@@ -278,6 +278,75 @@
           <div class="flex items-center gap-2 mb-3">
             <div
               class="w-7 h-7 rounded-lg flex items-center justify-center"
+              style="background: rgba(99, 102, 241, 0.2)"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#818cf8"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <span
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.45);
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+              "
+              >Chu kỳ MA</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              id="maPeriod"
+              value="20"
+              min="5"
+              max="60"
+              onchange="runScan()"
+              style="
+                flex: 1;
+                height: 42px;
+                padding: 0 14px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.07);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: #fff;
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 16px;
+                font-weight: 700;
+                outline: none;
+              "
+            />
+            <span
+              style="
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.3);
+                white-space: nowrap;
+                font-family: 'IBM Plex Mono', monospace;
+              "
+              >phiên</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="rounded-2xl p-4"
+          style="
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+          "
+        >
+          <div class="flex items-center gap-2 mb-3">
+            <div
+              class="w-7 h-7 rounded-lg flex items-center justify-center"
               style="background: rgba(251, 191, 36, 0.15)"
             >
               <svg
@@ -590,6 +659,17 @@
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
+          <!-- Symbol search -->
+          <div style="position:relative;display:flex;align-items:center">
+            <svg style="position:absolute;left:10px;pointer-events:none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="symbolSearch" type="text" placeholder="Tìm mã…"
+              oninput="onSymbolSearch(this.value)"
+              style="height:34px;width:130px;padding:0 30px 0 30px;border-radius:20px;border:1.5px solid rgba(0,0,0,.1);background:#f8fafc;font-size:13px;font-weight:600;color:#1f2937;outline:none;transition:all .15s;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px"
+              onfocus="this.style.borderColor='#003a6b';this.style.background='#fff';this.style.width='180px'"
+              onblur="this.style.borderColor='rgba(0,0,0,.1)';this.style.background='#f8fafc';if(!this.value)this.style.width='130px'"/>
+            <button id="symbolSearchClear" onclick="clearSymbolSearch()" style="display:none;position:absolute;right:8px;width:16px;height:16px;border-radius:50%;border:none;background:#d1d5db;cursor:pointer;font-size:10px;font-weight:700;color:#6b7280;display:none;align-items:center;justify-content:center;line-height:1;padding:0">✕</button>
+          </div>
+          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
           <!-- Chart mode toggle -->
           <div style="display:flex;align-items:center;background:#f1f5f9;border-radius:20px;padding:3px;gap:2px">
             <button id="modeLineBtn" onclick="setChartMode('line')"
@@ -620,28 +700,6 @@
             <div id="settingsPopup"
               style="display:none;position:absolute;top:40px;right:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:20px;min-width:280px;z-index:100">
               <div style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Tuỳ chọn hiển thị</div>
-
-              <!-- Chu kỳ MA -->
-              <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
-                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  <div style="font-size:13px;font-weight:600;color:#1f2937">Chu kỳ MA</div>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <input
-                    type="number"
-                    id="maPeriod"
-                    value="20"
-                    min="5"
-                    max="60"
-                    onchange="runScan()"
-                    style="flex:1;height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#1f2937;outline:none;transition:border .15s"
-                    onfocus="this.style.borderColor='#818cf8'"
-                    onblur="this.style.borderColor='#e5e7eb'"
-                  />
-                  <span style="font-size:12px;font-weight:600;color:#6b7280;white-space:nowrap">phiên</span>
-                </div>
-              </div>
 
               <!-- Marker toggle row -->
               <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
@@ -674,10 +732,24 @@
                 <div style="font-size:11px;color:#9ca3af;margin-top:5px">Để trống = hiển thị tất cả mã surge</div>
               </div>
 
-              <!-- Ngưỡng highlight KL -->
+              <!-- Lọc theo ngưỡng toggle (row riêng, nằm trên stepper) -->
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#1f2937">Lọc theo ngưỡng KL</div>
+                  <div style="font-size:11px;color:#9ca3af;margin-top:2px">Tắt để hiển thị tất cả mã</div>
+                </div>
+                <button id="surgeFilterSwitch" onclick="toggleSurgeFilter()"
+                  style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;background:#003a6b">
+                  <span id="surgeFilterThumb"
+                    style="position:absolute;top:3px;left:21px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
+                </button>
+              </div>
+
+              <!-- Ngưỡng highlight KL stepper -->
               <div style="margin-top:14px;padding-bottom:16px;border-bottom:1px solid #f1f5f9">
-                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:6px">Ngưỡng highlight KL <span style="color:#e03131">■</span></div>
-                <div style="display:flex;align-items:center;gap:8px">
+                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:10px">Ngưỡng highlight KL <span style="color:#e03131">■</span></div>
+                <!-- Stepper (dim khi tắt filter) -->
+                <div id="volXStepper" style="display:flex;align-items:center;gap:8px;transition:opacity .2s">
                   <button onclick="stepVolX(-0.5)"
                     style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1"
                     onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
@@ -696,34 +768,37 @@
 
               <!-- Nút Áp dụng -->
               <div style="margin-top:14px">
-                <button onclick="applySettings()"
-                  style="width:100%;height:38px;border-radius:10px;border:none;background:#003a6b;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.3px"
+                <button id="applyBtn" onclick="applySettings()"
+                  style="width:100%;height:38px;border-radius:10px;border:none;background:#003a6b;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px"
                   onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
-                  Áp dụng
+                  <svg id="applySpinner" style="display:none;animation:spin .75s linear infinite;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                  <span id="applyBtnLabel">Áp dụng</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-          </svg>
-          <span id="resultCount" style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#9ca3af"></span>
+          <span id="resultCount" style="display:none"></span>
         </div>
       </header>
 
       <!-- Filter bar -->
-      <div id="filterBar" style="background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;min-height:0;transition:all .2s">
-        <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap">Lọc:</span>
-        <button id="filter-liked" onclick="toggleFilter('liked')"
-          style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap">
-          ★ Đã thích
-        </button>
-        <div style="width:1px;height:16px;background:#e5e7eb;flex-shrink:0"></div>
-        <div id="patternFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      <div id="filterBar" style="background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:0 28px;display:flex;align-items:center;gap:0;flex-shrink:0;height:44px;overflow:hidden">
+        <!-- Label cố định trái -->
+        <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-right:10px">Lọc:</span>
+        <!-- Scroll container -->
+        <div style="flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;gap:6px;scrollbar-width:none;-ms-overflow-style:none;padding:8px 0" id="filterScroll">
+          <style>#filterScroll::-webkit-scrollbar{display:none}</style>
+          <button id="filter-liked" onclick="toggleFilter('liked')"
+            style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0">
+            ★ Đã thích
+          </button>
+          <div style="width:1px;height:16px;background:#e5e7eb;flex-shrink:0"></div>
+          <div id="patternFilters" style="display:flex;gap:6px;flex-shrink:0"></div>
+        </div>
+        <!-- Nút xoá lọc cố định phải -->
         <button onclick="clearFilters()" id="clearFilterBtn"
-          style="display:none;margin-left:auto;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #fca5a5;background:#fff5f5;font-size:11px;font-weight:700;color:#e03131;cursor:pointer;transition:all .15s;white-space:nowrap">
+          style="display:none;flex-shrink:0;margin-left:8px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #fca5a5;background:#fff5f5;font-size:11px;font-weight:700;color:#e03131;cursor:pointer;transition:all .15s;white-space:nowrap">
           ✕ Xoá lọc
         </button>
       </div>
@@ -779,8 +854,29 @@
       let showMarkers = true;  // hiển thị marker đảo chiều
       let displayLimit = 0;    // 0 = hiển thị tất cả
       let volHighlightX = 2;   // ngưỡng KL/MA để highlight đỏ
+      let surgeFilterEnabled = true; // bật/tắt lọc theo ngưỡng
+
+      // isSurge tính động theo volHighlightX — không dùng field từ backend nữa
+      function isSurge(r) { return !surgeFilterEnabled || r.ratio >= volHighlightX; }
       let likedSymbols = new Set(); // mã được like
       let activeFilters = new Set(); // filter đang bật: 'liked' | pattern label
+      let symbolQuery = ''; // tìm kiếm theo mã
+
+      function onSymbolSearch(val) {
+        symbolQuery = val.trim().toUpperCase();
+        const clearBtn = document.getElementById("symbolSearchClear");
+        if (clearBtn) clearBtn.style.display = symbolQuery ? "flex" : "none";
+        renderGrid();
+      }
+
+      function clearSymbolSearch() {
+        symbolQuery = '';
+        const inp = document.getElementById("symbolSearch");
+        if (inp) inp.value = '';
+        const clearBtn = document.getElementById("symbolSearchClear");
+        if (clearBtn) clearBtn.style.display = "none";
+        renderGrid();
+      }
 
       function loadLikes() {
         try { likedSymbols = new Set(JSON.parse(localStorage.getItem("surgeLikes") || "[]")); } catch(e) {}
@@ -846,7 +942,7 @@
       function buildPatternFilterBtns() {
         // Collect all patterns present in current results
         const patternMap = new Map(); // label → {bull, count}
-        allResults.filter(r => r.isSurge).forEach(r => {
+        allResults.filter(r => isSurge(r)).forEach(r => {
           const ps = detectCandlePatterns(r.chart.opens??[], r.chart.highs??[], r.chart.lows??[], r.chart.prices??[]);
           ps.forEach(p => {
             if (!patternMap.has(p.label)) patternMap.set(p.label, { bull: p.bull, count: 0 });
@@ -889,11 +985,12 @@
           if (s.showMarkers   !== undefined) showMarkers   = s.showMarkers;
           if (s.displayLimit  !== undefined) displayLimit  = s.displayLimit;
           if (s.volHighlightX !== undefined) volHighlightX = s.volHighlightX;
+          if (s.surgeFilterEnabled !== undefined) surgeFilterEnabled = s.surgeFilterEnabled;
         } catch(e) {}
       }
       function saveSettings() {
         try {
-          localStorage.setItem("surgeSettings", JSON.stringify({ showMarkers, displayLimit, volHighlightX }));
+          localStorage.setItem("surgeSettings", JSON.stringify({ showMarkers, displayLimit, volHighlightX, surgeFilterEnabled }));
         } catch(e) {}
       }
       loadSettings();
@@ -925,7 +1022,9 @@
         // Sync pending với current khi mở
         _pendingMarkers = showMarkers;
         _pendingLimit   = displayLimit;
-        _pendingVolX    = volHighlightX;
+        _pendingVolX          = volHighlightX;
+        _pendingFilterEnabled = surgeFilterEnabled;
+        applySurgeFilterUI(_pendingFilterEnabled);
         applyMarkerSwitchUI(_pendingMarkers);
         const vxi = document.getElementById("volHighlightInput");
         if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
@@ -938,7 +1037,8 @@
               // Reset pending về current nếu đóng mà không Áp dụng
               _pendingMarkers = showMarkers;
               _pendingLimit   = displayLimit;
-              _pendingVolX    = volHighlightX;
+              _pendingVolX          = volHighlightX;
+              _pendingFilterEnabled = surgeFilterEnabled;
               applyMarkerSwitchUI(showMarkers);
               document.getElementById("settingsPopup").style.display = "none";
               document.removeEventListener("click", closePopup);
@@ -950,7 +1050,8 @@
       // Pending settings — chỉ apply khi bấm "Áp dụng"
       let _pendingMarkers    = showMarkers;
       let _pendingLimit      = displayLimit;
-      let _pendingVolX       = volHighlightX;
+      let _pendingVolX          = volHighlightX;
+      let _pendingFilterEnabled = surgeFilterEnabled;
 
       function toggleMarkers() {
         _pendingMarkers = !_pendingMarkers;
@@ -963,6 +1064,21 @@
         const thumb = document.getElementById("markerSwitchThumb");
         if (sw)    sw.style.background = v ? "#003a6b" : "#d1d5db";
         if (thumb) thumb.style.left    = v ? "21px" : "3px";
+      }
+
+      function applySurgeFilterUI(val) {
+        const sw    = document.getElementById("surgeFilterSwitch");
+        const thumb = document.getElementById("surgeFilterThumb");
+        const stepper = document.getElementById("volXStepper");
+        if (sw)    sw.style.background = val ? "#003a6b" : "#d1d5db";
+        if (thumb) thumb.style.left    = val ? "21px" : "3px";
+        if (stepper) stepper.style.opacity = val ? "1" : "0.35";
+        if (stepper) stepper.style.pointerEvents = val ? "auto" : "none";
+      }
+
+      function toggleSurgeFilter() {
+        _pendingFilterEnabled = !_pendingFilterEnabled;
+        applySurgeFilterUI(_pendingFilterEnabled);
       }
 
       function onDisplayLimitInput(val) {
@@ -985,29 +1101,51 @@
       }
 
       function applySettings() {
-        const changed = (showMarkers !== _pendingMarkers) || (displayLimit !== _pendingLimit) || (volHighlightX !== _pendingVolX);
+        const changed = (showMarkers !== _pendingMarkers) || (displayLimit !== _pendingLimit) || (volHighlightX !== _pendingVolX) || (surgeFilterEnabled !== _pendingFilterEnabled);
         if (!changed) { closeSettingsPopup(); return; }
 
-        showMarkers   = _pendingMarkers;
-        displayLimit  = _pendingLimit;
-        volHighlightX = _pendingVolX;
-        saveSettings();
+        // Hiện loading trên button
+        const spinner = document.getElementById("applySpinner");
+        const label   = document.getElementById("applyBtnLabel");
+        const btn     = document.getElementById("applyBtn");
+        if (spinner) spinner.style.display = "block";
+        if (label)   label.textContent = "Đang xử lý…";
+        if (btn)     btn.style.opacity = ".7";
+        if (btn)     btn.style.pointerEvents = "none";
 
-        // Update display limit input nếu reset
-        const inp = document.getElementById("displayLimitInput");
-        if (inp) inp.value = displayLimit > 0 ? displayLimit : "";
+        // Nhường browser 1 frame để vẽ loading, rồi mới xử lý nặng
+        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => {
+          showMarkers   = _pendingMarkers;
+          displayLimit  = _pendingLimit;
+          volHighlightX      = _pendingVolX;
+          surgeFilterEnabled = _pendingFilterEnabled;
+          saveSettings();
 
-        // Re-draw markers không cần rebuild chart
-        Object.values(chartMap).forEach(c => {
-          if (Array.isArray(c)) c.forEach(ch => ch?.update("none"));
-          else c?.update("none");
-        });
+          // Update display limit input nếu reset
+          const inp = document.getElementById("displayLimitInput");
+          if (inp) inp.value = displayLimit > 0 ? displayLimit : "";
 
-        // Nếu displayLimit thay đổi thì cần renderGrid
-        if (displayLimit !== _pendingLimit) renderGrid();
-        else renderGrid();
+          // Re-draw markers không cần rebuild chart
+          Object.values(chartMap).forEach(c => {
+            if (Array.isArray(c)) c.forEach(ch => ch?.update("none"));
+            else c?.update("none");
+          });
 
-        closeSettingsPopup();
+          // Cập nhật lại stat sidebar (surgeCount phụ thuộc volHighlightX)
+          const statSurge = document.getElementById("statSurge");
+          if (statSurge) statSurge.textContent = allResults.filter(r => isSurge(r)).length;
+          const statConfig = document.getElementById("statConfig");
+          if (statConfig) statConfig.textContent = volHighlightX + "× / MA" + getMaPeriod();
+
+          renderGrid();
+          closeSettingsPopup();
+
+          // Reset button
+          if (spinner) spinner.style.display = "none";
+          if (label)   label.textContent = "Áp dụng";
+          if (btn)     btn.style.opacity = "1";
+          if (btn)     btn.style.pointerEvents = "auto";
+        }, 50)));
       }
 
       function closeSettingsPopup() {
@@ -1080,10 +1218,6 @@
       function getMaPeriod() {
         return parseInt(document.getElementById("maPeriod").value) || 20;
       }
-      function getThreshold() {
-        return 2.0;
-      }
-
       // ── Scan ──────────────────────────────────────────────────────────────────────
       async function runScan() {
         const ma = getMaPeriod();
@@ -1114,7 +1248,7 @@
           renderGrid();
 
           statsBlock.style.opacity = "1";
-          if (allResults.some((r) => r.isSurge)) {
+          if (allResults.some((r) => isSurge(r))) {
             document.getElementById("btnExportAll").classList.remove("hidden");
             document.getElementById("btnExportAll").classList.add("flex");
           }
@@ -1132,14 +1266,22 @@
       function renderSummary(json) {
         document.getElementById("statFiles").textContent =
           json.scannedFiles ?? 0;
-        document.getElementById("statSurge").textContent = json.surgeCount ?? 0;
+        document.getElementById("statSurge").textContent =
+          allResults.filter(r => isSurge(r)).length;
         document.getElementById("statConfig").textContent =
-          (json.threshold ?? 2) + "× / MA" + (json.maPeriod ?? 20);
+          volHighlightX + "× / MA" + (json.maPeriod ?? 20);
       }
 
       // ── Grid ──────────────────────────────────────────────────────────────────────
       function renderGrid() {
-        const all = sortResults(allResults.filter((r) => r.isSurge));
+        const surgeList = allResults.filter((r) => isSurge(r));
+        // Filter theo mã tìm kiếm (hỗ trợ nhiều mã cách nhau dấu cách/phẩy)
+        const queries = symbolQuery ? symbolQuery.split(/[\s,;]+/).filter(Boolean) : [];
+        const all = sortResults(
+          queries.length > 0
+            ? surgeList.filter(r => queries.some(q => r.symbol.includes(q)))
+            : surgeList
+        );
 
         // Áp dụng filter
         let filtered = all;
@@ -1188,7 +1330,16 @@
         items.forEach((r) => grid.appendChild(buildCard(r)));
         document.getElementById("content").innerHTML = "";
         document.getElementById("content").appendChild(grid);
-        requestAnimationFrame(() => items.forEach((r) => buildChart(r)));
+
+        // Build charts theo batch — nhường browser vẽ giữa mỗi card
+        // để tránh block main thread quá lâu
+        let idx = 0;
+        function buildNextChart() {
+          if (idx >= items.length) return;
+          buildChart(items[idx++]);
+          setTimeout(buildNextChart, 0);
+        }
+        requestAnimationFrame(buildNextChart);
       }
 
       // ── Card ──────────────────────────────────────────────────────────────────────
@@ -1377,12 +1528,12 @@
       function buildCard(r) {
         const div = document.createElement("div");
         div.id = `card-${r.symbol}`;
-        div.className = r.isSurge ? "is-surge" : "";
+        div.className = isSurge(r) ? "is-surge" : "";
         div.style.cssText =
           "background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;" +
-          (r.isSurge
+          (isSurge(r)
             ? "border:1px solid rgba(0,0,0,.08);border-top:3px solid #e03131;"
-            : "border:1px solid rgba(0,0,0,.08);");
+            : "border:1px solid rgba(0,0,0,.08);")
         div.onmouseenter = () => {
           div.style.transform = "translateY(-3px)";
           div.style.boxShadow = "0 10px 32px rgba(0,0,0,.1)";
@@ -1393,7 +1544,6 @@
         };
 
         const barPct = Math.min((r.ratio / 5) * 100, 100).toFixed(1);
-        const thr = getThreshold();
         const ma = getMaPeriod();
         const price = r.chart.prices?.at(-1);
         const fmtPrice = (v) =>
@@ -1445,7 +1595,7 @@
           <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af">KL mới nhất</span>
         </div>
         <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${
-          r.isSurge ? "#e03131" : "#1a1a2e"
+          isSurge(r) ? "#e03131" : "#1a1a2e"
         }">${fmtVol(r.latestVol)}</div>
       </div>
       <div>
@@ -1463,7 +1613,7 @@
           <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af">KL / MA</span>
         </div>
         <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${
-          r.isSurge ? "#e03131" : "#2f9e44"
+          isSurge(r) ? "#e03131" : "#2f9e44"
         }">${r.ratio}×</div>
       </div>
     </div>
@@ -1761,7 +1911,7 @@
 
         // Màu bar khối lượng
         const volColors = volumes.map((v, i) => {
-          if (i === last && r.isSurge) return "rgba(224,49,49,.85)";
+          if (i === last && isSurge(r)) return "rgba(224,49,49,.85)";
           if (r.ma20 > 0 && v > r.ma20 * 1.5) return "rgba(224,49,49,.45)";
           return "rgba(0,58,107,.55)";
         });
@@ -2121,7 +2271,7 @@
       }
 
       async function exportAll() {
-        const surges = allResults.filter((r) => r.isSurge);
+        const surges = allResults.filter((r) => isSurge(r));
         if (!surges.length) {
           alert("Không có mã đột biến.");
           return;
@@ -2172,6 +2322,7 @@
       window.addEventListener("load", () => {
         // Áp dụng settings đã load vào UI
         applyMarkerSwitchUI();
+        applySurgeFilterUI(surgeFilterEnabled);
         const inp = document.getElementById("displayLimitInput");
         if (inp && displayLimit > 0) inp.value = displayLimit;
         applyFilterUI();

@@ -168,9 +168,8 @@ async function readXlsx(filePath) {
 // ── Phân tích tất cả ─────────────────────────────────────────────────────────
 export async function analyzeAll(tmpDir, options = {}) {
   const {
-    maPeriod  = 20,
-    threshold = 2.0,
-    topN      = 264,
+    maPeriod = 20,
+    topN     = 264,
   } = options;
 
   if (!fs.existsSync(tmpDir)) {
@@ -250,7 +249,6 @@ export async function analyzeAll(tmpDir, options = {}) {
 
     results.push({
       symbol,
-      isSurge   : ratio >= threshold,
       ratio     : Math.round(ratio * 100) / 100,
       ma20      : Math.round(ma),
       latestVol : latest.volume,
@@ -281,14 +279,9 @@ export async function analyzeAll(tmpDir, options = {}) {
     });
   }
 
-  // Trả về tất cả surges, frontend tự sort theo lựa chọn người dùng
-  const surges = results.filter(r => r.isSurge);
-
   return {
     scannedFiles: files.length,
-    surgeCount  : surges.length,
-    threshold,
     maPeriod,
-    results     : surges,
+    results,
   };
 }
