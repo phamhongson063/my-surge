@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-[#0b1120]">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Engine Pro v3.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Lexend", "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background: radial-gradient(
+          circle at 10% 10%,
+          #1e293b 0%,
+          #0b1120 100%
+        );
+        color: #f1f5f9;
+      }
+      /* Làm nổi bật góc bo bằng viền sáng và bóng đổ rộng */
+      .glass-panel {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+      #log::-webkit-scrollbar {
+        width: 6px;
+      }
+      #log::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 10px;
+      }
+      #log::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+
+      .neon-text-blue {
+        text-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+      }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        scale: 1.3;
+        cursor: pointer;
+      }
+      input:focus {
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+      }
+    </style>
+  </head>
+  <body
+    class="h-full font-sans antialiased p-4 md:p-8 flex flex-col items-center justify-center"
+  >
+    <div
+      id="errorAlert"
+      class="fixed top-10 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-4 px-8 py-4 bg-red-600 text-white rounded-2xl shadow-2xl transition-all duration-500 opacity-0 -translate-y-10 pointer-events-none"
+    >
+      <div class="bg-white/20 p-2 rounded-xl">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+        >
+          <path
+            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"
+          />
+        </svg>
+      </div>
+      <span class="text-lg font-bold">Vui lòng nhập mã chứng khoán!</span>
+    </div>
+    <div class="w-full max-w-7xl">
+      <header class="flex justify-between items-center mb-12 px-6">
+        <div class="flex items-center gap-5">
+          <button
+            onclick="window.history.back()"
+            class="group flex items-center justify-center w-12 h-12 bg-slate-800/50 hover:bg-slate-700 rounded-2xl border border-slate-700 transition-all active:scale-95"
+            title="Quay lại"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              class="text-slate-400 group-hover:text-white transition-colors"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div
+            class="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center shadow-inner border border-white/10"
+          >
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M21 7V17C21 19.2091 19.2091 21 17 21H7C4.79086 21 3 19.2091 3 17V7C3 4.79086 4.79086 3 7 3H17C19.2091 3 21 4.79086 21 7Z"
+                fill="#0EA5E9"
+                fill-opacity="0.1"
+                stroke="#0EA5E9"
+                stroke-width="2"
+              />
+              <path
+                d="M14.5 9.5L11 13L9.5 11.5L6 15"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M18 15V18H15"
+                stroke="#F472B6"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M18 18L13 13"
+                stroke="#F472B6"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1
+              class="text-4xl font-extrabold tracking-tighter neon-text-blue text-white"
+            >
+              Stock<span class="text-sky-400">Engine</span>
+            </h1>
+            <p class="text-sm text-slate-400 font-medium tracking-wide mt-1">
+              Hệ thống khai thác dữ liệu CafeF v3.0 Ultra Clear
+            </p>
+          </div>
+        </div>
+
+        <div
+          id="serverPill"
+          class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-slate-900/80 border border-slate-700 shadow-2xl"
+        >
+          <span class="w-3 h-3 rounded-full bg-slate-600 status-pulse"></span>
+          <span
+            class="text-xs font-bold uppercase tracking-widest text-slate-500"
+            >Đang kết nối...</span
+          >
+        </div>
+      </header>
+
+      <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div class="lg:col-span-5 flex flex-col gap-8">
+          <div class="glass-panel p-10 flex-1 flex flex-col justify-between">
+            <section class="space-y-8">
+              <div class="flex items-center gap-4">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="text-sky-400"
+                >
+                  <path
+                    d="M11 4H4V11H11V4Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M20 4H13V11H20V4Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M11 13H4V20H11V13Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M19 13V20M16 17H22"
+                    stroke="#F472B6"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <h2
+                  class="text-sm font-bold text-slate-400 uppercase tracking-widest"
+                >
+                  Cấu hình tham số
+                </h2>
+              </div>
+
+              <div>
+                <input
+                  id="symbolInput"
+                  type="text"
+                  placeholder="NHẬP MÃ (VD: DPM)"
+                  class="w-full h-20 px-8 bg-slate-950/40 border-2 border-slate-700 rounded-3xl text-4xl font-mono font-bold text-sky-300 placeholder:text-slate-600 outline-none transition-all uppercase tracking-tight"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <label
+                    class="text-xs font-bold text-slate-300 uppercase tracking-wide ml-2"
+                    >Từ ngày</label
+                  >
+                  <input
+                    type="date"
+                    id="startDate"
+                    value="2025-01-01"
+                    class="w-full h-14 bg-slate-950/40 border-2 border-slate-700 rounded-2xl px-5 text-base font-semibold text-white outline-none focus:border-sky-500"
+                  />
+                </div>
+                <div class="space-y-3">
+                  <label
+                    class="text-xs font-bold text-slate-300 uppercase tracking-wide ml-2"
+                    >Đến ngày</label
+                  >
+                  <input
+                    type="date"
+                    id="endDate"
+                    class="w-full h-14 bg-slate-950/40 border-2 border-slate-700 rounded-2xl px-5 text-base font-semibold text-white outline-none focus:border-sky-500"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-12 space-y-4">
+              <button
+                onclick="doDownload()"
+                class="w-full h-16 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-2xl text-lg transition-all shadow-xl shadow-sky-950/30 active:scale-[0.98] flex items-center justify-center gap-3"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M12 5V19M5 12H19" />
+                </svg>
+                Tải Mã Đơn Lẻ
+              </button>
+
+              <div class="flex gap-4">
+                <button
+                  id="btnDownloadAll"
+                  onclick="doDownloadAll()"
+                  class="flex-[4] h-16 bg-white hover:bg-slate-100 text-slate-950 font-extrabold rounded-2xl text-lg transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path
+                      d="M4 16V17C4 18.6569 5.34315 20 7 20H17C18.6569 20 20 18.6569 20 17V16M16 12L12 16M12 16L8 12M12 16V4"
+                    />
+                  </svg>
+                  Tải Danh Sách (CSV)
+                </button>
+
+                <button
+                  id="btnStop"
+                  onclick="stopDownload()"
+                  class="hidden flex-1 h-16 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="6" y="6" width="12" height="12" rx="2" />
+                  </svg>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col">
+          <div
+            class="glass-panel overflow-hidden flex flex-col h-full min-h-[600px]"
+          >
+            <div
+              id="progressContainer"
+              class="hidden p-10 bg-sky-950/30 border-b-2 border-slate-700"
+            >
+              <div class="flex justify-between items-center mb-5">
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-12 h-12 bg-sky-500/20 rounded-full flex items-center justify-center border border-sky-500/30"
+                  >
+                    <svg
+                      id="spinnerIcon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="text-sky-400 animate-spin"
+                    >
+                      <path
+                        d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <span
+                      id="progressLabel"
+                      class="text-white font-extrabold text-2xl tracking-tight"
+                      >Hệ thống sẵn sàng...</span
+                    >
+                    <div
+                      class="text-xs text-slate-400 uppercase tracking-widest mt-1"
+                    >
+                      Tiến độ xử lý hàng loạt
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span
+                    id="progressPercent"
+                    class="text-5xl font-black text-sky-400 italic neon-text-blue"
+                    >0%</span
+                  >
+                </div>
+              </div>
+              <div
+                class="w-full h-4 bg-slate-950 rounded-full overflow-hidden p-1 border border-slate-700"
+              >
+                <div
+                  id="progressFill"
+                  class="h-full bg-sky-500 rounded-full shadow-[0_0_20px_rgba(56,189,248,0.8)] transition-all duration-500"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <div class="flex-1 p-8 flex flex-col">
+              <div class="flex items-center justify-between mb-6 px-2">
+                <div class="flex items-center gap-3">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="text-slate-500"
+                  >
+                    <path
+                      d="M13 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V9M13 2L20 9M13 2V9H20"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span
+                    class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+                    >Nhật ký vận hành</span
+                  >
+                </div>
+                <button
+                  onclick="clearLog()"
+                  class="text-xs font-bold text-slate-500 hover:text-red-400 transition-colors uppercase bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700"
+                >
+                  Xóa nhật ký
+                </button>
+              </div>
+              <div
+                id="log"
+                class="flex-1 bg-slate-950/50 rounded-3xl p-8 font-mono text-[14px] overflow-y-auto space-y-3 border-2 border-slate-800 tracking-wide text-slate-200"
+              >
+                <div class="text-slate-600 italic">
+                  // Khởi tạo hệ thống... Sẵn sàng nhận lệnh.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

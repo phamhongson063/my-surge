@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Khối lượng Đột biến</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['"IBM Plex Mono"', "monospace"],
+              display: ["Syne", "sans-serif"],
+              sans: ['"Noto Sans"', "sans-serif"],
+            },
+            colors: {
+              navy: { DEFAULT: "#003a6b", light: "#e8f0f7" },
+              surge: {
+                DEFAULT: "#e03131",
+                light: "#fff5f5",
+                border: "#ffc9c9",
+              },
+              sidebar: "#0f1923",
+            },
+            keyframes: {
+              popIn: {
+                "0%": { transform: "scale(.8)", opacity: "0" },
+                "100%": { transform: "scale(1)", opacity: "1" },
+              },
+              spin: { to: { transform: "rotate(360deg)" } },
+            },
+            animation: {
+              popIn: "popIn .3s cubic-bezier(.34,1.56,.64,1) both",
+              spin: "spin .75s linear infinite",
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&family=Noto+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script>
+      Chart.register(Chart.registry.plugins.get("filler") ?? {});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.4.0/dist/dom-to-image-more.min.js"></script>
+    <style>
+      /* Tailwind doesn't ship these at CDN runtime */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      .tooltip-box {
+        display: none;
+      }
+      .tooltip-wrap:hover .tooltip-box {
+        display: block;
+      }
+      .surge-pill {
+        display: none;
+      }
+      .is-surge .surge-pill {
+        display: flex;
+        animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .ratio-fill {
+        transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      /* scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body
+    class="h-full font-sans text-gray-900 flex"
+    style="background: #f0f2f5"
+    style="font-family: 'Noto Sans', sans-serif"
+  >
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside
+      class="w-[280px] shrink-0 flex flex-col sticky top-0 h-screen overflow-y-auto"
+      style="
+        background: #0d1117;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+      "
+    >
+      <div
+        class="px-6 py-6 flex items-center gap-3"
+        style="border-bottom: 1px solid rgba(255, 255, 255, 0.06)"
+      >
+        <div
+          class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+          style="
+            background: linear-gradient(135deg, #e03131, #c92a2a);
+            box-shadow: 0 4px 16px rgba(224, 49, 49, 0.35);
+          "
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M18 20V10M12 20V4M6 20v-6"
+              stroke="#fff"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <div>
+          <div
+            style="
+              font-family: 'Syne', sans-serif;
+              font-weight: 800;
+              font-size: 16px;
+              color: #fff;
+              letter-spacing: -0.3px;
+            "
+          >
+            Volume Surge
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 px-4 py-5 flex flex-col gap-4 overflow-y-auto">
+        <div
+          id="statsBlock"
+          class="rounded-2xl p-4"
+          style="
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            opacity: 0.35;
+            transition: opacity 0.3s;
+          "
+        >
+          <div
+            style="
+              font-size: 15px;
+              font-weight: 600;
+              color: rgba(255, 255, 255, 0.3);
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              margin-bottom: 12px;
+            "
+          >
+            Kết quả quét
+          </div>
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-7 h-7 rounded-lg flex items-center justify-center"
+                style="background: rgba(224, 49, 49, 0.15)"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#e03131"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+              </div>
+              <span style="font-size: 13px; color: rgba(255, 255, 255, 0.5)"
+                >Mã đột biến</span
+              >
+            </div>
+            <span
+              id="statSurge"
+              style="
+                font-family: 'IBM Plex Mono', monospace;
+                font-weight: 700;
+                font-size: 28px;
+                color: #e03131;
+                line-height: 1;
+              "
+              >—</span
+            >
+          </div>
+          <div
+            style="
+              border-top: 1px solid rgba(255, 255, 255, 0.07);
+              padding-top: 10px;
+              display: flex;
+              flex-direction: column;
+              gap: 7px;
+            "
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(255,255,255,.3)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <span style="font-size: 15px; color: rgba(255, 255, 255, 0.3)"
+                  >File đã quét</span
+                >
+              </div>
+              <span
+                id="statFiles"
+                style="
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-size: 13px;
+                  color: rgba(255, 255, 255, 0.5);
+                "
+                >—</span
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(255,255,255,.3)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span style="font-size: 15px; color: rgba(255, 255, 255, 0.3)"
+                  >Ngưỡng / MA</span
+                >
+              </div>
+              <span
+                id="statConfig"
+                style="
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-size: 13px;
+                  color: rgba(255, 255, 255, 0.5);
+                "
+                >—</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="rounded-2xl p-4"
+          style="
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+          "
+        >
+          <div class="flex items-center gap-2 mb-3">
+            <div
+              class="w-7 h-7 rounded-lg flex items-center justify-center"
+              style="background: rgba(251, 191, 36, 0.15)"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fbbf24"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            </div>
+            <span
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.45);
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+              "
+              >Sắp xếp theo</span
+            >
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 7px">
+            <button
+              onclick="setSort('ratio')"
+              id="sortRatio"
+              style="
+                height: 42px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.05);
+                color: rgba(255, 255, 255, 0.45);
+                font-size: 13px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 14px;
+                cursor: pointer;
+                transition: all 0.15s;
+              "
+            >
+              <span style="display: flex; align-items: center; gap: 7px">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <path d="M18 20V10M12 20V4M6 20v-6" /></svg
+                >Tỉ lệ KL / MA
+              </span>
+              <span
+                style="
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-size: 12px;
+                  opacity: 0.7;
+                "
+                >ratio ↓</span
+              >
+            </button>
+            <button
+              onclick="setSort('vol')"
+              id="sortVol"
+              style="
+                height: 42px;
+                border-radius: 12px;
+                border: 1px solid #e03131;
+                background: #e03131;
+                color: #fff;
+                font-size: 13px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 14px;
+                cursor: pointer;
+                transition: all 0.15s;
+              "
+            >
+              <span style="display: flex; align-items: center; gap: 7px">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" /></svg
+                >Khối lượng GD
+              </span>
+              <span
+                style="
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-size: 12px;
+                  opacity: 0.6;
+                "
+                >KLGD ↓</span
+              >
+            </button>
+            <button
+              onclick="setSort('balance')"
+              id="sortBalance"
+              style="
+                height: 42px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.05);
+                color: rgba(255, 255, 255, 0.45);
+                font-size: 13px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 14px;
+                cursor: pointer;
+                transition: all 0.15s;
+              "
+            >
+              <span style="display: flex; align-items: center; gap: 7px">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <line x1="12" y1="2" x2="12" y2="6" />
+                  <line x1="12" y1="18" x2="12" y2="22" />
+                  <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+                  <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+                  <line x1="2" y1="12" x2="6" y2="12" />
+                  <line x1="18" y1="12" x2="22" y2="12" /></svg
+                >Cân bằng
+              </span>
+              <span
+                style="
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-size: 12px;
+                  opacity: 0.6;
+                "
+                >ratio×vol</span
+              >
+            </button>
+          </div>
+        </div>
+
+        <button
+          id="btnExportAll"
+          onclick="exportAll()"
+          class="hidden w-full rounded-2xl font-semibold items-center justify-center gap-2 transition-colors"
+          style="
+            height: 44px;
+            font-size: 13px;
+            background: rgba(47, 158, 68, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(47, 158, 68, 0.25);
+          "
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Xuất tất cả ảnh
+        </button>
+      </div>
+
+      <a
+        href="/"
+        class="px-6 py-4 flex items-center gap-2 no-underline transition-colors"
+        style="
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          color: rgba(255, 255, 255, 0.2);
+          font-size: 13px;
+        "
+      >
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        Trang chủ
+      </a>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
+      <!-- Header bar -->
+      <header
+        style="
+          background: #fff;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+          padding: 14px 28px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-shrink: 0;
+        "
+      >
+        <div style="display: flex; align-items: center; gap: 8px">
+          <button
+            onclick="setRange(22)"
+            id="range22"
+            class="range-btn"
+            style="
+              height: 36px;
+              padding: 0 18px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              border: 1.5px solid rgba(0, 0, 0, 0.1);
+              background: transparent;
+              color: #9ca3af;
+              cursor: pointer;
+              transition: all 0.15s;
+            "
+          >
+            1 Tháng
+          </button>
+          <button
+            onclick="setRange(66)"
+            id="range66"
+            class="range-btn"
+            style="
+              height: 36px;
+              padding: 0 18px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              border: 1.5px solid #003a6b;
+              background: #003a6b;
+              color: #fff;
+              cursor: pointer;
+              transition: all 0.15s;
+            "
+          >
+            3 Tháng
+          </button>
+          <button
+            onclick="setRange(132)"
+            id="range132"
+            class="range-btn"
+            style="
+              height: 36px;
+              padding: 0 18px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              border: 1.5px solid rgba(0, 0, 0, 0.1);
+              background: transparent;
+              color: #9ca3af;
+              cursor: pointer;
+              transition: all 0.15s;
+            "
+          >
+            6 Tháng
+          </button>
+          <button
+            onclick="setRange(264)"
+            id="range264"
+            class="range-btn"
+            style="
+              height: 36px;
+              padding: 0 18px;
+              border-radius: 20px;
+              font-size: 13px;
+              font-weight: 600;
+              border: 1.5px solid rgba(0, 0, 0, 0.1);
+              background: transparent;
+              color: #9ca3af;
+              cursor: pointer;
+              transition: all 0.15s;
+            "
+          >
+            1 Năm
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <!-- Chart mode toggle -->
+          <div style="display:flex;align-items:center;background:#f1f5f9;border-radius:20px;padding:3px;gap:2px">
+            <button id="modeLineBtn" onclick="setChartMode('line')"
+              style="height:30px;padding:0 14px;border-radius:17px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;background:transparent;color:#9ca3af">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Đường
+            </button>
+            <button id="modeCandleBtn" onclick="setChartMode('candle')"
+              style="height:30px;padding:0 14px;border-radius:17px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;background:#003a6b;color:#fff">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="22"/><rect x="5" y="6" width="6" height="10" rx="1"/><line x1="16" y1="2" x2="16" y2="22"/><rect x="13" y="8" width="6" height="8" rx="1"/></svg>
+              Nến
+            </button>
+          </div>
+          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
+
+          <!-- Settings icon + popup -->
+          <div style="position:relative">
+            <button onclick="toggleSettingsPopup()" id="settingsBtn"
+              style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(0,0,0,.1);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#6b7280"
+              onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='rgba(0,0,0,.2)'"
+              onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(0,0,0,.1)'">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+            <!-- Settings popup -->
+            <div id="settingsPopup"
+              style="display:none;position:absolute;top:40px;right:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:20px;min-width:280px;z-index:100">
+              <div style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Tuỳ chọn hiển thị</div>
+
+              <!-- Chu kỳ MA -->
+              <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  <div style="font-size:13px;font-weight:600;color:#1f2937">Chu kỳ MA</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input
+                    type="number"
+                    id="maPeriod"
+                    value="20"
+                    min="5"
+                    max="60"
+                    onchange="runScan()"
+                    style="flex:1;height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#1f2937;outline:none;transition:border .15s"
+                    onfocus="this.style.borderColor='#818cf8'"
+                    onblur="this.style.borderColor='#e5e7eb'"
+                  />
+                  <span style="font-size:12px;font-weight:600;color:#6b7280;white-space:nowrap">phiên</span>
+                </div>
+              </div>
+
+              <!-- Marker toggle row -->
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#1f2937">▲▼ Marker đảo chiều</div>
+                  <div style="font-size:11px;color:#9ca3af;margin-top:2px">Hiện tín hiệu trên nến nhật</div>
+                </div>
+                <button id="markerToggleSwitch" onclick="toggleMarkers()"
+                  style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
+                  <span id="markerSwitchThumb"
+                    style="position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
+                </button>
+              </div>
+
+              <!-- Số cổ phiếu hiển thị -->
+              <div style="margin-top:14px;padding-bottom:16px;border-bottom:1px solid #f1f5f9">
+                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:6px">Số cổ phiếu hiển thị</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input id="displayLimitInput" type="number" min="0" max="999" placeholder="Tất cả"
+                    oninput="onDisplayLimitInput(this.value)"
+                    style="flex:1;height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f2937;outline:none;transition:border .15s"
+                    onfocus="this.style.borderColor='#003a6b'"
+                    onblur="this.style.borderColor='#e5e7eb'"/>
+                  <button onclick="_pendingLimit=0;document.getElementById('displayLimitInput').value=''"
+                    style="height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;background:transparent;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;white-space:nowrap"
+                    onmouseenter="this.style.background='#f1f5f9'" onmouseleave="this.style.background='transparent'">
+                    Tất cả
+                  </button>
+                </div>
+                <div style="font-size:11px;color:#9ca3af;margin-top:5px">Để trống = hiển thị tất cả mã surge</div>
+              </div>
+
+              <!-- Ngưỡng highlight KL -->
+              <div style="margin-top:14px;padding-bottom:16px;border-bottom:1px solid #f1f5f9">
+                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:6px">Ngưỡng highlight KL <span style="color:#e03131">■</span></div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <button onclick="stepVolX(-0.5)"
+                    style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1"
+                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
+                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'">−</button>
+                  <div style="display:flex;align-items:center;gap:4px;flex:1;justify-content:center">
+                    <span id="volHighlightInput" style="width:44px;height:36px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#003a6b;display:flex;align-items:center;justify-content:center;background:#f8fafc">2</span>
+                    <span style="font-size:12px;font-weight:700;color:#6b7280;white-space:nowrap">× MA</span>
+                  </div>
+                  <button onclick="stepVolX(+0.5)"
+                    style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1"
+                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
+                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'">+</button>
+                </div>
+                <div style="font-size:11px;color:#9ca3af;margin-top:5px">Cột KL vượt ngưỡng này sẽ đổi màu đỏ</div>
+              </div>
+
+              <!-- Nút Áp dụng -->
+              <div style="margin-top:14px">
+                <button onclick="applySettings()"
+                  style="width:100%;height:38px;border-radius:10px;border:none;background:#003a6b;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.3px"
+                  onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
+                  Áp dụng
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+          <span id="resultCount" style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#9ca3af"></span>
+        </div>
+      </header>
+
+      <!-- Filter bar -->
+      <div id="filterBar" style="background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;min-height:0;transition:all .2s">
+        <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap">Lọc:</span>
+        <button id="filter-liked" onclick="toggleFilter('liked')"
+          style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap">
+          ★ Đã thích
+        </button>
+        <div style="width:1px;height:16px;background:#e5e7eb;flex-shrink:0"></div>
+        <div id="patternFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <button onclick="clearFilters()" id="clearFilterBtn"
+          style="display:none;margin-left:auto;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #fca5a5;background:#fff5f5;font-size:11px;font-weight:700;color:#e03131;cursor:pointer;transition:all .15s;white-space:nowrap">
+          ✕ Xoá lọc
+        </button>
+      </div>
+
+      <!-- Scrollable content -->
+      <main
+        id="content"
+        class="flex-1 overflow-y-auto"
+        style="padding: 24px 28px"
+      >
+        <div
+          class="flex flex-col items-center justify-center h-full gap-4 text-gray-400 text-sm"
+        >
+          <div
+            class="w-8 h-8 rounded-full border-[3px] border-navy/20 border-t-navy animate-spin"
+          ></div>
+          Đang quét dữ liệu…
+        </div>
+      </main>
+    </div>
+
+    <!-- Export overlay -->
+    <div
+      id="exportOverlay"
+      class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 items-center justify-center"
+    >
+      <div
+        class="bg-white rounded-2xl px-10 py-8 text-center shadow-2xl min-w-[220px]"
+      >
+        <div
+          class="w-8 h-8 rounded-full border-[3px] border-navy/20 border-t-navy animate-spin mx-auto"
+        ></div>
+        <p
+          id="exportMsg"
+          class="font-mono text-xs text-gray-400 mt-3"
+          style="font-family: 'IBM Plex Mono', monospace"
+        >
+          Đang xuất ảnh…
+        </p>
+      </div>
+    </div>
+
+    <!-- Tab active styles injected via JS (Tailwind CDN can't purge dynamic classes) -->
+    <style></style>
+
+    <script>
+      const SERVER = "http://localhost:3000";
+      let allResults = [];
+      let chartMap = {};
+      let sortMode = "vol"; // 'ratio' | 'vol' | 'balance'
+      let rangeN = 66; // số phiên hiển thị: 22=1T, 66=3T, 132=6T, 264=1N
+      let chartMode = "candle"; // 'line' | 'candle'
+      let showMarkers = true;  // hiển thị marker đảo chiều
+      let displayLimit = 0;    // 0 = hiển thị tất cả
+      let volHighlightX = 2;   // ngưỡng KL/MA để highlight đỏ
+      let likedSymbols = new Set(); // mã được like
+      let activeFilters = new Set(); // filter đang bật: 'liked' | pattern label
+
+      function loadLikes() {
+        try { likedSymbols = new Set(JSON.parse(localStorage.getItem("surgeLikes") || "[]")); } catch(e) {}
+      }
+      function saveLikes() {
+        try { localStorage.setItem("surgeLikes", JSON.stringify([...likedSymbols])); } catch(e) {}
+      }
+      function toggleLike(symbol) {
+        if (likedSymbols.has(symbol)) likedSymbols.delete(symbol);
+        else likedSymbols.add(symbol);
+        saveLikes();
+        // Cập nhật icon ngôi sao ngay lập tức
+        const btn = document.getElementById("like-" + symbol);
+        if (btn) applyStarUI(btn, likedSymbols.has(symbol));
+        // Re-sort grid để liked items lên trên
+        renderGrid();
+      }
+      function applyStarUI(btn, liked) {
+        btn.innerHTML = liked
+          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        btn.title = liked ? "Bỏ yêu thích" : "Thêm vào yêu thích";
+      }
+      loadLikes();
+
+      // ── Filter logic ─────────────────────────────────────────────────────────
+      function toggleFilter(key) {
+        if (activeFilters.has(key)) activeFilters.delete(key);
+        else activeFilters.add(key);
+        applyFilterUI();
+        renderGrid();
+      }
+
+      function clearFilters() {
+        activeFilters.clear();
+        applyFilterUI();
+        renderGrid();
+      }
+
+      function applyFilterUI() {
+        const hasFilter = activeFilters.size > 0;
+        const clearBtn = document.getElementById("clearFilterBtn");
+        if (clearBtn) clearBtn.style.display = hasFilter ? "block" : "none";
+
+        // Liked button
+        const likedBtn = document.getElementById("filter-liked");
+        if (likedBtn) {
+          const on = activeFilters.has("liked");
+          likedBtn.style.background = on ? "#fefce8" : "#fff";
+          likedBtn.style.borderColor = on ? "#fcd34d" : "#e5e7eb";
+          likedBtn.style.color = on ? "#92400e" : "#6b7280";
+        }
+        // Pattern buttons
+        document.querySelectorAll(".pattern-filter-btn").forEach(btn => {
+          const key = btn.dataset.key;
+          const on  = activeFilters.has(key);
+          btn.style.background   = on ? btn.dataset.bgOn   : "#fff";
+          btn.style.borderColor  = on ? btn.dataset.brdOn  : "#e5e7eb";
+          btn.style.color        = on ? btn.dataset.clrOn  : "#6b7280";
+        });
+      }
+
+      function buildPatternFilterBtns() {
+        // Collect all patterns present in current results
+        const patternMap = new Map(); // label → {bull, count}
+        allResults.filter(r => r.isSurge).forEach(r => {
+          const ps = detectCandlePatterns(r.chart.opens??[], r.chart.highs??[], r.chart.lows??[], r.chart.prices??[]);
+          ps.forEach(p => {
+            if (!patternMap.has(p.label)) patternMap.set(p.label, { bull: p.bull, count: 0 });
+            patternMap.get(p.label).count++;
+          });
+        });
+
+        const wrap = document.getElementById("patternFilters");
+        if (!wrap) return;
+        wrap.innerHTML = "";
+
+        if (patternMap.size === 0) { wrap.style.display = "none"; return; }
+        wrap.style.display = "flex";
+
+        patternMap.forEach((v, label) => {
+          const bgOn  = v.bull === true  ? "#f0fdf4" : v.bull === false ? "#fff5f5" : "#f8fafc";
+          const brdOn = v.bull === true  ? "#86efac" : v.bull === false ? "#fca5a5" : "#cbd5e1";
+          const clrOn = v.bull === true  ? "#166534" : v.bull === false ? "#991b1b" : "#475569";
+
+          const btn = document.createElement("button");
+          btn.className = "pattern-filter-btn";
+          btn.dataset.key   = label;
+          btn.dataset.bgOn  = bgOn;
+          btn.dataset.brdOn = brdOn;
+          btn.dataset.clrOn = clrOn;
+          btn.onclick = () => toggleFilter(label);
+          btn.style.cssText = "display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap";
+          btn.textContent = label + " (" + v.count + ")";
+          wrap.appendChild(btn);
+        });
+
+        // Áp dụng trạng thái active hiện tại
+        applyFilterUI();
+      }
+
+      // ── Load settings từ localStorage ────────────────────────────────────────
+      function loadSettings() {
+        try {
+          const s = JSON.parse(localStorage.getItem("surgeSettings") || "{}");
+          if (s.showMarkers   !== undefined) showMarkers   = s.showMarkers;
+          if (s.displayLimit  !== undefined) displayLimit  = s.displayLimit;
+          if (s.volHighlightX !== undefined) volHighlightX = s.volHighlightX;
+        } catch(e) {}
+      }
+      function saveSettings() {
+        try {
+          localStorage.setItem("surgeSettings", JSON.stringify({ showMarkers, displayLimit, volHighlightX }));
+        } catch(e) {}
+      }
+      loadSettings();
+
+      function setRange(n) {
+        rangeN = n;
+        [22, 66, 132, 264].forEach((v) => {
+          const btn = document.getElementById("range" + v);
+          if (!btn) return;
+          if (v === n) {
+            btn.style.background = "#003a6b";
+            btn.style.borderColor = "#003a6b";
+            btn.style.color = "#fff";
+          } else {
+            btn.style.background = "transparent";
+            btn.style.borderColor = "rgba(0,0,0,.12)";
+            btn.style.color = "#6b7280";
+          }
+        });
+        // Re-render charts với range mới (không cần gọi lại API)
+        renderGrid();
+      }
+
+      function toggleSettingsPopup() {
+        const popup = document.getElementById("settingsPopup");
+        const isOpen = popup.style.display !== "none";
+        if (isOpen) { popup.style.display = "none"; return; }
+
+        // Sync pending với current khi mở
+        _pendingMarkers = showMarkers;
+        _pendingLimit   = displayLimit;
+        _pendingVolX    = volHighlightX;
+        applyMarkerSwitchUI(_pendingMarkers);
+        const vxi = document.getElementById("volHighlightInput");
+        if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+
+        popup.style.display = "block";
+        setTimeout(() => {
+          document.addEventListener("click", function closePopup(e) {
+            if (!document.getElementById("settingsPopup")?.contains(e.target) &&
+                !document.getElementById("settingsBtn")?.contains(e.target)) {
+              // Reset pending về current nếu đóng mà không Áp dụng
+              _pendingMarkers = showMarkers;
+              _pendingLimit   = displayLimit;
+              _pendingVolX    = volHighlightX;
+              applyMarkerSwitchUI(showMarkers);
+              document.getElementById("settingsPopup").style.display = "none";
+              document.removeEventListener("click", closePopup);
+            }
+          });
+        }, 0);
+      }
+
+      // Pending settings — chỉ apply khi bấm "Áp dụng"
+      let _pendingMarkers    = showMarkers;
+      let _pendingLimit      = displayLimit;
+      let _pendingVolX       = volHighlightX;
+
+      function toggleMarkers() {
+        _pendingMarkers = !_pendingMarkers;
+        applyMarkerSwitchUI(_pendingMarkers);
+      }
+
+      function applyMarkerSwitchUI(val) {
+        const v     = val !== undefined ? val : showMarkers;
+        const sw    = document.getElementById("markerToggleSwitch");
+        const thumb = document.getElementById("markerSwitchThumb");
+        if (sw)    sw.style.background = v ? "#003a6b" : "#d1d5db";
+        if (thumb) thumb.style.left    = v ? "21px" : "3px";
+      }
+
+      function onDisplayLimitInput(val) {
+        _pendingLimit = parseInt(val) || 0;
+      }
+
+      function stepVolX(delta) {
+        const next = Math.round((_pendingVolX + delta) * 10) / 10;
+        if (next < 0.5 || next > 10) return;
+        _pendingVolX = next;
+        const el = document.getElementById("volHighlightInput");
+        if (el) el.textContent = _pendingVolX % 1 === 0 ? _pendingVolX : _pendingVolX.toFixed(1);
+      }
+
+      function setDisplayLimit(val) {
+        _pendingLimit = parseInt(val) || 0;
+        displayLimit  = _pendingLimit;
+        saveSettings();
+        renderGrid();
+      }
+
+      function applySettings() {
+        const changed = (showMarkers !== _pendingMarkers) || (displayLimit !== _pendingLimit) || (volHighlightX !== _pendingVolX);
+        if (!changed) { closeSettingsPopup(); return; }
+
+        showMarkers   = _pendingMarkers;
+        displayLimit  = _pendingLimit;
+        volHighlightX = _pendingVolX;
+        saveSettings();
+
+        // Update display limit input nếu reset
+        const inp = document.getElementById("displayLimitInput");
+        if (inp) inp.value = displayLimit > 0 ? displayLimit : "";
+
+        // Re-draw markers không cần rebuild chart
+        Object.values(chartMap).forEach(c => {
+          if (Array.isArray(c)) c.forEach(ch => ch?.update("none"));
+          else c?.update("none");
+        });
+
+        // Nếu displayLimit thay đổi thì cần renderGrid
+        if (displayLimit !== _pendingLimit) renderGrid();
+        else renderGrid();
+
+        closeSettingsPopup();
+      }
+
+      function closeSettingsPopup() {
+        document.getElementById("settingsPopup").style.display = "none";
+      }
+
+      function setChartMode(mode) {
+        chartMode = mode;
+        const lineBtn = document.getElementById("modeLineBtn");
+        const candleBtn = document.getElementById("modeCandleBtn");
+        if (mode === "line") {
+          lineBtn.style.background = "#003a6b";   lineBtn.style.color = "#fff";
+          candleBtn.style.background = "transparent"; candleBtn.style.color = "#9ca3af";
+        } else {
+          candleBtn.style.background = "#003a6b"; candleBtn.style.color = "#fff";
+          lineBtn.style.background = "transparent";  lineBtn.style.color = "#9ca3af";
+          // Mặc định 3 tháng khi xem nến
+          if (rangeN === 22) setRange(66);
+        }
+        renderGrid();
+      }
+
+      function setSort(mode) {
+        sortMode = mode;
+        // Update button styles
+        ["ratio", "vol", "balance"].forEach((m) => {
+          const btn = document.getElementById(
+            "sort" + m.charAt(0).toUpperCase() + m.slice(1)
+          );
+          if (!btn) return;
+          if (m === mode) {
+            btn.style.background = "#e03131";
+            btn.style.borderColor = "#e03131";
+            btn.style.color = "#fff";
+          } else {
+            btn.style.background = "rgba(255,255,255,.05)";
+            btn.style.borderColor = "rgba(255,255,255,.1)";
+            btn.style.color = "rgba(255,255,255,.45)";
+          }
+        });
+        destroyCharts();
+        renderGrid();
+      }
+
+      function sortResults(arr) {
+        const sorted = [...arr];
+        if (sortMode === "vol")
+          sorted.sort((a, b) => b.latestVol - a.latestVol);
+        else if (sortMode === "balance")
+          sorted.sort((a, b) => b.ratio * Math.log1p(b.latestVol) - a.ratio * Math.log1p(a.latestVol));
+        else
+          sorted.sort((a, b) => b.ratio - a.ratio);
+        // Liked items luôn lên trên, giữ nguyên thứ tự tương đối
+        return sorted.sort((a, b) => {
+          const la = likedSymbols.has(a.symbol) ? 0 : 1;
+          const lb = likedSymbols.has(b.symbol) ? 0 : 1;
+          return la - lb;
+        });
+      }
+
+      function fmt(n) {
+        if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+        return Number(n).toLocaleString("vi-VN");
+      }
+      function fmtVol(n) {
+        // Dấu phẩy phân cách nghìn
+        return Number(n).toLocaleString("en-US");
+      }
+      function getMaPeriod() {
+        return parseInt(document.getElementById("maPeriod").value) || 20;
+      }
+      function getThreshold() {
+        return 2.0;
+      }
+
+      // ── Scan ──────────────────────────────────────────────────────────────────────
+      async function runScan() {
+        const ma = getMaPeriod();
+
+        const statsBlock = document.getElementById("statsBlock");
+        statsBlock.style.opacity = ".35";
+        document.getElementById("btnExportAll").classList.add("hidden");
+        document.getElementById("btnExportAll").classList.remove("flex");
+        destroyCharts();
+        document.getElementById("resultCount").textContent = "";
+        document.getElementById("content").innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full gap-4 text-gray-400 text-sm">
+      <div class="w-8 h-8 rounded-full border-[3px] border-[#003a6b]/20 border-t-[#003a6b] animate-spin"></div>
+      Đang quét dữ liệu…
+    </div>`;
+
+        try {
+          const res = await fetch(
+            `${SERVER}/analyze?ma=${ma}`,
+            { redirect: "error" }
+          );
+          const json = await res.json();
+          if (!res.ok || json.error)
+            throw new Error(json.error ?? `HTTP ${res.status}`);
+
+          allResults = json.results ?? [];
+          renderSummary(json);
+          renderGrid();
+
+          statsBlock.style.opacity = "1";
+          if (allResults.some((r) => r.isSurge)) {
+            document.getElementById("btnExportAll").classList.remove("hidden");
+            document.getElementById("btnExportAll").classList.add("flex");
+          }
+        } catch (err) {
+          document.getElementById("content").innerHTML = `
+      <div class="flex flex-col items-center justify-center h-full gap-3 text-sm text-gray-500">
+        <span class="text-2xl">❌</span>
+        <span>${err.message}</span>
+        <small class="text-gray-400">Đảm bảo <b>node main.mjs</b> đang chạy</small>
+      </div>`;
+        }
+      }
+
+      // ── Summary ───────────────────────────────────────────────────────────────────
+      function renderSummary(json) {
+        document.getElementById("statFiles").textContent =
+          json.scannedFiles ?? 0;
+        document.getElementById("statSurge").textContent = json.surgeCount ?? 0;
+        document.getElementById("statConfig").textContent =
+          (json.threshold ?? 2) + "× / MA" + (json.maPeriod ?? 20);
+      }
+
+      // ── Grid ──────────────────────────────────────────────────────────────────────
+      function renderGrid() {
+        const all = sortResults(allResults.filter((r) => r.isSurge));
+
+        // Áp dụng filter
+        let filtered = all;
+        if (activeFilters.size > 0) {
+          filtered = all.filter(r => {
+            // Filter liked
+            if (activeFilters.has("liked") && !likedSymbols.has(r.symbol)) return false;
+            // Filter pattern — nếu có bất kỳ pattern filter nào thì mã phải có ít nhất 1 pattern khớp
+            const patternFilters = [...activeFilters].filter(k => k !== "liked");
+            if (patternFilters.length > 0) {
+              const ps = detectCandlePatterns(r.chart.opens??[], r.chart.highs??[], r.chart.lows??[], r.chart.prices??[]);
+              const labels = ps.map(p => p.label);
+              if (!patternFilters.some(k => labels.includes(k))) return false;
+            }
+            return true;
+          });
+        }
+
+        // Build pattern filter buttons dựa trên toàn bộ surge (không theo filter)
+        buildPatternFilterBtns();
+
+        const items = (displayLimit > 0) ? filtered.slice(0, displayLimit) : filtered;
+        const total = filtered.length;
+        document.getElementById("resultCount").textContent =
+          activeFilters.size > 0
+            ? items.length + "/" + all.length + " mã"
+            : (displayLimit > 0 && displayLimit < all.length)
+              ? items.length + "/" + all.length + " mã đột biến"
+              : all.length + " mã đột biến";
+
+        // Destroy tất cả chart TRƯỚC khi xóa DOM —
+        // Chart.js giữ reference canvas trong registry, phải giải phóng trước
+        destroyCharts();
+
+        if (items.length === 0) {
+          document.getElementById("content").innerHTML = `
+      <div class="flex flex-col items-center justify-center h-full gap-2 text-sm text-gray-400 text-center">
+        Không tìm thấy mã nào.<br/>
+        <small>Thử giảm ngưỡng hoặc tải thêm mã vào <code class="bg-gray-200 px-1 rounded text-xs font-mono">tmp/</code></small>
+      </div>`;
+          return;
+        }
+
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 gap-5";
+        items.forEach((r) => grid.appendChild(buildCard(r)));
+        document.getElementById("content").innerHTML = "";
+        document.getElementById("content").appendChild(grid);
+        requestAnimationFrame(() => items.forEach((r) => buildChart(r)));
+      }
+
+      // ── Card ──────────────────────────────────────────────────────────────────────
+      function fmtP(v) {
+        if (v == null) return "—";
+        return parseFloat(v).toLocaleString("vi-VN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+      function parseChange(raw) {
+        if (!raw) return { val: null, pct: null, dir: 0 };
+        // "2,2(6,92 %)" hoặc "-1,5(-3,00 %)"
+        const m = String(raw).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
+        if (!m) return { val: null, pct: null, dir: 0 };
+        const val = parseFloat(m[1].replace(",", "."));
+        const pct = parseFloat(m[2].replace(",", "."));
+        return { val, pct, dir: val > 0 ? 1 : val < 0 ? -1 : 0 };
+      }
+
+      function sessionInfoHtml(r) {
+        const s = r.session;
+        if (!s) return "";
+        const ch = parseChange(s.change);
+        const chColor =
+          ch.dir > 0 ? "#2f9e44" : ch.dir < 0 ? "#e03131" : "#f59e0b";
+        const chSign = ch.dir > 0 ? "+" : "";
+        const valTy = s.val ? (s.val / 1e9).toFixed(2) + " tỷ" : "—";
+
+        const ico = (path) =>
+          `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${path}</svg>`;
+        const row = (label, svgPath, value, color = "#1a1a2e") =>
+          `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.04)">
+      <div style="display:flex;align-items:center;gap:7px;color:${color.replace(
+        "#1a1a2e",
+        "#6b7280"
+      )}">
+        ${ico(svgPath)}
+        <span style="font-size:13px;color:#6b7280;font-weight:500">${label}</span>
+      </div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${color}">${value}</span>
+    </div>`;
+
+        return `
+    <div style="padding:0">
+      ${row(
+        "Tham chiếu",
+        '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+        fmtP(s.ref),
+        "#f59e0b"
+      )}
+      ${row(
+        "Giá trần",
+        '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+        fmtP(s.ceil),
+        "#a855f7"
+      )}
+      ${row(
+        "Giá sàn",
+        '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>',
+        fmtP(s.floor),
+        "#06b6d4"
+      )}
+      ${row(
+        "Mở cửa",
+        '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        fmtP(s.open),
+        "#2f9e44"
+      )}
+      ${row(
+        "Cao nhất",
+        '<polyline points="18 15 12 9 6 15"/>',
+        fmtP(s.high),
+        "#2f9e44"
+      )}
+      ${row(
+        "Thấp nhất",
+        '<polyline points="6 9 12 15 18 9"/>',
+        fmtP(s.low),
+        "#e03131"
+      )}
+      ${row(
+        "Đóng cửa",
+        '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/>',
+        fmtP(s.close),
+        "#003a6b"
+      )}
+      <div class="flex items-center justify-between py-2" style="border-bottom:1px solid rgba(0,0,0,.05)">
+        <div style="display:flex;align-items:center;gap:7px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg><span style="font-size:13px;color:#6b7280;font-weight:500">Thay đổi</span></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${chColor}">
+          ${
+            ch.val != null
+              ? chSign +
+                fmtP(ch.val) +
+                " (" +
+                chSign +
+                ch.pct?.toFixed(2) +
+                "%)"
+              : "—"
+          }
+        </span>
+      </div>
+      ${row(
+        "GT khớp lệnh",
+        '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+        valTy,
+        "#6366f1"
+      )}
+    </div>`;
+      }
+
+      function bbBandHtml(r) {
+        const upper = r.chart.bbUpper?.at(-1);
+        const mid = r.chart.bbMid?.at(-1);
+        const lower = r.chart.bbLower?.at(-1);
+        const price = r.chart.prices?.at(-1);
+        if (!upper || !lower) return "";
+        const range = upper - lower;
+        const pricePct =
+          price != null
+            ? Math.min(Math.max(((price - lower) / range) * 100, 0), 100)
+            : null;
+        const fv = (v) =>
+          v?.toLocaleString("vi-VN", { maximumFractionDigits: 2 }) ?? "";
+        const markerLine =
+          pricePct != null
+            ? `<div class="absolute left-0 right-0 flex items-center" style="bottom:${pricePct}%;transform:translateY(50%)">
+         <div class="h-[2px] flex-1" style="background:rgba(224,49,49,.7)"></div>
+         <div class="w-1.5 h-1.5 rounded-full mx-1 shrink-0" style="background:#e03131"></div>
+       </div>`
+            : "";
+        return `<div class="relative mb-3 rounded-lg overflow-hidden" style="height:96px">
+    <div class="absolute inset-0 flex flex-col">
+      <div class="flex-1 bg-indigo-50" style="border-bottom:1px dashed rgba(99,102,241,.3)"></div>
+      <div class="flex-1" style="background:rgba(199,210,254,.35);border-bottom:1px dashed rgba(99,102,241,.3)"></div>
+      <div class="flex-1 bg-indigo-50"></div>
+    </div>
+    ${markerLine}
+    <div class="absolute inset-y-0 right-2 flex flex-col justify-between py-1 pointer-events-none">
+      <span class="font-mono text-indigo-400 leading-none" style="font-size:9px">${fv(
+        upper
+      )}</span>
+      <span class="font-mono text-indigo-500 leading-none" style="font-size:9px">${fv(
+        mid
+      )}</span>
+      <span class="font-mono text-indigo-400 leading-none" style="font-size:9px">${fv(
+        lower
+      )}</span>
+    </div>
+  </div>`;
+      }
+
+      function bbSignalHtml(r) {
+        const price = r.chart.prices?.at(-1);
+        const upper = r.chart.bbUpper?.at(-1);
+        const lower = r.chart.bbLower?.at(-1);
+        if (price == null || upper == null) return "";
+        if (price > upper)
+          return `
+    <div class="rounded-lg px-3 py-2 flex items-center gap-2" style="background:#fff5f5;border:1px solid #ffc9c9">
+      <span style="font-size:14px;line-height:1">🔴</span>
+      <div>
+        <div class="font-bold" style="font-size:10px;color:#e03131">Trên dải trên</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:3px">Phá vỡ — xu hướng mạnh</div>
+      </div>
+    </div>`;
+        if (price < lower)
+          return `
+    <div class="rounded-lg px-3 py-2 flex items-center gap-2" style="background:#f0fdf4;border:1px solid #bbf7d0">
+      <span style="font-size:14px;line-height:1">🟢</span>
+      <div>
+        <div class="font-bold" style="font-size:10px;color:#2f9e44">Dưới dải dưới</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:3px">Quá bán — có thể hồi phục</div>
+      </div>
+    </div>`;
+        return `
+    <div class="rounded-lg px-3 py-2 flex items-center gap-2" style="background:#f3f4f6;border:1px solid #e5e7eb">
+      <span style="font-size:14px;line-height:1">⚪</span>
+      <div>
+        <div class="font-bold" style="font-size:10px;color:#6b7280">Trong dải BB</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:3px">Dao động bình thường</div>
+      </div>
+    </div>`;
+      }
+
+      function buildCard(r) {
+        const div = document.createElement("div");
+        div.id = `card-${r.symbol}`;
+        div.className = r.isSurge ? "is-surge" : "";
+        div.style.cssText =
+          "background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;" +
+          (r.isSurge
+            ? "border:1px solid rgba(0,0,0,.08);border-top:3px solid #e03131;"
+            : "border:1px solid rgba(0,0,0,.08);");
+        div.onmouseenter = () => {
+          div.style.transform = "translateY(-3px)";
+          div.style.boxShadow = "0 10px 32px rgba(0,0,0,.1)";
+        };
+        div.onmouseleave = () => {
+          div.style.transform = "";
+          div.style.boxShadow = "0 2px 14px rgba(0,0,0,.06)";
+        };
+
+        const barPct = Math.min((r.ratio / 5) * 100, 100).toFixed(1);
+        const thr = getThreshold();
+        const ma = getMaPeriod();
+        const price = r.chart.prices?.at(-1);
+        const fmtPrice = (v) =>
+          v?.toLocaleString("vi-VN", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+          }) ?? "—";
+
+        // Detect candle patterns — dùng toàn bộ data để detect chính xác
+        const _allOpens  = r.chart.opens  ?? [];
+        const _allHighs  = r.chart.highs  ?? [];
+        const _allLows   = r.chart.lows   ?? [];
+        const _allCloses = r.chart.prices ?? [];
+        const patterns = detectCandlePatterns(_allOpens, _allHighs, _allLows, _allCloses);
+
+
+        div.innerHTML = `
+    <div style="padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;color:#003a6b;letter-spacing:-.5px;line-height:1">${
+          r.symbol
+        }</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9ca3af">${
+            r.latestDate
+          }</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <button id="like-${r.symbol}" onclick="toggleLike('${r.symbol}')"
+            style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0"
+            onmouseenter="this.style.background='#fefce8';this.style.borderColor='#fcd34d'"
+            onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'">
+          </button>
+          <div class="surge-pill" style="align-items:center;gap:5px;background:linear-gradient(135deg,#fff5f5,#ffe4e4);border:1px solid #ffc9c9;color:#e03131;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;letter-spacing:.5px">
+            ⚡ SURGE
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="pb-${r.symbol}" style="padding:0 24px 10px;display:flex;flex-wrap:wrap;gap:6px;min-height:0"></div>
+
+    <div style="padding:16px 24px 14px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div>
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af">KL mới nhất</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${
+          r.isSurge ? "#e03131" : "#1a1a2e"
+        }">${fmtVol(r.latestVol)}</div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af">MA${ma}</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:#1a1a2e">${fmtVol(
+          r.ma20
+        )}</div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af">KL / MA</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${
+          r.isSurge ? "#e03131" : "#2f9e44"
+        }">${r.ratio}×</div>
+      </div>
+    </div>
+
+    <div style="margin:0 24px 16px;height:3px;background:#f1f5f9;border-radius:2px;overflow:hidden">
+      <div class="ratio-fill" style="height:100%;border-radius:2px;background:linear-gradient(90deg,#003a6b,#e03131);width:${barPct}%"></div>
+    </div>
+
+    <div id="chart-row-${r.symbol}" style="display:flex;min-height:310px">
+      <div style="flex:3;padding:4px 8px 14px;position:relative;min-width:0;display:flex;flex-direction:column">
+        <div id="chart-wrap-${r.symbol}" style="flex:1;position:relative;min-height:180px">
+          <canvas id="chart-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        </div>
+        <div id="chart-vol-wrap-${r.symbol}" style="display:none;position:relative;height:110px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
+          <canvas id="chart-vol-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        </div>
+      </div>
+      <div id="info-${
+        r.symbol
+      }" style="flex:0 0 25%;border-left:none;margin-left:20px;margin-right:20px;padding:18px 16px;display:flex;flex-direction:column;min-width:0;background:#fafafa;border-radius:12px;border:1px solid rgba(0,0,0,.06)">
+        <div id="session-${r.symbol}" style="flex:1;overflow-y:auto"></div>
+        <div style="border-top:1px solid rgba(0,0,0,.06);padding-top:12px;margin-top:10px">
+          <div id="bb-signal-${r.symbol}" style="margin-bottom:10px"></div>
+          <button onclick="exportCard('${r.symbol}')"
+            style="width:100%;height:38px;border-radius:12px;border:1px solid rgba(0,0,0,.1);background:transparent;font-size:13px;font-weight:600;color:#6b7280;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .15s"
+            onmouseenter="this.style.background='#003a6b';this.style.borderColor='#003a6b';this.style.color='#fff'"
+            onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(0,0,0,.1)';this.style.color='#6b7280'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Xuất ảnh
+          </button>
+        </div>
+      </div>
+    </div>`;
+
+        // Inject session info + BB signal
+        div.querySelector(`#session-${r.symbol}`).innerHTML = sessionInfoHtml(r);
+        div.querySelector(`#bb-signal-${r.symbol}`).innerHTML = bbSignalHtml(r);
+
+        // Inject star icon
+        const starBtn = div.querySelector(`#like-${r.symbol}`);
+        if (starBtn) applyStarUI(starBtn, likedSymbols.has(r.symbol));
+
+        // Inject pattern badges
+        const badgeWrap = div.querySelector(`#pb-${r.symbol}`);
+        if (badgeWrap && patterns.length > 0) {
+          patterns.forEach(p => {
+            const bg     = p.bull === true  ? "linear-gradient(135deg,#f0fdf4,#dcfce7)"
+                         : p.bull === false ? "linear-gradient(135deg,#fff5f5,#ffe4e4)"
+                         : "linear-gradient(135deg,#f8fafc,#f1f5f9)";
+            const border = p.bull === true  ? "#86efac" : p.bull === false ? "#fca5a5" : "#dee2e6";
+            const color  = p.bull === true  ? "#166534" : p.bull === false ? "#991b1b" : "#64748b";
+
+            const badge = document.createElement("div");
+            badge.style.cssText = "position:relative;display:inline-flex;align-items:center;gap:5px;background:" + bg + ";border:1px solid " + border + ";color:" + color + ";font-size:10px;font-weight:700;padding:4px 8px 4px 10px;border-radius:20px;white-space:nowrap";
+
+            const labelSpan = document.createElement("span");
+            labelSpan.textContent = p.label;
+            badge.appendChild(labelSpan);
+
+            if (p.desc) {
+              // Icon ?
+              const icon = document.createElement("span");
+              icon.textContent = "?";
+              icon.style.cssText = "display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:" + border + ";color:" + color + ";font-size:9px;font-weight:800;cursor:default;flex-shrink:0";
+
+              // Tooltip
+              const tip = document.createElement("div");
+              tip.textContent = p.desc;
+              tip.style.cssText = "display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.5;padding:8px 12px;border-radius:10px;width:220px;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:999;white-space:normal;pointer-events:none";
+
+              // Arrow
+              const arrow = document.createElement("div");
+              arrow.style.cssText = "position:absolute;top:100%;left:16px;border:5px solid transparent;border-top-color:#1e293b";
+              tip.appendChild(arrow);
+
+              icon.addEventListener("mouseenter", () => { tip.style.display = "block"; });
+              icon.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+
+              badge.appendChild(icon);
+              badge.appendChild(tip);
+            }
+
+            badgeWrap.appendChild(badge);
+          });
+        }
+
+        return div;
+      }
+
+      // ── Candle Pattern Detection ──────────────────────────────────────────────
+      function detectCandlePatterns(opens, highs, lows, closes) {
+        const n = closes.length;
+        if (n < 3) return [];
+
+        // Tìm nến cuối cùng có đủ OHLC
+        let i = n - 1;
+        while (i >= 2 && (closes[i]==null||opens[i]==null||highs[i]==null||lows[i]==null)) i--;
+        if (i < 2) return [];
+
+        const o=opens[i], h=highs[i], l=lows[i], c=closes[i];
+        const o1=opens[i-1], h1=highs[i-1], l1=lows[i-1], c1=closes[i-1];
+        const o2=opens[i-2], h2=highs[i-2], l2=lows[i-2], c2=closes[i-2];
+
+        const body   = Math.abs(c - o);
+        const range  = h - l;
+        if (range === 0) return [];
+
+        const upperW = h - Math.max(o, c);
+        const lowerW = Math.min(o, c) - l;
+        const isUp   = c > o;
+        const isDown = c < o;
+        const bodyRatio = body / range;
+
+        // Trend 5 nến trước
+        const prev = closes.slice(Math.max(0, i-6), i).filter(v => v != null);
+        const downtrend = prev.length >= 3 && prev[0] > prev[prev.length-1] * 1.01;
+        const uptrend   = prev.length >= 3 && prev[0] < prev[prev.length-1] * 0.99;
+
+        const patterns = [];
+
+        // ── Marubozu tăng: thân lớn, gần như không có bóng ──────────────────────
+        if (isUp && bodyRatio > 0.85) {
+          patterns.push({ label: "▲ Marubozu↑", bull: true,  desc: "Nến tăng mạnh, thân dài gần như không có bóng. Lực mua áp đảo hoàn toàn trong phiên." });
+        }
+        // ── Marubozu giảm ────────────────────────────────────────────────────────
+        if (isDown && bodyRatio > 0.85) {
+          patterns.push({ label: "▼ Marubozu↓", bull: false, desc: "Nến giảm mạnh, thân dài gần như không có bóng. Lực bán áp đảo hoàn toàn trong phiên." });
+        }
+
+        // ── Doji: thân rất nhỏ so với range ──────────────────────────────────────
+        if (bodyRatio < 0.1) {
+          patterns.push({ label: "〠 Doji", bull: null, desc: "Giá mở và đóng gần bằng nhau. Thị trường đang do dự, cần xác nhận từ nến tiếp theo." });
+        }
+
+        // ── Hammer: bóng dưới dài, thân nhỏ ở trên, sau downtrend ───────────────
+        if (bodyRatio < 0.45 && lowerW >= range * 0.45 && upperW <= range * 0.2 && downtrend) {
+          patterns.push({ label: "🔨 Hammer", bull: true,  desc: "Bóng dưới dài sau downtrend. Phe bán đẩy giá xuống nhưng phe mua đã đẩy lại — tín hiệu đảo chiều tăng." });
+        }
+        // ── Hanging Man: hình dạng như Hammer nhưng sau uptrend ──────────────────
+        if (bodyRatio < 0.45 && lowerW >= range * 0.45 && upperW <= range * 0.2 && uptrend) {
+          patterns.push({ label: "☠ Hanging Man", bull: false, desc: "Hình dạng như Hammer nhưng xuất hiện sau uptrend — cảnh báo phe mua đang yếu dần, có thể đảo chiều giảm." });
+        }
+
+        // ── Shooting Star: bóng trên dài, thân nhỏ ở dưới, sau uptrend ──────────
+        // PVT: O=26.8 H=27.85 L=24.65 C=24.65 → upperW=27.85-26.8=1.05, lowerW=24.65-24.65=0
+        if (bodyRatio < 0.45 && upperW >= range * 0.45 && lowerW <= range * 0.2 && uptrend) {
+          patterns.push({ label: "🌠 Shooting Star", bull: false, desc: "Bóng trên dài sau uptrend. Giá bị đẩy lên cao nhưng phe bán kéo xuống mạnh — tín hiệu đảo chiều giảm." });
+        }
+        // ── Inverted Hammer: hình dạng như Shooting Star nhưng sau downtrend ─────
+        if (bodyRatio < 0.45 && upperW >= range * 0.45 && lowerW <= range * 0.2 && downtrend) {
+          patterns.push({ label: "↩ Inv. Hammer", bull: true,  desc: "Bóng trên dài sau downtrend. Phe mua thử đẩy giá lên — cần xác nhận từ nến xanh tiếp theo." });
+        }
+
+        if (!o1||!c1) return patterns;
+        const body1  = Math.abs(c1 - o1);
+        const isUp1  = c1 > o1;
+        const isDown1= c1 < o1;
+
+        // ── Bullish Engulfing ─────────────────────────────────────────────────────
+        if (isDown1 && isUp && body1 > 0 && o < c1 && c > o1 && body > body1) {
+          patterns.push({ label: "🔼 Engulfing↑", bull: true,  desc: "Nến xanh hôm nay nuốt trọn thân nến đỏ hôm qua. Lực mua đột ngột áp đảo — tín hiệu đảo chiều tăng mạnh." });
+        }
+        // ── Bearish Engulfing ─────────────────────────────────────────────────────
+        if (isUp1 && isDown && body1 > 0 && o > c1 && c < o1 && body > body1) {
+          patterns.push({ label: "🔽 Engulfing↓", bull: false, desc: "Nến đỏ hôm nay nuốt trọn thân nến xanh hôm qua. Lực bán đột ngột áp đảo — tín hiệu đảo chiều giảm mạnh." });
+        }
+
+        if (!o2||!c2) return patterns;
+        const body2  = Math.abs(c2 - o2);
+        const isDown2= c2 < o2;
+        const isUp2  = c2 > o2;
+
+        // ── Morning Star ──────────────────────────────────────────────────────────
+        if (isDown2 && body2 > 0 && body1 < body2 * 0.4 && isUp && c > (o2+c2)/2) {
+          patterns.push({ label: "🌅 Morning Star", bull: true,  desc: "3 nến: đỏ lớn → nến nhỏ do dự → xanh lớn. Xu hướng giảm kết thúc, phe mua kiểm soát trở lại." });
+        }
+        // ── Evening Star ──────────────────────────────────────────────────────────
+        if (isUp2 && body2 > 0 && body1 < body2 * 0.4 && isDown && c < (o2+c2)/2) {
+          patterns.push({ label: "🌇 Evening Star", bull: false, desc: "3 nến: xanh lớn → nến nhỏ do dự → đỏ lớn. Xu hướng tăng kết thúc, phe bán kiểm soát trở lại." });
+        }
+
+        return patterns;
+      }
+
+      // ── Candlestick plugin (Chart.js 4 custom) ────────────────────────────────────
+      const candlestickPlugin = {
+        id: "candlestick",
+        afterDatasetsDraw(chart) {
+          const dsIdx = chart.data.datasets.findIndex(d => d.label === "Nến");
+          if (dsIdx === -1) return;
+          const ds = chart.data.datasets[dsIdx];
+          const ctx = chart.ctx;
+          const meta = chart.getDatasetMeta(dsIdx);
+          const yScale = chart.scales["yPrice"];
+          if (!yScale) return;
+
+          const n = ds.data.length;
+          // Tính chiều rộng thân nến dựa theo số phiên và chiều rộng chart
+          const chartW = chart.chartArea.width;
+          const rawW = n > 0 ? (chartW / n) * 0.7 : 6;
+          const half = Math.max(Math.floor(rawW / 2), 1);
+
+          ds.data.forEach((d, i) => {
+            if (d == null || d.o == null || d.h == null || d.l == null || d.c == null) return;
+            const el = meta.data[i];
+            if (!el) return;
+            const x = el.x;
+
+            const yO = yScale.getPixelForValue(d.o);
+            const yC = yScale.getPixelForValue(d.c);
+            const yH = yScale.getPixelForValue(d.h);
+            const yL = yScale.getPixelForValue(d.l);
+
+            const isUp = d.c >= d.o;
+            const color = isUp ? "#2f9e44" : "#e03131";
+            const bodyTop = Math.min(yO, yC);
+            const bodyBot = Math.max(yO, yC);
+            const bodyH = Math.max(bodyBot - bodyTop, 1);
+
+            ctx.save();
+            // Bóng trên / dưới (wick)
+            ctx.beginPath();
+            ctx.moveTo(x, yH);
+            ctx.lineTo(x, bodyTop);
+            ctx.moveTo(x, bodyBot);
+            ctx.lineTo(x, yL);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            // Thân nến — tăng: fill xanh, giảm: fill đỏ
+            ctx.globalAlpha = 0.85;
+            ctx.fillStyle = color;
+            ctx.fillRect(x - half, bodyTop, half * 2, bodyH);
+            // Viền thân
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x - half, bodyTop, half * 2, bodyH);
+            ctx.restore();
+          });
+
+          // ── Vẽ marker đảo chiều (nếu bật) ────────────────────────────────────
+          if (showMarkers) {
+            const markers = ds._patternMarkers ?? [];
+            markers.forEach(m => {
+              const el = meta.data[m.idx];
+              if (!el) return;
+              const x = el.x;
+              const d = ds.data[m.idx];
+              if (!d) return;
+
+              ctx.save();
+              ctx.font = "bold 11px sans-serif";
+              ctx.textAlign = "center";
+              ctx.globalAlpha = 0.9;
+              if (m.bull) {
+                ctx.fillStyle = "#16a34a";
+                ctx.textBaseline = "top";
+                ctx.fillText("▲", x, yScale.getPixelForValue(d.l) + 3);
+              } else {
+                ctx.fillStyle = "#dc2626";
+                ctx.textBaseline = "bottom";
+                ctx.fillText("▼", x, yScale.getPixelForValue(d.h) - 3);
+              }
+              ctx.restore();
+            });
+          }
+        },
+      };
+      Chart.register(candlestickPlugin);
+
+      // ── Chart ─────────────────────────────────────────────────────────────────────
+      function buildChart(r) {
+        const canvas = document.getElementById(`chart-${r.symbol}`);
+        if (!canvas || !r.chart) return;
+
+        const sliceN = Math.min(rangeN, r.chart.labels?.length ?? rangeN);
+        const labels  = r.chart.labels?.slice(-sliceN) ?? [];
+        const volumes = r.chart.volumes?.slice(-sliceN) ?? [];
+        const prices  = r.chart.prices?.slice(-sliceN) ?? [];
+        const opens   = (r.chart.opens  ?? []).slice(-sliceN);
+        const highs   = (r.chart.highs  ?? []).slice(-sliceN);
+        const lows    = (r.chart.lows   ?? []).slice(-sliceN);
+        const bbMid   = r.chart.bbMid?.slice(-sliceN) ?? [];
+        const bbUpper = r.chart.bbUpper?.slice(-sliceN) ?? [];
+        const bbLower = r.chart.bbLower?.slice(-sliceN) ?? [];
+        const ma20    = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
+        if (!volumes?.length) return;
+
+        const isCandle  = chartMode === "candle";
+        const last      = volumes.length - 1;
+        const hasPrices = prices?.some(p => p != null);
+        const hasOHLC   = opens?.some(p => p != null) && highs?.some(p => p != null);
+        const hasBB     = bbUpper?.some(p => p != null);
+
+        // Màu bar khối lượng
+        const volColors = volumes.map((v, i) => {
+          if (i === last && r.isSurge) return "rgba(224,49,49,.85)";
+          if (r.ma20 > 0 && v > r.ma20 * 1.5) return "rgba(224,49,49,.45)";
+          return "rgba(0,58,107,.55)";
+        });
+
+        // ── Helper tính trục giá ─────────────────────────────────────────────────
+        function calcPriceAxis(extraArrays = []) {
+          const currentPrice = prices.at(-1);
+          const allVals = [
+            ...(prices || []),
+            ...extraArrays.flat(),
+          ].filter(p => p != null);
+          const rawMin = Math.min(...allVals);
+          const rawMax = Math.max(...allVals);
+          const pad = (rawMax - rawMin) * 0.08;
+          const yMin = rawMin - pad;
+          const yMax = rawMax + pad;
+          const step = (yMax - yMin) / 6;
+          const ticks = Array.from({ length: 7 }, (_, i) =>
+            parseFloat((yMin + i * step).toFixed(2))
+          );
+          if (currentPrice != null) {
+            const nearIdx = ticks.findIndex(t => Math.abs(t - currentPrice) < step * 0.15);
+            if (nearIdx !== -1) ticks.splice(nearIdx, 1);
+            ticks.push(currentPrice);
+            ticks.sort((a, b) => a - b);
+          }
+          return { yMin, yMax, ticks };
+        }
+
+        // ── Tooltip label helper ─────────────────────────────────────────────────
+        const fvPrice = v => v?.toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "—";
+
+        // ════════════════════════════════════════════════════════════════════════
+        // MODE NẾN — 2 chart riêng biệt (price trên, volume dưới)
+        // ════════════════════════════════════════════════════════════════════════
+        if (isCandle && hasOHLC) {
+          // Hiện panel volume
+          const volWrap = document.getElementById(`chart-vol-wrap-${r.symbol}`);
+          if (volWrap) volWrap.style.display = "block";
+
+          // ── Tính trục giá (dùng H/L thực) ───────────────────────────────────
+          const extra = hasBB ? [bbUpper, bbLower] : [];
+          extra.push(highs, lows);
+          const { yMin, yMax, ticks: yTicks } = calcPriceAxis(extra);
+
+          // ── Tính markers đảo chiều cho từng nến trong slice ─────────────────
+          const patternMarkers = [];
+          for (let pi = 2; pi < prices.length; pi++) {
+            const pts = detectCandlePatterns(
+              opens.slice(0, pi+1), highs.slice(0, pi+1),
+              lows.slice(0, pi+1),  prices.slice(0, pi+1)
+            );
+            if (pts.length === 0) continue;
+            const bull = pts.find(p => p.bull === true);
+            const bear = pts.find(p => p.bull === false);
+            if (bull) patternMarkers.push({ idx: pi, bull: true,  label: bull.label });
+            if (bear) patternMarkers.push({ idx: pi, bull: false, label: bear.label });
+          }
+
+          // ── Dataset nến (dùng type line, plugin vẽ) ──────────────────────────
+          const candleDs = [{
+            type: "line", label: "Nến",
+            data: prices.map((c, i) => ({ x: i, y: c, o: opens[i], h: highs[i], l: lows[i], c })),
+            yAxisID: "yPrice", order: 2,
+            borderColor: "transparent", backgroundColor: "transparent",
+            borderWidth: 0, pointRadius: 0, tension: 0, spanGaps: true,
+            _patternMarkers: patternMarkers,
+          }];
+          if (hasBB) {
+            candleDs.push(
+              { type:"line", label:"BB Upper", data:bbUpper, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:"+2", backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 },
+              { type:"line", label:"BB Mid",   data:bbMid,   borderColor:"rgba(99,102,241,.7)", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:3 },
+              { type:"line", label:"BB Lower", data:bbLower, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:false, backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 }
+            );
+          }
+
+          // ── Tính width trục trái đồng nhất cho cả 2 chart ──────────────────
+          // Đo text width của label giá và label volume, lấy max
+          const _measureCtx = document.createElement("canvas").getContext("2d");
+          _measureCtx.font = "9px 'IBM Plex Mono', monospace";
+          const priceLabels = yTicks.map(v => {
+            const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            return (prices.at(-1) != null && Math.abs(v - prices.at(-1)) < 0.005) ? "▶ " + lbl : lbl;
+          });
+          const volLabels = volumes.map(v => fmt(v));
+          const allLabels = [...priceLabels, ...volLabels];
+          const maxTextW = Math.max(...allLabels.map(l => _measureCtx.measureText(l).width));
+          const syncedAxisWidth = Math.ceil(maxTextW) + 16; // padding 8px mỗi bên
+
+          const chartPrice = safeChart(canvas, {
+            data: { labels, datasets: candleDs },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              animation: { duration: 350 },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  displayColors: false,
+                  backgroundColor: "rgba(15,25,35,0.92)",
+                  titleColor: "#fff",
+                  titleFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
+                  bodyFont: { family: "'IBM Plex Mono'", size: 11 },
+                  padding: 10,
+                  cornerRadius: 8,
+                  callbacks: {
+                    title: (items) => items[0]?.label ?? "",
+                    label: (ctx) => {
+                      if (ctx.dataset.label === "Nến") {
+                        const d = ctx.dataset.data[ctx.dataIndex];
+                        if (!d) return null;
+                        const isUp = d.c >= d.o;
+                        const arrow = isUp ? "▲" : "▼";
+                        const chg = d.c != null && d.o != null ? (d.c - d.o).toFixed(2) : "—";
+                        const chgPct = d.o ? ((d.c - d.o) / d.o * 100).toFixed(2) : "—";
+                        return [
+                          `${arrow}  Đóng  ${fvPrice(d.c)}   (${isUp ? "+" : ""}${chg} / ${isUp ? "+" : ""}${chgPct}%)`,
+                          `   Mở    ${fvPrice(d.o)}`,
+                          `   Cao   ${fvPrice(d.h)}`,
+                          `   Thấp  ${fvPrice(d.l)}`,
+                        ];
+                      }
+                      const v = ctx.parsed.y;
+                      return v != null ? `${ctx.dataset.label}: ${fvPrice(v)}` : null;
+                    },
+                    labelColor: (ctx) => {
+                      if (ctx.dataset.label === "Nến") {
+                        const d = ctx.dataset.data[ctx.dataIndex];
+                        const isUp = d && d.c >= d.o;
+                        const col = isUp ? "#2f9e44" : "#e03131";
+                        return { borderColor: col, backgroundColor: col, borderRadius: 3 };
+                      }
+                      return { borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor, borderRadius: 3 };
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: { display: false, offset: true },
+                yPrice: {
+                  position: "left",
+                  min: yMin, max: yMax,
+                  afterBuildTicks: ax => { ax.ticks = yTicks.map(v => ({ value: v })); },
+                  afterFit: ax => { ax.width = syncedAxisWidth; },
+                  ticks: {
+                    font: { size: 9, family: "'IBM Plex Mono'" },
+                    color: ctx => {
+                      const cp = prices.at(-1);
+                      return cp != null && Math.abs(ctx.tick.value - cp) < 0.005 ? "#e03131" : "#2f9e44";
+                    },
+                    callback: v => {
+                      const cp = prices.at(-1);
+                      const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                      return (cp != null && Math.abs(v - cp) < 0.005) ? "▶ " + lbl : lbl;
+                    },
+                  },
+                  grid: { color: "rgba(0,0,0,.06)" },
+                },
+              },
+            },
+          });
+
+          // ── Chart khối lượng ─────────────────────────────────────────────────
+          const canvasVol = document.getElementById(`chart-vol-${r.symbol}`);
+          // Màu bar khớp với màu nến (tăng=xanh, giảm=đỏ)
+          // KL/MA > 2.5× → đỏ, còn lại → xám
+          const maLine_candle = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
+          const candleVolColors = volumes.map((v, i) => {
+            const ma = maLine_candle[i];
+            if (ma && ma > 0 && v / ma > volHighlightX) return "rgba(224,49,49,.85)";
+            return "rgba(156,163,175,.55)";
+          });
+          const chartVol = safeChart(canvasVol, {
+            data: {
+              labels,
+              datasets: [
+                { type:"bar", label:"Khối lượng", data:volumes, backgroundColor:candleVolColors, borderRadius:1, yAxisID:"y", order:2 },
+                { type:"line", label:`MA${getMaPeriod()}`, data:ma20, borderColor:"#e67700", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, yAxisID:"y", order:1 },
+              ],
+            },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              animation: { duration: 350 },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  displayColors: true,
+                  backgroundColor: "rgba(15,25,35,0.92)",
+                  titleColor: "#fff",
+                  titleFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
+                  bodyFont: { family: "'IBM Plex Mono'", size: 11 },
+                  bodyColor: "#cbd5e1",
+                  padding: 10,
+                  cornerRadius: 8,
+                  callbacks: {
+                    label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
+                    labelColor: (ctx) => {
+                      const col = Array.isArray(ctx.dataset.backgroundColor)
+                        ? ctx.dataset.backgroundColor[ctx.dataIndex]
+                        : (ctx.dataset.borderColor ?? "#888");
+                      return { borderColor: col, backgroundColor: col, borderRadius: 3 };
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: { display: false, offset: true },
+                y: {
+                  position: "left",
+                  afterFit: ax => { ax.width = syncedAxisWidth; },
+                  ticks: { maxTicksLimit: 4, font: { size: 9, family: "'IBM Plex Mono'" }, color: "#adb5bd", callback: v => fmt(v) },
+                  grid: { color: "rgba(0,0,0,.06)" },
+                },
+              },
+            },
+          });
+
+          chartMap[r.symbol] = [chartPrice, chartVol];
+          // Tăng chiều cao row khi có 2 panel
+          const rowEl = document.getElementById(`chart-row-${r.symbol}`);
+          if (rowEl) rowEl.style.minHeight = "420px";
+
+          return;
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        // MODE ĐƯỜNG — 1 chart duy nhất (giữ nguyên logic cũ)
+        // ════════════════════════════════════════════════════════════════════════
+
+        // Ẩn panel volume phụ nếu có
+        const volWrap = document.getElementById(`chart-vol-wrap-${r.symbol}`);
+        if (volWrap) volWrap.style.display = "none";
+        // Reset chiều cao row về mặc định
+        const rowEl = document.getElementById(`chart-row-${r.symbol}`);
+        if (rowEl) rowEl.style.minHeight = "310px";
+
+        let yPriceMin, yPriceMax, yPriceTicks;
+        if (hasPrices) {
+          const extra = hasBB ? [bbUpper, bbLower] : [];
+          const { yMin, yMax, ticks } = calcPriceAxis(extra);
+          yPriceMin = yMin; yPriceMax = yMax; yPriceTicks = ticks;
+        }
+
+        const datasets = [
+          { type:"bar",  label:"Khối lượng", data:volumes, backgroundColor:volColors, borderRadius:2, yAxisID:"y", order:10 },
+          { type:"line", label:`MA${getMaPeriod()}`, data:ma20, borderColor:"#e67700", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, yAxisID:"y", order:9 },
+        ];
+
+        if (hasPrices) {
+          if (hasBB) {
+            datasets.push(
+              { type:"line", label:"BB Upper", data:bbUpper, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:"+2", backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 },
+              { type:"line", label:"BB Mid",   data:bbMid,   borderColor:"rgba(99,102,241,.7)", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:3 },
+              { type:"line", label:"BB Lower", data:bbLower, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:false, backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 }
+            );
+          }
+          datasets.push({ type:"line", label:"Giá đóng cửa", data:prices, borderColor:"#2f9e44", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:2 });
+        }
+
+        chartMap[r.symbol] = safeChart(canvas, {
+          data: { labels, datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            animation: { duration: 350 },
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    if (ctx.dataset.yAxisID === "yPrice") {
+                      const v = ctx.parsed.y;
+                      return v != null ? `${ctx.dataset.label}: ${v.toLocaleString("vi-VN")}` : null;
+                    }
+                    return `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: { display: false },
+              y: {
+                position: "left",
+                ticks: { maxTicksLimit: 8, font: { size: 9, family: "'IBM Plex Mono'" }, color: "#adb5bd", callback: v => fmt(v) },
+                grid: { color: "rgba(0,0,0,.06)" },
+              },
+              ...(hasPrices ? {
+                yPrice: {
+                  position: "right",
+                  min: yPriceMin, max: yPriceMax,
+                  afterBuildTicks: ax => { ax.ticks = yPriceTicks.map(v => ({ value: v })); },
+                  ticks: {
+                    font: { size: 9, family: "'IBM Plex Mono'" },
+                    color: ctx => {
+                      const cp = prices.at(-1);
+                      return cp != null && Math.abs(ctx.tick.value - cp) < 0.005 ? "#e03131" : "#2f9e44";
+                    },
+                    callback: v => {
+                      const cp = prices.at(-1);
+                      const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                      return (cp != null && Math.abs(v - cp) < 0.005) ? "▶ " + lbl : lbl;
+                    },
+                  },
+                  grid: { drawOnChartArea: false },
+                },
+              } : {}),
+            },
+          },
+        });
+      }
+      function destroyCharts() {
+        Object.values(chartMap).forEach((c) => {
+          if (Array.isArray(c)) c.forEach(ch => ch?.destroy());
+          else c?.destroy();
+        });
+        chartMap = {};
+      }
+
+      // Luôn destroy chart cũ trên canvas trước khi tạo mới
+      // Chart.js giữ global registry — dù chartMap đã xóa vẫn có thể còn sót
+      function safeChart(canvas, config) {
+        if (!canvas) return null;
+        const existing = Chart.getChart(canvas);
+        if (existing) existing.destroy();
+        return new Chart(canvas, config);
+      }
+
+      // ── Export helper: dùng dom-to-image-more (hỗ trợ oklch, Tailwind CDN) ────────
+      async function captureCard(el) {
+        const scale = 2;
+        const blob = await domtoimage.toBlob(el, {
+          bgcolor: "#ffffff",
+          width: el.offsetWidth * scale,
+          height: el.offsetHeight * scale,
+          style: { transform: `scale(${scale})`, transformOrigin: "top left" },
+        });
+        const img = await createImageBitmap(blob);
+        const cv = document.createElement("canvas");
+        cv.width = img.width;
+        cv.height = img.height;
+        cv.getContext("2d").drawImage(img, 0, 0);
+        return cv;
+      }
+
+      // ── Export ────────────────────────────────────────────────────────────────────
+      async function exportCard(symbol) {
+        showOverlay(`Đang xuất ${symbol}…`);
+        try {
+          const canvas = await captureCard(
+            document.getElementById(`card-${symbol}`)
+          );
+          dl(canvas, `${symbol}_KL_dotbien.png`);
+        } finally {
+          hideOverlay();
+        }
+      }
+
+      async function exportAll() {
+        const surges = allResults.filter((r) => r.isSurge);
+        if (!surges.length) {
+          alert("Không có mã đột biến.");
+          return;
+        }
+        showOverlay(`Chuẩn bị xuất ${surges.length} mã…`);
+        try {
+          for (let i = 0; i < surges.length; i++) {
+            const sym = surges[i].symbol;
+            document.getElementById("exportMsg").textContent = `Xuất ${sym}… (${
+              i + 1
+            }/${surges.length})`;
+            const card = document.getElementById(`card-${sym}`);
+            if (!card) continue;
+            const canvas = await captureCard(card);
+            dl(canvas, `${sym}_KL_dotbien.png`);
+            await sleep(200);
+          }
+        } finally {
+          hideOverlay();
+        }
+      }
+
+      function dl(canvas, filename) {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+      function sleep(ms) {
+        return new Promise((r) => setTimeout(r, ms));
+      }
+
+      function showOverlay(msg) {
+        document.getElementById("exportMsg").textContent = msg;
+        const el = document.getElementById("exportOverlay");
+        el.classList.remove("hidden");
+        el.classList.add("flex");
+      }
+      function hideOverlay() {
+        const el = document.getElementById("exportOverlay");
+        el.classList.add("hidden");
+        el.classList.remove("flex");
+      }
+
+      // ── Init ──────────────────────────────────────────────────────────────────────
+      window.addEventListener("load", () => {
+        // Áp dụng settings đã load vào UI
+        applyMarkerSwitchUI();
+        const inp = document.getElementById("displayLimitInput");
+        if (inp && displayLimit > 0) inp.value = displayLimit;
+        applyFilterUI();
+        const vxi = document.getElementById("volHighlightInput");
+        if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+        runScan();
+      });
+    </script>
+  </body>
+</html>

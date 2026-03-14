@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Stock — Trang chủ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Noto+Sans:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red:    #c32022;
+  --navy:   #004370;
+  --green:  #33a42e;
+  --bg:     #f0f4f8;
+  --card:   #ffffff;
+  --border: rgba(0,0,0,0.09);
+  --text:   #161616;
+  --muted:  #6b7280;
+  --mono:   'IBM Plex Mono', monospace;
+  --sans:   'Noto Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+/* Large decorative background grid lines */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,67,112,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,67,112,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+
+.page {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 540px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp .5s ease forwards;
+}
+
+.logo-wrap {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 64px; height: 64px;
+  background: var(--navy);
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(0,67,112,0.28), 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.tagline-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 16px;
+  letter-spacing: .5px;
+}
+.tagline-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+h1 {
+  font-size: 34px; font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+h1 span { color: var(--red); }
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 14px; color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Cards ── */
+.cards {
+  width: 100%;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.nav-card {
+  display: block;
+  text-decoration: none;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  opacity: 0;
+  animation: fadeUp .5s ease forwards;
+  position: relative;
+  overflow: hidden;
+}
+.nav-card:nth-child(1) { animation-delay: .15s; }
+.nav-card:nth-child(2) { animation-delay: .25s; }
+
+.nav-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%;
+  border-radius: 4px 0 0 4px;
+  transition: width .2s ease;
+}
+.nav-card.download::before { background: var(--navy); }
+.nav-card.surge::before    { background: var(--red); }
+
+.nav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.10);
+}
+.nav-card.download:hover { border-color: rgba(0,67,112,.3); }
+.nav-card.surge:hover    { border-color: rgba(195,32,34,.3); }
+.nav-card:hover::before  { width: 5px; }
+
+.card-inner {
+  display: flex; align-items: center; gap: 18px;
+}
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.nav-card.download .card-icon { background: rgba(0,67,112,.1); }
+.nav-card.surge    .card-icon { background: rgba(195,32,34,.08); }
+
+.card-body { flex: 1; min-width: 0; }
+.card-title {
+  font-size: 16px; font-weight: 800;
+  color: var(--text); letter-spacing: -.3px;
+  margin-bottom: 4px;
+}
+.card-desc {
+  font-size: 13px; color: var(--muted);
+  line-height: 1.5;
+}
+
+.card-arrow {
+  flex-shrink: 0;
+  color: #c8d3dd;
+  transition: transform .18s ease, color .18s ease;
+}
+.nav-card:hover .card-arrow { transform: translateX(4px); color: var(--navy); }
+.nav-card.surge:hover .card-arrow { color: var(--red); }
+
+/* ── Tags ── */
+.card-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600; letter-spacing: .5px;
+  padding: 2px 8px; border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: #f7fafc;
+}
+
+/* ── Footer note ── */
+.footer-note {
+  margin-top: 32px;
+  font-size: 12px; color: var(--muted);
+  text-align: center; line-height: 1.6;
+  opacity: 0;
+  animation: fadeUp .5s ease .4s forwards;
+}
+.footer-note code {
+  background: #e2e8f0; padding: 1px 5px;
+  border-radius: 4px; font-family: var(--mono); font-size: 11px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-wrap">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+        <path d="M3 17l5-5 4 4 5-6 4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 21h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="tagline-badge">
+      <span class="dot"></span>
+      <span>CafeF · localhost:3000</span>
+    </div>
+    <h1>My <span>Stock</span></h1>
+    <p class="subtitle">Công cụ tải & phân tích dữ liệu cổ phiếu<br/>từ CafeF — chạy hoàn toàn trên máy bạn.</p>
+  </div>
+
+  <!-- Nav cards -->
+  <div class="cards">
+
+    <a href="/front.html" class="nav-card download">
+      <div class="card-inner">
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#004370">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Tải dữ liệu</div>
+          <div class="card-desc">Nhập mã cổ phiếu, chọn khoảng thời gian và lưu file Excel về thư mục <code style="font-family:monospace;font-size:11px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code></div>
+          <div class="card-tags">
+            <span class="tag">XLSX</span>
+            <span class="tag">CafeF API</span>
+            <span class="tag">Lịch sử giá</span>
+          </div>
+        </div>
+        <svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </a>
+
+    <a href="/surge.html" class="nav-card surge">
+      <div class="card-inner">
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#c32022">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Phân tích đột biến</div>
+          <div class="card-desc">Tự động phát hiện mã có khối lượng giao dịch tăng đột biến so với trung bình MA, có biểu đồ và xuất ảnh.</div>
+          <div class="card-tags">
+            <span class="tag">🔥 Surge</span>
+            <span class="tag">MA20</span>
+            <span class="tag">Chart</span>
+            <span class="tag">Xuất PNG</span>
+          </div>
+        </div>
+        <svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="footer-note">
+    Yêu cầu <code>node main.mjs</code> đang chạy trên cổng <code>3000</code>
+  </div>
+
+</div>
+</body>
+</html>
