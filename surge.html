@@ -46,7 +46,6 @@
     <script>
       Chart.register(Chart.registry.plugins.get("filler") ?? {});
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.4.0/dist/dom-to-image-more.min.js"></script>
     <style>
       /* Tailwind doesn't ship these at CDN runtime */
       input[type="number"]::-webkit-inner-spin-button,
@@ -62,13 +61,7 @@
       .tooltip-wrap:hover .tooltip-box {
         display: block;
       }
-      .surge-pill {
-        display: none;
-      }
-      .is-surge .surge-pill {
-        display: flex;
-        animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-      }
+
       @keyframes popIn {
         from {
           transform: scale(0.8);
@@ -99,74 +92,141 @@
   >
     <!-- ═══ SIDEBAR ═══ -->
     <aside
-      class="w-[280px] shrink-0 flex flex-col sticky top-0 h-screen overflow-y-auto"
+      id="sidebar"
+      class="shrink-0 flex flex-col sticky top-0 h-screen overflow-y-auto"
       style="
+        width: 280px;
         background: #0d1117;
         border-right: 1px solid rgba(255, 255, 255, 0.06);
       "
     >
-      <div
-        class="px-6 py-6 flex items-center gap-3"
-        style="border-bottom: 1px solid rgba(255, 255, 255, 0.06)"
+      <!-- Header sidebar: logo only -->
+      <div id="sidebarHeader"
+        style="border-bottom: 1px solid rgba(255,255,255,.06);display:flex;align-items:center;padding:16px 20px;flex-shrink:0;transition:height .25s,opacity .15s,padding .25s,border .25s;overflow:hidden"
       >
-        <div
-          class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
-          style="
-            background: linear-gradient(135deg, #e03131, #c92a2a);
-            box-shadow: 0 4px 16px rgba(224, 49, 49, 0.35);
-          "
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M18 20V10M12 20V4M6 20v-6"
-              stroke="#fff"
-              stroke-width="2.5"
-              stroke-linecap="round"
-            />
-          </svg>
-        </div>
-        <div>
+        <div id="sidebarLogo" class="sidebar-content" style="display:flex;align-items:center;gap:12px;min-width:0">
           <div
-            style="
-              font-family: 'Syne', sans-serif;
-              font-weight: 800;
-              font-size: 16px;
-              color: #fff;
-              letter-spacing: -0.3px;
-            "
+            class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+            style="background:linear-gradient(135deg,#e03131,#c92a2a);box-shadow:0 4px 16px rgba(224,49,49,.35)"
           >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M18 20V10M12 20V4M6 20v-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:-.3px;white-space:nowrap">
             Volume Surge
           </div>
         </div>
       </div>
 
-      <div class="flex-1 px-4 py-5 flex flex-col gap-4 overflow-y-auto">
+      <div class="sidebar-content flex-1 px-4 py-5 flex flex-col gap-4 overflow-y-auto">
         <div
           id="statsBlock"
           class="rounded-2xl p-4"
-          style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);opacity:.35;transition:opacity .3s"
+          style="
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            opacity: 0.35;
+            transition: opacity 0.3s;
+          "
         >
-          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Kết quả quét</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div
+            style="
+              font-size: 10px;
+              font-weight: 700;
+              color: rgba(255, 255, 255, 0.25);
+              letter-spacing: 1.5px;
+              text-transform: uppercase;
+              margin-bottom: 10px;
+            "
+          >
+            Kết quả quét
+          </div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 8px;
+            "
+          >
             <!-- Mã đột biến -->
-            <div style="flex:1;background:rgba(224,49,49,.08);border-radius:12px;padding:10px 12px">
-              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.5px;margin-bottom:4px">ĐỘT BIẾN</div>
-              <div style="display:flex;align-items:baseline;gap:4px">
-                <span id="statSurge" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:24px;color:#e03131;line-height:1">—</span>
-                <span style="font-size:10px;color:rgba(255,255,255,.25)">mã</span>
+            <div
+              style="
+                flex: 1;
+                background: rgba(224, 49, 49, 0.08);
+                border-radius: 12px;
+                padding: 10px 12px;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  font-weight: 600;
+                  color: rgba(255, 255, 255, 0.3);
+                  letter-spacing: 0.5px;
+                  margin-bottom: 4px;
+                "
+              >
+                ĐỘT BIẾN
+              </div>
+              <div style="display: flex; align-items: baseline; gap: 4px">
+                <span
+                  id="statSurge"
+                  style="
+                    font-family: 'IBM Plex Mono', monospace;
+                    font-weight: 700;
+                    font-size: 24px;
+                    color: #e03131;
+                    line-height: 1;
+                  "
+                  >—</span
+                >
+                <span style="font-size: 10px; color: rgba(255, 255, 255, 0.25)"
+                  >mã</span
+                >
               </div>
             </div>
             <!-- File đã quét -->
-            <div style="flex:1;background:rgba(255,255,255,.04);border-radius:12px;padding:10px 12px">
-              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.5px;margin-bottom:4px">ĐÃ QUÉT</div>
-              <div style="display:flex;align-items:baseline;gap:4px">
-                <span id="statFiles" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:24px;color:rgba(255,255,255,.7);line-height:1">—</span>
-                <span style="font-size:10px;color:rgba(255,255,255,.25)">file</span>
+            <div
+              style="
+                flex: 1;
+                background: rgba(255, 255, 255, 0.04);
+                border-radius: 12px;
+                padding: 10px 12px;
+              "
+            >
+              <div
+                style="
+                  font-size: 10px;
+                  font-weight: 600;
+                  color: rgba(255, 255, 255, 0.3);
+                  letter-spacing: 0.5px;
+                  margin-bottom: 4px;
+                "
+              >
+                ĐÃ QUÉT
+              </div>
+              <div style="display: flex; align-items: baseline; gap: 4px">
+                <span
+                  id="statFiles"
+                  style="
+                    font-family: 'IBM Plex Mono', monospace;
+                    font-weight: 700;
+                    font-size: 24px;
+                    color: rgba(255, 255, 255, 0.7);
+                    line-height: 1;
+                  "
+                  >—</span
+                >
+                <span style="font-size: 10px; color: rgba(255, 255, 255, 0.25)"
+                  >file</span
+                >
               </div>
             </div>
           </div>
           <!-- statConfig ẩn, giữ để JS không lỗi -->
-          <span id="statConfig" style="display:none"></span>
+          <span id="statConfig" style="display: none"></span>
         </div>
 
         <div
@@ -411,39 +471,11 @@
             </button>
           </div>
         </div>
-
-        <button
-          id="btnExportAll"
-          onclick="exportAll()"
-          class="hidden w-full rounded-2xl font-semibold items-center justify-center gap-2 transition-colors"
-          style="
-            height: 44px;
-            font-size: 13px;
-            background: rgba(47, 158, 68, 0.12);
-            color: #4ade80;
-            border: 1px solid rgba(47, 158, 68, 0.25);
-          "
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Xuất tất cả ảnh
-        </button>
       </div>
 
       <a
         href="/"
-        class="px-6 py-4 flex items-center gap-2 no-underline transition-colors"
+        class="sidebar-content px-6 py-4 flex items-center gap-2 no-underline transition-colors"
         style="
           border-top: 1px solid rgba(255, 255, 255, 0.06);
           color: rgba(255, 255, 255, 0.2);
@@ -465,6 +497,23 @@
         Trang chủ
       </a>
     </aside>
+
+    <!-- Sidebar toggle tab — gắn vào cạnh phải sidebar -->
+    <button id="sidebarToggle" onclick="toggleSidebar()" title="Thu gọn / Mở rộng menu"
+      style="position:fixed;top:20px;left:280px;z-index:200;
+             width:16px;height:56px;border-radius:0 8px 8px 0;
+             border:1px solid rgba(255,255,255,.1);border-left:none;
+             background:#0d1117;cursor:pointer;
+             display:flex;align-items:center;justify-content:center;
+             color:rgba(255,255,255,.4);
+             transition:left .25s cubic-bezier(.4,0,.2,1), background .15s, color .15s"
+      onmouseenter="this.style.background='#1e2832';this.style.color='rgba(255,255,255,.8)'"
+      onmouseleave="this.style.background='#0d1117';this.style.color='rgba(255,255,255,.4)'">
+      <svg id="sidebarToggleIcon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        style="transition:transform .25s cubic-bezier(.4,0,.2,1)">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
 
     <!-- ═══ MAIN ═══ -->
     <div class="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
@@ -559,138 +608,598 @@
             1 Năm
           </button>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
+        <div style="display: flex; align-items: center; gap: 12px">
           <!-- Symbol search -->
-          <div style="position:relative;display:flex;align-items:center">
-            <svg style="position:absolute;left:10px;pointer-events:none" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input id="symbolSearch" type="text" placeholder="Tìm mã…"
+          <div style="position: relative; display: flex; align-items: center">
+            <svg
+              style="position: absolute; left: 10px; pointer-events: none"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9ca3af"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              id="symbolSearch"
+              type="text"
+              placeholder="Tìm mã…"
               oninput="onSymbolSearch(this.value)"
-              style="height:34px;width:130px;padding:0 30px 0 30px;border-radius:20px;border:1.5px solid rgba(0,0,0,.1);background:#f8fafc;font-size:13px;font-weight:600;color:#1f2937;outline:none;transition:all .15s;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px"
+              style="
+                height: 34px;
+                width: 130px;
+                padding: 0 30px 0 30px;
+                border-radius: 20px;
+                border: 1.5px solid rgba(0, 0, 0, 0.1);
+                background: #f8fafc;
+                font-size: 13px;
+                font-weight: 600;
+                color: #1f2937;
+                outline: none;
+                transition: all 0.15s;
+                font-family: 'IBM Plex Mono', monospace;
+                letter-spacing: 0.5px;
+              "
               onfocus="this.style.borderColor='#003a6b';this.style.background='#fff';this.style.width='180px'"
-              onblur="this.style.borderColor='rgba(0,0,0,.1)';this.style.background='#f8fafc';if(!this.value)this.style.width='130px'"/>
-            <button id="symbolSearchClear" onclick="clearSymbolSearch()" style="display:none;position:absolute;right:8px;width:16px;height:16px;border-radius:50%;border:none;background:#d1d5db;cursor:pointer;font-size:10px;font-weight:700;color:#6b7280;display:none;align-items:center;justify-content:center;line-height:1;padding:0">✕</button>
+              onblur="this.style.borderColor='rgba(0,0,0,.1)';this.style.background='#f8fafc';if(!this.value)this.style.width='130px'"
+            />
+            <button
+              id="symbolSearchClear"
+              onclick="clearSymbolSearch()"
+              style="
+                display: none;
+                position: absolute;
+                right: 8px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                border: none;
+                background: #d1d5db;
+                cursor: pointer;
+                font-size: 10px;
+                font-weight: 700;
+                color: #6b7280;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+                padding: 0;
+              "
+            >
+              ✕
+            </button>
           </div>
-          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
+          <div
+            style="width: 1px; height: 20px; background: rgba(0, 0, 0, 0.08)"
+          ></div>
           <!-- Chart mode toggle -->
-          <div style="display:flex;align-items:center;background:#f1f5f9;border-radius:20px;padding:3px;gap:2px">
-            <button id="modeLineBtn" onclick="setChartMode('line')"
-              style="height:30px;padding:0 14px;border-radius:17px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;background:transparent;color:#9ca3af">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              background: #f1f5f9;
+              border-radius: 20px;
+              padding: 3px;
+              gap: 2px;
+            "
+          >
+            <button
+              id="modeLineBtn"
+              onclick="setChartMode('line')"
+              style="
+                height: 30px;
+                padding: 0 14px;
+                border-radius: 17px;
+                border: none;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.15s;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                background: transparent;
+                color: #9ca3af;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
               Đường
             </button>
-            <button id="modeCandleBtn" onclick="setChartMode('candle')"
-              style="height:30px;padding:0 14px;border-radius:17px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;background:#003a6b;color:#fff">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="22"/><rect x="5" y="6" width="6" height="10" rx="1"/><line x1="16" y1="2" x2="16" y2="22"/><rect x="13" y="8" width="6" height="8" rx="1"/></svg>
+            <button
+              id="modeCandleBtn"
+              onclick="setChartMode('candle')"
+              style="
+                height: 30px;
+                padding: 0 14px;
+                border-radius: 17px;
+                border: none;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.15s;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                background: #003a6b;
+                color: #fff;
+              "
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <line x1="8" y1="2" x2="8" y2="22" />
+                <rect x="5" y="6" width="6" height="10" rx="1" />
+                <line x1="16" y1="2" x2="16" y2="22" />
+                <rect x="13" y="8" width="6" height="8" rx="1" />
+              </svg>
               Nến
             </button>
           </div>
-          <div style="width:1px;height:20px;background:rgba(0,0,0,.08)"></div>
+          <div
+            style="width: 1px; height: 20px; background: rgba(0, 0, 0, 0.08)"
+          ></div>
 
           <!-- Settings icon + popup -->
-          <div style="position:relative">
-            <button onclick="toggleSettingsPopup()" id="settingsBtn"
-              style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(0,0,0,.1);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#6b7280"
+          <div style="position: relative">
+            <button
+              onclick="toggleSettingsPopup()"
+              id="settingsBtn"
+              style="
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 1.5px solid rgba(0, 0, 0, 0.1);
+                background: transparent;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.15s;
+                color: #6b7280;
+              "
               onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='rgba(0,0,0,.2)'"
-              onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(0,0,0,.1)'">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(0,0,0,.1)'"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+                />
               </svg>
             </button>
             <!-- Settings popup -->
-            <div id="settingsPopup"
-              style="display:none;position:absolute;top:40px;right:0;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);padding:20px;min-width:280px;z-index:100">
-              <div style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Tuỳ chọn hiển thị</div>
+            <div
+              id="settingsPopup"
+              style="
+                display: none;
+                position: absolute;
+                top: 40px;
+                right: 0;
+                background: #fff;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 16px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+                padding: 20px;
+                min-width: 280px;
+                z-index: 100;
+              "
+            >
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: #9ca3af;
+                  letter-spacing: 1px;
+                  text-transform: uppercase;
+                  margin-bottom: 14px;
+                "
+              >
+                Tuỳ chọn hiển thị
+              </div>
 
               <!-- Marker toggle row -->
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 16px;
+                  padding-bottom: 14px;
+                  border-bottom: 1px solid #f1f5f9;
+                "
+              >
                 <div>
-                  <div style="font-size:13px;font-weight:600;color:#1f2937">▲▼ Marker đảo chiều</div>
-                  <div style="font-size:11px;color:#9ca3af;margin-top:2px">Hiện tín hiệu trên nến nhật</div>
+                  <div
+                    style="font-size: 13px; font-weight: 600; color: #1f2937"
+                  >
+                    ▲▼ Marker đảo chiều
+                  </div>
+                  <div style="font-size: 11px; color: #9ca3af; margin-top: 2px">
+                    Hiện tín hiệu trên nến nhật
+                  </div>
                 </div>
-                <button id="markerToggleSwitch" onclick="toggleMarkers()"
-                  style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0">
-                  <span id="markerSwitchThumb"
-                    style="position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
+                <button
+                  id="markerToggleSwitch"
+                  onclick="toggleMarkers()"
+                  style="
+                    width: 40px;
+                    height: 22px;
+                    border-radius: 11px;
+                    border: none;
+                    cursor: pointer;
+                    position: relative;
+                    transition: background 0.2s;
+                    flex-shrink: 0;
+                  "
+                >
+                  <span
+                    id="markerSwitchThumb"
+                    style="
+                      position: absolute;
+                      top: 3px;
+                      width: 16px;
+                      height: 16px;
+                      border-radius: 50%;
+                      background: #fff;
+                      transition: left 0.2s;
+                      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                    "
+                  ></span>
                 </button>
               </div>
 
               <!-- Số cổ phiếu hiển thị -->
-              <div style="margin-top:14px;padding-bottom:16px;border-bottom:1px solid #f1f5f9">
-                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:6px">Số cổ phiếu hiển thị</div>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <input id="displayLimitInput" type="number" min="0" max="999" placeholder="Tất cả"
+              <div
+                style="
+                  margin-top: 14px;
+                  padding-bottom: 16px;
+                  border-bottom: 1px solid #f1f5f9;
+                "
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #1f2937;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Số cổ phiếu hiển thị
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <input
+                    id="displayLimitInput"
+                    type="number"
+                    min="0"
+                    max="999"
+                    placeholder="Tất cả"
                     oninput="onDisplayLimitInput(this.value)"
-                    style="flex:1;height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:#1f2937;outline:none;transition:border .15s"
+                    style="
+                      flex: 1;
+                      height: 36px;
+                      padding: 0 12px;
+                      border-radius: 10px;
+                      border: 1.5px solid #e5e7eb;
+                      font-size: 13px;
+                      font-family: 'IBM Plex Mono', monospace;
+                      font-weight: 600;
+                      color: #1f2937;
+                      outline: none;
+                      transition: border 0.15s;
+                    "
                     onfocus="this.style.borderColor='#003a6b'"
-                    onblur="this.style.borderColor='#e5e7eb'"/>
-                  <button onclick="_pendingLimit=0;document.getElementById('displayLimitInput').value=''"
-                    style="height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #e5e7eb;background:transparent;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;white-space:nowrap"
-                    onmouseenter="this.style.background='#f1f5f9'" onmouseleave="this.style.background='transparent'">
+                    onblur="this.style.borderColor='#e5e7eb'"
+                  />
+                  <button
+                    onclick="_pendingLimit=0;document.getElementById('displayLimitInput').value=''"
+                    style="
+                      height: 36px;
+                      padding: 0 12px;
+                      border-radius: 10px;
+                      border: 1.5px solid #e5e7eb;
+                      background: transparent;
+                      font-size: 12px;
+                      font-weight: 600;
+                      color: #6b7280;
+                      cursor: pointer;
+                      white-space: nowrap;
+                    "
+                    onmouseenter="this.style.background='#f1f5f9'"
+                    onmouseleave="this.style.background='transparent'"
+                  >
                     Tất cả
                   </button>
                 </div>
-                <div style="font-size:11px;color:#9ca3af;margin-top:5px">Để trống = hiển thị tất cả mã surge</div>
+                <div style="font-size: 11px; color: #9ca3af; margin-top: 5px">
+                  Để trống = hiển thị tất cả mã surge
+                </div>
               </div>
 
               <!-- Lọc theo ngưỡng toggle (row riêng, nằm trên stepper) -->
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 16px;
+                  margin-top: 14px;
+                  padding-bottom: 14px;
+                  border-bottom: 1px solid #f1f5f9;
+                "
+              >
                 <div>
-                  <div style="font-size:13px;font-weight:600;color:#1f2937">Lọc theo ngưỡng KL</div>
-                  <div style="font-size:11px;color:#9ca3af;margin-top:2px">Tắt để hiển thị tất cả mã</div>
+                  <div
+                    style="font-size: 13px; font-weight: 600; color: #1f2937"
+                  >
+                    Lọc theo ngưỡng KL
+                  </div>
+                  <div style="font-size: 11px; color: #9ca3af; margin-top: 2px">
+                    Tắt để hiển thị tất cả mã
+                  </div>
                 </div>
-                <button id="surgeFilterSwitch" onclick="toggleSurgeFilter()"
-                  style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;background:#003a6b">
-                  <span id="surgeFilterThumb"
-                    style="position:absolute;top:3px;left:21px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
+                <button
+                  id="surgeFilterSwitch"
+                  onclick="toggleSurgeFilter()"
+                  style="
+                    width: 40px;
+                    height: 22px;
+                    border-radius: 11px;
+                    border: none;
+                    cursor: pointer;
+                    position: relative;
+                    transition: background 0.2s;
+                    flex-shrink: 0;
+                    background: #003a6b;
+                  "
+                >
+                  <span
+                    id="surgeFilterThumb"
+                    style="
+                      position: absolute;
+                      top: 3px;
+                      left: 21px;
+                      width: 16px;
+                      height: 16px;
+                      border-radius: 50%;
+                      background: #fff;
+                      transition: left 0.2s;
+                      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                    "
+                  ></span>
                 </button>
               </div>
 
               <!-- Ngưỡng highlight KL stepper -->
-              <div style="margin-top:14px;padding-bottom:16px;border-bottom:1px solid #f1f5f9">
-                <div style="font-size:13px;font-weight:600;color:#1f2937;margin-bottom:10px">Ngưỡng highlight KL <span style="color:#e03131">■</span></div>
-                <!-- Stepper (dim khi tắt filter) -->
-                <div id="volXStepper" style="display:flex;align-items:center;gap:8px;transition:opacity .2s">
-                  <button onclick="stepVolX(-0.5)"
-                    style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1"
-                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
-                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'">−</button>
-                  <div style="display:flex;align-items:center;gap:4px;flex:1;justify-content:center">
-                    <span id="volHighlightInput" style="width:44px;height:36px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#003a6b;display:flex;align-items:center;justify-content:center;background:#f8fafc">2</span>
-                    <span style="font-size:12px;font-weight:700;color:#6b7280;white-space:nowrap">× MA</span>
-                  </div>
-                  <button onclick="stepVolX(+0.5)"
-                    style="width:30px;height:30px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;line-height:1"
-                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
-                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'">+</button>
+              <div
+                style="
+                  margin-top: 14px;
+                  padding-bottom: 16px;
+                  border-bottom: 1px solid #f1f5f9;
+                "
+              >
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #1f2937;
+                    margin-bottom: 10px;
+                  "
+                >
+                  Ngưỡng highlight KL <span style="color: #e03131">■</span>
                 </div>
-                <div style="font-size:11px;color:#9ca3af;margin-top:5px">Cột KL vượt ngưỡng này sẽ đổi màu đỏ</div>
+                <!-- Stepper (dim khi tắt filter) -->
+                <div
+                  id="volXStepper"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    transition: opacity 0.2s;
+                  "
+                >
+                  <button
+                    onclick="stepVolX(-0.5)"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 50%;
+                      border: 1.5px solid #e5e7eb;
+                      background: #fff;
+                      font-size: 16px;
+                      font-weight: 700;
+                      color: #374151;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      flex-shrink: 0;
+                      transition: all 0.15s;
+                      line-height: 1;
+                    "
+                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
+                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'"
+                  >
+                    −
+                  </button>
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                      flex: 1;
+                      justify-content: center;
+                    "
+                  >
+                    <span
+                      id="volHighlightInput"
+                      style="
+                        width: 44px;
+                        height: 36px;
+                        border-radius: 10px;
+                        border: 1.5px solid #e5e7eb;
+                        font-size: 14px;
+                        font-family: 'IBM Plex Mono', monospace;
+                        font-weight: 700;
+                        color: #003a6b;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: #f8fafc;
+                      "
+                      >2</span
+                    >
+                    <span
+                      style="
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #6b7280;
+                        white-space: nowrap;
+                      "
+                      >× MA</span
+                    >
+                  </div>
+                  <button
+                    onclick="stepVolX(+0.5)"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      border-radius: 50%;
+                      border: 1.5px solid #e5e7eb;
+                      background: #fff;
+                      font-size: 16px;
+                      font-weight: 700;
+                      color: #374151;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      flex-shrink: 0;
+                      transition: all 0.15s;
+                      line-height: 1;
+                    "
+                    onmouseenter="this.style.background='#f1f5f9';this.style.borderColor='#003a6b'"
+                    onmouseleave="this.style.background='#fff';this.style.borderColor='#e5e7eb'"
+                  >
+                    +
+                  </button>
+                </div>
+                <div style="font-size: 11px; color: #9ca3af; margin-top: 5px">
+                  Cột KL vượt ngưỡng này sẽ đổi màu đỏ
+                </div>
               </div>
 
               <!-- Nút Áp dụng -->
-              <div style="margin-top:14px">
-                <button id="applyBtn" onclick="applySettings()"
-                  style="width:100%;height:38px;border-radius:10px;border:none;background:#003a6b;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px"
-                  onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
-                  <svg id="applySpinner" style="display:none;animation:spin .75s linear infinite;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+              <div style="margin-top: 14px">
+                <button
+                  id="applyBtn"
+                  onclick="applySettings()"
+                  style="
+                    width: 100%;
+                    height: 38px;
+                    border-radius: 10px;
+                    border: none;
+                    background: #003a6b;
+                    color: #fff;
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: opacity 0.15s;
+                    letter-spacing: 0.3px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                  "
+                  onmouseenter="this.style.opacity='.85'"
+                  onmouseleave="this.style.opacity='1'"
+                >
+                  <svg
+                    id="applySpinner"
+                    style="
+                      display: none;
+                      animation: spin 0.75s linear infinite;
+                      flex-shrink: 0;
+                    "
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  >
+                    <path d="M12 2a10 10 0 0 1 10 10" />
+                  </svg>
                   <span id="applyBtnLabel">Áp dụng</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <span id="resultCount" style="display:none"></span>
+          <span id="resultCount" style="display: none"></span>
         </div>
       </header>
 
       <!-- Ticker bar (liked symbols) -->
-      <div id="tickerBar" style="display:none;background:#0d1117;border-bottom:1px solid rgba(255,255,255,.06);height:52px;overflow:hidden;flex-shrink:0">
-        <div id="tickerTrack" style="display:inline-flex;align-items:stretch;height:100%;gap:0;white-space:nowrap;will-change:transform"></div>
+      <div
+        id="tickerBar"
+        style="
+          display: none;
+          background: #0d1117;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          height: 52px;
+          overflow: hidden;
+          flex-shrink: 0;
+        "
+      >
+        <div
+          id="tickerTrack"
+          style="
+            display: inline-flex;
+            align-items: stretch;
+            height: 100%;
+            gap: 0;
+            white-space: nowrap;
+            will-change: transform;
+          "
+        ></div>
       </div>
       <style>
         @keyframes tickerScroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
         .ticker-item {
           display: inline-flex;
@@ -699,33 +1208,132 @@
           justify-content: center;
           gap: 2px;
           padding: 0 18px;
-          border-right: 1px solid rgba(255,255,255,.07);
+          border-right: 1px solid rgba(255, 255, 255, 0.07);
           height: 52px;
           cursor: pointer;
-          transition: background .15s;
+          transition: background 0.15s;
         }
-        .ticker-item:hover { background: rgba(255,255,255,.05); }
-        .ticker-row1 { display:flex;align-items:baseline;gap:7px; }
-        .ticker-row2 { display:flex;align-items:center;gap:4px; }
+        .ticker-item:hover {
+          background: rgba(255, 255, 255, 0.05);
+        }
+        .ticker-row1 {
+          display: flex;
+          align-items: baseline;
+          gap: 7px;
+        }
+        .ticker-row2 {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
       </style>
 
       <!-- Filter bar -->
-      <div id="filterBar" style="background:#fff;border-bottom:1px solid rgba(0,0,0,.06);padding:0 28px;display:flex;align-items:center;gap:0;flex-shrink:0;height:44px;overflow:hidden">
+      <div
+        id="filterBar"
+        style="
+          background: #fff;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+          padding: 0 28px;
+          display: flex;
+          align-items: center;
+          gap: 0;
+          flex-shrink: 0;
+          height: 44px;
+          overflow: hidden;
+        "
+      >
         <!-- Label cố định trái -->
-        <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;padding-right:10px">Lọc:</span>
+        <span
+          style="
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-right: 10px;
+          "
+          >Lọc:</span
+        >
         <!-- Scroll container -->
-        <div style="flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;gap:6px;scrollbar-width:none;-ms-overflow-style:none;padding:8px 0" id="filterScroll">
-          <style>#filterScroll::-webkit-scrollbar{display:none}</style>
-          <button id="filter-liked" onclick="toggleFilter('liked')"
-            style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0">
+        <div
+          style="
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 8px 0;
+          "
+          id="filterScroll"
+        >
+          <style>
+            #filterScroll::-webkit-scrollbar {
+              display: none;
+            }
+          </style>
+          <button
+            id="filter-liked"
+            onclick="toggleFilter('liked')"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 5px;
+              height: 28px;
+              padding: 0 12px;
+              border-radius: 14px;
+              border: 1.5px solid #e5e7eb;
+              background: #fff;
+              font-size: 11px;
+              font-weight: 700;
+              color: #6b7280;
+              cursor: pointer;
+              transition: all 0.15s;
+              white-space: nowrap;
+              flex-shrink: 0;
+            "
+          >
             ★ Đã thích
           </button>
-          <div style="width:1px;height:16px;background:#e5e7eb;flex-shrink:0"></div>
-          <div id="patternFilters" style="display:flex;gap:6px;flex-shrink:0"></div>
+          <div
+            style="
+              width: 1px;
+              height: 16px;
+              background: #e5e7eb;
+              flex-shrink: 0;
+            "
+          ></div>
+          <div
+            id="patternFilters"
+            style="display: flex; gap: 6px; flex-shrink: 0"
+          ></div>
         </div>
         <!-- Nút xoá lọc cố định phải -->
-        <button onclick="clearFilters()" id="clearFilterBtn"
-          style="display:none;flex-shrink:0;margin-left:8px;height:28px;padding:0 12px;border-radius:14px;border:1.5px solid #fca5a5;background:#fff5f5;font-size:11px;font-weight:700;color:#e03131;cursor:pointer;transition:all .15s;white-space:nowrap">
+        <button
+          onclick="clearFilters()"
+          id="clearFilterBtn"
+          style="
+            display: none;
+            flex-shrink: 0;
+            margin-left: 8px;
+            height: 28px;
+            padding: 0 12px;
+            border-radius: 14px;
+            border: 1.5px solid #fca5a5;
+            background: #fff5f5;
+            font-size: 11px;
+            font-weight: 700;
+            color: #e03131;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+          "
+        >
           ✕ Xoá lọc
         </button>
       </div>
@@ -747,47 +1355,91 @@
       </main>
     </div>
 
-    <!-- Export overlay -->
-    <div
-      id="exportOverlay"
-      class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 items-center justify-center"
-    >
-      <div
-        class="bg-white rounded-2xl px-10 py-8 text-center shadow-2xl min-w-[220px]"
-      >
-        <div
-          class="w-8 h-8 rounded-full border-[3px] border-navy/20 border-t-navy animate-spin mx-auto"
-        ></div>
-        <p
-          id="exportMsg"
-          class="font-mono text-xs text-gray-400 mt-3"
-          style="font-family: 'IBM Plex Mono', monospace"
-        >
-          Đang xuất ảnh…
-        </p>
-      </div>
-    </div>
-
     <!-- Tab active styles injected via JS (Tailwind CDN can't purge dynamic classes) -->
-    <style></style>
+    <style>
+      #sidebar {
+        transition: width .25s cubic-bezier(.4,0,.2,1);
+        overflow: hidden;
+      }
+      #sidebar.collapsed {
+        width: 0 !important;
+      }
+      #sidebar.collapsed #sidebarHeader {
+        height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-bottom-color: transparent !important;
+        opacity: 0;
+      }
+      #sidebar.collapsed .sidebar-content {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .15s;
+      }
+      #sidebar.collapsed #sidebarLogo {
+        opacity: 0;
+      }
+      #sidebar .sidebar-content {
+        opacity: 1;
+        transition: opacity .2s .05s;
+        min-width: 230px; /* tránh wrap khi animate */
+      }
+      /* Tab toggle di chuyển cùng sidebar */
+      #sidebar.collapsed + button#sidebarToggle {
+        left: 52px;
+      }
+      #sidebar.collapsed + button#sidebarToggle #sidebarToggleIcon {
+        transform: rotate(180deg);
+      }
+    </style>
 
     <script>
       const SERVER = "http://localhost:3000";
+
+      // ── Sidebar collapse ─────────────────────────────────────────────────────────
+      function updateToggleTab(collapsed) {
+        const tab = document.getElementById("sidebarToggle");
+        const icon = document.getElementById("sidebarToggleIcon");
+        if (tab)  tab.style.left  = collapsed ? "0px" : "280px";
+        if (icon) icon.style.transform = collapsed ? "rotate(180deg)" : "rotate(0deg)";
+      }
+
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const collapsed = sidebar.classList.toggle("collapsed");
+        updateToggleTab(collapsed);
+        try { localStorage.setItem("sidebarCollapsed", collapsed ? "1" : "0"); } catch(e) {}
+      }
+
+      // Restore trạng thái khi load
+      (function() {
+        try {
+          const collapsed = localStorage.getItem("sidebarCollapsed") === "1";
+          if (collapsed) {
+            document.getElementById("sidebar")?.classList.add("collapsed");
+          }
+          // Chạy sau khi DOM sẵn sàng
+          requestAnimationFrame(() => updateToggleTab(collapsed));
+        } catch(e) {}
+      })();
       let allResults = [];
       let chartMap = {};
+      const chartDataCache = {}; // lưu rsiSlice, macdSlice per symbol để update badge khi hover
       let sortMode = "vol"; // 'ratio' | 'vol' | 'balance'
       let rangeN = 66; // số phiên hiển thị: 22=1T, 66=3T, 132=6T, 264=1N
       let chartMode = "candle"; // 'line' | 'candle'
-      let showMarkers = true;  // hiển thị marker đảo chiều
-      let displayLimit = 0;    // 0 = hiển thị tất cả
-      let volHighlightX = 2;   // ngưỡng KL/MA để highlight đỏ
+      let showMarkers = true; // hiển thị marker đảo chiều
+      let displayLimit = 0; // 0 = hiển thị tất cả
+      let volHighlightX = 2; // ngưỡng KL/MA để highlight đỏ
       let surgeFilterEnabled = true; // bật/tắt lọc theo ngưỡng
 
       // isSurge tính động theo volHighlightX — không dùng field từ backend nữa
-      function isSurge(r) { return !surgeFilterEnabled || r.ratio >= volHighlightX; }
+      function isSurge(r) {
+        return !surgeFilterEnabled || r.ratio >= volHighlightX;
+      }
       let likedSymbols = new Set(); // mã được like
       let activeFilters = new Set(); // filter đang bật: 'liked' | pattern label
-      let symbolQuery = ''; // tìm kiếm theo mã
+      let symbolQuery = ""; // tìm kiếm theo mã
 
       function onSymbolSearch(val) {
         symbolQuery = val.trim().toUpperCase();
@@ -798,9 +1450,9 @@
       }
 
       function clearSymbolSearch() {
-        symbolQuery = '';
+        symbolQuery = "";
         const inp = document.getElementById("symbolSearch");
-        if (inp) inp.value = '';
+        if (inp) inp.value = "";
         const clearBtn = document.getElementById("symbolSearchClear");
         if (clearBtn) clearBtn.style.display = "none";
         saveSettings();
@@ -812,10 +1464,16 @@
         try {
           const res = await fetch(`${SERVER}/likes`);
           const json = await res.json();
-          likedSymbols = new Set((json.symbols ?? []).map(s => s.toUpperCase()));
-        } catch(e) {
+          likedSymbols = new Set(
+            (json.symbols ?? []).map((s) => s.toUpperCase())
+          );
+        } catch (e) {
           // fallback localStorage nếu server chưa có API
-          try { likedSymbols = new Set(JSON.parse(localStorage.getItem("surgeLikes") || "[]")); } catch(_) {}
+          try {
+            likedSymbols = new Set(
+              JSON.parse(localStorage.getItem("surgeLikes") || "[]")
+            );
+          } catch (_) {}
         }
       }
       async function saveLike(symbol, liked) {
@@ -823,37 +1481,58 @@
           await fetch(`${SERVER}/likes/${encodeURIComponent(symbol)}`, {
             method: liked ? "POST" : "DELETE",
           });
-        } catch(e) { console.warn("saveLike error:", e); }
+        } catch (e) {
+          console.warn("saveLike error:", e);
+        }
       }
       // ── Ticker bar ───────────────────────────────────────────────────────────────
       function buildTicker() {
-        const bar   = document.getElementById("tickerBar");
+        const bar = document.getElementById("tickerBar");
         const track = document.getElementById("tickerTrack");
         if (!bar || !track) return;
 
-        const liked = allResults.filter(r => likedSymbols.has(r.symbol));
-        if (liked.length === 0) { bar.style.display = "none"; return; }
+        const liked = allResults.filter((r) => likedSymbols.has(r.symbol));
+        if (liked.length === 0) {
+          bar.style.display = "none";
+          return;
+        }
 
         bar.style.display = "block";
 
         function itemHtml(r) {
-          const s  = r.session ?? {};
+          const s = r.session ?? {};
           const ch = parseChange(s.change);
-          const price = s.close != null
-            ? parseFloat(s.close).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-            : "—";
-          const chColor = ch.dir > 0 ? "#4ade80" : ch.dir < 0 ? "#f87171" : "#fbbf24";
-          const arrow   = ch.dir > 0 ? "↑" : ch.dir < 0 ? "↓" : "–";
-          const chStr   = ch.val != null
-            ? `${arrow} ${ch.dir >= 0 ? "+" : ""}${ch.val.toFixed(1)} (${ch.dir >= 0 ? "+" : ""}${ch.pct?.toFixed(2)}%)`
-            : "";
-          return `<div class="ticker-item" onclick="clearSymbolSearch();document.getElementById('symbolSearch').value='${r.symbol}';onSymbolSearch('${r.symbol}')">
+          const price =
+            s.close != null
+              ? parseFloat(s.close).toLocaleString("vi-VN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })
+              : "—";
+          const chColor =
+            ch.dir > 0 ? "#4ade80" : ch.dir < 0 ? "#f87171" : "#fbbf24";
+          const arrow = ch.dir > 0 ? "↑" : ch.dir < 0 ? "↓" : "–";
+          const chStr =
+            ch.val != null
+              ? `${arrow} ${ch.dir >= 0 ? "+" : ""}${ch.val.toFixed(1)} (${
+                  ch.dir >= 0 ? "+" : ""
+                }${ch.pct?.toFixed(2)}%)`
+              : "";
+          return `<div class="ticker-item" onclick="clearSymbolSearch();document.getElementById('symbolSearch').value='${
+            r.symbol
+          }';onSymbolSearch('${r.symbol}')">
             <div class="ticker-row1">
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px">${r.symbol}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px">${
+                r.symbol
+              }</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:#e2e8f0">${price}</span>
             </div>
             <div class="ticker-row2">
-              ${chStr ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:${chColor}">${chStr}</span>` : '<span style="font-size:11px;color:rgba(255,255,255,.2)">—</span>'}
+              ${
+                chStr
+                  ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:${chColor}">${chStr}</span>`
+                  : '<span style="font-size:11px;color:rgba(255,255,255,.2)">—</span>'
+              }
             </div>
           </div>`;
         }
@@ -865,7 +1544,7 @@
         track.innerHTML = html;
         track.offsetHeight; // reflow
 
-        const barW   = bar.offsetWidth;
+        const barW = bar.offsetWidth;
         const trackW = track.scrollWidth;
         const needScroll = trackW > barW;
 
@@ -881,12 +1560,14 @@
       // Hiển thị ticker ngay sau load likes — giá 0, chờ runScan update
       function buildTickerPlaceholder() {
         if (likedSymbols.size === 0) return;
-        const bar   = document.getElementById("tickerBar");
+        const bar = document.getElementById("tickerBar");
         const track = document.getElementById("tickerTrack");
         if (!bar || !track) return;
         bar.style.display = "block";
         track.style.animation = "none";
-        track.innerHTML = [...likedSymbols].map(sym => `
+        track.innerHTML = [...likedSymbols]
+          .map(
+            (sym) => `
           <div class="ticker-item">
             <div class="ticker-row1">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px">${sym}</span>
@@ -895,7 +1576,9 @@
             <div class="ticker-row2">
               <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:rgba(255,255,255,.25)">Đang tải…</span>
             </div>
-          </div>`).join("");
+          </div>`
+          )
+          .join("");
       }
 
       function toggleLike(symbol) {
@@ -949,46 +1632,73 @@
           likedBtn.style.color = on ? "#92400e" : "#6b7280";
         }
         // Pattern buttons
-        document.querySelectorAll(".pattern-filter-btn").forEach(btn => {
+        document.querySelectorAll(".pattern-filter-btn").forEach((btn) => {
           const key = btn.dataset.key;
-          const on  = activeFilters.has(key);
-          btn.style.background   = on ? btn.dataset.bgOn   : "#fff";
-          btn.style.borderColor  = on ? btn.dataset.brdOn  : "#e5e7eb";
-          btn.style.color        = on ? btn.dataset.clrOn  : "#6b7280";
+          const on = activeFilters.has(key);
+          btn.style.background = on ? btn.dataset.bgOn : "#fff";
+          btn.style.borderColor = on ? btn.dataset.brdOn : "#e5e7eb";
+          btn.style.color = on ? btn.dataset.clrOn : "#6b7280";
         });
       }
 
       function buildPatternFilterBtns() {
         // Collect all patterns present in current results
         const patternMap = new Map(); // label → {bull, count}
-        allResults.filter(r => isSurge(r)).forEach(r => {
-          const ps = detectCandlePatterns(r.chart.opens??[], r.chart.highs??[], r.chart.lows??[], r.chart.prices??[]);
-          ps.forEach(p => {
-            if (!patternMap.has(p.label)) patternMap.set(p.label, { bull: p.bull, count: 0 });
-            patternMap.get(p.label).count++;
+        allResults
+          .filter((r) => isSurge(r))
+          .forEach((r) => {
+            const ps = detectCandlePatterns(
+              r.chart.opens ?? [],
+              r.chart.highs ?? [],
+              r.chart.lows ?? [],
+              r.chart.prices ?? []
+            );
+            ps.forEach((p) => {
+              if (!patternMap.has(p.label))
+                patternMap.set(p.label, { bull: p.bull, count: 0 });
+              patternMap.get(p.label).count++;
+            });
           });
-        });
 
         const wrap = document.getElementById("patternFilters");
         if (!wrap) return;
         wrap.innerHTML = "";
 
-        if (patternMap.size === 0) { wrap.style.display = "none"; return; }
+        if (patternMap.size === 0) {
+          wrap.style.display = "none";
+          return;
+        }
         wrap.style.display = "flex";
 
         patternMap.forEach((v, label) => {
-          const bgOn  = v.bull === true  ? "#f0fdf4" : v.bull === false ? "#fff5f5" : "#f8fafc";
-          const brdOn = v.bull === true  ? "#86efac" : v.bull === false ? "#fca5a5" : "#cbd5e1";
-          const clrOn = v.bull === true  ? "#166534" : v.bull === false ? "#991b1b" : "#475569";
+          const bgOn =
+            v.bull === true
+              ? "#f0fdf4"
+              : v.bull === false
+              ? "#fff5f5"
+              : "#f8fafc";
+          const brdOn =
+            v.bull === true
+              ? "#86efac"
+              : v.bull === false
+              ? "#fca5a5"
+              : "#cbd5e1";
+          const clrOn =
+            v.bull === true
+              ? "#166534"
+              : v.bull === false
+              ? "#991b1b"
+              : "#475569";
 
           const btn = document.createElement("button");
           btn.className = "pattern-filter-btn";
-          btn.dataset.key   = label;
-          btn.dataset.bgOn  = bgOn;
+          btn.dataset.key = label;
+          btn.dataset.bgOn = bgOn;
           btn.dataset.brdOn = brdOn;
           btn.dataset.clrOn = clrOn;
           btn.onclick = () => toggleFilter(label);
-          btn.style.cssText = "display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap";
+          btn.style.cssText =
+            "display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:14px;border:1.5px solid #e5e7eb;background:#fff;font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;transition:all .15s;white-space:nowrap";
           btn.textContent = label + " (" + v.count + ")";
           wrap.appendChild(btn);
         });
@@ -1001,25 +1711,36 @@
       function loadSettings() {
         try {
           const s = JSON.parse(localStorage.getItem("surgeSettings") || "{}");
-          if (s.showMarkers        !== undefined) showMarkers        = s.showMarkers;
-          if (s.displayLimit       !== undefined) displayLimit       = s.displayLimit;
-          if (s.volHighlightX      !== undefined) volHighlightX      = s.volHighlightX;
-          if (s.surgeFilterEnabled !== undefined) surgeFilterEnabled = s.surgeFilterEnabled;
-          if (s.activeFilters      !== undefined) activeFilters      = new Set(s.activeFilters);
-          if (s.symbolQuery        !== undefined) symbolQuery        = s.symbolQuery;
-          if (s.sortMode           !== undefined) sortMode           = s.sortMode;
-          if (s.rangeN             !== undefined) rangeN             = s.rangeN;
-          if (s.chartMode          !== undefined) chartMode          = s.chartMode;
-        } catch(e) {}
+          if (s.showMarkers !== undefined) showMarkers = s.showMarkers;
+          if (s.displayLimit !== undefined) displayLimit = s.displayLimit;
+          if (s.volHighlightX !== undefined) volHighlightX = s.volHighlightX;
+          if (s.surgeFilterEnabled !== undefined)
+            surgeFilterEnabled = s.surgeFilterEnabled;
+          if (s.activeFilters !== undefined)
+            activeFilters = new Set(s.activeFilters);
+          if (s.symbolQuery !== undefined) symbolQuery = s.symbolQuery;
+          if (s.sortMode !== undefined) sortMode = s.sortMode;
+          if (s.rangeN !== undefined) rangeN = s.rangeN;
+          if (s.chartMode !== undefined) chartMode = s.chartMode;
+        } catch (e) {}
       }
       function saveSettings() {
         try {
-          localStorage.setItem("surgeSettings", JSON.stringify({
-            showMarkers, displayLimit, volHighlightX, surgeFilterEnabled,
-            activeFilters: [...activeFilters],
-            symbolQuery, sortMode, rangeN, chartMode,
-          }));
-        } catch(e) {}
+          localStorage.setItem(
+            "surgeSettings",
+            JSON.stringify({
+              showMarkers,
+              displayLimit,
+              volHighlightX,
+              surgeFilterEnabled,
+              activeFilters: [...activeFilters],
+              symbolQuery,
+              sortMode,
+              rangeN,
+              chartMode,
+            })
+          );
+        } catch (e) {}
       }
       loadSettings();
 
@@ -1046,27 +1767,36 @@
       function toggleSettingsPopup() {
         const popup = document.getElementById("settingsPopup");
         const isOpen = popup.style.display !== "none";
-        if (isOpen) { popup.style.display = "none"; return; }
+        if (isOpen) {
+          popup.style.display = "none";
+          return;
+        }
 
         // Sync pending với current khi mở
         _pendingMarkers = showMarkers;
-        _pendingLimit   = displayLimit;
-        _pendingVolX          = volHighlightX;
+        _pendingLimit = displayLimit;
+        _pendingVolX = volHighlightX;
         _pendingFilterEnabled = surgeFilterEnabled;
         applySurgeFilterUI(_pendingFilterEnabled);
         applyMarkerSwitchUI(_pendingMarkers);
         const vxi = document.getElementById("volHighlightInput");
-        if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+        if (vxi)
+          vxi.textContent =
+            volHighlightX % 1 === 0
+              ? volHighlightX
+              : parseFloat(volHighlightX).toFixed(1);
 
         popup.style.display = "block";
         setTimeout(() => {
           document.addEventListener("click", function closePopup(e) {
-            if (!document.getElementById("settingsPopup")?.contains(e.target) &&
-                !document.getElementById("settingsBtn")?.contains(e.target)) {
+            if (
+              !document.getElementById("settingsPopup")?.contains(e.target) &&
+              !document.getElementById("settingsBtn")?.contains(e.target)
+            ) {
               // Reset pending về current nếu đóng mà không Áp dụng
               _pendingMarkers = showMarkers;
-              _pendingLimit   = displayLimit;
-              _pendingVolX          = volHighlightX;
+              _pendingLimit = displayLimit;
+              _pendingVolX = volHighlightX;
               _pendingFilterEnabled = surgeFilterEnabled;
               applyMarkerSwitchUI(showMarkers);
               document.getElementById("settingsPopup").style.display = "none";
@@ -1077,9 +1807,9 @@
       }
 
       // Pending settings — chỉ apply khi bấm "Áp dụng"
-      let _pendingMarkers    = showMarkers;
-      let _pendingLimit      = displayLimit;
-      let _pendingVolX          = volHighlightX;
+      let _pendingMarkers = showMarkers;
+      let _pendingLimit = displayLimit;
+      let _pendingVolX = volHighlightX;
       let _pendingFilterEnabled = surgeFilterEnabled;
 
       function toggleMarkers() {
@@ -1088,19 +1818,19 @@
       }
 
       function applyMarkerSwitchUI(val) {
-        const v     = val !== undefined ? val : showMarkers;
-        const sw    = document.getElementById("markerToggleSwitch");
+        const v = val !== undefined ? val : showMarkers;
+        const sw = document.getElementById("markerToggleSwitch");
         const thumb = document.getElementById("markerSwitchThumb");
-        if (sw)    sw.style.background = v ? "#003a6b" : "#d1d5db";
-        if (thumb) thumb.style.left    = v ? "21px" : "3px";
+        if (sw) sw.style.background = v ? "#003a6b" : "#d1d5db";
+        if (thumb) thumb.style.left = v ? "21px" : "3px";
       }
 
       function applySurgeFilterUI(val) {
-        const sw    = document.getElementById("surgeFilterSwitch");
+        const sw = document.getElementById("surgeFilterSwitch");
         const thumb = document.getElementById("surgeFilterThumb");
         const stepper = document.getElementById("volXStepper");
-        if (sw)    sw.style.background = val ? "#003a6b" : "#d1d5db";
-        if (thumb) thumb.style.left    = val ? "21px" : "3px";
+        if (sw) sw.style.background = val ? "#003a6b" : "#d1d5db";
+        if (thumb) thumb.style.left = val ? "21px" : "3px";
         if (stepper) stepper.style.opacity = val ? "1" : "0.35";
         if (stepper) stepper.style.pointerEvents = val ? "auto" : "none";
       }
@@ -1119,62 +1849,80 @@
         if (next < 0.5 || next > 10) return;
         _pendingVolX = next;
         const el = document.getElementById("volHighlightInput");
-        if (el) el.textContent = _pendingVolX % 1 === 0 ? _pendingVolX : _pendingVolX.toFixed(1);
+        if (el)
+          el.textContent =
+            _pendingVolX % 1 === 0 ? _pendingVolX : _pendingVolX.toFixed(1);
       }
 
       function setDisplayLimit(val) {
         _pendingLimit = parseInt(val) || 0;
-        displayLimit  = _pendingLimit;
+        displayLimit = _pendingLimit;
         saveSettings();
         renderGrid();
       }
 
       function applySettings() {
-        const changed = (showMarkers !== _pendingMarkers) || (displayLimit !== _pendingLimit) || (volHighlightX !== _pendingVolX) || (surgeFilterEnabled !== _pendingFilterEnabled);
-        if (!changed) { closeSettingsPopup(); return; }
+        const changed =
+          showMarkers !== _pendingMarkers ||
+          displayLimit !== _pendingLimit ||
+          volHighlightX !== _pendingVolX ||
+          surgeFilterEnabled !== _pendingFilterEnabled;
+        if (!changed) {
+          closeSettingsPopup();
+          return;
+        }
 
         // Hiện loading trên button
         const spinner = document.getElementById("applySpinner");
-        const label   = document.getElementById("applyBtnLabel");
-        const btn     = document.getElementById("applyBtn");
+        const label = document.getElementById("applyBtnLabel");
+        const btn = document.getElementById("applyBtn");
         if (spinner) spinner.style.display = "block";
-        if (label)   label.textContent = "Đang xử lý…";
-        if (btn)     btn.style.opacity = ".7";
-        if (btn)     btn.style.pointerEvents = "none";
+        if (label) label.textContent = "Đang xử lý…";
+        if (btn) btn.style.opacity = ".7";
+        if (btn) btn.style.pointerEvents = "none";
 
         // Nhường browser 1 frame để vẽ loading, rồi mới xử lý nặng
-        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => {
-          showMarkers   = _pendingMarkers;
-          displayLimit  = _pendingLimit;
-          volHighlightX      = _pendingVolX;
-          surgeFilterEnabled = _pendingFilterEnabled;
-          saveSettings();
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() =>
+            setTimeout(() => {
+              showMarkers = _pendingMarkers;
+              displayLimit = _pendingLimit;
+              volHighlightX = _pendingVolX;
+              surgeFilterEnabled = _pendingFilterEnabled;
+              saveSettings();
 
-          // Update display limit input nếu reset
-          const inp = document.getElementById("displayLimitInput");
-          if (inp) inp.value = displayLimit > 0 ? displayLimit : "";
+              // Update display limit input nếu reset
+              const inp = document.getElementById("displayLimitInput");
+              if (inp) inp.value = displayLimit > 0 ? displayLimit : "";
 
-          // Re-draw markers không cần rebuild chart
-          Object.values(chartMap).forEach(c => {
-            if (Array.isArray(c)) c.forEach(ch => ch?.update("none"));
-            else c?.update("none");
-          });
+              // Re-draw markers không cần rebuild chart
+              Object.values(chartMap).forEach((c) => {
+                if (Array.isArray(c)) c.forEach((ch) => ch?.update("none"));
+                else c?.update("none");
+              });
 
-          // Cập nhật lại stat sidebar (surgeCount phụ thuộc volHighlightX)
-          const statSurge = document.getElementById("statSurge");
-          if (statSurge) statSurge.textContent = allResults.filter(r => isSurge(r)).length;
-          const statConfig = document.getElementById("statConfig");
-          if (statConfig) statConfig.textContent = volHighlightX + "× / MA" + getMaPeriod();
+              // Cập nhật lại stat sidebar (surgeCount phụ thuộc volHighlightX)
+              const statSurge = document.getElementById("statSurge");
+              if (statSurge)
+                statSurge.textContent = allResults.filter((r) =>
+                  isSurge(r)
+                ).length;
+              const statConfig = document.getElementById("statConfig");
+              if (statConfig)
+                statConfig.textContent =
+                  volHighlightX + "× / MA" + getMaPeriod();
 
-          renderGrid();
-          closeSettingsPopup();
+              renderGrid();
+              closeSettingsPopup();
 
-          // Reset button
-          if (spinner) spinner.style.display = "none";
-          if (label)   label.textContent = "Áp dụng";
-          if (btn)     btn.style.opacity = "1";
-          if (btn)     btn.style.pointerEvents = "auto";
-        }, 50)));
+              // Reset button
+              if (spinner) spinner.style.display = "none";
+              if (label) label.textContent = "Áp dụng";
+              if (btn) btn.style.opacity = "1";
+              if (btn) btn.style.pointerEvents = "auto";
+            }, 50)
+          )
+        );
       }
 
       function closeSettingsPopup() {
@@ -1186,11 +1934,15 @@
         const lineBtn = document.getElementById("modeLineBtn");
         const candleBtn = document.getElementById("modeCandleBtn");
         if (mode === "line") {
-          lineBtn.style.background = "#003a6b";   lineBtn.style.color = "#fff";
-          candleBtn.style.background = "transparent"; candleBtn.style.color = "#9ca3af";
+          lineBtn.style.background = "#003a6b";
+          lineBtn.style.color = "#fff";
+          candleBtn.style.background = "transparent";
+          candleBtn.style.color = "#9ca3af";
         } else {
-          candleBtn.style.background = "#003a6b"; candleBtn.style.color = "#fff";
-          lineBtn.style.background = "transparent";  lineBtn.style.color = "#9ca3af";
+          candleBtn.style.background = "#003a6b";
+          candleBtn.style.color = "#fff";
+          lineBtn.style.background = "transparent";
+          lineBtn.style.color = "#9ca3af";
           // Mặc định 3 tháng khi xem nến
           if (rangeN === 22) setRange(66);
         }
@@ -1226,9 +1978,12 @@
         if (sortMode === "vol")
           sorted.sort((a, b) => b.latestVol - a.latestVol);
         else if (sortMode === "balance")
-          sorted.sort((a, b) => b.ratio * Math.log1p(b.latestVol) - a.ratio * Math.log1p(a.latestVol));
-        else
-          sorted.sort((a, b) => b.ratio - a.ratio);
+          sorted.sort(
+            (a, b) =>
+              b.ratio * Math.log1p(b.latestVol) -
+              a.ratio * Math.log1p(a.latestVol)
+          );
+        else sorted.sort((a, b) => b.ratio - a.ratio);
         // Liked items luôn lên trên, giữ nguyên thứ tự tương đối
         return sorted.sort((a, b) => {
           const la = likedSymbols.has(a.symbol) ? 0 : 1;
@@ -1255,8 +2010,6 @@
 
         const statsBlock = document.getElementById("statsBlock");
         statsBlock.style.opacity = ".35";
-        document.getElementById("btnExportAll").classList.add("hidden");
-        document.getElementById("btnExportAll").classList.remove("flex");
         destroyCharts();
         document.getElementById("resultCount").textContent = "";
         document.getElementById("content").innerHTML = `
@@ -1266,10 +2019,9 @@
     </div>`;
 
         try {
-          const res = await fetch(
-            `${SERVER}/analyze?ma=${ma}`,
-            { redirect: "error" }
-          );
+          const res = await fetch(`${SERVER}/analyze?ma=${ma}`, {
+            redirect: "error",
+          });
           const json = await res.json();
           if (!res.ok || json.error)
             throw new Error(json.error ?? `HTTP ${res.status}`);
@@ -1280,10 +2032,6 @@
           renderGrid();
 
           statsBlock.style.opacity = "1";
-          if (allResults.some((r) => isSurge(r))) {
-            document.getElementById("btnExportAll").classList.remove("hidden");
-            document.getElementById("btnExportAll").classList.add("flex");
-          }
         } catch (err) {
           document.getElementById("content").innerHTML = `
       <div class="flex flex-col items-center justify-center h-full gap-3 text-sm text-gray-500">
@@ -1298,8 +2046,9 @@
       function renderSummary(json) {
         document.getElementById("statFiles").textContent =
           json.scannedFiles ?? 0;
-        document.getElementById("statSurge").textContent =
-          allResults.filter(r => isSurge(r)).length;
+        document.getElementById("statSurge").textContent = allResults.filter(
+          (r) => isSurge(r)
+        ).length;
         document.getElementById("statConfig").textContent =
           volHighlightX + "× / MA" + (json.maPeriod ?? 20);
       }
@@ -1308,25 +2057,35 @@
       function renderGrid() {
         const surgeList = allResults.filter((r) => isSurge(r));
         // Filter theo mã tìm kiếm (hỗ trợ nhiều mã cách nhau dấu cách/phẩy)
-        const queries = symbolQuery ? symbolQuery.split(/[\s,;]+/).filter(Boolean) : [];
+        const queries = symbolQuery
+          ? symbolQuery.split(/[\s,;]+/).filter(Boolean)
+          : [];
         const all = sortResults(
           queries.length > 0
-            ? surgeList.filter(r => queries.some(q => r.symbol.includes(q)))
+            ? surgeList.filter((r) => queries.some((q) => r.symbol.includes(q)))
             : surgeList
         );
 
         // Áp dụng filter
         let filtered = all;
         if (activeFilters.size > 0) {
-          filtered = all.filter(r => {
+          filtered = all.filter((r) => {
             // Filter liked
-            if (activeFilters.has("liked") && !likedSymbols.has(r.symbol)) return false;
+            if (activeFilters.has("liked") && !likedSymbols.has(r.symbol))
+              return false;
             // Filter pattern — nếu có bất kỳ pattern filter nào thì mã phải có ít nhất 1 pattern khớp
-            const patternFilters = [...activeFilters].filter(k => k !== "liked");
+            const patternFilters = [...activeFilters].filter(
+              (k) => k !== "liked"
+            );
             if (patternFilters.length > 0) {
-              const ps = detectCandlePatterns(r.chart.opens??[], r.chart.highs??[], r.chart.lows??[], r.chart.prices??[]);
-              const labels = ps.map(p => p.label);
-              if (!patternFilters.some(k => labels.includes(k))) return false;
+              const ps = detectCandlePatterns(
+                r.chart.opens ?? [],
+                r.chart.highs ?? [],
+                r.chart.lows ?? [],
+                r.chart.prices ?? []
+              );
+              const labels = ps.map((p) => p.label);
+              if (!patternFilters.some((k) => labels.includes(k))) return false;
             }
             return true;
           });
@@ -1335,14 +2094,15 @@
         // Build pattern filter buttons dựa trên toàn bộ surge (không theo filter)
         buildPatternFilterBtns();
 
-        const items = (displayLimit > 0) ? filtered.slice(0, displayLimit) : filtered;
+        const items =
+          displayLimit > 0 ? filtered.slice(0, displayLimit) : filtered;
         const total = filtered.length;
         document.getElementById("resultCount").textContent =
           activeFilters.size > 0
             ? items.length + "/" + all.length + " mã"
-            : (displayLimit > 0 && displayLimit < all.length)
-              ? items.length + "/" + all.length + " mã đột biến"
-              : all.length + " mã đột biến";
+            : displayLimit > 0 && displayLimit < all.length
+            ? items.length + "/" + all.length + " mã đột biến"
+            : all.length + " mã đột biến";
 
         // Destroy tất cả chart TRƯỚC khi xóa DOM —
         // Chart.js giữ reference canvas trong registry, phải giải phóng trước
@@ -1367,7 +2127,10 @@
         // để tránh block main thread quá lâu
         let idx = 0;
         function buildNextChart() {
-          if (idx >= items.length) return;
+          if (idx >= items.length) {
+            fitCardsToViewport();
+            return;
+          }
           buildChart(items[idx++]);
           setTimeout(buildNextChart, 0);
         }
@@ -1562,10 +2325,10 @@
         div.id = `card-${r.symbol}`;
         div.className = isSurge(r) ? "is-surge" : "";
         div.style.cssText =
-          "background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;" +
+          "background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;" +
           (isSurge(r)
             ? "border:1px solid rgba(0,0,0,.08);border-top:3px solid #e03131;"
-            : "border:1px solid rgba(0,0,0,.08);")
+            : "border:1px solid rgba(0,0,0,.08);");
         div.onmouseenter = () => {
           div.style.transform = "translateY(-3px)";
           div.style.boxShadow = "0 10px 32px rgba(0,0,0,.1)";
@@ -1585,12 +2348,16 @@
           }) ?? "—";
 
         // Detect candle patterns — dùng toàn bộ data để detect chính xác
-        const _allOpens  = r.chart.opens  ?? [];
-        const _allHighs  = r.chart.highs  ?? [];
-        const _allLows   = r.chart.lows   ?? [];
+        const _allOpens = r.chart.opens ?? [];
+        const _allHighs = r.chart.highs ?? [];
+        const _allLows = r.chart.lows ?? [];
         const _allCloses = r.chart.prices ?? [];
-        const patterns = detectCandlePatterns(_allOpens, _allHighs, _allLows, _allCloses);
-
+        const patterns = detectCandlePatterns(
+          _allOpens,
+          _allHighs,
+          _allLows,
+          _allCloses
+        );
 
         div.innerHTML = `
     <!-- Card header compact: 1 row -->
@@ -1598,8 +2365,12 @@
 
       <!-- Symbol + date -->
       <div style="display:flex;align-items:baseline;gap:8px;flex-shrink:0">
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#003a6b;letter-spacing:-.3px;line-height:1">${r.symbol}</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9ca3af">${r.latestDate}</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#003a6b;letter-spacing:-.3px;line-height:1">${
+          r.symbol
+        }</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9ca3af">${
+          r.latestDate
+        }</span>
       </div>
 
       <!-- Divider -->
@@ -1609,14 +2380,20 @@
       <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0;overflow:hidden">
         <div style="display:flex;align-items:center;gap:5px;white-space:nowrap">
           <span style="font-size:11px;color:#9ca3af;font-weight:600">KL</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${isSurge(r) ? "#e03131" : "#1a1a2e"}">${fmtVol(r.latestVol)}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${
+            isSurge(r) ? "#e03131" : "#1a1a2e"
+          }">${fmtVol(r.latestVol)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:5px;white-space:nowrap">
           <span style="font-size:11px;color:#9ca3af;font-weight:600">MA${ma}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:#1a1a2e">${fmtVol(r.ma20)}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:#1a1a2e">${fmtVol(
+            r.ma20
+          )}</span>
         </div>
         <div style="display:flex;align-items:center;gap:4px;white-space:nowrap">
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:${isSurge(r) ? "#e03131" : "#2f9e44"}">${r.ratio}×</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:${
+            isSurge(r) ? "#e03131" : "#2f9e44"
+          }">${r.ratio}×</span>
           <!-- Progress bar inline -->
           <div style="width:48px;height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden;flex-shrink:0">
             <div class="ratio-fill" style="height:100%;border-radius:2px;background:linear-gradient(90deg,#003a6b,#e03131);width:${barPct}%"></div>
@@ -1625,16 +2402,22 @@
       </div>
 
       <!-- Pattern badges -->
-      <div id="pb-${r.symbol}" style="display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden;max-width:240px"></div>
+      <div id="pb-${
+        r.symbol
+      }" style="display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden;max-width:240px"></div>
 
       <!-- Right: RSI badge + MACD badge + GT badge + like + surge pill -->
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto">
-        <div id="rsi-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">RSI —</div>
-        <div id="macd-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">MACD —</div>
-        <div id="val-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">GT —</div>
-        <div class="surge-pill" style="align-items:center;gap:4px;background:linear-gradient(135deg,#fff5f5,#ffe4e4);border:1px solid #ffc9c9;color:#e03131;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.3px;white-space:nowrap">
-          ⚡ SURGE
-        </div>
+        <div id="rsi-badge-${
+          r.symbol
+        }" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">RSI —</div>
+        <div id="macd-badge-${
+          r.symbol
+        }" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">MACD —</div>
+        <div id="val-badge-${
+          r.symbol
+        }" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">GT —</div>
+
         <button id="like-${r.symbol}" onclick="toggleLike('${r.symbol}')"
           style="width:26px;height:26px;border-radius:50%;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0"
           onmouseenter="this.style.background='#fefce8';this.style.borderColor='#fcd34d'"
@@ -1643,22 +2426,40 @@
       </div>
     </div>
 
-    <div id="chart-row-${r.symbol}" style="display:flex;min-height:310px">
+    <div id="chart-row-${r.symbol}" style="display:flex;flex:1;min-height:0">
       <div style="flex:3;padding:4px 8px 14px;position:relative;min-width:0;display:flex;flex-direction:column">
-        <div id="chart-wrap-${r.symbol}" style="flex:1;position:relative;min-height:180px">
-          <canvas id="chart-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        <div id="chart-wrap-${
+          r.symbol
+        }" style="flex:1;position:relative;min-height:0">
+          <canvas id="chart-${
+            r.symbol
+          }" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
         </div>
-        <div id="chart-vol-wrap-${r.symbol}" style="display:none;position:relative;height:110px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
-          <canvas id="chart-vol-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        <div id="chart-vol-wrap-${
+          r.symbol
+        }" style="display:none;position:relative;height:110px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
+          <canvas id="chart-vol-${
+            r.symbol
+          }" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
         </div>
         <!-- RSI + MACD side by side -->
-        <div id="chart-indicators-${r.symbol}" style="display:none;flex-shrink:0;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;gap:1px;background:#f1f5f9;border-radius:0 0 4px 4px;overflow:hidden">
+        <div id="chart-indicators-${
+          r.symbol
+        }" style="display:none;flex-shrink:0;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;background:#f1f5f9;border-radius:0 0 4px 4px;overflow:hidden;height:80px">
           <div style="display:flex;height:80px">
-            <div id="chart-rsi-wrap-${r.symbol}" style="display:none;flex:1;position:relative;min-width:0">
-              <canvas id="chart-rsi-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+            <div id="chart-rsi-wrap-${
+              r.symbol
+            }" style="display:none;flex:1;position:relative;min-width:0">
+              <canvas id="chart-rsi-${
+                r.symbol
+              }" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
             </div>
-            <div id="chart-macd-wrap-${r.symbol}" style="display:none;flex:1;position:relative;min-width:0;border-left:1px solid rgba(0,0,0,.06)">
-              <canvas id="chart-macd-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+            <div id="chart-macd-wrap-${
+              r.symbol
+            }" style="display:none;flex:1;position:relative;min-width:0;border-left:1px solid rgba(0,0,0,.06)">
+              <canvas id="chart-macd-${
+                r.symbol
+              }" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
             </div>
           </div>
         </div>
@@ -1667,32 +2468,28 @@
         r.symbol
       }" style="flex:0 0 25%;border-left:none;margin-left:20px;margin-right:20px;padding:18px 16px;display:flex;flex-direction:column;min-width:0;background:#fafafa;border-radius:12px;border:1px solid rgba(0,0,0,.06)">
         <div id="session-${r.symbol}" style="flex:1;overflow-y:auto"></div>
-        <div style="border-top:1px solid rgba(0,0,0,.06);padding-top:12px;margin-top:10px">
-          <div id="bb-signal-${r.symbol}" style="margin-bottom:10px"></div>
-          <button onclick="exportCard('${r.symbol}')"
-            style="width:100%;height:38px;border-radius:12px;border:1px solid rgba(0,0,0,.1);background:transparent;font-size:13px;font-weight:600;color:#6b7280;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .15s"
-            onmouseenter="this.style.background='#003a6b';this.style.borderColor='#003a6b';this.style.color='#fff'"
-            onmouseleave="this.style.background='transparent';this.style.borderColor='rgba(0,0,0,.1)';this.style.color='#6b7280'">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Xuất ảnh
-          </button>
-        </div>
+        <div id="bb-signal-${
+          r.symbol
+        }" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)"></div>
       </div>
     </div>`;
 
         // Inject session info + BB signal
-        div.querySelector(`#session-${r.symbol}`).innerHTML = sessionInfoHtml(r);
+        div.querySelector(`#session-${r.symbol}`).innerHTML =
+          sessionInfoHtml(r);
         div.querySelector(`#bb-signal-${r.symbol}`).innerHTML = bbSignalHtml(r);
 
         // Inject RSI badge (tính nhanh từ toàn bộ giá)
-        const _rsiPrices = (r.chart.prices ?? []).filter(p => p != null);
-        const _rsiVals   = calcRSI(_rsiPrices);
-        const _rsiNow    = _rsiVals.filter(v => v != null).at(-1) ?? null;
-        const _rsiBadge  = div.querySelector(`#rsi-badge-${r.symbol}`);
+        const _rsiPrices = (r.chart.prices ?? []).filter((p) => p != null);
+        const _rsiVals = calcRSI(_rsiPrices);
+        const _rsiNow = _rsiVals.filter((v) => v != null).at(-1) ?? null;
+        const _rsiBadge = div.querySelector(`#rsi-badge-${r.symbol}`);
         if (_rsiBadge && _rsiNow != null) {
           const { text, color } = rsiLabel(_rsiNow);
-          const bg = _rsiNow >= 70 ? "#fff5f5" : _rsiNow <= 30 ? "#f0fdf4" : "#eef2ff";
-          const bd = _rsiNow >= 70 ? "#ffc9c9" : _rsiNow <= 30 ? "#bbf7d0" : "#c7d2fe";
+          const bg =
+            _rsiNow >= 70 ? "#fff5f5" : _rsiNow <= 30 ? "#f0fdf4" : "#eef2ff";
+          const bd =
+            _rsiNow >= 70 ? "#ffc9c9" : _rsiNow <= 30 ? "#bbf7d0" : "#c7d2fe";
           _rsiBadge.textContent = text;
           _rsiBadge.style.color = color;
           _rsiBadge.style.background = bg;
@@ -1701,45 +2498,65 @@
 
           // Nội dung tooltip theo vùng RSI
           const rsiDesc =
-            _rsiNow >= 70 ? "RSI ≥ 70: Vùng quá mua — cổ phiếu đang tăng mạnh, có thể sắp điều chỉnh. Kết hợp KL đột biến cần thận trọng." :
-            _rsiNow >= 60 ? "RSI 60–70: Xu hướng tăng mạnh nhưng chưa quá mua. Momentum tốt, vẫn còn dư địa tăng." :
-            _rsiNow >= 50 ? "RSI 50–60: Vùng trung tính thiên tăng. Phe mua đang chiếm ưu thế nhẹ." :
-            _rsiNow >= 40 ? "RSI 40–50: Vùng trung tính thiên giảm. Phe bán đang chiếm ưu thế nhẹ." :
-            _rsiNow >= 30 ? "RSI 30–40: Xu hướng giảm nhưng chưa quá bán. Cần theo dõi thêm dấu hiệu đảo chiều." :
-                            "RSI ≤ 30: Vùng quá bán — cổ phiếu giảm mạnh, có thể sắp hồi phục. Kết hợp KL đột biến là tín hiệu mua tiềm năng.";
+            _rsiNow >= 70
+              ? "RSI ≥ 70: Vùng quá mua — cổ phiếu đang tăng mạnh, có thể sắp điều chỉnh. Kết hợp KL đột biến cần thận trọng."
+              : _rsiNow >= 60
+              ? "RSI 60–70: Xu hướng tăng mạnh nhưng chưa quá mua. Momentum tốt, vẫn còn dư địa tăng."
+              : _rsiNow >= 50
+              ? "RSI 50–60: Vùng trung tính thiên tăng. Phe mua đang chiếm ưu thế nhẹ."
+              : _rsiNow >= 40
+              ? "RSI 40–50: Vùng trung tính thiên giảm. Phe bán đang chiếm ưu thế nhẹ."
+              : _rsiNow >= 30
+              ? "RSI 30–40: Xu hướng giảm nhưng chưa quá bán. Cần theo dõi thêm dấu hiệu đảo chiều."
+              : "RSI ≤ 30: Vùng quá bán — cổ phiếu giảm mạnh, có thể sắp hồi phục. Kết hợp KL đột biến là tín hiệu mua tiềm năng.";
 
           const rsiBadgeTip = document.createElement("div");
           rsiBadgeTip.textContent = rsiDesc;
-          rsiBadgeTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+          rsiBadgeTip.style.cssText =
+            "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
           document.body.appendChild(rsiBadgeTip);
 
           _rsiBadge.addEventListener("mouseenter", () => {
             const rect = _rsiBadge.getBoundingClientRect();
             rsiBadgeTip.style.display = "block";
             const tipH = rsiBadgeTip.offsetHeight || 80;
-            const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
-            rsiBadgeTip.style.top  = top + "px";
-            rsiBadgeTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+            const top =
+              rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+            rsiBadgeTip.style.top = top + "px";
+            rsiBadgeTip.style.left =
+              Math.min(rect.left, window.innerWidth - 256) + "px";
           });
-          _rsiBadge.addEventListener("mouseleave", () => { rsiBadgeTip.style.display = "none"; });
+          _rsiBadge.addEventListener("mouseleave", () => {
+            rsiBadgeTip.style.display = "none";
+          });
         }
 
         // Inject MACD badge
-        const _macdPrices = (r.chart.prices ?? []).filter(p => p != null);
+        const _macdPrices = (r.chart.prices ?? []).filter((p) => p != null);
         if (_macdPrices.length >= 35) {
           const { macdLine, signalLine, histogram } = calcMACD(_macdPrices);
-          const _macdNow  = macdLine.filter(v => v != null).at(-1) ?? null;
-          const _sigNow   = signalLine.filter(v => v != null).at(-1) ?? null;
-          const _histNow  = histogram.filter(v => v != null).at(-1) ?? null;
+          const _macdNow = macdLine.filter((v) => v != null).at(-1) ?? null;
+          const _sigNow = signalLine.filter((v) => v != null).at(-1) ?? null;
+          const _histNow = histogram.filter((v) => v != null).at(-1) ?? null;
           const _macdBadge = div.querySelector(`#macd-badge-${r.symbol}`);
           if (_macdBadge && _macdNow != null) {
             const { text, color } = macdLabel(_macdNow, _sigNow, _histNow);
-            const bg = color === "#2f9e44" || color === "#059669" ? "#f0fdf4" :
-                       color === "#e03131" ? "#fff5f5" :
-                       color === "#f59e0b" ? "#fffbeb" : "#f3f4f6";
-            const bd = color === "#2f9e44" || color === "#059669" ? "#bbf7d0" :
-                       color === "#e03131" ? "#ffc9c9" :
-                       color === "#f59e0b" ? "#fde68a" : "#e5e7eb";
+            const bg =
+              color === "#2f9e44" || color === "#059669"
+                ? "#f0fdf4"
+                : color === "#e03131"
+                ? "#fff5f5"
+                : color === "#f59e0b"
+                ? "#fffbeb"
+                : "#f3f4f6";
+            const bd =
+              color === "#2f9e44" || color === "#059669"
+                ? "#bbf7d0"
+                : color === "#e03131"
+                ? "#ffc9c9"
+                : color === "#f59e0b"
+                ? "#fde68a"
+                : "#e5e7eb";
             _macdBadge.textContent = text;
             _macdBadge.style.color = color;
             _macdBadge.style.background = bg;
@@ -1747,23 +2564,31 @@
             _macdBadge.style.cursor = "help";
 
             const macdDesc =
-              _histNow > 0 && _macdNow > 0  ? "MACD > 0, Histogram dương: Xu hướng tăng mạnh. Đường MACD trên Signal và trên 0 — momentum tăng đang chiếm ưu thế." :
-              _histNow > 0 && _macdNow <= 0 ? "MACD < 0 nhưng Histogram dương: Đang phục hồi từ vùng âm. MACD cắt lên Signal — tín hiệu đảo chiều tăng sớm." :
-              _histNow < 0 && _macdNow < 0  ? "MACD < 0, Histogram âm: Xu hướng giảm. Đường MACD dưới Signal và dưới 0 — momentum giảm đang chiếm ưu thế." :
-                                              "MACD > 0 nhưng Histogram âm: Xu hướng tăng đang suy yếu. MACD cắt xuống Signal — cảnh báo đảo chiều giảm.";
+              _histNow > 0 && _macdNow > 0
+                ? "MACD > 0, Histogram dương: Xu hướng tăng mạnh. Đường MACD trên Signal và trên 0 — momentum tăng đang chiếm ưu thế."
+                : _histNow > 0 && _macdNow <= 0
+                ? "MACD < 0 nhưng Histogram dương: Đang phục hồi từ vùng âm. MACD cắt lên Signal — tín hiệu đảo chiều tăng sớm."
+                : _histNow < 0 && _macdNow < 0
+                ? "MACD < 0, Histogram âm: Xu hướng giảm. Đường MACD dưới Signal và dưới 0 — momentum giảm đang chiếm ưu thế."
+                : "MACD > 0 nhưng Histogram âm: Xu hướng tăng đang suy yếu. MACD cắt xuống Signal — cảnh báo đảo chiều giảm.";
             const macdTip = document.createElement("div");
             macdTip.textContent = macdDesc;
-            macdTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+            macdTip.style.cssText =
+              "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
             document.body.appendChild(macdTip);
             _macdBadge.addEventListener("mouseenter", () => {
               const rect = _macdBadge.getBoundingClientRect();
               macdTip.style.display = "block";
               const tipH = macdTip.offsetHeight || 80;
-              const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
-              macdTip.style.top  = top + "px";
-              macdTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+              const top =
+                rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+              macdTip.style.top = top + "px";
+              macdTip.style.left =
+                Math.min(rect.left, window.innerWidth - 256) + "px";
             });
-            _macdBadge.addEventListener("mouseleave", () => { macdTip.style.display = "none"; });
+            _macdBadge.addEventListener("mouseleave", () => {
+              macdTip.style.display = "none";
+            });
           }
         }
 
@@ -1771,14 +2596,17 @@
         const _valBadge = div.querySelector(`#val-badge-${r.symbol}`);
         if (_valBadge && r.session?.val != null) {
           const valTy = r.session.val / 1e9; // tỷ đồng
-          const valStr = valTy >= 1000 ? (valTy / 1000).toFixed(1) + " nghìn tỷ"
-                       : valTy >= 1   ? valTy.toFixed(1) + " tỷ"
-                       : (valTy * 1000).toFixed(0) + " triệu";
+          const valStr =
+            valTy >= 1000
+              ? (valTy / 1000).toFixed(1) + " nghìn tỷ"
+              : valTy >= 1
+              ? valTy.toFixed(1) + " tỷ"
+              : (valTy * 1000).toFixed(0) + " triệu";
           const isLarge = valTy >= 100;
-          const isMed   = valTy >= 10;
+          const isMed = valTy >= 10;
           const valColor = isLarge ? "#7c3aed" : isMed ? "#0369a1" : "#6b7280";
-          const valBg    = isLarge ? "#f5f3ff" : isMed ? "#f0f9ff" : "#f3f4f6";
-          const valBd    = isLarge ? "#ddd6fe" : isMed ? "#bae6fd" : "#e5e7eb";
+          const valBg = isLarge ? "#f5f3ff" : isMed ? "#f0f9ff" : "#f3f4f6";
+          const valBd = isLarge ? "#ddd6fe" : isMed ? "#bae6fd" : "#e5e7eb";
           _valBadge.textContent = "GT " + valStr;
           _valBadge.style.color = valColor;
           _valBadge.style.background = valBg;
@@ -1792,17 +2620,22 @@
             : `Giá trị khớp lệnh ${valStr} — dòng tiền nhỏ, cần thận trọng khi đánh giá tín hiệu KL đột biến.`;
           const valTip = document.createElement("div");
           valTip.textContent = valDesc;
-          valTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+          valTip.style.cssText =
+            "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
           document.body.appendChild(valTip);
           _valBadge.addEventListener("mouseenter", () => {
             const rect = _valBadge.getBoundingClientRect();
             valTip.style.display = "block";
             const tipH = valTip.offsetHeight || 70;
-            const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
-            valTip.style.top  = top + "px";
-            valTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+            const top =
+              rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+            valTip.style.top = top + "px";
+            valTip.style.left =
+              Math.min(rect.left, window.innerWidth - 256) + "px";
           });
-          _valBadge.addEventListener("mouseleave", () => { valTip.style.display = "none"; });
+          _valBadge.addEventListener("mouseleave", () => {
+            valTip.style.display = "none";
+          });
         }
 
         // Inject star icon
@@ -1812,15 +2645,35 @@
         // Inject pattern badges
         const badgeWrap = div.querySelector(`#pb-${r.symbol}`);
         if (badgeWrap && patterns.length > 0) {
-          patterns.forEach(p => {
-            const bg     = p.bull === true  ? "linear-gradient(135deg,#f0fdf4,#dcfce7)"
-                         : p.bull === false ? "linear-gradient(135deg,#fff5f5,#ffe4e4)"
-                         : "linear-gradient(135deg,#f8fafc,#f1f5f9)";
-            const border = p.bull === true  ? "#86efac" : p.bull === false ? "#fca5a5" : "#dee2e6";
-            const color  = p.bull === true  ? "#166534" : p.bull === false ? "#991b1b" : "#64748b";
+          patterns.forEach((p) => {
+            const bg =
+              p.bull === true
+                ? "linear-gradient(135deg,#f0fdf4,#dcfce7)"
+                : p.bull === false
+                ? "linear-gradient(135deg,#fff5f5,#ffe4e4)"
+                : "linear-gradient(135deg,#f8fafc,#f1f5f9)";
+            const border =
+              p.bull === true
+                ? "#86efac"
+                : p.bull === false
+                ? "#fca5a5"
+                : "#dee2e6";
+            const color =
+              p.bull === true
+                ? "#166534"
+                : p.bull === false
+                ? "#991b1b"
+                : "#64748b";
 
             const badge = document.createElement("div");
-            badge.style.cssText = "position:relative;display:inline-flex;align-items:center;gap:5px;background:" + bg + ";border:1px solid " + border + ";color:" + color + ";font-size:10px;font-weight:700;padding:4px 8px 4px 10px;border-radius:20px;white-space:nowrap";
+            badge.style.cssText =
+              "position:relative;display:inline-flex;align-items:center;gap:5px;background:" +
+              bg +
+              ";border:1px solid " +
+              border +
+              ";color:" +
+              color +
+              ";font-size:10px;font-weight:700;padding:4px 8px 4px 10px;border-radius:20px;white-space:nowrap";
 
             const labelSpan = document.createElement("span");
             labelSpan.textContent = p.label;
@@ -1830,7 +2683,8 @@
               // Tooltip hiện khi hover toàn badge
               const tip = document.createElement("div");
               tip.textContent = p.desc;
-              tip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.5;padding:8px 12px;border-radius:10px;width:220px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+              tip.style.cssText =
+                "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.5;padding:8px 12px;border-radius:10px;width:220px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
               document.body.appendChild(tip);
 
               badge.style.cursor = "default";
@@ -1839,20 +2693,28 @@
                 tip.style.display = "block";
                 // Định vị: ưu tiên bên trên badge, tránh tràn màn hình
                 const tipH = 80;
-                const top = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+                const top =
+                  rect.top - tipH - 8 > 0
+                    ? rect.top - tipH - 8
+                    : rect.bottom + 8;
                 const left = Math.min(rect.left, window.innerWidth - 236);
-                tip.style.top  = top + "px";
+                tip.style.top = top + "px";
                 tip.style.left = left + "px";
               });
               badge.addEventListener("mousemove", (e) => {
                 const rect = badge.getBoundingClientRect();
                 const tipH = tip.offsetHeight || 80;
-                const top = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+                const top =
+                  rect.top - tipH - 8 > 0
+                    ? rect.top - tipH - 8
+                    : rect.bottom + 8;
                 const left = Math.min(rect.left, window.innerWidth - 236);
-                tip.style.top  = top + "px";
+                tip.style.top = top + "px";
                 tip.style.left = left + "px";
               });
-              badge.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+              badge.addEventListener("mouseleave", () => {
+                tip.style.display = "none";
+              });
             }
 
             badgeWrap.appendChild(badge);
@@ -1869,89 +2731,185 @@
 
         // Tìm nến cuối cùng có đủ OHLC
         let i = n - 1;
-        while (i >= 2 && (closes[i]==null||opens[i]==null||highs[i]==null||lows[i]==null)) i--;
+        while (
+          i >= 2 &&
+          (closes[i] == null ||
+            opens[i] == null ||
+            highs[i] == null ||
+            lows[i] == null)
+        )
+          i--;
         if (i < 2) return [];
 
-        const o=opens[i], h=highs[i], l=lows[i], c=closes[i];
-        const o1=opens[i-1], h1=highs[i-1], l1=lows[i-1], c1=closes[i-1];
-        const o2=opens[i-2], h2=highs[i-2], l2=lows[i-2], c2=closes[i-2];
+        const o = opens[i],
+          h = highs[i],
+          l = lows[i],
+          c = closes[i];
+        const o1 = opens[i - 1],
+          h1 = highs[i - 1],
+          l1 = lows[i - 1],
+          c1 = closes[i - 1];
+        const o2 = opens[i - 2],
+          h2 = highs[i - 2],
+          l2 = lows[i - 2],
+          c2 = closes[i - 2];
 
-        const body   = Math.abs(c - o);
-        const range  = h - l;
+        const body = Math.abs(c - o);
+        const range = h - l;
         if (range === 0) return [];
 
         const upperW = h - Math.max(o, c);
         const lowerW = Math.min(o, c) - l;
-        const isUp   = c > o;
+        const isUp = c > o;
         const isDown = c < o;
         const bodyRatio = body / range;
 
         // Trend 5 nến trước
-        const prev = closes.slice(Math.max(0, i-6), i).filter(v => v != null);
-        const downtrend = prev.length >= 3 && prev[0] > prev[prev.length-1] * 1.01;
-        const uptrend   = prev.length >= 3 && prev[0] < prev[prev.length-1] * 0.99;
+        const prev = closes
+          .slice(Math.max(0, i - 6), i)
+          .filter((v) => v != null);
+        const downtrend =
+          prev.length >= 3 && prev[0] > prev[prev.length - 1] * 1.01;
+        const uptrend =
+          prev.length >= 3 && prev[0] < prev[prev.length - 1] * 0.99;
 
         const patterns = [];
 
         // ── Marubozu tăng: thân lớn, gần như không có bóng ──────────────────────
         if (isUp && bodyRatio > 0.85) {
-          patterns.push({ label: "▲ Marubozu↑", bull: true,  desc: "Nến tăng mạnh, thân dài gần như không có bóng. Lực mua áp đảo hoàn toàn trong phiên." });
+          patterns.push({
+            label: "▲ Marubozu↑",
+            bull: true,
+            desc: "Nến tăng mạnh, thân dài gần như không có bóng. Lực mua áp đảo hoàn toàn trong phiên.",
+          });
         }
         // ── Marubozu giảm ────────────────────────────────────────────────────────
         if (isDown && bodyRatio > 0.85) {
-          patterns.push({ label: "▼ Marubozu↓", bull: false, desc: "Nến giảm mạnh, thân dài gần như không có bóng. Lực bán áp đảo hoàn toàn trong phiên." });
+          patterns.push({
+            label: "▼ Marubozu↓",
+            bull: false,
+            desc: "Nến giảm mạnh, thân dài gần như không có bóng. Lực bán áp đảo hoàn toàn trong phiên.",
+          });
         }
 
         // ── Doji: thân rất nhỏ so với range ──────────────────────────────────────
         if (bodyRatio < 0.1) {
-          patterns.push({ label: "〠 Doji", bull: null, desc: "Giá mở và đóng gần bằng nhau. Thị trường đang do dự, cần xác nhận từ nến tiếp theo." });
+          patterns.push({
+            label: "〠 Doji",
+            bull: null,
+            desc: "Giá mở và đóng gần bằng nhau. Thị trường đang do dự, cần xác nhận từ nến tiếp theo.",
+          });
         }
 
         // ── Hammer: bóng dưới dài, thân nhỏ ở trên, sau downtrend ───────────────
-        if (bodyRatio < 0.45 && lowerW >= range * 0.45 && upperW <= range * 0.2 && downtrend) {
-          patterns.push({ label: "🔨 Hammer", bull: true,  desc: "Bóng dưới dài sau downtrend. Phe bán đẩy giá xuống nhưng phe mua đã đẩy lại — tín hiệu đảo chiều tăng." });
+        if (
+          bodyRatio < 0.45 &&
+          lowerW >= range * 0.45 &&
+          upperW <= range * 0.2 &&
+          downtrend
+        ) {
+          patterns.push({
+            label: "🔨 Hammer",
+            bull: true,
+            desc: "Bóng dưới dài sau downtrend. Phe bán đẩy giá xuống nhưng phe mua đã đẩy lại — tín hiệu đảo chiều tăng.",
+          });
         }
         // ── Hanging Man: hình dạng như Hammer nhưng sau uptrend ──────────────────
-        if (bodyRatio < 0.45 && lowerW >= range * 0.45 && upperW <= range * 0.2 && uptrend) {
-          patterns.push({ label: "☠ Hanging Man", bull: false, desc: "Hình dạng như Hammer nhưng xuất hiện sau uptrend — cảnh báo phe mua đang yếu dần, có thể đảo chiều giảm." });
+        if (
+          bodyRatio < 0.45 &&
+          lowerW >= range * 0.45 &&
+          upperW <= range * 0.2 &&
+          uptrend
+        ) {
+          patterns.push({
+            label: "☠ Hanging Man",
+            bull: false,
+            desc: "Hình dạng như Hammer nhưng xuất hiện sau uptrend — cảnh báo phe mua đang yếu dần, có thể đảo chiều giảm.",
+          });
         }
 
         // ── Shooting Star: bóng trên dài, thân nhỏ ở dưới, sau uptrend ──────────
         // PVT: O=26.8 H=27.85 L=24.65 C=24.65 → upperW=27.85-26.8=1.05, lowerW=24.65-24.65=0
-        if (bodyRatio < 0.45 && upperW >= range * 0.45 && lowerW <= range * 0.2 && uptrend) {
-          patterns.push({ label: "🌠 Shooting Star", bull: false, desc: "Bóng trên dài sau uptrend. Giá bị đẩy lên cao nhưng phe bán kéo xuống mạnh — tín hiệu đảo chiều giảm." });
+        if (
+          bodyRatio < 0.45 &&
+          upperW >= range * 0.45 &&
+          lowerW <= range * 0.2 &&
+          uptrend
+        ) {
+          patterns.push({
+            label: "🌠 Shooting Star",
+            bull: false,
+            desc: "Bóng trên dài sau uptrend. Giá bị đẩy lên cao nhưng phe bán kéo xuống mạnh — tín hiệu đảo chiều giảm.",
+          });
         }
         // ── Inverted Hammer: hình dạng như Shooting Star nhưng sau downtrend ─────
-        if (bodyRatio < 0.45 && upperW >= range * 0.45 && lowerW <= range * 0.2 && downtrend) {
-          patterns.push({ label: "↩ Inv. Hammer", bull: true,  desc: "Bóng trên dài sau downtrend. Phe mua thử đẩy giá lên — cần xác nhận từ nến xanh tiếp theo." });
+        if (
+          bodyRatio < 0.45 &&
+          upperW >= range * 0.45 &&
+          lowerW <= range * 0.2 &&
+          downtrend
+        ) {
+          patterns.push({
+            label: "↩ Inv. Hammer",
+            bull: true,
+            desc: "Bóng trên dài sau downtrend. Phe mua thử đẩy giá lên — cần xác nhận từ nến xanh tiếp theo.",
+          });
         }
 
-        if (!o1||!c1) return patterns;
-        const body1  = Math.abs(c1 - o1);
-        const isUp1  = c1 > o1;
-        const isDown1= c1 < o1;
+        if (!o1 || !c1) return patterns;
+        const body1 = Math.abs(c1 - o1);
+        const isUp1 = c1 > o1;
+        const isDown1 = c1 < o1;
 
         // ── Bullish Engulfing ─────────────────────────────────────────────────────
         if (isDown1 && isUp && body1 > 0 && o < c1 && c > o1 && body > body1) {
-          patterns.push({ label: "🔼 Engulfing↑", bull: true,  desc: "Nến xanh hôm nay nuốt trọn thân nến đỏ hôm qua. Lực mua đột ngột áp đảo — tín hiệu đảo chiều tăng mạnh." });
+          patterns.push({
+            label: "🔼 Engulfing↑",
+            bull: true,
+            desc: "Nến xanh hôm nay nuốt trọn thân nến đỏ hôm qua. Lực mua đột ngột áp đảo — tín hiệu đảo chiều tăng mạnh.",
+          });
         }
         // ── Bearish Engulfing ─────────────────────────────────────────────────────
         if (isUp1 && isDown && body1 > 0 && o > c1 && c < o1 && body > body1) {
-          patterns.push({ label: "🔽 Engulfing↓", bull: false, desc: "Nến đỏ hôm nay nuốt trọn thân nến xanh hôm qua. Lực bán đột ngột áp đảo — tín hiệu đảo chiều giảm mạnh." });
+          patterns.push({
+            label: "🔽 Engulfing↓",
+            bull: false,
+            desc: "Nến đỏ hôm nay nuốt trọn thân nến xanh hôm qua. Lực bán đột ngột áp đảo — tín hiệu đảo chiều giảm mạnh.",
+          });
         }
 
-        if (!o2||!c2) return patterns;
-        const body2  = Math.abs(c2 - o2);
-        const isDown2= c2 < o2;
-        const isUp2  = c2 > o2;
+        if (!o2 || !c2) return patterns;
+        const body2 = Math.abs(c2 - o2);
+        const isDown2 = c2 < o2;
+        const isUp2 = c2 > o2;
 
         // ── Morning Star ──────────────────────────────────────────────────────────
-        if (isDown2 && body2 > 0 && body1 < body2 * 0.4 && isUp && c > (o2+c2)/2) {
-          patterns.push({ label: "🌅 Morning Star", bull: true,  desc: "3 nến: đỏ lớn → nến nhỏ do dự → xanh lớn. Xu hướng giảm kết thúc, phe mua kiểm soát trở lại." });
+        if (
+          isDown2 &&
+          body2 > 0 &&
+          body1 < body2 * 0.4 &&
+          isUp &&
+          c > (o2 + c2) / 2
+        ) {
+          patterns.push({
+            label: "🌅 Morning Star",
+            bull: true,
+            desc: "3 nến: đỏ lớn → nến nhỏ do dự → xanh lớn. Xu hướng giảm kết thúc, phe mua kiểm soát trở lại.",
+          });
         }
         // ── Evening Star ──────────────────────────────────────────────────────────
-        if (isUp2 && body2 > 0 && body1 < body2 * 0.4 && isDown && c < (o2+c2)/2) {
-          patterns.push({ label: "🌇 Evening Star", bull: false, desc: "3 nến: xanh lớn → nến nhỏ do dự → đỏ lớn. Xu hướng tăng kết thúc, phe bán kiểm soát trở lại." });
+        if (
+          isUp2 &&
+          body2 > 0 &&
+          body1 < body2 * 0.4 &&
+          isDown &&
+          c < (o2 + c2) / 2
+        ) {
+          patterns.push({
+            label: "🌇 Evening Star",
+            bull: false,
+            desc: "3 nến: xanh lớn → nến nhỏ do dự → đỏ lớn. Xu hướng tăng kết thúc, phe bán kiểm soát trở lại.",
+          });
         }
 
         return patterns;
@@ -1961,7 +2919,7 @@
       const candlestickPlugin = {
         id: "candlestick",
         afterDatasetsDraw(chart) {
-          const dsIdx = chart.data.datasets.findIndex(d => d.label === "Nến");
+          const dsIdx = chart.data.datasets.findIndex((d) => d.label === "Nến");
           if (dsIdx === -1) return;
           const ds = chart.data.datasets[dsIdx];
           const ctx = chart.ctx;
@@ -1976,7 +2934,14 @@
           const half = Math.max(Math.floor(rawW / 2), 1);
 
           ds.data.forEach((d, i) => {
-            if (d == null || d.o == null || d.h == null || d.l == null || d.c == null) return;
+            if (
+              d == null ||
+              d.o == null ||
+              d.h == null ||
+              d.l == null ||
+              d.c == null
+            )
+              return;
             const el = meta.data[i];
             if (!el) return;
             const x = el.x;
@@ -2017,7 +2982,7 @@
           // ── Vẽ marker đảo chiều (nếu bật) ────────────────────────────────────
           if (showMarkers) {
             const markers = ds._patternMarkers ?? [];
-            markers.forEach(m => {
+            markers.forEach((m) => {
               const el = meta.data[m.idx];
               if (!el) return;
               const x = el.x;
@@ -2046,14 +3011,12 @@
 
       // ── Sync crosshair plugin ─────────────────────────────────────────────────────
       // Chart đang hover: hoạt động bình thường (tooltip + crosshair gốc)
-      // 2 chart còn lại: hiện điểm tròn tại cùng dataIndex, không tooltip
       const syncCrosshairPlugin = {
         id: "syncCrosshair",
         afterEvent(chart, args) {
           const e = args.event;
           if (e.type !== "mousemove" && e.type !== "mouseout") return;
 
-          // Tìm symbol: chart-VCB → VCB, chart-vol-VCB → VCB, chart-rsi-VCB → VCB
           const rawId = chart.canvas?.id ?? "";
           const sym = rawId.replace(/^chart-(vol-|rsi-|macd-)?/, "");
           if (!sym) return;
@@ -2061,11 +3024,10 @@
           if (!Array.isArray(group) || group.length < 2) return;
 
           if (e.type === "mouseout") {
-            group.forEach(c => {
-              if (c === chart) return;
-              c._syncIndex = null;
-              c.update("none");
-            });
+            // Clear cả chart đang hover lẫn chart phụ
+            chart._hoverIndex = null;
+            group.forEach((c) => { c._syncIndex = null; c.update("none"); });
+            chart.update("none");
             return;
           }
 
@@ -2075,22 +3037,37 @@
           if (!points.length) return;
           const dataIndex = points[0].index;
 
-          group.forEach(c => {
+          // Set _hoverIndex cho chính chart đang hover để afterDraw xử lý
+          if (chart._hoverIndex !== dataIndex) {
+            chart._hoverIndex = dataIndex;
+            chart.update("none");
+          }
+
+          // Sync _syncIndex sang chart phụ
+          group.forEach((c) => {
             if (c === chart) return;
-            c._syncIndex = dataIndex;
-            c.update("none");
+            if (c._syncIndex !== dataIndex) {
+              c._syncIndex = dataIndex;
+              c.update("none");
+            }
           });
         },
 
-        // Vẽ điểm tròn + đường dọc cho chart phụ đang được sync
         afterDraw(chart) {
-          const dataIndex = chart._syncIndex;
+          // Chart đang hover trực tiếp — dùng _hoverIndex
+          // Chart phụ được sync — dùng _syncIndex
+          const hoverIdx = chart._hoverIndex ?? null;
+          const syncIdx  = chart._syncIndex  ?? null;
+          const dataIndex = hoverIdx ?? syncIdx;
           if (dataIndex == null) return;
 
-          const ctx = chart.ctx;
-          const { top, bottom } = chart.chartArea;
+          const isHoverChart = hoverIdx != null; // chart mà chuột đang ở trên
+          const isCandle = chart.data.datasets.some(ds => ds.label === "Nến");
 
-          // Lấy vị trí x từ dataset đầu tiên có data tại index này
+          const ctx = chart.ctx;
+          const { top, bottom, left, right } = chart.chartArea;
+
+          // Lấy x
           let x = null;
           for (let di = 0; di < chart.data.datasets.length; di++) {
             const meta = chart.getDatasetMeta(di);
@@ -2098,34 +3075,77 @@
           }
           if (x == null) return;
 
-          // Đường dọc
           ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(x, top);
-          ctx.lineTo(x, bottom);
-          ctx.strokeStyle = "rgba(0,0,0,.2)";
-          ctx.lineWidth = 1;
-          ctx.setLineDash([3, 3]);
-          ctx.stroke();
-          ctx.setLineDash([]);
 
-          // Điểm tròn trên mỗi dataset line
-          chart.data.datasets.forEach((ds, di) => {
-            if (ds.type === "bar") return;
-            const meta = chart.getDatasetMeta(di);
-            const el = meta?.data?.[dataIndex];
-            if (!el) return;
-            const val = ds.data[dataIndex];
-            if (val == null) return;
-            const color = typeof ds.borderColor === "string" ? ds.borderColor : "#f59e0b";
+          if (isCandle && isHoverChart) {
+            // Tìm dữ liệu nến tại dataIndex
+            const candleDs = chart.data.datasets.find(ds => ds.label === "Nến");
+            if (candleDs) {
+              const d = candleDs.data[dataIndex];
+              const yScale = chart.scales["yPrice"];
+              if (d && yScale) {
+                const n = chart.data.labels?.length ?? 1;
+                const barW = Math.max(((right - left) / n) * 0.38, 3);
+                const isUp = d.c >= d.o;
+                const color = isUp ? "#2f9e44" : "#e03131";
+
+                const yH = yScale.getPixelForValue(d.h);
+                const yL = yScale.getPixelForValue(d.l);
+                const yO = yScale.getPixelForValue(d.o);
+                const yC = yScale.getPixelForValue(d.c);
+                const bodyTop = Math.min(yO, yC);
+                const bodyH   = Math.max(Math.abs(yC - yO), 1);
+
+                // Vẽ lại nến với màu sáng hơn (không phủ cột)
+                // Thân nến — fill sáng
+                ctx.fillStyle = isUp ? "rgba(47,158,68,0.9)" : "rgba(224,49,49,0.9)";
+                ctx.fillRect(x - barW, bodyTop, barW * 2, bodyH);
+
+                // Viền thân nến rõ nét
+                ctx.strokeStyle = isUp ? "#2f9e44" : "#e03131";
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(x - barW, bodyTop, barW * 2, bodyH);
+
+                // Bóng trên/dưới
+                ctx.beginPath();
+                ctx.moveTo(x, yH);
+                ctx.lineTo(x, bodyTop);
+                ctx.moveTo(x, bodyTop + bodyH);
+                ctx.lineTo(x, yL);
+                ctx.strokeStyle = isUp ? "#2f9e44" : "#e03131";
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+              }
+            }
+          } else if (!isCandle) {
+            // Chart phụ (vol/RSI/MACD): đường dọc + dot
             ctx.beginPath();
-            ctx.arc(x, el.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = "#fff";
-            ctx.fill();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 2;
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            ctx.strokeStyle = "rgba(0,0,0,.18)";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
             ctx.stroke();
-          });
+            ctx.setLineDash([]);
+
+            chart.data.datasets.forEach((ds, di) => {
+              if (ds.type === "bar") return;
+              if (["BB Upper","BB Mid","BB Lower","OB","OS"].includes(ds.label)) return;
+              const meta = chart.getDatasetMeta(di);
+              const el = meta?.data?.[dataIndex];
+              if (!el) return;
+              if (ds.data[dataIndex] == null) return;
+              const color = typeof ds.borderColor === "string" ? ds.borderColor : "#6366f1";
+              ctx.beginPath();
+              ctx.arc(x, el.y, 3, 0, Math.PI * 2);
+              ctx.fillStyle = "#fff";
+              ctx.fill();
+              ctx.strokeStyle = color;
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            });
+          }
+
           ctx.restore();
         },
       };
@@ -2134,11 +3154,13 @@
       // ── RSI ───────────────────────────────────────────────────────────────────────
       function calcRSI(prices, period = 14) {
         const rsi = new Array(prices.length).fill(null);
-        let gains = 0, losses = 0;
+        let gains = 0,
+          losses = 0;
         // seed
         for (let i = 1; i <= period; i++) {
           const d = prices[i] - prices[i - 1];
-          if (d >= 0) gains += d; else losses -= d;
+          if (d >= 0) gains += d;
+          else losses -= d;
         }
         let avgGain = gains / period;
         let avgLoss = losses / period;
@@ -2154,8 +3176,10 @@
 
       function rsiLabel(val) {
         if (val == null) return { text: "—", color: "#9ca3af" };
-        if (val >= 70)   return { text: `RSI ${val.toFixed(0)} ↑ Quá mua`, color: "#e03131" };
-        if (val <= 30)   return { text: `RSI ${val.toFixed(0)} ↓ Quá bán`, color: "#2f9e44" };
+        if (val >= 70)
+          return { text: `RSI ${val.toFixed(0)} ↑ Quá mua`, color: "#e03131" };
+        if (val <= 30)
+          return { text: `RSI ${val.toFixed(0)} ↓ Quá bán`, color: "#2f9e44" };
         return { text: `RSI ${val.toFixed(0)}`, color: "#6366f1" };
       }
 
@@ -2170,9 +3194,13 @@
           if (!started) {
             // seed: SMA của period đầu tiên
             if (i < period - 1) continue;
-            let sum = 0, cnt = 0;
+            let sum = 0,
+              cnt = 0;
             for (let j = i - period + 1; j <= i; j++) {
-              if (prices[j] != null) { sum += prices[j]; cnt++; }
+              if (prices[j] != null) {
+                sum += prices[j];
+                cnt++;
+              }
             }
             prev = sum / cnt;
             ema[i] = prev;
@@ -2186,25 +3214,36 @@
       }
 
       function calcMACD(prices, fast = 12, slow = 26, signal = 9) {
-        const emaFast   = calcEMA(prices, fast);
-        const emaSlow   = calcEMA(prices, slow);
-        const macdLine  = prices.map((_, i) =>
-          emaFast[i] != null && emaSlow[i] != null ? parseFloat((emaFast[i] - emaSlow[i]).toFixed(4)) : null
+        const emaFast = calcEMA(prices, fast);
+        const emaSlow = calcEMA(prices, slow);
+        const macdLine = prices.map((_, i) =>
+          emaFast[i] != null && emaSlow[i] != null
+            ? parseFloat((emaFast[i] - emaSlow[i]).toFixed(4))
+            : null
         );
-        const macdNotNull = macdLine.map(v => v ?? 0); // seed EMA signal từ macd
-        const signalLine  = calcEMA(macdNotNull, signal).map((v, i) => macdLine[i] == null ? null : parseFloat(v.toFixed(4)));
-        const histogram   = macdLine.map((v, i) =>
-          v != null && signalLine[i] != null ? parseFloat((v - signalLine[i]).toFixed(4)) : null
+        const macdNotNull = macdLine.map((v) => v ?? 0); // seed EMA signal từ macd
+        const signalLine = calcEMA(macdNotNull, signal).map((v, i) =>
+          macdLine[i] == null ? null : parseFloat(v.toFixed(4))
+        );
+        const histogram = macdLine.map((v, i) =>
+          v != null && signalLine[i] != null
+            ? parseFloat((v - signalLine[i]).toFixed(4))
+            : null
         );
         return { macdLine, signalLine, histogram };
       }
 
       function macdLabel(macd, signal, hist) {
-        if (macd == null || signal == null || hist == null) return { text: "MACD —", color: "#9ca3af" };
-        if (hist > 0 && macd > 0)  return { text: `MACD ↑ Tăng`,    color: "#2f9e44" };
-        if (hist > 0 && macd <= 0) return { text: `MACD ↑ Phục hồi`, color: "#059669" };
-        if (hist < 0 && macd < 0)  return { text: `MACD ↓ Giảm`,    color: "#e03131" };
-        if (hist < 0 && macd >= 0) return { text: `MACD ↓ Yếu dần`, color: "#f59e0b" };
+        if (macd == null || signal == null || hist == null)
+          return { text: "MACD —", color: "#9ca3af" };
+        if (hist > 0 && macd > 0)
+          return { text: `MACD ↑ Tăng`, color: "#2f9e44" };
+        if (hist > 0 && macd <= 0)
+          return { text: `MACD ↑ Phục hồi`, color: "#059669" };
+        if (hist < 0 && macd < 0)
+          return { text: `MACD ↓ Giảm`, color: "#e03131" };
+        if (hist < 0 && macd >= 0)
+          return { text: `MACD ↓ Yếu dần`, color: "#f59e0b" };
         return { text: "MACD ~", color: "#9ca3af" };
       }
 
@@ -2231,10 +3270,72 @@
         ].join(";");
         document.body.appendChild(tip);
         window._chartTooltipEl = tip;
-        window._chartTooltipKey = "";  // cache để tránh rewrite HTML
+        window._chartTooltipKey = ""; // cache để tránh rewrite HTML
       })();
 
-      function showExternalTooltip(chart, tooltipModel) {
+      // Tooltip cho RSI/MACD: hiện cố định phía trên chart, không che chart
+      // ── Update badges RSI / MACD / GT theo dataIndex khi hover ────────────────
+      function applyRsiBadge(el, val) {
+        if (!el || val == null) return;
+        const { text, color } = rsiLabel(val);
+        const bg = val >= 70 ? "#fff5f5" : val <= 30 ? "#f0fdf4" : "#eef2ff";
+        const bd = val >= 70 ? "#ffc9c9" : val <= 30 ? "#bbf7d0" : "#c7d2fe";
+        el.textContent = text;
+        el.style.color = color;
+        el.style.background = bg;
+        el.style.borderColor = bd;
+      }
+
+      function applyMacdBadge(el, macd, sig, hist) {
+        if (!el || macd == null) return;
+        const { text, color } = macdLabel(macd, sig, hist);
+        const bg = color === "#2f9e44" || color === "#059669" ? "#f0fdf4"
+                 : color === "#e03131" ? "#fff5f5"
+                 : color === "#f59e0b" ? "#fffbeb" : "#f3f4f6";
+        const bd = color === "#2f9e44" || color === "#059669" ? "#bbf7d0"
+                 : color === "#e03131" ? "#ffc9c9"
+                 : color === "#f59e0b" ? "#fde68a" : "#e5e7eb";
+        el.textContent = text;
+        el.style.color = color;
+        el.style.background = bg;
+        el.style.borderColor = bd;
+      }
+
+      function updateBadgesAtIndex(symbol, dataIndex) {
+        const cache = chartDataCache[symbol];
+        if (!cache) return;
+
+        const rsiBadge  = document.getElementById(`rsi-badge-${symbol}`);
+        const macdBadge = document.getElementById(`macd-badge-${symbol}`);
+
+        // RSI
+        const rsiVal = cache.rsiSlice?.[dataIndex] ?? null;
+        applyRsiBadge(rsiBadge, rsiVal);
+
+        // MACD
+        const macdVal = cache.macdSlice?.[dataIndex]   ?? null;
+        const sigVal  = cache.signalSlice?.[dataIndex]  ?? null;
+        const histVal = cache.histSlice?.[dataIndex]    ?? null;
+        applyMacdBadge(macdBadge, macdVal, sigVal, histVal);
+      }
+
+      function resetBadgesToLatest(symbol) {
+        const cache = chartDataCache[symbol];
+        if (!cache) return;
+
+        const rsiBadge  = document.getElementById(`rsi-badge-${symbol}`);
+        const macdBadge = document.getElementById(`macd-badge-${symbol}`);
+
+        const lastRsi  = cache.rsiSlice?.filter(v => v != null).at(-1)  ?? null;
+        const lastMacd = cache.macdSlice?.filter(v => v != null).at(-1) ?? null;
+        const lastSig  = cache.signalSlice?.filter(v => v != null).at(-1) ?? null;
+        const lastHist = cache.histSlice?.filter(v => v != null).at(-1)  ?? null;
+
+        applyRsiBadge(rsiBadge, lastRsi);
+        applyMacdBadge(macdBadge, lastMacd, lastSig, lastHist);
+      }
+
+      function showIndicatorTooltip(chart, tooltipModel) {
         const tip = window._chartTooltipEl;
         if (!tip) return;
 
@@ -2243,11 +3344,77 @@
           return;
         }
 
+        const dp = tooltipModel.dataPoints?.find(p =>
+          ["RSI","MACD","Signal","Histogram"].includes(p.dataset.label)
+        );
+        if (!dp) { tip.style.opacity = "0"; return; }
+
+        const idx   = dp.dataIndex;
+        const label = tooltipModel.title?.[0] ?? "";
+        const cacheKey = `ind-${chart.canvas.id}-${idx}`;
+
+        if (window._chartTooltipKey !== cacheKey) {
+          window._chartTooltipKey = cacheKey;
+          let lines = [];
+
+          // Lấy tất cả dataPoints để hiển thị cùng lúc
+          tooltipModel.dataPoints.forEach(p => {
+            const v = p.parsed.y;
+            if (v == null) return;
+            const dsLabel = p.dataset.label;
+            if (dsLabel === "RSI") {
+              const state = v >= 70 ? " <span style='color:#f87171'>↑ Quá mua</span>"
+                          : v <= 30 ? " <span style='color:#4ade80'>↓ Quá bán</span>" : "";
+              lines.push(`<span style='color:#f59e0b;font-weight:700'>RSI ${v.toFixed(1)}</span>${state}`);
+            } else if (dsLabel === "MACD") {
+              lines.push(`<span style='color:#3b82f6;font-weight:700'>MACD ${v.toFixed(3)}</span>`);
+            } else if (dsLabel === "Signal") {
+              lines.push(`<span style='color:#f59e0b;font-weight:700'>Tín hiệu ${v.toFixed(3)}</span>`);
+            } else if (dsLabel === "Histogram") {
+              const col = v >= 0 ? "#4ade80" : "#f87171";
+              lines.push(`<span style='color:${col};font-weight:700'>Biên độ ${v > 0 ? "+" : ""}${v.toFixed(3)}</span>`);
+            }
+          });
+
+          tip.innerHTML = `<div style="font-size:10px;color:#64748b;margin-bottom:4px">${label}</div>`
+                        + `<div style="display:flex;gap:10px;font-size:11px">${lines.join("")}</div>`;
+        }
+
+        // Hiện tooltip phía TRÊN chart, không che chart
+        const rect = chart.canvas.getBoundingClientRect();
+        const tw = 240;
+        const th = 52;
+        let x = rect.left + tooltipModel.caretX - tw / 2;
+        // Luôn hiện trên chart
+        let y = rect.top - th - 6;
+        // Nếu trên màn hình không đủ chỗ thì hiện dưới
+        if (y < 4) y = rect.bottom + 6;
+        // Giới hạn trái phải
+        x = Math.max(4, Math.min(x, window.innerWidth - tw - 4));
+
+        tip.style.transform = `translate(${x}px,${y}px)`;
+        tip.style.left = "0";
+        tip.style.top  = "0";
+        tip.style.opacity = "1";
+      }
+
+      function showExternalTooltip(chart, tooltipModel) {
+        const tip = window._chartTooltipEl;
+        if (!tip) return;
+
+        if (tooltipModel.opacity === 0) {
+          tip.style.opacity = "0";
+          // Reset badges về giá trị mới nhất khi không hover
+          const _sym0 = chart.canvas?.id?.replace(/^chart-/, "");
+          if (_sym0) resetBadgesToLatest(_sym0);
+          return;
+        }
+
         const dp = tooltipModel.dataPoints?.[0];
         if (!dp) return;
 
-        const ds    = dp.dataset;
-        const idx   = dp.dataIndex;
+        const ds = dp.dataset;
+        const idx = dp.dataIndex;
         const label = tooltipModel.title?.[0] ?? "";
 
         // Chỉ rewrite HTML khi dữ liệu thực sự thay đổi → không reflow liên tục
@@ -2255,21 +3422,32 @@
         if (window._chartTooltipKey !== cacheKey) {
           window._chartTooltipKey = cacheKey;
 
-          const fmt2 = v => v?.toLocaleString("vi-VN",{minimumFractionDigits:2,maximumFractionDigits:2}) ?? "—";
+          const fmt2 = (v) =>
+            v?.toLocaleString("vi-VN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) ?? "—";
           let html = `<div style="font-size:10px;color:#64748b;margin-bottom:6px;letter-spacing:.5px">${label}</div>`;
 
           if (ds.label === "Nến") {
             const d = ds.data[idx];
             if (!d) return;
-            const isUp   = d.c >= d.o;
-            const color  = isUp ? "#4ade80" : "#f87171";
-            const arrow  = isUp ? "▲" : "▼";
-            const chg    = (d.c ?? 0) - (d.o ?? 0);
-            const chgPct = d.o ? chg / d.o * 100 : 0;
-            const sign   = chg >= 0 ? "+" : "";
+            // Update badges RSI/MACD theo vị trí hover
+            const _sym = chart.canvas?.id?.replace(/^chart-/, "");
+            if (_sym) updateBadgesAtIndex(_sym, idx);
+            const isUp = d.c >= d.o;
+            const color = isUp ? "#4ade80" : "#f87171";
+            const arrow = isUp ? "▲" : "▼";
+            const chg = (d.c ?? 0) - (d.o ?? 0);
+            const chgPct = d.o ? (chg / d.o) * 100 : 0;
+            const sign = chg >= 0 ? "+" : "";
             html += `<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">
-              <span style="font-size:14px;font-weight:700;color:${color}">${arrow} ${fmt2(d.c)}</span>
-              <span style="font-size:11px;font-weight:600;color:${color}">${sign}${chg.toFixed(2)} (${sign}${chgPct.toFixed(2)}%)</span>
+              <span style="font-size:14px;font-weight:700;color:${color}">${arrow} ${fmt2(
+              d.c
+            )}</span>
+              <span style="font-size:11px;font-weight:600;color:${color}">${sign}${chg.toFixed(
+              2
+            )} (${sign}${chgPct.toFixed(2)}%)</span>
             </div>
             <div style="display:flex;gap:12px;font-size:10px;color:#94a3b8">
               <span>Mở&nbsp;<b style="color:#e2e8f0">${fmt2(d.o)}</b></span>
@@ -2278,7 +3456,9 @@
             </div>`;
           } else if (ds.label === "Giá đóng cửa") {
             const v = dp.parsed.y;
-            html += `<div style="font-size:14px;font-weight:700;color:#4ade80">${fmt2(v)}</div>`;
+            html += `<div style="font-size:14px;font-weight:700;color:#4ade80">${fmt2(
+              v
+            )}</div>`;
           } else {
             return;
           }
@@ -2287,22 +3467,22 @@
         }
 
         // Vị trí dùng transform thay vì left/top → GPU composite, không reflow
-        const rect   = chart.canvas.getBoundingClientRect();
-        const mx     = rect.left + tooltipModel.caretX;
-        const my     = rect.top  + tooltipModel.caretY;
-        const tw     = 200;  // ước lượng cố định, tránh offsetWidth trigger reflow
-        const th     = 68;
+        const rect = chart.canvas.getBoundingClientRect();
+        const mx = rect.left + tooltipModel.caretX;
+        const my = rect.top + tooltipModel.caretY;
+        const tw = 200; // ước lượng cố định, tránh offsetWidth trigger reflow
+        const th = 68;
         const margin = 14;
 
         let x = mx + margin;
         let y = my - th / 2;
-        if (x + tw > window.innerWidth  - 8) x = mx - tw - margin;
-        if (y < 8)                            y = 8;
-        if (y + th > window.innerHeight - 8)  y = window.innerHeight - th - 8;
+        if (x + tw > window.innerWidth - 8) x = mx - tw - margin;
+        if (y < 8) y = 8;
+        if (y + th > window.innerHeight - 8) y = window.innerHeight - th - 8;
 
         tip.style.transform = `translate(${x}px,${y}px)`;
         tip.style.left = "0";
-        tip.style.top  = "0";
+        tip.style.top = "0";
         tip.style.opacity = "1";
       }
 
@@ -2312,47 +3492,58 @@
         if (!canvas || !r.chart) return;
 
         const sliceN = Math.min(rangeN, r.chart.labels?.length ?? rangeN);
-        const labels  = r.chart.labels?.slice(-sliceN) ?? [];
+        const labels = r.chart.labels?.slice(-sliceN) ?? [];
         const volumes = r.chart.volumes?.slice(-sliceN) ?? [];
-        const prices  = r.chart.prices?.slice(-sliceN) ?? [];
-        const opens   = (r.chart.opens  ?? []).slice(-sliceN);
-        const highs   = (r.chart.highs  ?? []).slice(-sliceN);
-        const lows    = (r.chart.lows   ?? []).slice(-sliceN);
-        const bbMid   = r.chart.bbMid?.slice(-sliceN) ?? [];
+        const prices = r.chart.prices?.slice(-sliceN) ?? [];
+        const opens = (r.chart.opens ?? []).slice(-sliceN);
+        const highs = (r.chart.highs ?? []).slice(-sliceN);
+        const lows = (r.chart.lows ?? []).slice(-sliceN);
+        const bbMid = r.chart.bbMid?.slice(-sliceN) ?? [];
         const bbUpper = r.chart.bbUpper?.slice(-sliceN) ?? [];
         const bbLower = r.chart.bbLower?.slice(-sliceN) ?? [];
-        const ma20    = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
+        const ma20 = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
         if (!volumes?.length) return;
 
         // ── Tính RSI từ toàn bộ giá rồi slice ─────────────────────────────────
         const allPrices = r.chart.prices ?? [];
-        const rsiAll    = calcRSI(allPrices.filter(p => p != null));
+        const rsiAll = calcRSI(allPrices.filter((p) => p != null));
         // map lại vị trí (bỏ null)
-        const rsiSlice  = (() => {
-          const notNull = allPrices.map((p, i) => p != null ? i : -1).filter(i => i >= 0);
+        const rsiSlice = (() => {
+          const notNull = allPrices
+            .map((p, i) => (p != null ? i : -1))
+            .filter((i) => i >= 0);
           const startGlobal = allPrices.length - sliceN;
           return labels.map((_, li) => {
             const gi = startGlobal + li;
             const ni = notNull.indexOf(gi);
-            return ni >= 0 ? (rsiAll[ni] != null ? parseFloat(rsiAll[ni].toFixed(2)) : null) : null;
+            return ni >= 0
+              ? rsiAll[ni] != null
+                ? parseFloat(rsiAll[ni].toFixed(2))
+                : null
+              : null;
           });
         })();
-        const rsiCurrent = rsiSlice.filter(v => v != null).at(-1) ?? null;
+        const rsiCurrent = rsiSlice.filter((v) => v != null).at(-1) ?? null;
 
         // Helper vẽ RSI chart
         function buildRsiChart(axisWidth) {
-          const rsiWrap   = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
+          const rsiWrap = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
           const rsiCanvas = document.getElementById(`chart-rsi-${r.symbol}`);
           if (!rsiWrap || !rsiCanvas) return null;
-          rsiWrap.style.display = "flex";
-          const _indWrap = document.getElementById(`chart-indicators-${r.symbol}`);
+          rsiWrap.style.display = "block";
+          const _indWrap = document.getElementById(
+            `chart-indicators-${r.symbol}`
+          );
           if (_indWrap) _indWrap.style.display = "block";
 
-          const rsiColors = rsiSlice.map(v =>
-            v == null ? "transparent" :
-            v >= 70   ? "rgba(224,49,49,.7)" :
-            v <= 30   ? "rgba(47,158,68,.7)"  :
-                        "rgba(99,102,241,.6)"
+          const rsiColors = rsiSlice.map((v) =>
+            v == null
+              ? "transparent"
+              : v >= 70
+              ? "rgba(224,49,49,.7)"
+              : v <= 30
+              ? "rgba(47,158,68,.7)"
+              : "rgba(99,102,241,.6)"
           );
 
           return safeChart(rsiCanvas, {
@@ -2360,152 +3551,235 @@
               labels,
               datasets: [
                 // Vùng overbought fill
-                { type:"line", label:"RSI", data:rsiSlice,
-                  borderColor:"#f59e0b", borderWidth:2, pointRadius:0,
-                  tension:0.3, spanGaps:true,
-                  fill:false, yAxisID:"yRsi", order:1 },
+                {
+                  type: "line",
+                  label: "RSI",
+                  data: rsiSlice,
+                  borderColor: "#f59e0b",
+                  borderWidth: 2,
+                  pointRadius: 0, pointHoverRadius: 0,
+                  tension: 0.3,
+                  spanGaps: true,
+                  fill: false,
+                  yAxisID: "yRsi",
+                  order: 1,
+                },
                 // Line 70
-                { type:"line", label:"OB", data:labels.map(()=>70),
-                  borderColor:"rgba(224,49,49,.4)", borderWidth:1,
-                  borderDash:[3,3], pointRadius:0, spanGaps:true,
-                  fill:false, yAxisID:"yRsi", order:2 },
+                {
+                  type: "line",
+                  label: "OB",
+                  data: labels.map(() => 70),
+                  borderColor: "rgba(224,49,49,.4)",
+                  borderWidth: 1,
+                  borderDash: [3, 3],
+                  pointRadius: 0, pointHoverRadius: 0,
+                  spanGaps: true,
+                  fill: false,
+                  yAxisID: "yRsi",
+                  order: 2,
+                },
                 // Line 30
-                { type:"line", label:"OS", data:labels.map(()=>30),
-                  borderColor:"rgba(47,158,68,.4)", borderWidth:1,
-                  borderDash:[3,3], pointRadius:0, spanGaps:true,
-                  fill:false, yAxisID:"yRsi", order:3 },
+                {
+                  type: "line",
+                  label: "OS",
+                  data: labels.map(() => 30),
+                  borderColor: "rgba(47,158,68,.4)",
+                  borderWidth: 1,
+                  borderDash: [3, 3],
+                  pointRadius: 0, pointHoverRadius: 0,
+                  spanGaps: true,
+                  fill: false,
+                  yAxisID: "yRsi",
+                  order: 3,
+                },
               ],
             },
             options: {
-              responsive:true, maintainAspectRatio:false,
-              animation:{ duration:350 },
-              interaction:{ mode:"index", intersect:false },
-              plugins:{
-                legend:{ display:false },
-                tooltip:{
-                  enabled: true,
-                  displayColors: false,
-                  backgroundColor: "rgba(15,25,35,0.92)",
-                  titleColor: "#94a3b8",
-                  titleFont: { family: "'IBM Plex Mono'", size: 10 },
-                  bodyFont: { family: "'IBM Plex Mono'", size: 12, weight: "700" },
-                  bodyColor: "#fff",
-                  padding: 8,
-                  cornerRadius: 8,
-                  callbacks: {
-                    title: items => items[0]?.label ?? "",
-                    label: ctx => {
-                      if (ctx.dataset.label !== "RSI") return null;
-                      const v = ctx.parsed.y;
-                      if (v == null) return null;
-                      const state = v >= 70 ? " ↑ Quá mua" : v <= 30 ? " ↓ Quá bán" : "";
-                      return "RSI " + v.toFixed(1) + state;
-                    },
-                  },
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 350 },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  enabled: false,
+                  external: (ctx) => showIndicatorTooltip(ctx.chart, ctx.tooltip),
                 },
               },
-              scales:{
-                x:{ display:false },
-                yRsi:{
-                  position:"left", min:0, max:100,
-                  afterFit: ax => { if (axisWidth) ax.width = axisWidth; },
-                  ticks:{ maxTicksLimit:3, font:{ size:8, family:"'IBM Plex Mono'" }, color:"#adb5bd",
-                    callback: v => v===70?"70":v===30?"30":v===50?"RSI":"" },
-                  grid:{ color:"rgba(0,0,0,.04)" },
-                }
-              }
-            }
+              scales: {
+                x: { display: false },
+                yRsi: {
+                  position: "left",
+                  min: 0,
+                  max: 100,
+                  afterFit: (ax) => {
+                    // Tính width dựa trên label thực tế của RSI, không dùng syncedAxisWidth của chart chính
+                    const _ctx = ax.chart.ctx;
+                    _ctx.save();
+                    _ctx.font = "8px 'IBM Plex Mono', monospace";
+                    const _w = Math.max(
+                      _ctx.measureText("70").width,
+                      _ctx.measureText("30").width,
+                      _ctx.measureText("RSI").width
+                    );
+                    _ctx.restore();
+                    ax.width = Math.ceil(_w) + 12;
+                  },
+                  ticks: {
+                    maxTicksLimit: 3,
+                    font: { size: 8, family: "'IBM Plex Mono'" },
+                    color: "#adb5bd",
+                    callback: (v) =>
+                      v === 70 ? "70" : v === 30 ? "30" : v === 50 ? "RSI" : "",
+                  },
+                  grid: { color: "rgba(0,0,0,.04)" },
+                },
+              },
+            },
           });
         }
 
         // ── Tính MACD từ toàn bộ giá rồi slice ────────────────────────────────
         const allPricesForMacd = r.chart.prices ?? [];
-        const pricesNotNull = allPricesForMacd.filter(p => p != null);
+        const pricesNotNull = allPricesForMacd.filter((p) => p != null);
         let macdSlice = labels.map(() => null);
         let signalSlice = labels.map(() => null);
         let histSlice = labels.map(() => null);
         if (pricesNotNull.length >= 35) {
           const { macdLine, signalLine, histogram } = calcMACD(pricesNotNull);
-          const notNullIdx = allPricesForMacd.map((p, i) => p != null ? i : -1).filter(i => i >= 0);
+          const notNullIdx = allPricesForMacd
+            .map((p, i) => (p != null ? i : -1))
+            .filter((i) => i >= 0);
           const startGlobal = allPricesForMacd.length - sliceN;
-          macdSlice   = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? macdLine[ni]   : null; });
-          signalSlice = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? signalLine[ni] : null; });
-          histSlice   = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? histogram[ni]  : null; });
+          macdSlice = labels.map((_, li) => {
+            const gi = startGlobal + li;
+            const ni = notNullIdx.indexOf(gi);
+            return ni >= 0 ? macdLine[ni] : null;
+          });
+          signalSlice = labels.map((_, li) => {
+            const gi = startGlobal + li;
+            const ni = notNullIdx.indexOf(gi);
+            return ni >= 0 ? signalLine[ni] : null;
+          });
+          histSlice = labels.map((_, li) => {
+            const gi = startGlobal + li;
+            const ni = notNullIdx.indexOf(gi);
+            return ni >= 0 ? histogram[ni] : null;
+          });
         }
 
+        // Lưu vào cache để badge có thể update theo hover
+        chartDataCache[r.symbol] = {
+          rsiSlice, macdSlice, signalSlice, histSlice,
+          prices, opens, highs, lows, volumes, ma20,
+        };
+
         function buildMacdChart(axisWidth) {
-          const wrap   = document.getElementById(`chart-macd-wrap-${r.symbol}`);
+          const wrap = document.getElementById(`chart-macd-wrap-${r.symbol}`);
           const canvas = document.getElementById(`chart-macd-${r.symbol}`);
           if (!wrap || !canvas) return null;
-          wrap.style.display = "flex";
-          const _indWrap2 = document.getElementById(`chart-indicators-${r.symbol}`);
+          wrap.style.display = "block";
+          const _indWrap2 = document.getElementById(
+            `chart-indicators-${r.symbol}`
+          );
           if (_indWrap2) _indWrap2.style.display = "block";
 
-          const histColors = histSlice.map(v =>
-            v == null ? "transparent" : v >= 0 ? "rgba(47,158,68,.65)" : "rgba(224,49,49,.65)"
+          const histColors = histSlice.map((v) =>
+            v == null
+              ? "transparent"
+              : v >= 0
+              ? "rgba(47,158,68,.65)"
+              : "rgba(224,49,49,.65)"
           );
 
           return safeChart(canvas, {
             data: {
               labels,
               datasets: [
-                { type:"bar",  label:"Histogram", data:histSlice, backgroundColor:histColors, borderRadius:1, yAxisID:"yMacd", order:3 },
-                { type:"line", label:"MACD",      data:macdSlice,   borderColor:"#3b82f6", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yMacd", order:1 },
-                { type:"line", label:"Signal",    data:signalSlice, borderColor:"#f59e0b", borderWidth:1.25, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yMacd", order:2, borderDash:[3,2] },
+                {
+                  type: "bar",
+                  label: "Histogram",
+                  data: histSlice,
+                  backgroundColor: histColors,
+                  borderRadius: 1,
+                  yAxisID: "yMacd",
+                  order: 3,
+                },
+                {
+                  type: "line",
+                  label: "MACD",
+                  data: macdSlice,
+                  borderColor: "#3b82f6",
+                  borderWidth: 1.75,
+                  pointRadius: 0, pointHoverRadius: 0,
+                  tension: 0.3,
+                  spanGaps: true,
+                  fill: false,
+                  yAxisID: "yMacd",
+                  order: 1,
+                },
+                {
+                  type: "line",
+                  label: "Signal",
+                  data: signalSlice,
+                  borderColor: "#f59e0b",
+                  borderWidth: 1.25,
+                  pointRadius: 0, pointHoverRadius: 0,
+                  tension: 0.3,
+                  spanGaps: true,
+                  fill: false,
+                  yAxisID: "yMacd",
+                  order: 2,
+                  borderDash: [3, 2],
+                },
               ],
             },
             options: {
-              responsive:true, maintainAspectRatio:false,
-              animation:{ duration:350 },
-              interaction:{ mode:"index", intersect:false },
-              plugins:{
-                legend:{ display:false },
-                tooltip:{
-                  enabled:true,
-                  displayColors:true,
-                  backgroundColor:"rgba(15,25,35,0.92)",
-                  titleColor:"#94a3b8",
-                  titleFont:{ family:"'IBM Plex Mono'", size:10 },
-                  bodyFont:{ family:"'IBM Plex Mono'", size:11, weight:"700" },
-                  bodyColor:"#fff",
-                  padding:8, cornerRadius:8,
-                  callbacks:{
-                    title: items => items[0]?.label ?? "",
-                    label: ctx => {
-                      const v = ctx.parsed.y;
-                      if (v == null) return null;
-                      if (ctx.dataset.label === "Histogram") return `Hist: ${v > 0 ? "+" : ""}${v.toFixed(3)}`;
-                      if (ctx.dataset.label === "MACD")      return `MACD: ${v.toFixed(3)}`;
-                      if (ctx.dataset.label === "Signal")    return `Signal: ${v.toFixed(3)}`;
-                      return null;
-                    },
-                    labelColor: ctx => ({
-                      borderColor: ctx.dataset.borderColor ?? "#888",
-                      backgroundColor: ctx.dataset.borderColor ?? "#888",
-                      borderRadius: 3,
-                    }),
-                  },
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 350 },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  enabled: false,
+                  external: (ctx) => showIndicatorTooltip(ctx.chart, ctx.tooltip),
                 },
               },
-              scales:{
-                x:{ display:false },
-                yMacd:{
-                  position:"left",
-                  afterFit: ax => { if (axisWidth) ax.width = axisWidth; },
-                  ticks:{ maxTicksLimit:3, font:{ size:8, family:"'IBM Plex Mono'" }, color:"#adb5bd",
-                    callback: v => v === 0 ? "0" : v.toFixed(2) },
-                  grid:{ color:"rgba(0,0,0,.04)" },
-                }
-              }
-            }
+              scales: {
+                x: { display: false },
+                yMacd: {
+                  position: "left",
+                  afterFit: (ax) => {
+                    // Dùng string đại diện dài nhất của MACD label (format toFixed(2))
+                    // Không phụ thuộc runtime ticks — giống cách RSI dùng string cố định
+                    const _ctx = ax.chart.ctx;
+                    _ctx.save();
+                    _ctx.font = "8px 'IBM Plex Mono', monospace";
+                    // "-0.99" là label dài nhất có thể với toFixed(2)
+                    const _w = _ctx.measureText("-0.99").width;
+                    _ctx.restore();
+                    ax.width = Math.ceil(_w) + 12;
+                  },
+                  ticks: {
+                    maxTicksLimit: 3,
+                    font: { size: 8, family: "'IBM Plex Mono'" },
+                    color: "#adb5bd",
+                    callback: (v) => (v === 0 ? "0" : v.toFixed(2)),
+                  },
+                  grid: { color: "rgba(0,0,0,.04)" },
+                },
+              },
+            },
           });
         }
 
-        const isCandle  = chartMode === "candle";
-        const last      = volumes.length - 1;
-        const hasPrices = prices?.some(p => p != null);
-        const hasOHLC   = opens?.some(p => p != null) && highs?.some(p => p != null);
-        const hasBB     = bbUpper?.some(p => p != null);
+        const isCandle = chartMode === "candle";
+        const last = volumes.length - 1;
+        const hasPrices = prices?.some((p) => p != null);
+        const hasOHLC =
+          opens?.some((p) => p != null) && highs?.some((p) => p != null);
+        const hasBB = bbUpper?.some((p) => p != null);
 
         // Màu bar khối lượng
         const volColors = volumes.map((v, i) => {
@@ -2517,10 +3791,9 @@
         // ── Helper tính trục giá ─────────────────────────────────────────────────
         function calcPriceAxis(extraArrays = []) {
           const currentPrice = prices.at(-1);
-          const allVals = [
-            ...(prices || []),
-            ...extraArrays.flat(),
-          ].filter(p => p != null);
+          const allVals = [...(prices || []), ...extraArrays.flat()].filter(
+            (p) => p != null
+          );
           const rawMin = Math.min(...allVals);
           const rawMax = Math.max(...allVals);
           const pad = (rawMax - rawMin) * 0.08;
@@ -2531,7 +3804,9 @@
             parseFloat((yMin + i * step).toFixed(2))
           );
           if (currentPrice != null) {
-            const nearIdx = ticks.findIndex(t => Math.abs(t - currentPrice) < step * 0.15);
+            const nearIdx = ticks.findIndex(
+              (t) => Math.abs(t - currentPrice) < step * 0.15
+            );
             if (nearIdx !== -1) ticks.splice(nearIdx, 1);
             ticks.push(currentPrice);
             ticks.sort((a, b) => a - b);
@@ -2540,7 +3815,11 @@
         }
 
         // ── Tooltip label helper ─────────────────────────────────────────────────
-        const fvPrice = v => v?.toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "—";
+        const fvPrice = (v) =>
+          v?.toLocaleString("vi-VN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) ?? "—";
 
         // ════════════════════════════════════════════════════════════════════════
         // MODE NẾN — 2 chart riêng biệt (price trên, volume dưới)
@@ -2559,30 +3838,89 @@
           const patternMarkers = [];
           for (let pi = 2; pi < prices.length; pi++) {
             const pts = detectCandlePatterns(
-              opens.slice(0, pi+1), highs.slice(0, pi+1),
-              lows.slice(0, pi+1),  prices.slice(0, pi+1)
+              opens.slice(0, pi + 1),
+              highs.slice(0, pi + 1),
+              lows.slice(0, pi + 1),
+              prices.slice(0, pi + 1)
             );
             if (pts.length === 0) continue;
-            const bull = pts.find(p => p.bull === true);
-            const bear = pts.find(p => p.bull === false);
-            if (bull) patternMarkers.push({ idx: pi, bull: true,  label: bull.label });
-            if (bear) patternMarkers.push({ idx: pi, bull: false, label: bear.label });
+            const bull = pts.find((p) => p.bull === true);
+            const bear = pts.find((p) => p.bull === false);
+            if (bull)
+              patternMarkers.push({ idx: pi, bull: true, label: bull.label });
+            if (bear)
+              patternMarkers.push({ idx: pi, bull: false, label: bear.label });
           }
 
           // ── Dataset nến (dùng type line, plugin vẽ) ──────────────────────────
-          const candleDs = [{
-            type: "line", label: "Nến",
-            data: prices.map((c, i) => ({ x: i, y: c, o: opens[i], h: highs[i], l: lows[i], c })),
-            yAxisID: "yPrice", order: 2,
-            borderColor: "transparent", backgroundColor: "transparent",
-            borderWidth: 0, pointRadius: 0, tension: 0, spanGaps: true,
-            _patternMarkers: patternMarkers,
-          }];
+          const candleDs = [
+            {
+              type: "line",
+              label: "Nến",
+              data: prices.map((c, i) => ({
+                x: i,
+                y: c,
+                o: opens[i],
+                h: highs[i],
+                l: lows[i],
+                c,
+              })),
+              yAxisID: "yPrice",
+              order: 2,
+              borderColor: "transparent",
+              backgroundColor: "transparent",
+              borderWidth: 0,
+              pointRadius: 0, pointHoverRadius: 0,
+              tension: 0,
+              spanGaps: true,
+              _patternMarkers: patternMarkers,
+            },
+          ];
           if (hasBB) {
             candleDs.push(
-              { type:"line", label:"BB Upper", data:bbUpper, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:"+2", backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 },
-              { type:"line", label:"BB Mid",   data:bbMid,   borderColor:"rgba(99,102,241,.7)", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:3 },
-              { type:"line", label:"BB Lower", data:bbLower, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:false, backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 }
+              {
+                type: "line",
+                label: "BB Upper",
+                data: bbUpper,
+                borderColor: "rgba(99,102,241,.5)",
+                borderWidth: 1,
+                borderDash: [3, 3],
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: "+2",
+                backgroundColor: "rgba(99,102,241,.07)",
+                yAxisID: "yPrice",
+                order: 4,
+              },
+              {
+                type: "line",
+                label: "BB Mid",
+                data: bbMid,
+                borderColor: "rgba(99,102,241,.7)",
+                borderWidth: 1.75,
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: false,
+                yAxisID: "yPrice",
+                order: 3,
+              },
+              {
+                type: "line",
+                label: "BB Lower",
+                data: bbLower,
+                borderColor: "rgba(99,102,241,.5)",
+                borderWidth: 1,
+                borderDash: [3, 3],
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: false,
+                backgroundColor: "rgba(99,102,241,.07)",
+                yAxisID: "yPrice",
+                order: 4,
+              }
             );
           }
 
@@ -2590,45 +3928,66 @@
           // Đo text width của label giá và label volume, lấy max
           const _measureCtx = document.createElement("canvas").getContext("2d");
           _measureCtx.font = "9px 'IBM Plex Mono', monospace";
-          const priceLabels = yTicks.map(v => {
-            const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-            return (prices.at(-1) != null && Math.abs(v - prices.at(-1)) < 0.005) ? "▶ " + lbl : lbl;
+          const priceLabels = yTicks.map((v) => {
+            const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            });
+            return prices.at(-1) != null && Math.abs(v - prices.at(-1)) < 0.005
+              ? "▶ " + lbl
+              : lbl;
           });
-          const volLabels = volumes.map(v => fmt(v));
+          const volLabels = volumes.map((v) => fmt(v));
           const allLabels = [...priceLabels, ...volLabels];
-          const maxTextW = Math.max(...allLabels.map(l => _measureCtx.measureText(l).width));
+          const maxTextW = Math.max(
+            ...allLabels.map((l) => _measureCtx.measureText(l).width)
+          );
           const syncedAxisWidth = Math.ceil(maxTextW) + 16; // padding 8px mỗi bên
 
           const chartPrice = safeChart(canvas, {
             data: { labels, datasets: candleDs },
             options: {
-              responsive: true, maintainAspectRatio: false,
+              responsive: true,
+              maintainAspectRatio: false,
               animation: { duration: 350 },
               interaction: { mode: "index", intersect: false },
               plugins: {
                 legend: { display: false },
                 tooltip: {
                   enabled: false,
-                  external: (ctx) => showExternalTooltip(ctx.chart, ctx.tooltip),
+                  external: (ctx) =>
+                    showExternalTooltip(ctx.chart, ctx.tooltip),
                 },
               },
               scales: {
                 x: { display: false, offset: true },
                 yPrice: {
                   position: "left",
-                  min: yMin, max: yMax,
-                  afterBuildTicks: ax => { ax.ticks = yTicks.map(v => ({ value: v })); },
-                  afterFit: ax => { ax.width = syncedAxisWidth; },
+                  min: yMin,
+                  max: yMax,
+                  afterBuildTicks: (ax) => {
+                    ax.ticks = yTicks.map((v) => ({ value: v }));
+                  },
+                  afterFit: (ax) => {
+                    ax.width = syncedAxisWidth;
+                  },
                   ticks: {
                     font: { size: 9, family: "'IBM Plex Mono'" },
-                    color: ctx => {
+                    color: (ctx) => {
                       const cp = prices.at(-1);
-                      return cp != null && Math.abs(ctx.tick.value - cp) < 0.005 ? "#e03131" : "#2f9e44";
+                      return cp != null && Math.abs(ctx.tick.value - cp) < 0.005
+                        ? "#e03131"
+                        : "#2f9e44";
                     },
-                    callback: v => {
+                    callback: (v) => {
                       const cp = prices.at(-1);
-                      const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-                      return (cp != null && Math.abs(v - cp) < 0.005) ? "▶ " + lbl : lbl;
+                      const lbl = parseFloat(v.toFixed(2)).toLocaleString(
+                        "vi-VN",
+                        { minimumFractionDigits: 0, maximumFractionDigits: 2 }
+                      );
+                      return cp != null && Math.abs(v - cp) < 0.005
+                        ? "▶ " + lbl
+                        : lbl;
                     },
                   },
                   grid: { color: "rgba(0,0,0,.06)" },
@@ -2641,22 +4000,45 @@
           const canvasVol = document.getElementById(`chart-vol-${r.symbol}`);
           // Màu bar khớp với màu nến (tăng=xanh, giảm=đỏ)
           // KL/MA > 2.5× → đỏ, còn lại → xám
-          const maLine_candle = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
+          const maLine_candle = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(
+            -sliceN
+          );
           const candleVolColors = volumes.map((v, i) => {
             const ma = maLine_candle[i];
-            if (ma && ma > 0 && v / ma > volHighlightX) return "rgba(224,49,49,.85)";
+            if (ma && ma > 0 && v / ma > volHighlightX)
+              return "rgba(224,49,49,.85)";
             return "rgba(156,163,175,.55)";
           });
           const chartVol = safeChart(canvasVol, {
             data: {
               labels,
               datasets: [
-                { type:"bar", label:"Khối lượng", data:volumes, backgroundColor:candleVolColors, borderRadius:1, yAxisID:"y", order:2 },
-                { type:"line", label:`MA${getMaPeriod()}`, data:ma20, borderColor:"#e67700", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, yAxisID:"y", order:1 },
+                {
+                  type: "bar",
+                  label: "Khối lượng",
+                  data: volumes,
+                  backgroundColor: candleVolColors,
+                  borderRadius: 1,
+                  yAxisID: "y",
+                  order: 2,
+                },
+                {
+                  type: "line",
+                  label: `MA${getMaPeriod()}`,
+                  data: ma20,
+                  borderColor: "#e67700",
+                  borderWidth: 1.75,
+                  pointRadius: 0, pointHoverRadius: 0,
+                  tension: 0.3,
+                  spanGaps: true,
+                  yAxisID: "y",
+                  order: 1,
+                },
               ],
             },
             options: {
-              responsive: true, maintainAspectRatio: false,
+              responsive: true,
+              maintainAspectRatio: false,
               animation: { duration: 350 },
               interaction: { mode: "index", intersect: false },
               plugins: {
@@ -2667,18 +4049,27 @@
                   backgroundColor: "rgba(15,25,35,0.92)",
                   titleColor: "#94a3b8",
                   titleFont: { family: "'IBM Plex Mono'", size: 10 },
-                  bodyFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
+                  bodyFont: {
+                    family: "'IBM Plex Mono'",
+                    size: 11,
+                    weight: "700",
+                  },
                   bodyColor: "#fff",
                   padding: 8,
                   cornerRadius: 8,
                   callbacks: {
-                    title: items => items[0]?.label ?? "",
-                    label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
-                    labelColor: ctx => {
+                    title: (items) => items[0]?.label ?? "",
+                    label: (ctx) =>
+                      `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
+                    labelColor: (ctx) => {
                       const col = Array.isArray(ctx.dataset.backgroundColor)
                         ? ctx.dataset.backgroundColor[ctx.dataIndex]
-                        : (ctx.dataset.borderColor ?? "#888");
-                      return { borderColor: col, backgroundColor: col, borderRadius: 3 };
+                        : ctx.dataset.borderColor ?? "#888";
+                      return {
+                        borderColor: col,
+                        backgroundColor: col,
+                        borderRadius: 3,
+                      };
                     },
                   },
                 },
@@ -2687,19 +4078,30 @@
                 x: { display: false, offset: true },
                 y: {
                   position: "left",
-                  afterFit: ax => { ax.width = syncedAxisWidth; },
-                  ticks: { maxTicksLimit: 4, font: { size: 9, family: "'IBM Plex Mono'" }, color: "#adb5bd", callback: v => fmt(v) },
+                  afterFit: (ax) => {
+                    ax.width = syncedAxisWidth;
+                  },
+                  ticks: {
+                    maxTicksLimit: 4,
+                    font: { size: 9, family: "'IBM Plex Mono'" },
+                    color: "#adb5bd",
+                    callback: (v) => fmt(v),
+                  },
                   grid: { color: "rgba(0,0,0,.06)" },
                 },
               },
             },
           });
 
-          const chartRsi  = buildRsiChart(syncedAxisWidth);
+          const chartRsi = buildRsiChart(syncedAxisWidth);
           const chartMacd = buildMacdChart(syncedAxisWidth);
-          chartMap[r.symbol] = [chartPrice, chartVol, chartRsi, chartMacd].filter(Boolean);
-          const rowEl = document.getElementById(`chart-row-${r.symbol}`);
-          if (rowEl) rowEl.style.minHeight = "420px";
+          chartMap[r.symbol] = [
+            chartPrice,
+            chartVol,
+            chartRsi,
+            chartMacd,
+          ].filter(Boolean);
+          // height set by fitCardsToViewport()
 
           return;
         }
@@ -2712,91 +4114,227 @@
         const volWrap = document.getElementById(`chart-vol-wrap-${r.symbol}`);
         if (volWrap) volWrap.style.display = "none";
         // Reset chiều cao row về mặc định
-        const rowEl = document.getElementById(`chart-row-${r.symbol}`);
-        if (rowEl) rowEl.style.minHeight = "310px";
+        // height set by fitCardsToViewport()
 
         // Tính syncedAxisWidth cho line mode (đồng bộ với RSI)
-        const _measureCtxLine = document.createElement("canvas").getContext("2d");
+        const _measureCtxLine = document
+          .createElement("canvas")
+          .getContext("2d");
         _measureCtxLine.font = "9px 'IBM Plex Mono', monospace";
-        const _lineVolLabels = volumes.map(v => fmt(v));
-        const _lineMaxW = Math.max(..._lineVolLabels.map(l => _measureCtxLine.measureText(l).width));
+        const _lineVolLabels = volumes.map((v) => fmt(v));
+        const _lineMaxW = Math.max(
+          ..._lineVolLabels.map((l) => _measureCtxLine.measureText(l).width)
+        );
         const syncedAxisWidthLine = Math.ceil(_lineMaxW) + 16;
 
         let yPriceMin, yPriceMax, yPriceTicks;
         if (hasPrices) {
           const extra = hasBB ? [bbUpper, bbLower] : [];
           const { yMin, yMax, ticks } = calcPriceAxis(extra);
-          yPriceMin = yMin; yPriceMax = yMax; yPriceTicks = ticks;
+          yPriceMin = yMin;
+          yPriceMax = yMax;
+          yPriceTicks = ticks;
         }
 
         const datasets = [
-          { type:"bar",  label:"Khối lượng", data:volumes, backgroundColor:volColors, borderRadius:2, yAxisID:"y", order:10 },
-          { type:"line", label:`MA${getMaPeriod()}`, data:ma20, borderColor:"#e67700", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, yAxisID:"y", order:9 },
+          {
+            type: "bar",
+            label: "Khối lượng",
+            data: volumes,
+            backgroundColor: volColors,
+            borderRadius: 2,
+            yAxisID: "y",
+            order: 10,
+          },
+          {
+            type: "line",
+            label: `MA${getMaPeriod()}`,
+            data: ma20,
+            borderColor: "#e67700",
+            borderWidth: 1.75,
+            pointRadius: 0, pointHoverRadius: 0,
+            tension: 0.3,
+            spanGaps: true,
+            yAxisID: "y",
+            order: 9,
+          },
         ];
 
         if (hasPrices) {
           if (hasBB) {
             datasets.push(
-              { type:"line", label:"BB Upper", data:bbUpper, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:"+2", backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 },
-              { type:"line", label:"BB Mid",   data:bbMid,   borderColor:"rgba(99,102,241,.7)", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:3 },
-              { type:"line", label:"BB Lower", data:bbLower, borderColor:"rgba(99,102,241,.5)", borderWidth:1, borderDash:[3,3], pointRadius:0, tension:0.3, spanGaps:true, fill:false, backgroundColor:"rgba(99,102,241,.07)", yAxisID:"yPrice", order:4 }
+              {
+                type: "line",
+                label: "BB Upper",
+                data: bbUpper,
+                borderColor: "rgba(99,102,241,.5)",
+                borderWidth: 1,
+                borderDash: [3, 3],
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: "+2",
+                backgroundColor: "rgba(99,102,241,.07)",
+                yAxisID: "yPrice",
+                order: 4,
+              },
+              {
+                type: "line",
+                label: "BB Mid",
+                data: bbMid,
+                borderColor: "rgba(99,102,241,.7)",
+                borderWidth: 1.75,
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: false,
+                yAxisID: "yPrice",
+                order: 3,
+              },
+              {
+                type: "line",
+                label: "BB Lower",
+                data: bbLower,
+                borderColor: "rgba(99,102,241,.5)",
+                borderWidth: 1,
+                borderDash: [3, 3],
+                pointRadius: 0, pointHoverRadius: 0,
+                tension: 0.3,
+                spanGaps: true,
+                fill: false,
+                backgroundColor: "rgba(99,102,241,.07)",
+                yAxisID: "yPrice",
+                order: 4,
+              }
             );
           }
-          datasets.push({ type:"line", label:"Giá đóng cửa", data:prices, borderColor:"#2f9e44", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:2 });
+          datasets.push({
+            type: "line",
+            label: "Giá đóng cửa",
+            data: prices,
+            borderColor: "#2f9e44",
+            borderWidth: 1.75,
+            pointRadius: 0, pointHoverRadius: 0,
+            tension: 0.3,
+            spanGaps: true,
+            fill: false,
+            yAxisID: "yPrice",
+            order: 2,
+          });
         }
 
         // Hiện RSI panel dưới chart line
-        const rsiWrapLine = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
+        const rsiWrapLine = document.getElementById(
+          `chart-rsi-wrap-${r.symbol}`
+        );
         if (rsiWrapLine) rsiWrapLine.style.display = "block";
 
-        chartMap[r.symbol] = [safeChart(canvas, {
-          data: { labels, datasets },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            animation: { duration: 350 },
-            interaction: { mode: "index", intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                enabled: false,
-                external: (ctx) => showExternalTooltip(ctx.chart, ctx.tooltip),
-              },
-            },
-            scales: {
-              x: { display: false },
-              y: {
-                position: "left",
-                ticks: { maxTicksLimit: 8, font: { size: 9, family: "'IBM Plex Mono'" }, color: "#adb5bd", callback: v => fmt(v) },
-                grid: { color: "rgba(0,0,0,.06)" },
-              },
-              ...(hasPrices ? {
-                yPrice: {
-                  position: "right",
-                  min: yPriceMin, max: yPriceMax,
-                  afterBuildTicks: ax => { ax.ticks = yPriceTicks.map(v => ({ value: v })); },
-                  ticks: {
-                    font: { size: 9, family: "'IBM Plex Mono'" },
-                    color: ctx => {
-                      const cp = prices.at(-1);
-                      return cp != null && Math.abs(ctx.tick.value - cp) < 0.005 ? "#e03131" : "#2f9e44";
-                    },
-                    callback: v => {
-                      const cp = prices.at(-1);
-                      const lbl = parseFloat(v.toFixed(2)).toLocaleString("vi-VN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-                      return (cp != null && Math.abs(v - cp) < 0.005) ? "▶ " + lbl : lbl;
-                    },
-                  },
-                  grid: { drawOnChartArea: false },
+        chartMap[r.symbol] = [
+          safeChart(canvas, {
+            data: { labels, datasets },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 350 },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  enabled: false,
+                  external: (ctx) =>
+                    showExternalTooltip(ctx.chart, ctx.tooltip),
                 },
-              } : {}),
+              },
+              scales: {
+                x: { display: false },
+                y: {
+                  position: "left",
+                  ticks: {
+                    maxTicksLimit: 8,
+                    font: { size: 9, family: "'IBM Plex Mono'" },
+                    color: "#adb5bd",
+                    callback: (v) => fmt(v),
+                  },
+                  grid: { color: "rgba(0,0,0,.06)" },
+                },
+                ...(hasPrices
+                  ? {
+                      yPrice: {
+                        position: "right",
+                        min: yPriceMin,
+                        max: yPriceMax,
+                        afterBuildTicks: (ax) => {
+                          ax.ticks = yPriceTicks.map((v) => ({ value: v }));
+                        },
+                        ticks: {
+                          font: { size: 9, family: "'IBM Plex Mono'" },
+                          color: (ctx) => {
+                            const cp = prices.at(-1);
+                            return cp != null &&
+                              Math.abs(ctx.tick.value - cp) < 0.005
+                              ? "#e03131"
+                              : "#2f9e44";
+                          },
+                          callback: (v) => {
+                            const cp = prices.at(-1);
+                            const lbl = parseFloat(v.toFixed(2)).toLocaleString(
+                              "vi-VN",
+                              {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2,
+                              }
+                            );
+                            return cp != null && Math.abs(v - cp) < 0.005
+                              ? "▶ " + lbl
+                              : lbl;
+                          },
+                        },
+                        grid: { drawOnChartArea: false },
+                      },
+                    }
+                  : {}),
+              },
             },
-          },
-        }), buildRsiChart(syncedAxisWidthLine), buildMacdChart(syncedAxisWidthLine)].filter(Boolean);
-        if (rowEl) rowEl.style.minHeight = "380px";
+          }),
+          buildRsiChart(syncedAxisWidthLine),
+          buildMacdChart(syncedAxisWidthLine),
+        ].filter(Boolean);
+        // height set by fitCardsToViewport()
       }
+      // Fit mỗi card vừa đúng chiều cao viewport
+      function fitCardsToViewport() {
+        const header = document.querySelector("header");
+        const tickerBar = document.getElementById("tickerBar");
+        const filterBar = document.getElementById("filterBar");
+        const main = document.getElementById("content");
+        if (!main) return;
+
+        const headerH = header?.offsetHeight ?? 64;
+        const tickerH =
+          tickerBar && tickerBar.style.display !== "none"
+            ? tickerBar.offsetHeight ?? 0
+            : 0;
+        const filterH = filterBar?.offsetHeight ?? 44;
+        const padding = 24; // padding top của main
+        const cardGap = 20; // gap giữa cards (grid gap-5 = 20px)
+
+        // Chiều cao còn lại cho 1 card = viewport - tất cả bars - padding
+        const cardH =
+          window.innerHeight -
+          headerH -
+          tickerH -
+          filterH -
+          padding * 2 -
+          cardGap;
+
+        document.querySelectorAll("[id^='card-']").forEach((card) => {
+          card.style.height = cardH + "px";
+        });
+      }
+
       function destroyCharts() {
         Object.values(chartMap).forEach((c) => {
-          if (Array.isArray(c)) c.forEach(ch => ch?.destroy());
+          if (Array.isArray(c)) c.forEach((ch) => ch?.destroy());
           else c?.destroy();
         });
         chartMap = {};
@@ -2811,85 +4349,9 @@
         return new Chart(canvas, config);
       }
 
-      // ── Export helper: dùng dom-to-image-more (hỗ trợ oklch, Tailwind CDN) ────────
-      async function captureCard(el) {
-        const scale = 2;
-        const blob = await domtoimage.toBlob(el, {
-          bgcolor: "#ffffff",
-          width: el.offsetWidth * scale,
-          height: el.offsetHeight * scale,
-          style: { transform: `scale(${scale})`, transformOrigin: "top left" },
-        });
-        const img = await createImageBitmap(blob);
-        const cv = document.createElement("canvas");
-        cv.width = img.width;
-        cv.height = img.height;
-        cv.getContext("2d").drawImage(img, 0, 0);
-        return cv;
-      }
-
-      // ── Export ────────────────────────────────────────────────────────────────────
-      async function exportCard(symbol) {
-        showOverlay(`Đang xuất ${symbol}…`);
-        try {
-          const canvas = await captureCard(
-            document.getElementById(`card-${symbol}`)
-          );
-          dl(canvas, `${symbol}_KL_dotbien.png`);
-        } finally {
-          hideOverlay();
-        }
-      }
-
-      async function exportAll() {
-        const surges = allResults.filter((r) => isSurge(r));
-        if (!surges.length) {
-          alert("Không có mã đột biến.");
-          return;
-        }
-        showOverlay(`Chuẩn bị xuất ${surges.length} mã…`);
-        try {
-          for (let i = 0; i < surges.length; i++) {
-            const sym = surges[i].symbol;
-            document.getElementById("exportMsg").textContent = `Xuất ${sym}… (${
-              i + 1
-            }/${surges.length})`;
-            const card = document.getElementById(`card-${sym}`);
-            if (!card) continue;
-            const canvas = await captureCard(card);
-            dl(canvas, `${sym}_KL_dotbien.png`);
-            await sleep(200);
-          }
-        } finally {
-          hideOverlay();
-        }
-      }
-
-      function dl(canvas, filename) {
-        const a = document.createElement("a");
-        a.href = canvas.toDataURL("image/png");
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      }
-      function sleep(ms) {
-        return new Promise((r) => setTimeout(r, ms));
-      }
-
-      function showOverlay(msg) {
-        document.getElementById("exportMsg").textContent = msg;
-        const el = document.getElementById("exportOverlay");
-        el.classList.remove("hidden");
-        el.classList.add("flex");
-      }
-      function hideOverlay() {
-        const el = document.getElementById("exportOverlay");
-        el.classList.add("hidden");
-        el.classList.remove("flex");
-      }
-
       // ── Init ──────────────────────────────────────────────────────────────────────
+      window.addEventListener("resize", () => fitCardsToViewport());
+
       window.addEventListener("load", async () => {
         // ── Restore tất cả UI state từ settings ─────────────────────────────────
         applyMarkerSwitchUI();
@@ -2901,7 +4363,11 @@
 
         // volHighlightX
         const vxi = document.getElementById("volHighlightInput");
-        if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+        if (vxi)
+          vxi.textContent =
+            volHighlightX % 1 === 0
+              ? volHighlightX
+              : parseFloat(volHighlightX).toFixed(1);
 
         // Range buttons
         setRange(rangeN);
