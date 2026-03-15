@@ -17,6 +17,9 @@ import fs from "fs";
 import path from "path";
 import url from "url";
 import { analyzeAll } from "./analyze.mjs";
+import { analyzeDetail } from "./analyzeDetail.mjs";
+import { scrapeSymbol, loadDB as loadStockDB, saveDB as saveStockDB } from "./fetchStockInfo.mjs";
+import { scanWatchlist, parseBody } from "./watchlist.mjs";
 
 const PORT = 3000;
 const TMP_DIR   = "tmp";
@@ -240,6 +243,104 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, result.error ? 400 : 200, result);
   }
 
+  // ─── Company info (stocks_info.json là nguồn duy nhất, không tạo file phụ) ──
+  if (pathname === "/company-info" && req.method === "GET") {
+    const symbol = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!symbol) return sendJSON(res, 400, { error: "Thiếu symbol" });
+
+    // 1) Check stocks_info.json — nếu đủ thông tin thì trả ngay
+    const db = loadStockDB();
+    const dbEntry = db[symbol] || null;
+
+    if (dbEntry?.companyName && dbEntry.companyName !== symbol && dbEntry?.industry) {
+      return sendJSON(res, 200, dbEntry);
+    }
+
+    // 2) DB có data nhưng thiếu field → trả ngay, scrape ngầm để bổ sung
+    if (dbEntry?.companyName && dbEntry.companyName !== symbol) {
+      sendJSON(res, 200, dbEntry);
+      scrapeSymbol(symbol).then(info => {
+        if (info.companyName || info.industry) {
+          const merged = {
+            symbol,
+            companyName: info.companyName || dbEntry.companyName,
+            exchange:    info.exchange    || dbEntry.exchange,
+            industry:    info.industry    || dbEntry.industry,
+            chairman:    info.chairman    || dbEntry.chairman,
+            ceo:         info.ceo         || dbEntry.ceo,
+            pe:          info.pe          || null,
+          };
+          db[symbol] = merged;
+          saveStockDB(db);
+          console.log(`   🔄 Background update: ${symbol} | ${merged.industry || "?"}`);
+        }
+      }).catch(() => {});
+      return;
+    }
+
+    // 3) Hoàn toàn không có → scrape blocking lần đầu, lưu vào stocks_info.json
+    console.log(`[${new Date().toLocaleTimeString("vi-VN")}] 🏢 Scrape mới: ${symbol}`);
+    try {
+      const info = await scrapeSymbol(symbol);
+      const result = {
+        symbol,
+        companyName: info.companyName || symbol,
+        exchange:    info.exchange    || null,
+        industry:    info.industry    || null,
+        chairman:    info.chairman    || null,
+        ceo:         info.ceo         || null,
+        pe:          info.pe          || null,
+      };
+      if (result.companyName !== symbol || result.industry) {
+        db[symbol] = result;
+        saveStockDB(db);
+      }
+      console.log(`   ✅ ${result.companyName} | ${result.industry || "?"} | ${result.exchange || "?"}`);
+      return sendJSON(res, 200, result);
+    } catch (err) {
+      console.error(`   ❌ ${err.message}`);
+      return sendJSON(res, 200, { symbol, companyName: symbol });
+    }
+  }
+
+  // ─── Detail analysis ───────────────────────────────────────────────────────
+  if (pathname === "/analyze-detail" && req.method === "GET") {
+    const symbol = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!symbol) return sendJSON(res, 400, { error: "Thiếu tham số symbol" });
+
+    const forceRefresh = parsed.query.refresh === "1";
+    const detailCachePath = path.join(CACHE_DIR, symbol, "analysis.json");
+
+    // ── Đọc cache nếu còn hạn (< 24h) và không bị force refresh ──────────────
+    if (!forceRefresh) {
+      try {
+        if (fs.existsSync(detailCachePath)) {
+          const ageMs = Date.now() - fs.statSync(detailCachePath).mtimeMs;
+          if (ageMs < 24 * 60 * 60 * 1000) {
+            const cached = JSON.parse(fs.readFileSync(detailCachePath, "utf8"));
+            if (cached && !cached.error) {
+              cached._fromCache = true;
+              cached._cacheAgeMin = Math.floor(ageMs / 60000);
+              console.log(`[Cache] HIT detail — ${symbol} (${Math.floor(ageMs/60000)} phút tuổi)`);
+              return sendJSON(res, 200, cached);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(`[Cache] Lỗi đọc cache detail ${symbol}:`, e.message);
+      }
+    }
+
+    console.log(`\n[${new Date().toLocaleTimeString("vi-VN")}] 🔍 Phân tích chi tiết: ${symbol}${forceRefresh ? " (force refresh)" : ""}`);
+    try {
+      const result = await analyzeDetail(TMP_DIR, symbol, { cacheDir: CACHE_DIR });
+      return sendJSON(res, result.error ? 400 : 200, result);
+    } catch (err) {
+      console.error(`   ❌ Lỗi: ${err.message}`);
+      return sendJSON(res, 500, { error: err.message });
+    }
+  }
+
   if (pathname === "/download" && req.method === "GET") {
     return handleDownload(req, res, parsed.query);
   }
@@ -292,6 +393,65 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ─── Watchlist ──────────────────────────────────────────────────────────────
+  if (pathname.startsWith("/watchlist")) {
+    // Parse body cho POST requests
+    let body = {};
+    if (req.method === "POST") body = await parseBody(req);
+
+    // GET /watchlist — trả danh sách + alerts gần nhất
+    if (pathname === "/watchlist" && req.method === "GET") {
+      const WLFILE = path.join(CACHE_DIR, "watchlist.json");
+      try {
+        const wl = fs.existsSync(WLFILE)
+          ? JSON.parse(fs.readFileSync(WLFILE, "utf8"))
+          : { symbols: [], lastScan: null, alerts: [] };
+        return sendJSON(res, 200, wl);
+      } catch { return sendJSON(res, 200, { symbols: [], lastScan: null, alerts: [] }); }
+    }
+
+    // POST /watchlist/add  { symbol }
+    if (pathname === "/watchlist/add" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym))
+        return sendJSON(res, 400, { error: "Mã không hợp lệ" });
+      const WLFILE = path.join(CACHE_DIR, "watchlist.json");
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+      let wl = { symbols: [], lastScan: null, alerts: [] };
+      try { if (fs.existsSync(WLFILE)) wl = JSON.parse(fs.readFileSync(WLFILE, "utf8")); } catch {}
+      if (!wl.symbols.includes(sym)) wl.symbols.push(sym);
+      fs.writeFileSync(WLFILE, JSON.stringify(wl, null, 2));
+      console.log(`[Watchlist] ➕ ${sym} | tổng: ${wl.symbols.length} mã`);
+      return sendJSON(res, 200, { ok: true, symbols: wl.symbols });
+    }
+
+    // POST /watchlist/remove  { symbol }
+    if (pathname === "/watchlist/remove" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      const WLFILE = path.join(CACHE_DIR, "watchlist.json");
+      let wl = { symbols: [], lastScan: null, alerts: [] };
+      try { if (fs.existsSync(WLFILE)) wl = JSON.parse(fs.readFileSync(WLFILE, "utf8")); } catch {}
+      wl.symbols = wl.symbols.filter(s => s !== sym);
+      fs.writeFileSync(WLFILE, JSON.stringify(wl, null, 2));
+      console.log(`[Watchlist] ➖ ${sym} | còn: ${wl.symbols.length} mã`);
+      return sendJSON(res, 200, { ok: true, symbols: wl.symbols });
+    }
+
+    // GET /watchlist/scan?refresh=1  — quét toàn bộ watchlist
+    if (pathname === "/watchlist/scan" && req.method === "GET") {
+      const forceRefresh = parsed.query.refresh === "1";
+      console.log(`\n[${new Date().toLocaleTimeString("vi-VN")}] 📡 Scan watchlist${forceRefresh ? " (force)" : ""}...`);
+      try {
+        const result = await scanWatchlist(forceRefresh);
+        console.log(`   ✅ ${result.scanned} mã | ${result.alerts.length} alerts`);
+        return sendJSON(res, 200, result);
+      } catch (err) {
+        console.error(`   ❌ ${err.message}`);
+        return sendJSON(res, 500, { error: err.message });
+      }
+    }
+  }
+
   const staticFiles = {
     "/style.css": { file: "style.css", mime: "text/css; charset=utf-8" },
     "/app.js": {
@@ -299,6 +459,7 @@ const server = http.createServer(async (req, res) => {
       mime: "application/javascript; charset=utf-8",
     },
     "/surge.html": { file: "surge.html", mime: "text/html; charset=utf-8" },
+    "/detail.html": { file: "detail.html", mime: "text/html; charset=utf-8" },
     "/stocks.csv": { file: "stocks.csv", mime: "text/csv; charset=utf-8" },
   };
   if (staticFiles[pathname]) {
@@ -328,6 +489,13 @@ server.listen(PORT, () => {
   console.log("╚══════════════════════════════════════════════╝");
   console.log("\nEndpoints:");
   console.log(`  GET /              → Giao diện HTML (front.html)`);
+  console.log(`  GET /surge.html    → Quét khối lượng đột biến`);
+  console.log(`  GET /detail.html?s=DGC → Phân tích chi tiết 1 mã`);
   console.log(`  GET /download?symbol=DPM&start=2025-01-01&end=2026-03-13`);
-  console.log(`  GET /health        → Health check\n`);
+  console.log(`  GET /health        → Health check`);
+  console.log(`  GET /watchlist     → Lấy watchlist + alerts`);
+  console.log(`  POST /watchlist/add    { symbol }  → Thêm mã`);
+  console.log(`  POST /watchlist/remove { symbol }  → Xóa mã`);
+  console.log(`  GET /watchlist/scan    → Quét tín hiệu toàn bộ watchlist`);
+  console.log(`  GET /watchlist/scan?refresh=1 → Force scan (bỏ qua cache)\n`);
 });

@@ -474,8 +474,25 @@
       </div>
 
       <a
+        href="/detail.html"
+        class="sidebar-content px-6 py-3 flex items-center gap-2 no-underline transition-colors"
+        style="
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          color: rgba(99, 102, 241, 0.6);
+          font-size: 13px;
+          font-weight: 600;
+        "
+        onmouseenter="this.style.color='rgba(99,102,241,.9)';this.style.background='rgba(99,102,241,.06)'"
+        onmouseleave="this.style.color='rgba(99,102,241,.6)';this.style.background='transparent'"
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/><path d="M11 8v6M8 11h6"/>
+        </svg>
+        Phân tích chi tiết
+      </a>
+      <a
         href="/"
-        class="sidebar-content px-6 py-4 flex items-center gap-2 no-underline transition-colors"
+        class="sidebar-content px-6 py-3 flex items-center gap-2 no-underline transition-colors"
         style="
           border-top: 1px solid rgba(255, 255, 255, 0.06);
           color: rgba(255, 255, 255, 0.2);
@@ -2402,6 +2419,13 @@
         <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#003a6b;letter-spacing:-.3px;line-height:1">${
           r.symbol
         }</span>
+        <a href="/detail.html?s=${r.symbol}" target="_blank" title="Phân tích chi tiết ${r.symbol}"
+          style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#6366f1;text-decoration:none;padding:3px 8px;border-radius:6px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15);transition:all .15s;white-space:nowrap"
+          onmouseenter="this.style.background='rgba(99,102,241,.15)';this.style.borderColor='rgba(99,102,241,.3)'"
+          onmouseleave="this.style.background='rgba(99,102,241,.08)';this.style.borderColor='rgba(99,102,241,.15)'">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/><path d="M11 8v6M8 11h6"/></svg>
+          Chi tiết
+        </a>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9ca3af">${
           r.latestDate
         }</span>

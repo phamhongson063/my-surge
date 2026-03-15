@@ -1,2 +1,5 @@
 tmp/*
 !tmp/.gitkeep
+
+cache/*
+!tmp/.gitkeep
