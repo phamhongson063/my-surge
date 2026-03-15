@@ -1676,8 +1676,9 @@
       <!-- Pattern badges -->
       <div id="pb-${r.symbol}" style="display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden;max-width:240px"></div>
 
-      <!-- Right: like + surge pill -->
+      <!-- Right: RSI badge + like + surge pill -->
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto">
+        <div id="rsi-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">RSI —</div>
         <div class="surge-pill" style="align-items:center;gap:4px;background:linear-gradient(135deg,#fff5f5,#ffe4e4);border:1px solid #ffc9c9;color:#e03131;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.3px;white-space:nowrap">
           ⚡ SURGE
         </div>
@@ -1696,6 +1697,9 @@
         </div>
         <div id="chart-vol-wrap-${r.symbol}" style="display:none;position:relative;height:110px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
           <canvas id="chart-vol-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        </div>
+        <div id="chart-rsi-wrap-${r.symbol}" style="display:none;position:relative;height:80px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
+          <canvas id="chart-rsi-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
         </div>
       </div>
       <div id="info-${
@@ -1719,6 +1723,46 @@
         div.querySelector(`#session-${r.symbol}`).innerHTML = sessionInfoHtml(r);
         div.querySelector(`#bb-signal-${r.symbol}`).innerHTML = bbSignalHtml(r);
 
+        // Inject RSI badge (tính nhanh từ toàn bộ giá)
+        const _rsiPrices = (r.chart.prices ?? []).filter(p => p != null);
+        const _rsiVals   = calcRSI(_rsiPrices);
+        const _rsiNow    = _rsiVals.filter(v => v != null).at(-1) ?? null;
+        const _rsiBadge  = div.querySelector(`#rsi-badge-${r.symbol}`);
+        if (_rsiBadge && _rsiNow != null) {
+          const { text, color } = rsiLabel(_rsiNow);
+          const bg = _rsiNow >= 70 ? "#fff5f5" : _rsiNow <= 30 ? "#f0fdf4" : "#eef2ff";
+          const bd = _rsiNow >= 70 ? "#ffc9c9" : _rsiNow <= 30 ? "#bbf7d0" : "#c7d2fe";
+          _rsiBadge.textContent = text;
+          _rsiBadge.style.color = color;
+          _rsiBadge.style.background = bg;
+          _rsiBadge.style.borderColor = bd;
+          _rsiBadge.style.cursor = "help";
+
+          // Nội dung tooltip theo vùng RSI
+          const rsiDesc =
+            _rsiNow >= 70 ? "RSI ≥ 70: Vùng quá mua — cổ phiếu đang tăng mạnh, có thể sắp điều chỉnh. Kết hợp KL đột biến cần thận trọng." :
+            _rsiNow >= 60 ? "RSI 60–70: Xu hướng tăng mạnh nhưng chưa quá mua. Momentum tốt, vẫn còn dư địa tăng." :
+            _rsiNow >= 50 ? "RSI 50–60: Vùng trung tính thiên tăng. Phe mua đang chiếm ưu thế nhẹ." :
+            _rsiNow >= 40 ? "RSI 40–50: Vùng trung tính thiên giảm. Phe bán đang chiếm ưu thế nhẹ." :
+            _rsiNow >= 30 ? "RSI 30–40: Xu hướng giảm nhưng chưa quá bán. Cần theo dõi thêm dấu hiệu đảo chiều." :
+                            "RSI ≤ 30: Vùng quá bán — cổ phiếu giảm mạnh, có thể sắp hồi phục. Kết hợp KL đột biến là tín hiệu mua tiềm năng.";
+
+          const rsiBadgeTip = document.createElement("div");
+          rsiBadgeTip.textContent = rsiDesc;
+          rsiBadgeTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+          document.body.appendChild(rsiBadgeTip);
+
+          _rsiBadge.addEventListener("mouseenter", () => {
+            const rect = _rsiBadge.getBoundingClientRect();
+            rsiBadgeTip.style.display = "block";
+            const tipH = rsiBadgeTip.offsetHeight || 80;
+            const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+            rsiBadgeTip.style.top  = top + "px";
+            rsiBadgeTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+          });
+          _rsiBadge.addEventListener("mouseleave", () => { rsiBadgeTip.style.display = "none"; });
+        }
+
         // Inject star icon
         const starBtn = div.querySelector(`#like-${r.symbol}`);
         if (starBtn) applyStarUI(starBtn, likedSymbols.has(r.symbol));
@@ -1741,26 +1785,32 @@
             badge.appendChild(labelSpan);
 
             if (p.desc) {
-              // Icon ?
-              const icon = document.createElement("span");
-              icon.textContent = "?";
-              icon.style.cssText = "display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:" + border + ";color:" + color + ";font-size:9px;font-weight:800;cursor:default;flex-shrink:0";
-
-              // Tooltip
+              // Tooltip hiện khi hover toàn badge
               const tip = document.createElement("div");
               tip.textContent = p.desc;
-              tip.style.cssText = "display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.5;padding:8px 12px;border-radius:10px;width:220px;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:999;white-space:normal;pointer-events:none";
+              tip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.5;padding:8px 12px;border-radius:10px;width:220px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+              document.body.appendChild(tip);
 
-              // Arrow
-              const arrow = document.createElement("div");
-              arrow.style.cssText = "position:absolute;top:100%;left:16px;border:5px solid transparent;border-top-color:#1e293b";
-              tip.appendChild(arrow);
-
-              icon.addEventListener("mouseenter", () => { tip.style.display = "block"; });
-              icon.addEventListener("mouseleave", () => { tip.style.display = "none"; });
-
-              badge.appendChild(icon);
-              badge.appendChild(tip);
+              badge.style.cursor = "default";
+              badge.addEventListener("mouseenter", (e) => {
+                const rect = badge.getBoundingClientRect();
+                tip.style.display = "block";
+                // Định vị: ưu tiên bên trên badge, tránh tràn màn hình
+                const tipH = 80;
+                const top = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+                const left = Math.min(rect.left, window.innerWidth - 236);
+                tip.style.top  = top + "px";
+                tip.style.left = left + "px";
+              });
+              badge.addEventListener("mousemove", (e) => {
+                const rect = badge.getBoundingClientRect();
+                const tipH = tip.offsetHeight || 80;
+                const top = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+                const left = Math.min(rect.left, window.innerWidth - 236);
+                tip.style.top  = top + "px";
+                tip.style.left = left + "px";
+              });
+              badge.addEventListener("mouseleave", () => { tip.style.display = "none"; });
             }
 
             badgeWrap.appendChild(badge);
@@ -1952,6 +2002,121 @@
       };
       Chart.register(candlestickPlugin);
 
+      // ── Sync crosshair plugin ─────────────────────────────────────────────────────
+      // Chart đang hover: hoạt động bình thường (tooltip + crosshair gốc)
+      // 2 chart còn lại: hiện điểm tròn tại cùng dataIndex, không tooltip
+      const syncCrosshairPlugin = {
+        id: "syncCrosshair",
+        afterEvent(chart, args) {
+          const e = args.event;
+          if (e.type !== "mousemove" && e.type !== "mouseout") return;
+
+          // Tìm symbol: chart-VCB → VCB, chart-vol-VCB → VCB, chart-rsi-VCB → VCB
+          const rawId = chart.canvas?.id ?? "";
+          const sym = rawId.replace(/^chart-(vol-|rsi-)?/, "");
+          if (!sym) return;
+          const group = chartMap[sym];
+          if (!Array.isArray(group) || group.length < 2) return;
+
+          if (e.type === "mouseout") {
+            group.forEach(c => {
+              if (c === chart) return;
+              c._syncIndex = null;
+              c.update("none");
+            });
+            return;
+          }
+
+          const points = chart.getElementsAtEventForMode(
+            args.event.native, "index", { intersect: false }, false
+          );
+          if (!points.length) return;
+          const dataIndex = points[0].index;
+
+          group.forEach(c => {
+            if (c === chart) return;
+            c._syncIndex = dataIndex;
+            c.update("none");
+          });
+        },
+
+        // Vẽ điểm tròn + đường dọc cho chart phụ đang được sync
+        afterDraw(chart) {
+          const dataIndex = chart._syncIndex;
+          if (dataIndex == null) return;
+
+          const ctx = chart.ctx;
+          const { top, bottom } = chart.chartArea;
+
+          // Lấy vị trí x từ dataset đầu tiên có data tại index này
+          let x = null;
+          for (let di = 0; di < chart.data.datasets.length; di++) {
+            const meta = chart.getDatasetMeta(di);
+            if (meta?.data?.[dataIndex]) { x = meta.data[dataIndex].x; break; }
+          }
+          if (x == null) return;
+
+          // Đường dọc
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x, top);
+          ctx.lineTo(x, bottom);
+          ctx.strokeStyle = "rgba(0,0,0,.2)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3, 3]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Điểm tròn trên mỗi dataset line
+          chart.data.datasets.forEach((ds, di) => {
+            if (ds.type === "bar") return;
+            const meta = chart.getDatasetMeta(di);
+            const el = meta?.data?.[dataIndex];
+            if (!el) return;
+            const val = ds.data[dataIndex];
+            if (val == null) return;
+            const color = typeof ds.borderColor === "string" ? ds.borderColor : "#f59e0b";
+            ctx.beginPath();
+            ctx.arc(x, el.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          });
+          ctx.restore();
+        },
+      };
+      Chart.register(syncCrosshairPlugin);
+
+      // ── RSI ───────────────────────────────────────────────────────────────────────
+      function calcRSI(prices, period = 14) {
+        const rsi = new Array(prices.length).fill(null);
+        let gains = 0, losses = 0;
+        // seed
+        for (let i = 1; i <= period; i++) {
+          const d = prices[i] - prices[i - 1];
+          if (d >= 0) gains += d; else losses -= d;
+        }
+        let avgGain = gains / period;
+        let avgLoss = losses / period;
+        rsi[period] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+        for (let i = period + 1; i < prices.length; i++) {
+          const d = prices[i] - prices[i - 1];
+          avgGain = (avgGain * (period - 1) + Math.max(d, 0)) / period;
+          avgLoss = (avgLoss * (period - 1) + Math.max(-d, 0)) / period;
+          rsi[i] = avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss);
+        }
+        return rsi;
+      }
+
+      function rsiLabel(val) {
+        if (val == null) return { text: "—", color: "#9ca3af" };
+        if (val >= 70)   return { text: `RSI ${val.toFixed(0)} ↑ Quá mua`, color: "#e03131" };
+        if (val <= 30)   return { text: `RSI ${val.toFixed(0)} ↓ Quá bán`, color: "#2f9e44" };
+        return { text: `RSI ${val.toFixed(0)}`, color: "#6366f1" };
+      }
+
       // ── Chart ─────────────────────────────────────────────────────────────────────
       function buildChart(r) {
         const canvas = document.getElementById(`chart-${r.symbol}`);
@@ -1969,6 +2134,98 @@
         const bbLower = r.chart.bbLower?.slice(-sliceN) ?? [];
         const ma20    = (r.chart.ma20 ?? r.chart.maLine ?? []).slice(-sliceN);
         if (!volumes?.length) return;
+
+        // ── Tính RSI từ toàn bộ giá rồi slice ─────────────────────────────────
+        const allPrices = r.chart.prices ?? [];
+        const rsiAll    = calcRSI(allPrices.filter(p => p != null));
+        // map lại vị trí (bỏ null)
+        const rsiSlice  = (() => {
+          const notNull = allPrices.map((p, i) => p != null ? i : -1).filter(i => i >= 0);
+          const startGlobal = allPrices.length - sliceN;
+          return labels.map((_, li) => {
+            const gi = startGlobal + li;
+            const ni = notNull.indexOf(gi);
+            return ni >= 0 ? (rsiAll[ni] != null ? parseFloat(rsiAll[ni].toFixed(2)) : null) : null;
+          });
+        })();
+        const rsiCurrent = rsiSlice.filter(v => v != null).at(-1) ?? null;
+
+        // Helper vẽ RSI chart
+        function buildRsiChart(axisWidth) {
+          const rsiWrap   = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
+          const rsiCanvas = document.getElementById(`chart-rsi-${r.symbol}`);
+          if (!rsiWrap || !rsiCanvas) return null;
+          rsiWrap.style.display = "block";
+
+          const rsiColors = rsiSlice.map(v =>
+            v == null ? "transparent" :
+            v >= 70   ? "rgba(224,49,49,.7)" :
+            v <= 30   ? "rgba(47,158,68,.7)"  :
+                        "rgba(99,102,241,.6)"
+          );
+
+          return safeChart(rsiCanvas, {
+            data: {
+              labels,
+              datasets: [
+                // Vùng overbought fill
+                { type:"line", label:"RSI", data:rsiSlice,
+                  borderColor:"#f59e0b", borderWidth:2, pointRadius:0,
+                  tension:0.3, spanGaps:true,
+                  fill:false, yAxisID:"yRsi", order:1 },
+                // Line 70
+                { type:"line", label:"OB", data:labels.map(()=>70),
+                  borderColor:"rgba(224,49,49,.4)", borderWidth:1,
+                  borderDash:[3,3], pointRadius:0, spanGaps:true,
+                  fill:false, yAxisID:"yRsi", order:2 },
+                // Line 30
+                { type:"line", label:"OS", data:labels.map(()=>30),
+                  borderColor:"rgba(47,158,68,.4)", borderWidth:1,
+                  borderDash:[3,3], pointRadius:0, spanGaps:true,
+                  fill:false, yAxisID:"yRsi", order:3 },
+              ],
+            },
+            options: {
+              responsive:true, maintainAspectRatio:false,
+              animation:{ duration:350 },
+              interaction:{ mode:"index", intersect:false },
+              plugins:{
+                legend:{ display:false },
+                tooltip:{
+                  enabled: true,
+                  displayColors: false,
+                  backgroundColor: "rgba(15,25,35,0.92)",
+                  titleColor: "#94a3b8",
+                  titleFont: { family: "'IBM Plex Mono'", size: 10 },
+                  bodyFont: { family: "'IBM Plex Mono'", size: 12, weight: "700" },
+                  bodyColor: "#fff",
+                  padding: 8,
+                  cornerRadius: 8,
+                  callbacks: {
+                    title: items => items[0]?.label ?? "",
+                    label: ctx => {
+                      if (ctx.dataset.label !== "RSI") return null;
+                      const v = ctx.parsed.y;
+                      if (v == null) return null;
+                      const state = v >= 70 ? " ↑ Quá mua" : v <= 30 ? " ↓ Quá bán" : "";
+                      return "RSI " + v.toFixed(1) + state;
+                    },
+                  },
+                },
+              },
+              scales:{
+                x:{ display:false },
+                yRsi:{
+                  position:"left", min:0, max:100,
+                  afterFit: ax => { if (axisWidth) ax.width = axisWidth; },
+                  ticks:{ maxTicksLimit:3, font:{ size:8, family:"'IBM Plex Mono'" }, color:"#adb5bd",
+                    callback: v => v===70?"70":v===30?"30":v===50?"RSI":"" },
+                  grid:{ color:"rgba(0,0,0,.04)" },
+                }
+              }
+            }
+          });
+        }
 
         const isCandle  = chartMode === "candle";
         const last      = volumes.length - 1;
@@ -2166,17 +2423,19 @@
               plugins: {
                 legend: { display: false },
                 tooltip: {
+                  enabled: true,
                   displayColors: true,
                   backgroundColor: "rgba(15,25,35,0.92)",
-                  titleColor: "#fff",
-                  titleFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
-                  bodyFont: { family: "'IBM Plex Mono'", size: 11 },
-                  bodyColor: "#cbd5e1",
-                  padding: 10,
+                  titleColor: "#94a3b8",
+                  titleFont: { family: "'IBM Plex Mono'", size: 10 },
+                  bodyFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
+                  bodyColor: "#fff",
+                  padding: 8,
                   cornerRadius: 8,
                   callbacks: {
+                    title: items => items[0]?.label ?? "",
                     label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`,
-                    labelColor: (ctx) => {
+                    labelColor: ctx => {
                       const col = Array.isArray(ctx.dataset.backgroundColor)
                         ? ctx.dataset.backgroundColor[ctx.dataIndex]
                         : (ctx.dataset.borderColor ?? "#888");
@@ -2197,10 +2456,11 @@
             },
           });
 
-          chartMap[r.symbol] = [chartPrice, chartVol];
-          // Tăng chiều cao row khi có 2 panel
+          const chartRsi = buildRsiChart(syncedAxisWidth);
+          chartMap[r.symbol] = [chartPrice, chartVol, chartRsi].filter(Boolean);
+          // Tăng chiều cao row khi có 3 panel
           const rowEl = document.getElementById(`chart-row-${r.symbol}`);
-          if (rowEl) rowEl.style.minHeight = "420px";
+          if (rowEl) rowEl.style.minHeight = "510px";
 
           return;
         }
@@ -2215,6 +2475,13 @@
         // Reset chiều cao row về mặc định
         const rowEl = document.getElementById(`chart-row-${r.symbol}`);
         if (rowEl) rowEl.style.minHeight = "310px";
+
+        // Tính syncedAxisWidth cho line mode (đồng bộ với RSI)
+        const _measureCtxLine = document.createElement("canvas").getContext("2d");
+        _measureCtxLine.font = "9px 'IBM Plex Mono', monospace";
+        const _lineVolLabels = volumes.map(v => fmt(v));
+        const _lineMaxW = Math.max(..._lineVolLabels.map(l => _measureCtxLine.measureText(l).width));
+        const syncedAxisWidthLine = Math.ceil(_lineMaxW) + 16;
 
         let yPriceMin, yPriceMax, yPriceTicks;
         if (hasPrices) {
@@ -2239,7 +2506,11 @@
           datasets.push({ type:"line", label:"Giá đóng cửa", data:prices, borderColor:"#2f9e44", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yPrice", order:2 });
         }
 
-        chartMap[r.symbol] = safeChart(canvas, {
+        // Hiện RSI panel dưới chart line
+        const rsiWrapLine = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
+        if (rsiWrapLine) rsiWrapLine.style.display = "block";
+
+        chartMap[r.symbol] = [safeChart(canvas, {
           data: { labels, datasets },
           options: {
             responsive: true, maintainAspectRatio: false,
@@ -2288,7 +2559,8 @@
               } : {}),
             },
           },
-        });
+        }), buildRsiChart(syncedAxisWidthLine)].filter(Boolean);
+        if (rowEl) rowEl.style.minHeight = "390px";
       }
       function destroyCharts() {
         Object.values(chartMap).forEach((c) => {
