@@ -19,24 +19,28 @@ import url from "url";
 import { analyzeAll } from "./analyze.mjs";
 
 const PORT = 3000;
-const TMP_DIR      = "tmp";
-const SETTINGS_DIR = "settings";
-const LIKES_FILE   = path.join(SETTINGS_DIR, "likes.csv");
+const TMP_DIR   = "tmp";
+const CACHE_DIR = "cache";
 
-// ─── Likes helpers ───────────────────────────────────────────────────────────
-function readLikes() {
-  try {
-    if (!fs.existsSync(LIKES_FILE)) return [];
-    return fs.readFileSync(LIKES_FILE, "utf8")
-      .split("\n")
-      .map(s => s.trim().toUpperCase())
-      .filter(Boolean);
-  } catch { return []; }
+// ─── Cache helpers ───────────────────────────────────────────────────────────
+function todayTag() {
+  return new Date().toISOString().slice(0, 10); // yyyy-mm-dd
 }
-
-function writeLikes(symbols) {
-  fs.mkdirSync(SETTINGS_DIR, { recursive: true });
-  fs.writeFileSync(LIKES_FILE, [...new Set(symbols)].join("\n"), "utf8");
+function cacheFilePath(maPeriod) {
+  return path.join(CACHE_DIR, `analyze_ma${maPeriod}_${todayTag()}.json`);
+}
+function readCache(maPeriod) {
+  try {
+    const fp = cacheFilePath(maPeriod);
+    if (!fs.existsSync(fp)) return null;
+    return JSON.parse(fs.readFileSync(fp, "utf8"));
+  } catch { return null; }
+}
+function writeCache(maPeriod, data) {
+  try {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+    fs.writeFileSync(cacheFilePath(maPeriod), JSON.stringify(data), "utf8");
+  } catch(e) { console.warn("Cache write error:", e.message); }
 }
 
 // ─── Helpers (giống download_stock.mjs) ─────────────────────────────────────
@@ -121,7 +125,7 @@ function fetchFromCafeF(targetUrl, symbol, redirectCount = 0) {
 
 function setCORS(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
@@ -218,32 +222,22 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === "/analyze" && req.method === "GET") {
-    const threshold = parseFloat(parsed.query.threshold) || 2.0;
-    const maPeriod = parseInt(parsed.query.ma) || 20;
-    const result = await analyzeAll(TMP_DIR, { threshold, maPeriod });
+    const maPeriod  = parseInt(parsed.query.ma) || 20;
+    const useCache  = parsed.query.cache === "1";
+
+    if (useCache) {
+      const cached = readCache(maPeriod);
+      if (cached) {
+        console.log(`[Cache] HIT — ma${maPeriod} ${todayTag()}`);
+        cached._fromCache = true;
+        return sendJSON(res, 200, cached);
+      }
+      console.log(`[Cache] MISS — tính toán mới ma${maPeriod} ${todayTag()}`);
+    }
+
+    const result = await analyzeAll(TMP_DIR, { maPeriod });
+    if (!result.error && useCache) writeCache(maPeriod, result);
     return sendJSON(res, result.error ? 400 : 200, result);
-  }
-
-  // ── GET /likes ──────────────────────────────────────────────────────────────
-  if (pathname === "/likes" && req.method === "GET") {
-    return sendJSON(res, 200, { symbols: readLikes() });
-  }
-
-  // ── POST /likes/:symbol ───────────────────────────────────────────────────
-  if (pathname.startsWith("/likes/") && req.method === "POST") {
-    const sym = pathname.slice(7).toUpperCase().trim();
-    if (!sym) return sendJSON(res, 400, { error: "Thiếu symbol" });
-    const list = readLikes();
-    if (!list.includes(sym)) { list.push(sym); writeLikes(list); }
-    return sendJSON(res, 200, { ok: true, symbols: list });
-  }
-
-  // ── DELETE /likes/:symbol ─────────────────────────────────────────────────
-  if (pathname.startsWith("/likes/") && req.method === "DELETE") {
-    const sym = pathname.slice(7).toUpperCase().trim();
-    const list = readLikes().filter(s => s !== sym);
-    writeLikes(list);
-    return sendJSON(res, 200, { ok: true, symbols: list });
   }
 
   if (pathname === "/download" && req.method === "GET") {
