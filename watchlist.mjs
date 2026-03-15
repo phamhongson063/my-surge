@@ -1,7 +1,7 @@
 /**
  * watchlist.mjs — Quản lý watchlist và quét tín hiệu
  *
- * Lưu trữ: cache/watchlist.json
+ * Lưu trữ: settings/watchlist.json
  * Tích hợp vào main.mjs qua import
  *
  * Endpoints (thêm vào main.mjs):
@@ -15,7 +15,7 @@ import fs from "fs";
 import path from "path";
 import { analyzeDetail } from "./analyzeDetail.mjs";
 
-const WATCHLIST_FILE = path.join("cache", "watchlist.json");
+const WATCHLIST_FILE = path.join("settings", "watchlist.json");
 const TMP_DIR = "tmp";
 const CACHE_DIR = "cache";
 
@@ -30,7 +30,7 @@ function loadWatchlist() {
 
 function saveWatchlist(data) {
   try {
-    fs.mkdirSync("cache", { recursive: true });
+    fs.mkdirSync("settings", { recursive: true });
     fs.writeFileSync(WATCHLIST_FILE, JSON.stringify(data, null, 2), "utf8");
   } catch (e) {
     console.warn("[Watchlist] Save error:", e.message);

@@ -10,6 +10,8 @@
   --red:    #c32022;
   --navy:   #004370;
   --green:  #33a42e;
+  --purple: #6d28d9;
+  --teal:   #0f766e;
   --bg:     #f0f4f8;
   --card:   #ffffff;
   --border: rgba(0,0,0,0.09);
@@ -18,32 +20,21 @@
   --mono:   'IBM Plex Mono', monospace;
   --sans:   'Noto Sans', sans-serif;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
 
 body {
   font-family: var(--sans);
   background: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 16px;
   color: var(--text);
   position: relative;
-  overflow: hidden;
 }
 
-/* Noise texture */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 0;
-}
-
-/* Large decorative background grid lines */
+/* Grid background */
 body::after {
   content: '';
   position: fixed; inset: 0;
@@ -54,28 +45,34 @@ body::after {
   pointer-events: none; z-index: 0;
 }
 
-.page {
+/* ── Layout: 2 cột, full height ── */
+.layout {
   position: relative; z-index: 1;
-  width: 100%; max-width: 540px;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
 }
 
-/* ── Header ── */
-.header {
-  text-align: center;
-  margin-bottom: 48px;
+/* ── Cột trái: header ── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 36px;
+  border-right: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
   opacity: 0;
-  animation: fadeUp .5s ease forwards;
+  animation: fadeIn .4s ease .05s forwards;
 }
 
 .logo-wrap {
   display: inline-flex;
   align-items: center; justify-content: center;
-  width: 64px; height: 64px;
+  width: 52px; height: 52px;
   background: var(--navy);
-  border-radius: 18px;
-  box-shadow: 0 8px 28px rgba(0,67,112,0.28), 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,67,112,0.25);
   margin-bottom: 20px;
 }
 
@@ -89,6 +86,7 @@ body::after {
   font-size: 11px; font-weight: 600;
   color: var(--muted);
   margin-bottom: 16px;
+  width: fit-content;
   letter-spacing: .5px;
 }
 .tagline-badge .dot {
@@ -99,41 +97,71 @@ body::after {
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
 h1 {
-  font-size: 34px; font-weight: 800;
+  font-size: 30px; font-weight: 800;
   color: var(--navy);
   letter-spacing: -1px;
   line-height: 1.1;
+  margin-bottom: 10px;
 }
 h1 span { color: var(--red); }
 
 .subtitle {
-  margin-top: 10px;
-  font-size: 14px; color: var(--muted);
+  font-size: 13px; color: var(--muted);
   line-height: 1.6;
+  margin-bottom: 32px;
 }
 
-/* ── Cards ── */
-.cards {
-  width: 100%;
-  display: flex; flex-direction: column; gap: 14px;
+.footer-note {
+  font-size: 11px; color: #adb5bd;
+  line-height: 1.6;
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.footer-note code {
+  background: #e2e8f0; padding: 1px 5px;
+  border-radius: 4px; font-family: var(--mono); font-size: 10px;
 }
 
+/* ── Cột phải: grid cards ── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 28px;
+  align-content: stretch;
+}
+
+/* ── Card ── */
 .nav-card {
-  display: block;
+  display: flex;
   text-decoration: none;
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: 16px;
-  padding: 22px 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   opacity: 0;
-  animation: fadeUp .5s ease forwards;
+  animation: fadeUp .4s ease forwards;
   position: relative;
   overflow: hidden;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.nav-card:nth-child(1) { animation-delay: .15s; }
-.nav-card:nth-child(2) { animation-delay: .25s; }
+
+.nav-card:nth-child(1){animation-delay:.12s}
+.nav-card:nth-child(2){animation-delay:.18s}
+.nav-card:nth-child(3){animation-delay:.24s}
+.nav-card:nth-child(4){animation-delay:.30s}
+.nav-card:nth-child(5){animation-delay:.36s}
+
+/* Card chiếm 2 cột — Tải dữ liệu ít quan trọng hơn, để nhỏ */
+/* Watcher span full width hàng cuối */
+.nav-card.watcher {
+  grid-column: span 2;
+}
 
 .nav-card::before {
   content: '';
@@ -142,87 +170,99 @@ h1 span { color: var(--red); }
   border-radius: 4px 0 0 4px;
   transition: width .2s ease;
 }
-.nav-card.download::before { background: var(--navy); }
-.nav-card.surge::before    { background: var(--red); }
+.nav-card.download::before  { background: var(--navy); }
+.nav-card.surge::before     { background: var(--red); }
+.nav-card.detail::before    { background: var(--teal); }
+.nav-card.watchlist::before { background: var(--purple); }
+.nav-card.watcher::before   { background: var(--green); }
 
 .nav-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 32px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
 }
-.nav-card.download:hover { border-color: rgba(0,67,112,.3); }
-.nav-card.surge:hover    { border-color: rgba(195,32,34,.3); }
-.nav-card:hover::before  { width: 5px; }
+.nav-card.download:hover  { border-color: rgba(0,67,112,.3); }
+.nav-card.surge:hover     { border-color: rgba(195,32,34,.3); }
+.nav-card.detail:hover    { border-color: rgba(15,118,110,.3); }
+.nav-card.watchlist:hover { border-color: rgba(109,40,217,.3); }
+.nav-card.watcher:hover   { border-color: rgba(51,164,46,.3); }
+.nav-card:hover::before   { width: 5px; }
 
-.card-inner {
-  display: flex; align-items: center; gap: 18px;
+/* Card top: icon + arrow */
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px;
 }
 
 .card-icon {
-  width: 48px; height: 48px; border-radius: 12px;
+  width: 40px; height: 40px; border-radius: 10px;
   display: grid; place-items: center; flex-shrink: 0;
 }
-.nav-card.download .card-icon { background: rgba(0,67,112,.1); }
-.nav-card.surge    .card-icon { background: rgba(195,32,34,.08); }
-
-.card-body { flex: 1; min-width: 0; }
-.card-title {
-  font-size: 16px; font-weight: 800;
-  color: var(--text); letter-spacing: -.3px;
-  margin-bottom: 4px;
-}
-.card-desc {
-  font-size: 13px; color: var(--muted);
-  line-height: 1.5;
-}
+.nav-card.download  .card-icon { background: rgba(0,67,112,.1); }
+.nav-card.surge     .card-icon { background: rgba(195,32,34,.08); }
+.nav-card.detail    .card-icon { background: rgba(15,118,110,.1); }
+.nav-card.watchlist .card-icon { background: rgba(109,40,217,.08); }
+.nav-card.watcher   .card-icon { background: rgba(51,164,46,.08); }
 
 .card-arrow {
-  flex-shrink: 0;
   color: #c8d3dd;
   transition: transform .18s ease, color .18s ease;
+  margin-top: 2px;
 }
-.nav-card:hover .card-arrow { transform: translateX(4px); color: var(--navy); }
-.nav-card.surge:hover .card-arrow { color: var(--red); }
+.nav-card:hover .card-arrow { transform: translateX(3px) translateY(-3px); }
+.nav-card.download:hover  .card-arrow { color: var(--navy); }
+.nav-card.surge:hover     .card-arrow { color: var(--red); }
+.nav-card.detail:hover    .card-arrow { color: var(--teal); }
+.nav-card.watchlist:hover .card-arrow { color: var(--purple); }
+.nav-card.watcher:hover   .card-arrow { color: var(--green); }
 
-/* ── Tags ── */
+.card-title {
+  font-size: 15px; font-weight: 800;
+  color: var(--text); letter-spacing: -.3px;
+  margin-bottom: 6px;
+}
+.card-desc {
+  font-size: 12px; color: var(--muted);
+  line-height: 1.55; flex: 1;
+}
+
+/* watcher card: horizontal layout */
+.nav-card.watcher {
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+.nav-card.watcher .card-top { margin-bottom: 0; flex-direction: column; gap: 10px; }
+.nav-card.watcher .card-body { flex: 1; }
+
 .card-tags {
-  display: flex; gap: 6px; flex-wrap: wrap;
+  display: flex; gap: 5px; flex-wrap: wrap;
   margin-top: 10px;
 }
 .tag {
   font-family: var(--mono);
   font-size: 10px; font-weight: 600; letter-spacing: .5px;
-  padding: 2px 8px; border-radius: 20px;
+  padding: 2px 7px; border-radius: 20px;
   border: 1px solid var(--border);
   color: var(--muted);
   background: #f7fafc;
 }
 
-/* ── Footer note ── */
-.footer-note {
-  margin-top: 32px;
-  font-size: 12px; color: var(--muted);
-  text-align: center; line-height: 1.6;
-  opacity: 0;
-  animation: fadeUp .5s ease .4s forwards;
-}
-.footer-note code {
-  background: #e2e8f0; padding: 1px 5px;
-  border-radius: 4px; font-family: var(--mono); font-size: 11px;
-}
-
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
 }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="layout">
 
-  <!-- Header -->
-  <div class="header">
+  <!-- ── Sidebar trái ── -->
+  <aside class="sidebar">
     <div class="logo-wrap">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
         <path d="M3 17l5-5 4 4 5-6 4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M3 21h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
       </svg>
@@ -232,65 +272,115 @@ h1 span { color: var(--red); }
       <span>CafeF · localhost:3000</span>
     </div>
     <h1>My <span>Stock</span></h1>
-    <p class="subtitle">Công cụ tải & phân tích dữ liệu cổ phiếu<br/>từ CafeF — chạy hoàn toàn trên máy bạn.</p>
-  </div>
+    <p class="subtitle">Công cụ tải & phân tích dữ liệu cổ phiếu từ CafeF — chạy hoàn toàn trên máy bạn.</p>
+    <div class="footer-note">
+      Yêu cầu <code>node main.mjs</code> đang chạy trên cổng <code>3000</code>
+    </div>
+  </aside>
 
-  <!-- Nav cards -->
-  <div class="cards">
+  <!-- ── Grid cards phải ── -->
+  <main class="main">
 
     <a href="/front.html" class="nav-card download">
-      <div class="card-inner">
+      <div class="card-top">
         <div class="card-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#004370">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004370" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
         </div>
-        <div class="card-body">
-          <div class="card-title">Tải dữ liệu</div>
-          <div class="card-desc">Nhập mã cổ phiếu, chọn khoảng thời gian và lưu file Excel về thư mục <code style="font-family:monospace;font-size:11px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code></div>
-          <div class="card-tags">
-            <span class="tag">XLSX</span>
-            <span class="tag">CafeF API</span>
-            <span class="tag">Lịch sử giá</span>
-          </div>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Tải dữ liệu</div>
+        <div class="card-desc">Nhập mã, chọn khoảng thời gian và lưu file Excel về <code style="font-family:monospace;font-size:10px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code></div>
+        <div class="card-tags">
+          <span class="tag">XLSX</span>
+          <span class="tag">CafeF API</span>
         </div>
-        <svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
       </div>
     </a>
 
     <a href="/surge.html" class="nav-card surge">
-      <div class="card-inner">
+      <div class="card-top">
         <div class="card-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#c32022">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c32022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 20V10M12 20V4M6 20v-6"/>
           </svg>
         </div>
-        <div class="card-body">
-          <div class="card-title">Phân tích đột biến</div>
-          <div class="card-desc">Tự động phát hiện mã có khối lượng giao dịch tăng đột biến so với trung bình MA, có biểu đồ và xuất ảnh.</div>
-          <div class="card-tags">
-            <span class="tag">🔥 Surge</span>
-            <span class="tag">MA20</span>
-            <span class="tag">Chart</span>
-            <span class="tag">Xuất PNG</span>
-          </div>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Phân tích đột biến</div>
+        <div class="card-desc">Phát hiện mã có khối lượng tăng đột biến so với MA, biểu đồ nến và xuất ảnh.</div>
+        <div class="card-tags">
+          <span class="tag">🔥 Surge</span>
+          <span class="tag">MA20</span>
+          <span class="tag">Chart</span>
         </div>
-        <svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
       </div>
     </a>
 
-  </div>
+    <a href="/detail.html" class="nav-card detail">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Phân tích chi tiết</div>
+        <div class="card-desc">RSI, MACD, BB, hỗ trợ/kháng cự, mẫu nến, scoring CANSLIM/SEPA cho một mã.</div>
+        <div class="card-tags">
+          <span class="tag">RSI · MACD</span>
+          <span class="tag">Nến Nhật</span>
+        </div>
+      </div>
+    </a>
 
-  <div class="footer-note">
-    Yêu cầu <code>node main.mjs</code> đang chạy trên cổng <code>3000</code>
-  </div>
+    <a href="/watchlist.html" class="nav-card watchlist">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </div>
+      <div>
+        <div class="card-title">Watchlist</div>
+        <div class="card-desc">Theo dõi mã yêu thích, quét tín hiệu mua/bán tự động và cảnh báo realtime.</div>
+        <div class="card-tags">
+          <span class="tag">❤️ Yêu thích</span>
+          <span class="tag">Tín hiệu</span>
+        </div>
+      </div>
+    </a>
 
+    <a href="/watcher.html" class="nav-card watcher">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#33a42e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Watcher — Toàn thị trường</div>
+        <div class="card-desc">Quét và xếp hạng toàn bộ mã trong <code style="font-family:monospace;font-size:10px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code> theo thứ tự ưu tiên mua → bán → chờ.</div>
+        <div class="card-tags">
+          <span class="tag">📊 Toàn bộ</span>
+          <span class="tag">Xếp hạng</span>
+          <span class="tag">Batch scan</span>
+        </div>
+      </div>
+    </a>
+
+  </main>
 </div>
 </body>
 </html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watchlist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#f0f2f5;--wht:#fff;--gray50:#f8f9fb;--gray100:#f1f3f5;--gray200:#e5e7eb;--gray400:#9ca3af;--gray500:#6b7280;--gray700:#374151;--gray900:#1a1a2e;
+      --navy:#003a6b;--navy-l:#e8f0f7;
+      --up:#2f9e44;--up-bg:#f0fdf4;--up-bd:#bbf7d0;
+      --dn:#e03131;--dn-bg:#fff5f5;--dn-bd:#ffc9c9;
+      --am:#f59e0b;--am-bg:#fffbeb;--am-bd:#fde68a;
+    }
+    *{box-sizing:border-box;margin:0}
+    body{background:var(--bg);color:var(--gray900);font-family:'Noto Sans',sans-serif;font-size:15px}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+    .b-buy{background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)}
+    .b-sell{background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)}
+    .b-watch{background:var(--am-bg);color:var(--am);border:1px solid var(--am-bd)}
+    .b-hold{background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .row-an{animation:fi .25s ease both}
+    .sig-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;margin:2px}
+  </style>
+</head>
+<body>
+
+<header style="background:var(--wht);border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:50">
+  <div style="max-width:1400px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--gray400);font-size:14px;font-weight:600;transition:color .15s" onmouseenter="this.style.color='var(--navy)'" onmouseleave="this.style.color='var(--gray400)'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Quay lại</a>
+      <div style="width:1px;height:24px;background:var(--gray200)"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--navy)">Watchlist</span>
+        <span id="countBadge" style="display:none;background:var(--navy-l);color:var(--navy);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700"></span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="lastScanTime" style="font-size:12px;color:var(--gray400)"></span>
+      <button id="scanBtn" onclick="runScan(false)"
+        style="height:38px;padding:0 20px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
+        onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Quét tín hiệu</button>
+      <button onclick="runScan(true)"
+        style="height:38px;padding:0 16px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);color:var(--gray500);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s"
+        onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray500)'"
+        title="Tải lại dữ liệu mới + quét">↺ Làm mới</button>
+    </div>
+  </div>
+</header>
+
+<main style="max-width:1400px;margin:0 auto;padding:24px 32px 60px">
+
+  <!-- Add symbol bar -->
+  <div style="display:flex;gap:10px;margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:8px;background:var(--wht);border:1.5px solid var(--gray200);border-radius:10px;padding:8px 16px;flex:1;max-width:320px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <input id="addInput" type="text" placeholder="Thêm mã…" autocomplete="off"
+        style="border:none;outline:none;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy);text-transform:uppercase;background:transparent;width:100%"
+        onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();addSymbol(this.value)}"/>
+    </div>
+    <button onclick="addSymbol(document.getElementById('addInput').value)"
+      style="height:42px;padding:0 20px;border-radius:10px;border:none;background:var(--up);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .15s"
+      onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">Thêm</button>
+  </div>
+
+  <!-- States -->
+  <div id="emptyState" style="text-align:center;padding:80px 0;display:none">
+    <div style="font-size:40px;margin-bottom:12px">🔍</div>
+    <div style="font-size:18px;font-weight:700;color:var(--gray900);margin-bottom:8px">Watchlist trống</div>
+    <div style="font-size:14px;color:var(--gray500)">Thêm mã cổ phiếu bên trên để bắt đầu theo dõi</div>
+  </div>
+  <div id="loadingState" style="text-align:center;padding:80px 0;display:none">
+    <div style="width:40px;height:40px;border-radius:50%;border:3px solid var(--navy-l);border-top-color:var(--navy);animation:sp .7s linear infinite;margin:0 auto 14px"></div>
+    <div id="loadingMsg" style="color:var(--gray500);font-size:15px">Đang tải…</div>
+  </div>
+
+  <!-- Summary bar -->
+  <div id="summaryBar" style="display:none;gap:12px;margin-bottom:20px;flex-wrap:wrap"></div>
+
+  <!-- Table -->
+  <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="background:var(--gray50);border-bottom:2px solid var(--gray200)">
+          <th style="padding:14px 20px;text-align:left;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>
+          <th style="padding:14px 16px;text-align:right;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">GIÁ</th>
+          <th style="padding:14px 16px;text-align:right;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">THAY ĐỔI</th>
+          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">RSI</th>
+          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">XU HƯỚNG</th>
+          <th style="padding:14px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU</th>
+          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KHUYẾN NGHỊ</th>
+          <th style="padding:14px 20px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px"></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- No-scan state: show symbols only -->
+  <div id="symbolsGrid" style="display:none;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px"></div>
+
+</main>
+
+<script>
+const SERVER=`http://${location.hostname}:3000`;
+const fp=v=>{if(v==null)return"—";return parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2})};
+
+let watchlistData=null;
+
+// ── Load initial state ────────────────────────────────────────────────────────
+async function init(){
+  setLoading("Đang tải watchlist…");
+  try{
+    const r=await fetch(`${SERVER}/watchlist`);
+    const d=await r.json();
+    watchlistData=d;
+    if(!d.symbols?.length){showEmpty();return;}
+    // Có data scan cũ → hiển thị luôn
+    if(d.symbols.length && d.lastScan && d.alerts){
+      renderTable(buildRows(d));
+    } else {
+      showSymbolsGrid(d.symbols);
+    }
+    updateLastScan(d.lastScan);
+  }catch(e){setLoading("Lỗi kết nối server");console.error(e)}
+}
+
+function buildRows(d){
+  // Merge symbols list với alerts data
+  const alertMap={};
+  (d.alerts||[]).forEach(a=>{alertMap[a.symbol]=a;});
+  return (d.symbols||[]).map(sym=>{
+    const a=alertMap[sym];
+    return{symbol:sym,price:a?.price,date:a?.date,signals:a?.signals||[],
+      rsi:null,trend:null,recommendation:null,recColor:null,change:null,error:null};
+  });
+}
+
+async function runScan(forceRefresh=false){
+  if(!watchlistData?.symbols?.length){showEmpty();return;}
+  const btn=document.getElementById("scanBtn");
+  btn.disabled=true;btn.style.opacity='.5';
+  setLoading(forceRefresh?"Đang tải dữ liệu mới + quét tín hiệu…":"Đang quét tín hiệu…");
+
+  try{
+    const url=`${SERVER}/watchlist/scan${forceRefresh?'?refresh=1':''}`;
+    const r=await fetch(url);
+    const d=await r.json();
+    if(d.error)throw new Error(d.error);
+
+    // Merge vào watchlistData
+    watchlistData={...watchlistData,lastScan:d.scanTime,alerts:d.alerts,symbols:watchlistData.symbols};
+    updateLastScan(d.scanTime);
+    renderTable(d.symbols||[]);
+  }catch(e){
+    alert("Lỗi quét: "+e.message);
+    document.getElementById("loadingState").style.display="none";
+    document.getElementById("tableWrap").style.display="block";
+  }finally{
+    btn.disabled=false;btn.style.opacity='1';
+  }
+}
+
+function renderTable(rows){
+  document.getElementById("loadingState").style.display="none";
+  document.getElementById("emptyState").style.display="none";
+  document.getElementById("symbolsGrid").style.display="none";
+
+  // Summary
+  const buyC=rows.filter(r=>r.buySignals>0).length;
+  const sellC=rows.filter(r=>r.sellSignals>0).length;
+  const totalSig=rows.reduce((s,r)=>(s+(r.signals?.length||0)),0);
+  const sb=document.getElementById("summaryBar");
+  sb.style.display="flex";
+  sb.innerHTML=`
+    <div style="padding:10px 18px;border-radius:10px;background:var(--wht);border:1px solid var(--gray200);font-size:13px">
+      <span style="color:var(--gray500)">Tổng mã</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--gray900);margin-left:8px">${rows.length}</span>
+    </div>
+    <div style="padding:10px 18px;border-radius:10px;background:var(--up-bg);border:1px solid var(--up-bd);font-size:13px">
+      <span style="color:var(--up)">Có tín hiệu MUA</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--up);margin-left:8px">${buyC}</span>
+    </div>
+    <div style="padding:10px 18px;border-radius:10px;background:var(--dn-bg);border:1px solid var(--dn-bd);font-size:13px">
+      <span style="color:var(--dn)">Có tín hiệu BÁN</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--dn);margin-left:8px">${sellC}</span>
+    </div>
+    <div style="padding:10px 18px;border-radius:10px;background:var(--am-bg);border:1px solid var(--am-bd);font-size:13px">
+      <span style="color:var(--am)">Tổng tín hiệu</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--am);margin-left:8px">${totalSig}</span>
+    </div>`;
+
+  // Table
+  const tbody=document.getElementById("tableBody");
+  document.getElementById("tableWrap").style.display="block";
+  document.getElementById("countBadge").style.display="inline";
+  document.getElementById("countBadge").textContent=`${rows.length} mã`;
+
+  tbody.innerHTML=rows.map((r,i)=>{
+    const changeStr=parseChange(r.change);
+    const changeColor=changeStr.dir>0?"var(--up)":changeStr.dir<0?"var(--dn)":"var(--gray500)";
+    const changeText=changeStr.val!=null?`${changeStr.dir>0?"+":""}${changeStr.pct?.toFixed(2)}%`:"—";
+
+    const rsiColor=r.rsi>70?"var(--dn)":r.rsi<30?"var(--up)":"var(--gray700)";
+    const rsiText=r.rsi!=null?r.rsi.toFixed(1):"—";
+
+    const trendMap={"STRONG_UP":"⚡ 3/3 Tăng","MODERATE_UP":"↑ Tăng vừa","STRONG_DOWN":"⚡ 3/3 Giảm","MODERATE_DOWN":"↓ Giảm vừa","MIXED":"↔ Hỗn hợp"};
+    const trendColor={"STRONG_UP":"var(--up)","MODERATE_UP":"var(--up)","STRONG_DOWN":"var(--dn)","MODERATE_DOWN":"var(--dn)","MIXED":"var(--am)"};
+    const trendText=r.trend?trendMap[r.trend]||r.trend:"—";
+    const trendC=r.trend?trendColor[r.trend]||"var(--gray500)":"var(--gray400)";
+
+    // Top 3 signals
+    const sigs=(r.signals||[]).slice(0,3).map(s=>{
+      const bg=s.level==="buy"?"var(--up-bg)":s.level==="sell"?"var(--dn-bg)":"var(--am-bg)";
+      const c=s.level==="buy"?"var(--up)":s.level==="sell"?"var(--dn)":"var(--am)";
+      const bd=s.level==="buy"?"var(--up-bd)":s.level==="sell"?"var(--dn-bd)":"var(--am-bd)";
+      return`<span class="sig-chip" style="background:${bg};color:${c};border:1px solid ${bd}">${s.title}</span>`;
+    }).join('');
+    const extraSigs=(r.signals?.length||0)>3?`<span class="sig-chip" style="background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)">+${r.signals.length-3}</span>`:'';
+
+    const recClass=r.recommendation==="MUA"?"b-buy":r.recommendation==="BÁN"?"b-sell":r.recommendation?.includes("THEO")?"b-watch":"b-hold";
+
+    return`<tr class="row-an" style="border-bottom:1px solid var(--gray100);animation-delay:${i*0.03}s;cursor:pointer"
+        onclick="openDetail('${r.symbol}')"
+        onmouseenter="this.style.background='var(--gray50)'" onmouseleave="this.style.background=''">
+      <td style="padding:14px 20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${r.symbol}</div>
+        ${r.error?`<div style="font-size:11px;color:var(--dn)">${r.error}</div>`:`<div style="font-size:11px;color:var(--gray400)">${r.date||''}</div>`}
+      </td>
+      <td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px">${fp(r.price)}</td>
+      <td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${changeColor}">${changeText}</td>
+      <td style="padding:14px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${rsiColor}">${rsiText}</td>
+      <td style="padding:14px 16px;text-align:center;font-size:13px;font-weight:600;color:${trendC}">${trendText}</td>
+      <td style="padding:10px 16px;max-width:280px">${sigs}${extraSigs}</td>
+      <td style="padding:14px 16px;text-align:center">
+        ${r.recommendation?`<span class="badge ${recClass}">${r.recommendation}</span>`:'<span style="color:var(--gray400);font-size:13px">—</span>'}
+      </td>
+      <td style="padding:14px 20px;text-align:center" onclick="event.stopPropagation()">
+        <button onclick="removeSymbol('${r.symbol}')"
+          style="width:30px;height:30px;border-radius:8px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray400);transition:all .15s"
+          onmouseenter="this.style.borderColor='var(--dn)';this.style.color='var(--dn)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray400)'"
+          title="Xóa khỏi watchlist">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function showSymbolsGrid(symbols){
+  document.getElementById("loadingState").style.display="none";
+  document.getElementById("tableWrap").style.display="none";
+  document.getElementById("summaryBar").style.display="none";
+  document.getElementById("countBadge").style.display="inline";
+  document.getElementById("countBadge").textContent=`${symbols.length} mã`;
+  const g=document.getElementById("symbolsGrid");
+  g.style.display="grid";
+  g.innerHTML=symbols.map(s=>`
+    <div onclick="openDetail('${s}')"
+      style="padding:16px;background:var(--wht);border:1px solid var(--gray200);border-radius:12px;cursor:pointer;text-align:center;transition:all .15s"
+      onmouseenter="this.style.borderColor='var(--navy)';this.style.background='var(--navy-l)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.background='var(--wht)'">
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${s}</div>
+    </div>`).join('');
+}
+
+function showEmpty(){
+  document.getElementById("loadingState").style.display="none";
+  document.getElementById("tableWrap").style.display="none";
+  document.getElementById("symbolsGrid").style.display="none";
+  document.getElementById("summaryBar").style.display="none";
+  document.getElementById("emptyState").style.display="block";
+  document.getElementById("countBadge").style.display="none";
+}
+
+function setLoading(msg){
+  document.getElementById("tableWrap").style.display="none";
+  document.getElementById("symbolsGrid").style.display="none";
+  document.getElementById("emptyState").style.display="none";
+  document.getElementById("loadingState").style.display="block";
+  document.getElementById("loadingMsg").textContent=msg;
+}
+
+function updateLastScan(t){
+  if(!t)return;
+  const el=document.getElementById("lastScanTime");
+  const d=new Date(t);
+  el.textContent=`Quét lúc ${d.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}`;
+}
+
+function parseChange(r){
+  if(!r)return{val:null,pct:null,dir:0};
+  const m=String(r).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
+  if(!m)return{val:null,pct:null,dir:0};
+  const v=parseFloat(m[1].replace(",",".")),p=parseFloat(m[2].replace(",","."));
+  return{val:v,pct:p,dir:v>0?1:v<0?-1:0};
+}
+
+function openDetail(sym){
+  window.open(`/detail.html?s=${sym}`,"_blank");
+}
+
+async function addSymbol(sym){
+  sym=(sym||"").toUpperCase().trim();
+  if(!sym||!/^[A-Z0-9]{1,10}$/.test(sym)){alert("Mã không hợp lệ");return;}
+  try{
+    const r=await fetch(`${SERVER}/watchlist/add`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:sym})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||"Lỗi");
+    document.getElementById("addInput").value="";
+    watchlistData={...watchlistData,symbols:d.symbols};
+    showSymbolsGrid(d.symbols);
+    document.getElementById("countBadge").style.display="inline";
+    document.getElementById("countBadge").textContent=`${d.symbols.length} mã`;
+  }catch(e){alert("Lỗi: "+e.message)}
+}
+
+async function removeSymbol(sym){
+  if(!confirm(`Xóa ${sym} khỏi watchlist?`))return;
+  try{
+    const r=await fetch(`${SERVER}/watchlist/remove`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:sym})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||"Lỗi");
+    watchlistData={...watchlistData,symbols:d.symbols};
+    if(!d.symbols.length){showEmpty();return;}
+    // Re-render table với row đó bị xóa
+    const tbody=document.getElementById("tableBody");
+    const rows=tbody.querySelectorAll("tr");
+    rows.forEach(row=>{if(row.textContent.includes(sym))row.remove();});
+    document.getElementById("countBadge").textContent=`${d.symbols.length} mã`;
+  }catch(e){alert("Lỗi: "+e.message)}
+}
+
+window.addEventListener("load",init);
+</script>
+</body>
+</html>

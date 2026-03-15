@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watcher — Toàn bộ thị trường</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#f0f2f5;--wht:#fff;--gray50:#f8f9fb;--gray100:#f1f3f5;--gray200:#e5e7eb;
+      --gray400:#9ca3af;--gray500:#6b7280;--gray700:#374151;--gray900:#1a1a2e;
+      --navy:#003a6b;--navy-l:#e8f0f7;
+      --up:#2f9e44;--up-bg:#f0fdf4;--up-bd:#bbf7d0;
+      --dn:#e03131;--dn-bg:#fff5f5;--dn-bd:#ffc9c9;
+      --am:#f59e0b;--am-bg:#fffbeb;--am-bd:#fde68a;
+    }
+    *{box-sizing:border-box;margin:0}
+    body{background:var(--bg);color:var(--gray900);font-family:'Noto Sans',sans-serif;font-size:15px}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
+    .b-buy{background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)}
+    .b-sell{background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)}
+    .b-watch{background:var(--am-bg);color:var(--am);border:1px solid var(--am-bd)}
+    .b-hold{background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .row-an{animation:fi .2s ease both}
+    .sig-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;margin:2px}
+    .group-header{padding:10px 20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid}
+    tr:hover td{background:var(--gray50)}
+    .progress-bar{height:4px;border-radius:2px;background:var(--gray200);overflow:hidden;margin-top:6px}
+    .progress-fill{height:100%;border-radius:2px;background:var(--navy);transition:width .3s ease}
+  </style>
+</head>
+<body>
+
+<header style="background:var(--wht);border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:50">
+  <div style="max-width:1500px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--gray400);font-size:14px;font-weight:600;transition:color .15s" onmouseenter="this.style.color='var(--navy)'" onmouseleave="this.style.color='var(--gray400)'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Quay lại</a>
+      <div style="width:1px;height:24px;background:var(--gray200)"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--navy)">Watcher</span>
+        <span id="countBadge" style="display:none;background:var(--navy-l);color:var(--navy);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700"></span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <!-- Search filter -->
+      <div style="display:flex;align-items:center;gap:6px;background:var(--gray50);border:1.5px solid var(--gray200);border-radius:10px;padding:6px 12px;transition:border-color .15s"
+        onfocusin="this.style.borderColor='var(--navy)'" onfocusout="this.style.borderColor='var(--gray200)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="filterInput" type="text" placeholder="Lọc mã…" autocomplete="off"
+          style="border:none;outline:none;background:transparent;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy);width:90px;text-transform:uppercase"
+          oninput="applyFilter(this.value)"
+          onkeydown="if(event.key==='Escape'){this.value='';applyFilter('')}"/>
+      </div>
+      <span id="filterBadge" style="display:none;font-size:12px;color:var(--gray400)"></span>
+      <span id="scanTime" style="font-size:12px;color:var(--gray400)"></span>
+      <button id="scanBtn" onclick="startScan()"
+        style="height:38px;padding:0 20px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
+        onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Quét tất cả</button>
+    </div>
+  </div>
+</header>
+
+<main style="max-width:1500px;margin:0 auto;padding:24px 32px 80px">
+
+  <!-- Loading state -->
+  <div id="loadingState" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;padding:32px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;border:3px solid var(--navy-l);border-top-color:var(--navy);animation:sp .7s linear infinite"></div>
+        <div>
+          <div id="loadingTitle" style="font-size:15px;font-weight:700;color:var(--gray900)">Đang quét…</div>
+          <div id="loadingDetail" style="font-size:13px;color:var(--gray400);margin-top:2px"></div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:var(--navy)" id="loadingCounter">0 / 0</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <!-- Live results preview during scan -->
+    <div id="livePreview" style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px"></div>
+  </div>
+
+  <!-- Empty state -->
+  <div id="emptyState" style="text-align:center;padding:80px 0;display:none">
+    <div style="font-size:40px;margin-bottom:12px">📂</div>
+    <div style="font-size:18px;font-weight:700;color:var(--gray900);margin-bottom:8px">Chưa có dữ liệu</div>
+    <div style="font-size:14px;color:var(--gray500);margin-bottom:24px">Không tìm thấy file .xlsx nào trong thư mục <code style="background:var(--gray100);padding:2px 6px;border-radius:4px">tmp/</code></div>
+    <a href="/" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:10px;background:var(--navy);color:#fff;font-weight:700;font-size:14px;text-decoration:none">
+      Tải dữ liệu tại surge.html</a>
+  </div>
+
+  <!-- Summary bar -->
+  <div id="summaryBar" style="display:none;gap:12px;margin-bottom:20px;flex-wrap:wrap"></div>
+
+  <!-- Table -->
+  <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="background:var(--gray50);border-bottom:2px solid var(--gray200)">
+          <th style="padding:13px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>
+          <th style="padding:13px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">GIÁ</th>
+          <th style="padding:13px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">THAY ĐỔI</th>
+          <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">RSI</th>
+          <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">XU HƯỚNG</th>
+          <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU NỔI BẬT</th>
+          <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KHUYẾN NGHỊ</th>
+          <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">ĐIỂM</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+const SERVER = `http://${location.hostname}:3000`;
+const BATCH  = 5; // số mã phân tích song song cùng lúc
+
+const fp = v => v == null ? "—" : parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
+
+function parseChange(r){
+  if(!r) return {val:null,pct:null,dir:0};
+  const m = String(r).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
+  if(!m) return {val:null,pct:null,dir:0};
+  const v = parseFloat(m[1].replace(",",".")), p = parseFloat(m[2].replace(",","."));
+  return {val:v, pct:p, dir:v>0?1:v<0?-1:0};
+}
+
+// Ưu tiên sắp xếp: MUA=0, THEO DÕI MUA=1, BÁN=2, THEO DÕI BÁN=3, CHỜ=4, lỗi=5
+function recPriority(rec){
+  if(!rec) return 4;
+  if(rec==="MUA") return 0;
+  if(rec==="THEO DÕI MUA") return 1;
+  if(rec==="BÁN") return 2;
+  if(rec==="THEO DÕI BÁN") return 3;
+  return 4;
+}
+
+// Group label + style
+const GROUP = {
+  0: { label:"MUA", color:"var(--up)", bg:"var(--up-bg)", bd:"var(--up-bd)" },
+  1: { label:"THEO DÕI MUA", color:"#16a34a", bg:"#f0fdf4", bd:"#86efac" },
+  2: { label:"BÁN", color:"var(--dn)", bg:"var(--dn-bg)", bd:"var(--dn-bd)" },
+  3: { label:"THEO DÕI BÁN", color:"#dc2626", bg:"#fff5f5", bd:"#fca5a5" },
+  4: { label:"CHỜ", color:"var(--am)", bg:"var(--am-bg)", bd:"var(--am-bd)" },
+};
+
+let scanResults = [];
+
+async function startScan(){
+  // Load symbol list
+  let symbols = [];
+  try {
+    const r = await fetch(`${SERVER}/symbols`);
+    const d = await r.json();
+    symbols = d.symbols || [];
+  } catch(e) {
+    alert("Không kết nối được server: " + e.message);
+    return;
+  }
+
+  if(!symbols.length){
+    document.getElementById("emptyState").style.display="block";
+    return;
+  }
+
+  // Reset UI
+  document.getElementById("emptyState").style.display="none";
+  document.getElementById("tableWrap").style.display="none";
+  document.getElementById("summaryBar").style.display="none";
+  document.getElementById("loadingState").style.display="block";
+  document.getElementById("scanBtn").disabled=true;
+  document.getElementById("scanBtn").style.opacity=".5";
+  document.getElementById("livePreview").innerHTML="";
+  scanResults = [];
+
+  const total = symbols.length;
+  document.getElementById("countBadge").style.display="inline";
+  document.getElementById("countBadge").textContent=`${total} mã`;
+
+  let done = 0;
+
+  const updateProgress = (sym, rec) => {
+    done++;
+    document.getElementById("loadingCounter").textContent=`${done} / ${total}`;
+    document.getElementById("progressFill").style.width=`${Math.round(done/total*100)}%`;
+    document.getElementById("loadingTitle").textContent=`Đang phân tích… (${done}/${total})`;
+    document.getElementById("loadingDetail").textContent=sym;
+
+    // Live preview chip
+    if(rec){
+      const p = recPriority(rec);
+      const g = GROUP[p] || GROUP[4];
+      const chip = document.createElement("div");
+      chip.style.cssText=`padding:6px 10px;border-radius:8px;background:${g.bg};border:1px solid ${g.bd};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:${g.color};text-align:center;cursor:pointer`;
+      chip.textContent=sym;
+      chip.onclick=()=>window.open(`/detail.html?s=${sym}`,"_blank");
+      document.getElementById("livePreview").appendChild(chip);
+    }
+  };
+
+  // Batch processing
+  for(let i = 0; i < symbols.length; i += BATCH){
+    const batch = symbols.slice(i, i + BATCH);
+    await Promise.all(batch.map(async sym => {
+      try {
+        const r = await fetch(`${SERVER}/analyze-detail?symbol=${sym}`);
+        const d = await r.json();
+        if(d.error){ updateProgress(sym, null); return; }
+
+        const ch = parseChange(d.latestChange);
+        const rec = d.predictions?.recommendation;
+        const recColor = d.predictions?.recColor;
+        const buySignals = (d.predictions?.bestBuy ? 1 : 0);
+
+        // Score tổng hợp: lấy max của 3 scoring methods
+        const scores = [
+          d.scoring?.canslim?.total,
+          d.scoring?.sepa?.total,
+          d.scoring?.momentum?.total,
+        ].filter(v => v != null);
+        const topScore = scores.length ? Math.max(...scores) : null;
+
+        // Top signal
+        const topSig = (() => {
+          const allSigs = [
+            ...(d.multiTimeframePatterns?.shortTerm?.bullish || []),
+            ...(d.multiTimeframePatterns?.shortTerm?.bearish || []),
+          ].sort((a,b) => b.strength - a.strength);
+          return allSigs[0] || null;
+        })();
+
+        scanResults.push({
+          symbol: sym,
+          price: d.latestPrice,
+          change: d.latestChange,
+          changePct: ch.pct,
+          changeDir: ch.dir,
+          rsi: d.indicators?.rsi,
+          trend: d.trend?.alignment,
+          rec,
+          recColor,
+          recPrio: recPriority(rec),
+          topScore,
+          topSig,
+          date: d.latestDate,
+          error: null,
+        });
+        updateProgress(sym, rec);
+      } catch(e) {
+        scanResults.push({ symbol: sym, error: e.message, recPrio: 5 });
+        updateProgress(sym, null);
+      }
+    }));
+  }
+
+  // Sort: theo priority rồi theo score giảm dần
+  scanResults.sort((a,b) => {
+    if(a.recPrio !== b.recPrio) return a.recPrio - b.recPrio;
+    return (b.topScore ?? 0) - (a.topScore ?? 0);
+  });
+
+  document.getElementById("loadingState").style.display="none";
+  document.getElementById("scanBtn").disabled=false;
+  document.getElementById("scanBtn").style.opacity="1";
+  document.getElementById("scanTime").textContent=`Quét lúc ${new Date().toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}`;
+
+  renderTable(scanResults);
+}
+
+function renderTable(rows){
+  // Summary
+  const counts = {0:0,1:0,2:0,3:0,4:0};
+  rows.forEach(r => { if(r.recPrio<=4) counts[r.recPrio]++; });
+  const sb = document.getElementById("summaryBar");
+  sb.style.display="flex";
+  sb.innerHTML = Object.entries(counts).filter(([,v])=>v>0).map(([p,v])=>{
+    const g = GROUP[p];
+    return `<div style="padding:10px 18px;border-radius:10px;background:${g.bg};border:1px solid ${g.bd};font-size:13px;display:flex;align-items:center;gap:10px">
+      <span style="color:${g.color};font-weight:700">${g.label}</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${g.color}">${v}</span>
+    </div>`;
+  }).join('');
+
+  // Table
+  const tbody = document.getElementById("tableBody");
+  document.getElementById("tableWrap").style.display="block";
+
+  let html = "";
+  let lastPrio = -1;
+
+  rows.forEach((r, i) => {
+    // Group header
+    if(r.recPrio !== lastPrio && r.recPrio <= 4){
+      const g = GROUP[r.recPrio];
+      html += `<tr><td colspan="8" class="group-header"
+        style="color:${g.color};background:${g.bg};border-bottom-color:${g.bd}">
+        ${g.label} · ${rows.filter(x=>x.recPrio===r.recPrio).length} mã
+      </td></tr>`;
+      lastPrio = r.recPrio;
+    }
+
+    if(r.error){
+      html += `<tr class="row-an" style="animation-delay:${i*0.015}s;opacity:.5">
+        <td style="padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--gray400)">${r.symbol}</td>
+        <td colspan="7" style="padding:12px 16px;font-size:13px;color:var(--dn)">${r.error}</td>
+      </tr>`;
+      return;
+    }
+
+    const changeColor = r.changeDir>0?"var(--up)":r.changeDir<0?"var(--dn)":"var(--gray500)";
+    const changeText  = r.changePct!=null?`${r.changeDir>0?"+":""}${r.changePct.toFixed(2)}%`:"—";
+    const rsiColor    = r.rsi>70?"var(--dn)":r.rsi<30?"var(--up)":"var(--gray700)";
+    const rsiText     = r.rsi!=null?r.rsi.toFixed(1):"—";
+
+    const trendMap   = {"STRONG_UP":"⚡ 3/3 Tăng","MODERATE_UP":"↑ Tăng vừa","STRONG_DOWN":"⚡ 3/3 Giảm","MODERATE_DOWN":"↓ Giảm vừa","MIXED":"↔ Hỗn hợp"};
+    const trendColor = {"STRONG_UP":"var(--up)","MODERATE_UP":"var(--up)","STRONG_DOWN":"var(--dn)","MODERATE_DOWN":"var(--dn)","MIXED":"var(--am)"};
+    const trendText  = r.trend ? (trendMap[r.trend]||r.trend) : "—";
+    const trendC     = r.trend ? (trendColor[r.trend]||"var(--gray500)") : "var(--gray400)";
+
+    const recClass = r.rec==="MUA"?"b-buy":r.rec==="BÁN"?"b-sell":(r.rec||"").includes("THEO")?"b-watch":"b-hold";
+
+    const sigHtml = r.topSig ? (() => {
+      const isBull = r.topSig.desc?.includes("tăng")||r.topSig.name?.toLowerCase().includes("bull")||r.topSig.name?.includes("Golden");
+      const bg  = isBull?"var(--up-bg)":"var(--dn-bg)";
+      const clr = isBull?"var(--up)":"var(--dn)";
+      const bd  = isBull?"var(--up-bd)":"var(--dn-bd)";
+      return `<span class="sig-chip" style="background:${bg};color:${clr};border:1px solid ${bd}">${r.topSig.name}</span>
+              <span style="font-size:11px;color:var(--gray400)">${r.topSig.strength}%</span>`;
+    })() : '<span style="font-size:12px;color:var(--gray400)">—</span>';
+
+    const scoreHtml = r.topScore!=null
+      ? `<span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${r.topScore>=70?"var(--up)":r.topScore>=50?"var(--am)":"var(--dn)"}">${r.topScore}</span>`
+      : '<span style="color:var(--gray400)">—</span>';
+
+    html += `<tr class="row-an" style="border-bottom:1px solid var(--gray100);animation-delay:${i*0.015}s;cursor:pointer"
+        onclick="window.open('/detail.html?s=${r.symbol}','_blank')">
+      <td style="padding:13px 20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy)">${r.symbol}</div>
+        <div style="font-size:11px;color:var(--gray400)">${r.date||''}</div>
+      </td>
+      <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px">${fp(r.price)}</td>
+      <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${changeColor}">${changeText}</td>
+      <td style="padding:13px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${rsiColor}">${rsiText}</td>
+      <td style="padding:13px 16px;text-align:center;font-size:13px;font-weight:600;color:${trendC}">${trendText}</td>
+      <td style="padding:10px 16px;max-width:260px">${sigHtml}</td>
+      <td style="padding:13px 16px;text-align:center">
+        ${r.rec?`<span class="badge ${recClass}">${r.rec}</span>`:'<span style="color:var(--gray400);font-size:12px">—</span>'}
+      </td>
+      <td style="padding:13px 16px;text-align:center">${scoreHtml}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = html;
+}
+
+// Auto-start on load
+window.addEventListener("load", () => {
+  startScan();
+});
+
+function applyFilter(val){
+  val = val.toUpperCase().trim();
+  const badge = document.getElementById("filterBadge");
+
+  if(!scanResults.length) return;
+
+  const filtered = val ? scanResults.filter(r => r.symbol.includes(val)) : scanResults;
+
+  if(val){
+    badge.style.display = "inline";
+    badge.textContent = filtered.length ? `${filtered.length} kết quả` : "Không tìm thấy";
+  } else {
+    badge.style.display = "none";
+  }
+
+  renderTable(filtered);
+}
+</script>
+</body>
+</html>

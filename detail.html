@@ -62,7 +62,7 @@
 <header style="background:var(--wht);border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:50">
   <div style="max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between">
     <div style="display:flex;align-items:center;gap:16px">
-      <a href="/surge.html" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--gray400);font-size:14px;font-weight:600;transition:color .15s" onmouseenter="this.style.color='var(--navy)'" onmouseleave="this.style.color='var(--gray400)'">
+      <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--gray400);font-size:14px;font-weight:600;transition:color .15s" onmouseenter="this.style.color='var(--navy)'" onmouseleave="this.style.color='var(--gray400)'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Quay lại</a>
       <div style="width:1px;height:24px;background:var(--gray200)"></div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -85,12 +85,15 @@
         </button>
         <div style="width:1px;height:22px;background:var(--gray200)"></div>
       </div>
-      <div id="searchBox" style="display:flex;align-items:center;gap:6px;background:var(--gray50);border-radius:12px;padding:8px 14px;border:2px solid var(--gray200);transition:border-color .15s">
+      <div id="searchBox" style="position:relative;display:flex;align-items:center;gap:6px;background:var(--gray50);border-radius:12px;padding:8px 14px;border:2px solid var(--gray200);transition:border-color .15s">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input id="symbolInput" type="text" placeholder="Nhập mã…"
+        <input id="symbolInput" type="text" placeholder="Nhập mã…" autocomplete="off"
           style="background:transparent;border:none;outline:none;color:var(--navy);font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;width:100px;letter-spacing:1px;text-transform:uppercase"
-          onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();loadAnalysis(this.value)}"
-          onfocus="document.getElementById('searchBox').style.borderColor='var(--navy)'" onblur="document.getElementById('searchBox').style.borderColor='var(--gray200)'"/>
+          onkeydown="handleSymbolKey(event)"
+          oninput="filterAutocomplete(this.value)"
+          onfocus="showAutocomplete();document.getElementById('searchBox').style.borderColor='var(--navy)'"
+          onblur="setTimeout(hideAutocomplete,150);document.getElementById('searchBox').style.borderColor='var(--gray200)'"/>
+        <div id="acDropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--wht);border:1.5px solid var(--gray200);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:200;max-height:220px;overflow-y:auto"></div>
       </div>
       <button onclick="loadAnalysis(document.getElementById('symbolInput').value)"
         style="height:42px;padding:0 24px;border-radius:12px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
@@ -134,10 +137,7 @@
             <span id="symbolBadge" style="font-family:'Syne',sans-serif;font-weight:800;font-size:36px;color:var(--navy);line-height:1">—</span>
             <div id="recBadge" class="badge"></div>
           </div>
-          <div id="companyInfo" style="min-height:44px;margin-bottom:16px">
-            <div class="sh" style="height:16px;width:320px;margin-bottom:8px"></div>
-            <div class="sh" style="height:14px;width:200px"></div>
-          </div>
+          <div id="companyInfo" style="min-height:20px;margin-bottom:16px"></div>
           <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
             <span id="priceDisplay" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:40px;color:var(--gray900)">—</span>
             <span id="changeDisplay" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px">—</span>
@@ -385,6 +385,41 @@ const bc=d=>d==="UPTREND"?"b-up":d==="DOWNTREND"?"b-dn":"b-sd";
 const ta=d=>d==="UPTREND"?"▲":d==="DOWNTREND"?"▼":"➡";
 const tl=d=>d==="UPTREND"?"Tăng":d==="DOWNTREND"?"Giảm":"Sideway";
 
+// ── Autocomplete ───────────────────────────────────────────────────────────
+let allSymbols=[],acIdx=-1;
+async function loadSymbols(){
+  try{const r=await fetch(`${SERVER}/symbols`);const d=await r.json();allSymbols=d.symbols||[];}catch{}
+}
+function filterAutocomplete(val){
+  val=(val||'').toUpperCase().trim();
+  const dd=document.getElementById('acDropdown');
+  if(!val){dd.style.display='none';return;}
+  const matches=allSymbols.filter(s=>s.startsWith(val)).slice(0,8);
+  if(!matches.length){dd.style.display='none';return;}
+  acIdx=-1;
+  dd.innerHTML=matches.map((s,i)=>`<div data-i="${i}" onmousedown="pickSymbol('${s}')"
+    style="padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer;border-bottom:1px solid var(--gray100)"
+    onmouseover="this.style.background='var(--navy-l)'" onmouseout="this.style.background=''">${s}</div>`).join('');
+  dd.style.display='block';
+}
+function showAutocomplete(){if(document.getElementById('symbolInput').value.trim())filterAutocomplete(document.getElementById('symbolInput').value);}
+function hideAutocomplete(){const dd=document.getElementById('acDropdown');if(dd)dd.style.display='none';acIdx=-1;}
+function pickSymbol(s){
+  document.getElementById('symbolInput').value=s;
+  hideAutocomplete();
+  loadAnalysis(s);
+}
+function handleSymbolKey(e){
+  const dd=document.getElementById('acDropdown');
+  const items=dd?.querySelectorAll('[data-i]');
+  if(dd?.style.display==='block'&&items?.length){
+    if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,items.length-1);items.forEach((el,i)=>el.style.background=i===acIdx?'var(--navy-l)':'');return;}
+    if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,0);items.forEach((el,i)=>el.style.background=i===acIdx?'var(--navy-l)':'');return;}
+    if(e.key==='Enter'&&acIdx>=0&&!e.isComposing){e.preventDefault();pickSymbol(items[acIdx].textContent);return;}
+  }
+  if(e.key==='Enter'&&!e.isComposing){e.preventDefault();loadAnalysis(document.getElementById('symbolInput').value);}
+}
+
 // ── Watchlist ──────────────────────────────────────────────────────────────
 let watchlistSymbols=[];
 async function loadWatchlistState(){
@@ -442,7 +477,6 @@ async function loadAnalysis(sym,forceRefresh=false){
   document.getElementById("symbolBadge").textContent=sym;
   ["priceDisplay","changeDisplay","openVal","highVal","lowVal"].forEach(i=>document.getElementById(i).textContent="—");
   document.getElementById("dateRange").textContent="";document.getElementById("recBadge").textContent="";
-  document.getElementById("companyInfo").innerHTML='<div class="sh" style="height:16px;width:320px;margin-bottom:8px"></div><div class="sh" style="height:14px;width:200px"></div>';
   ["trendContent","alignmentBadge","indicatorsContent","volumeContent","predictionsContent","srContent","patternsContent","rsContent","patternsTabContent","canslimContent","sepaContent","momentumContent","investProfileContent"].forEach(i=>{const e=document.getElementById(i);if(e)e.innerHTML=""});
   document.querySelectorAll(".an").forEach(e=>{e.style.animation="none";e.offsetHeight;e.style.animation=""});
 
@@ -499,24 +533,11 @@ async function loadAnalysis(sym,forceRefresh=false){
 
     document.getElementById("loadingState").style.display="none";document.getElementById("resultContent").style.display="block";
     document.getElementById("collapseControls").style.display="flex";
+    localStorage.setItem("detail_last_symbol", sym);
     const cb=document.getElementById("cacheBadge");
     if(cb){if(analysisData._fromCache){cb.style.display="inline-flex";cb.title=`Cache ${analysisData._cacheAgeMin??0} phút trước`}else{cb.style.display="none"}}
-    renderAll(analysisData);fetchCompanyInfo(sym);updateWatchlistBtn();
+    renderAll(analysisData);updateWatchlistBtn();
   }catch(e){document.getElementById("loadingState").style.display="none";document.getElementById("errorState").style.display="block";document.getElementById("errorMsg").textContent=e.message}
-}
-
-async function fetchCompanyInfo(sym){
-  const el=document.getElementById("companyInfo");
-  try{const r=await fetch(`${SERVER}/company-info?symbol=${sym}`);const d=await r.json();
-    if(!d?.companyName||d.companyName===sym){el.innerHTML=`<div style="font-size:16px;font-weight:600">${sym}</div>`;return}
-    let h=`<div style="font-size:17px;font-weight:700;color:var(--gray900);margin-bottom:6px">${d.companyName}</div>`;
-    const t=[];if(d.exchange)t.push(`<span style="background:var(--navy-l);color:var(--navy);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700">${d.exchange}</span>`);
-    if(d.industry)t.push(`<span style="background:var(--up-bg);color:var(--up);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700">${d.industry}</span>`);
-    if(t.length)h+=`<div style="display:flex;gap:6px;margin-bottom:4px">${t.join("")}</div>`;
-    const p=[];if(d.chairman)p.push(`Chủ tịch: ${d.chairman}`);if(d.ceo)p.push(`TGĐ: ${d.ceo}`);
-    if(p.length)h+=`<div style="font-size:13px;color:var(--gray500)">${p.join(" · ")}</div>`;
-    el.innerHTML=h;
-  }catch{el.innerHTML=`<div style="font-size:16px;font-weight:600">${sym}</div>`}
 }
 
 function renderAll(d){
@@ -1095,9 +1116,16 @@ Chart.register({
 });
 
 window.addEventListener("load",()=>{
+  loadSymbols();
   loadWatchlistState();
   const s=new URLSearchParams(location.search).get("s");
-  if(s){document.getElementById("symbolInput").value=s;loadAnalysis(s)}
+  if(s){
+    document.getElementById("symbolInput").value=s;
+    loadAnalysis(s);
+  } else {
+    const last=localStorage.getItem("detail_last_symbol");
+    if(last){document.getElementById("symbolInput").value=last;loadAnalysis(last);}
+  }
 });
 </script>
 </body>

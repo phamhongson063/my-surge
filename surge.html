@@ -476,19 +476,35 @@
       <a
         href="/detail.html"
         class="sidebar-content px-6 py-3 flex items-center gap-2 no-underline transition-colors"
-        style="
-          border-top: 1px solid rgba(255, 255, 255, 0.06);
-          color: rgba(99, 102, 241, 0.6);
-          font-size: 13px;
-          font-weight: 600;
-        "
+        style="border-top:1px solid rgba(255,255,255,.06);color:rgba(99,102,241,.6);font-size:13px;font-weight:600"
         onmouseenter="this.style.color='rgba(99,102,241,.9)';this.style.background='rgba(99,102,241,.06)'"
-        onmouseleave="this.style.color='rgba(99,102,241,.6)';this.style.background='transparent'"
-      >
+        onmouseleave="this.style.color='rgba(99,102,241,.6)';this.style.background='transparent'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/><path d="M11 8v6M8 11h6"/>
         </svg>
         Phân tích chi tiết
+      </a>
+      <a
+        href="/watchlist.html"
+        class="sidebar-content px-6 py-3 flex items-center gap-2 no-underline transition-colors"
+        style="border-top:1px solid rgba(255,255,255,.06);color:rgba(167,139,250,.6);font-size:13px;font-weight:600"
+        onmouseenter="this.style.color='rgba(167,139,250,.9)';this.style.background='rgba(167,139,250,.06)'"
+        onmouseleave="this.style.color='rgba(167,139,250,.6)';this.style.background='transparent'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        Watchlist
+      </a>
+      <a
+        href="/watcher.html"
+        class="sidebar-content px-6 py-3 flex items-center gap-2 no-underline transition-colors"
+        style="border-top:1px solid rgba(255,255,255,.06);color:rgba(74,222,128,.6);font-size:13px;font-weight:600"
+        onmouseenter="this.style.color='rgba(74,222,128,.9)';this.style.background='rgba(74,222,128,.06)'"
+        onmouseleave="this.style.color='rgba(74,222,128,.6)';this.style.background='transparent'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Watcher
       </a>
       <a
         href="/"
@@ -1133,19 +1149,6 @@
                 </div>
               </div>
 
-              <!-- Dùng cache -->
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9">
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#1f2937">Dùng cache kết quả</div>
-                  <div style="font-size:11px;color:#9ca3af;margin-top:2px">Lưu theo ngày, tăng tốc độ tải</div>
-                </div>
-                <button id="cacheSwitch" onclick="toggleCacheSetting()"
-                  style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;background:#d1d5db">
-                  <span id="cacheSwitchThumb"
-                    style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
-                </button>
-              </div>
-
               <!-- Nút Áp dụng -->
               <div style="margin-top: 14px">
                 <button
@@ -1462,7 +1465,6 @@
       let displayLimit = 0; // 0 = hiển thị tất cả
       let volHighlightX = 2; // ngưỡng KL/MA để highlight đỏ
       let surgeFilterEnabled = true; // bật/tắt lọc theo ngưỡng
-      let useCache = false; // dùng cache kết quả theo ngày
 
       // isSurge tính động theo volHighlightX — không dùng field từ backend nữa
       function isSurge(r) {
@@ -1490,16 +1492,15 @@
         renderGrid();
       }
 
-      // ── Likes: load/save qua server API (settings/likes.csv) ─────────────────
+      // ── Likes: dùng watchlist API ─────────────────────────────────────────
       async function loadLikes() {
         try {
-          const res = await fetch(`${SERVER}/likes`);
+          const res = await fetch(`${SERVER}/watchlist`);
           const json = await res.json();
           likedSymbols = new Set(
             (json.symbols ?? []).map((s) => s.toUpperCase())
           );
         } catch (e) {
-          // fallback localStorage nếu server chưa có API
           try {
             likedSymbols = new Set(
               JSON.parse(localStorage.getItem("surgeLikes") || "[]")
@@ -1509,8 +1510,10 @@
       }
       async function saveLike(symbol, liked) {
         try {
-          await fetch(`${SERVER}/likes/${encodeURIComponent(symbol)}`, {
-            method: liked ? "POST" : "DELETE",
+          await fetch(`${SERVER}/watchlist/${liked ? "add" : "remove"}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol }),
           });
         } catch (e) {
           console.warn("saveLike error:", e);
@@ -1753,7 +1756,6 @@
           if (s.sortMode !== undefined) sortMode = s.sortMode;
           if (s.rangeN !== undefined) rangeN = s.rangeN;
           if (s.chartMode  !== undefined) chartMode  = s.chartMode;
-          if (s.useCache   !== undefined) useCache   = s.useCache;
         } catch (e) {}
       }
       function saveSettings() {
@@ -1770,7 +1772,6 @@
               sortMode,
               rangeN,
               chartMode,
-              useCache,
             })
           );
         } catch (e) {}
@@ -1810,9 +1811,7 @@
         _pendingLimit = displayLimit;
         _pendingVolX = volHighlightX;
         _pendingFilterEnabled = surgeFilterEnabled;
-        _pendingUseCache      = useCache;
         applySurgeFilterUI(_pendingFilterEnabled);
-        applyCacheUI(_pendingUseCache);
         applyMarkerSwitchUI(_pendingMarkers);
         const vxi = document.getElementById("volHighlightInput");
         if (vxi)
@@ -1833,7 +1832,6 @@
               _pendingLimit = displayLimit;
               _pendingVolX = volHighlightX;
               _pendingFilterEnabled = surgeFilterEnabled;
-              _pendingUseCache      = useCache;
               applyMarkerSwitchUI(showMarkers);
               document.getElementById("settingsPopup").style.display = "none";
               document.removeEventListener("click", closePopup);
@@ -1847,7 +1845,6 @@
       let _pendingLimit = displayLimit;
       let _pendingVolX = volHighlightX;
       let _pendingFilterEnabled = surgeFilterEnabled;
-      let _pendingUseCache      = useCache;
 
       function toggleMarkers() {
         _pendingMarkers = !_pendingMarkers;
@@ -1870,18 +1867,6 @@
         if (thumb) thumb.style.left = val ? "21px" : "3px";
         if (stepper) stepper.style.opacity = val ? "1" : "0.35";
         if (stepper) stepper.style.pointerEvents = val ? "auto" : "none";
-      }
-
-      function applyCacheUI(val) {
-        const sw    = document.getElementById("cacheSwitch");
-        const thumb = document.getElementById("cacheSwitchThumb");
-        if (sw)    sw.style.background = val ? "#003a6b" : "#d1d5db";
-        if (thumb) thumb.style.left    = val ? "21px" : "3px";
-      }
-
-      function toggleCacheSetting() {
-        _pendingUseCache = !_pendingUseCache;
-        applyCacheUI(_pendingUseCache);
       }
 
       function toggleSurgeFilter() {
@@ -1915,8 +1900,7 @@
           showMarkers !== _pendingMarkers ||
           displayLimit !== _pendingLimit ||
           volHighlightX !== _pendingVolX ||
-          surgeFilterEnabled !== _pendingFilterEnabled ||
-          useCache !== _pendingUseCache;
+          surgeFilterEnabled !== _pendingFilterEnabled;
         if (!changed) {
           closeSettingsPopup();
           return;
@@ -1939,7 +1923,6 @@
               displayLimit = _pendingLimit;
               volHighlightX      = _pendingVolX;
               surgeFilterEnabled = _pendingFilterEnabled;
-              useCache           = _pendingUseCache;
               saveSettings();
 
               // Update display limit input nếu reset
@@ -2070,7 +2053,7 @@
     </div>`;
 
         try {
-          const res = await fetch(`${SERVER}/analyze?ma=${ma}${useCache ? '&cache=1' : ''}`, {
+          const res = await fetch(`${SERVER}/analyze?ma=${ma}`, {
             redirect: "error",
           });
           const json = await res.json();
@@ -4414,7 +4397,6 @@
         // ── Restore tất cả UI state từ settings ─────────────────────────────────
         applyMarkerSwitchUI();
         applySurgeFilterUI(surgeFilterEnabled);
-        applyCacheUI(useCache);
 
         // Display limit
         const inp = document.getElementById("displayLimitInput");
