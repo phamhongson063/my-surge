@@ -570,6 +570,275 @@ function determineTrend(prices, ma20, ma50, ma200, rsi, macd) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// Time-to-Target Estimation
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Ước tính số phiên giao dịch để đạt targetPrice từ fromPrice.
+ * Kết hợp 3 phương pháp:
+ *  1. ATR Velocity  — giá di chuyển bao nhiêu điểm/ngày TB
+ *  2. Historical Analogs — tìm đợt tăng tương tự trong quá khứ
+ *  3. Momentum Decay — đà tăng hiện tại suy giảm theo lũy thừa
+ */
+function estimateDaysToTarget(data, prices, fromPrice, targetPrice, atrArr, rsiArr, trend) {
+  const n = prices.length;
+  if (n < 30 || !fromPrice || !targetPrice || targetPrice <= fromPrice) return null;
+
+  const distance = targetPrice - fromPrice;          // khoảng cách cần đi
+  const distPct   = distance / fromPrice * 100;      // % cần tăng
+
+  // ── 1. ATR Velocity ──────────────────────────────────────────────────────
+  // Tính net daily move (close-to-close) trong 20 phiên gần nhất
+  const recentMoves = [];
+  for (let i = Math.max(1, n - 20); i < n; i++) {
+    const m = prices[i] - prices[i - 1];
+    if (m > 0) recentMoves.push(m); // chỉ tính ngày tăng
+  }
+  const latestATR = atrArr ? atrArr[n - 1] : null;
+  // Daily net up-move = ATR * 0.4 (kinh nghiệm: khoảng 40% ATR là net gain trung bình ngày tăng)
+  const atrDailyMove = latestATR ? latestATR * 0.40 : null;
+  const avgUpMove    = recentMoves.length > 3
+    ? recentMoves.reduce((s, v) => s + v, 0) / recentMoves.length
+    : atrDailyMove;
+
+  let atrDays = null;
+  if (avgUpMove && avgUpMove > 0) {
+    // Điều chỉnh theo tỷ lệ ngày tăng (upday ratio) — không phải ngày nào cũng tăng
+    const upDays20 = data.slice(-20).filter((d, i, a) => i > 0 && d.price > a[i-1].price).length;
+    const upRatio  = Math.max(0.3, Math.min(0.8, upDays20 / 19));
+    // Số phiên thực = khoảng cách / (net move TB * tỉ lệ tăng)
+    atrDays = Math.round(distance / (avgUpMove * upRatio));
+  }
+
+  // ── 2. Historical Analogs ─────────────────────────────────────────────────
+  // Tìm những đợt giá tăng >distPct trong lịch sử và đo thời gian
+  const analogDurations = [];
+  const lookback = Math.min(n, 264); // ~1 năm
+  for (let start = n - lookback; start < n - 5; start++) {
+    const basePrice = prices[start];
+    if (!basePrice) continue;
+    // Tìm lần đầu đạt target% từ điểm này
+    for (let end = start + 1; end < Math.min(start + 120, n); end++) {
+      const pctGain = (prices[end] - basePrice) / basePrice * 100;
+      if (pctGain >= distPct) {
+        analogDurations.push(end - start);
+        break;
+      }
+    }
+  }
+  let analogDays = null;
+  if (analogDurations.length >= 3) {
+    // Lấy median để loại outlier
+    analogDurations.sort((a, b) => a - b);
+    analogDays = analogDurations[Math.floor(analogDurations.length * 0.40)]; // p40 (optimistic)
+  }
+
+  // ── 3. Momentum Decay ─────────────────────────────────────────────────────
+  // Đà hiện tại: tốc độ tăng 5 phiên gần nhất, suy giảm theo hàm mũ
+  const last5Move = prices[n - 1] - prices[Math.max(0, n - 6)];
+  const dailyVelocity = last5Move / 5;
+  let momentumDays = null;
+  if (dailyVelocity > 0) {
+    // Đà suy giảm: v(t) = v0 * decay^t, decay phụ thuộc volatility
+    const currentRSI = rsiArr ? rsiArr[n - 1] : 50;
+    const decayRate  = currentRSI > 65 ? 0.90   // RSI cao → đà giảm nhanh hơn
+                     : currentRSI > 50 ? 0.93
+                     : 0.95;                     // RSI thấp → đà bền hơn
+    let accumulated = 0, days = 0;
+    while (accumulated < distance && days < 200) {
+      const v = dailyVelocity * Math.pow(decayRate, days);
+      if (v < 0.01 * fromPrice * 0.001) break; // velocity quá nhỏ
+      accumulated += v;
+      days++;
+    }
+    momentumDays = accumulated >= distance ? days : null;
+  }
+
+  // ── Kết hợp 3 phương pháp ─────────────────────────────────────────────────
+  const valid = [atrDays, analogDays, momentumDays].filter(d => d != null && d > 0 && d <= 180);
+  if (valid.length === 0) return null;
+
+  // Trọng số: ATR 40%, Analog 40%, Momentum 20%
+  const weights = [
+    atrDays      != null && atrDays > 0      ? 0.40 : 0,
+    analogDays   != null && analogDays > 0   ? 0.40 : 0,
+    momentumDays != null && momentumDays > 0 ? 0.20 : 0,
+  ];
+  const totalW = weights.reduce((s, w) => s + w, 0);
+  const sources = [atrDays, analogDays, momentumDays];
+  let weightedDays = 0;
+  sources.forEach((d, i) => {
+    if (d != null && d > 0) weightedDays += (d * weights[i]) / totalW;
+  });
+  const estimate = Math.round(weightedDays);
+
+  // Điều chỉnh trend bonus: uptrend mạnh → nhanh hơn 15%
+  const trendBonus = trend?.alignment === "STRONG_UP" ? 0.85
+                   : trend?.alignment === "MODERATE_UP" ? 0.92 : 1.0;
+  const finalDays = Math.max(2, Math.round(estimate * trendBonus));
+
+  // Range ±25%
+  const minDays = Math.max(1, Math.round(finalDays * 0.75));
+  const maxDays = Math.round(finalDays * 1.35);
+
+  // Label diễn giải
+  const label = finalDays <= 5   ? "Rất nhanh (dưới 1 tuần)"
+               : finalDays <= 15  ? "Ngắn hạn (~1–3 tuần)"
+               : finalDays <= 30  ? "Trung bình (~1 tháng)"
+               : finalDays <= 60  ? "Trung hạn (~1–2 tháng)"
+               : finalDays <= 120 ? "Dài hạn (~3–6 tháng)"
+               : "Rất dài (>6 tháng)";
+
+  // Mức tin cậy dựa trên số phương pháp đồng thuận
+  const spread = valid.length > 1 ? Math.max(...valid) - Math.min(...valid) : 0;
+  const convergence = valid.length >= 3 && spread < 10 ? "Cao"
+                    : valid.length >= 2 && spread < 20 ? "Trung bình"
+                    : "Thấp";
+
+  return {
+    days: finalDays,
+    minDays,
+    maxDays,
+    label,
+    convergence,
+    distPct: round2(distPct),
+    methods: {
+      atr:      atrDays      ? { days: atrDays,      label: "ATR velocity" }      : null,
+      analog:   analogDays   ? { days: analogDays,   label: "Lịch sử tương tự",
+                                  sampleSize: analogDurations.length }             : null,
+      momentum: momentumDays ? { days: momentumDays, label: "Momentum hiện tại" } : null,
+    },
+  };
+}
+
+/**
+ * Ước tính số phiên để giá pullback từ currentPrice xuống targetPrice.
+ * Dùng cho chiến lược vào lệnh: giá cần giảm về vùng mua.
+ *
+ * 3 phương pháp:
+ *  1. ATR Pullback  — giá giảm TB bao nhiêu điểm/ngày (ngày đỏ)
+ *  2. Historical Pullbacks — đo các lần giá pullback tương tự trong quá khứ
+ *  3. Reversion Speed — khoảng cách % so với MA → hút về nhanh hay chậm
+ */
+function estimateDaysToPullback(data, prices, currentPrice, targetPrice, atrArr, rsiArr, ma20Arr) {
+  const n = prices.length;
+  if (n < 20 || !currentPrice || !targetPrice) return null;
+
+  // Nếu giá hiện tại ĐÃ ở dưới hoặc bằng giá mua → có thể vào ngay
+  if (currentPrice <= targetPrice * 1.005) {
+    return { days: 0, minDays: 0, maxDays: 2, label: "Có thể vào ngay", convergence: "Cao", immediate: true, distPct: 0, methods: {} };
+  }
+
+  const dropNeeded  = currentPrice - targetPrice;          // số điểm cần giảm
+  const dropPct     = dropNeeded / currentPrice * 100;     // % cần giảm
+
+  // ── 1. ATR Pullback velocity ──────────────────────────────────────────────
+  const latestATR = atrArr ? atrArr[n - 1] : null;
+  // Các ngày giảm gần đây
+  const downMoves = [];
+  for (let i = Math.max(1, n - 30); i < n; i++) {
+    const m = prices[i - 1] - prices[i]; // giá trị dương khi giảm
+    if (m > 0) downMoves.push(m);
+  }
+  const avgDownMove = downMoves.length > 3
+    ? downMoves.reduce((s, v) => s + v, 0) / downMoves.length
+    : (latestATR ? latestATR * 0.35 : null);
+
+  let atrDays = null;
+  if (avgDownMove && avgDownMove > 0) {
+    // Tỷ lệ ngày giảm trong 20 phiên gần nhất
+    const downDays20 = data.slice(-20).filter((d, i, a) => i > 0 && d.price < a[i-1].price).length;
+    const downRatio  = Math.max(0.2, Math.min(0.7, downDays20 / 19));
+    atrDays = Math.round(dropNeeded / (avgDownMove * downRatio));
+  }
+
+  // ── 2. Historical Pullbacks ───────────────────────────────────────────────
+  // Tìm những đợt giá giảm >= dropPct% trong lịch sử, đo thời gian
+  const pullbackDurations = [];
+  const lookback = Math.min(n, 264);
+  for (let start = n - lookback; start < n - 3; start++) {
+    const basePrice = prices[start];
+    if (!basePrice) continue;
+    for (let end = start + 1; end < Math.min(start + 60, n); end++) {
+      const pctDrop = (basePrice - prices[end]) / basePrice * 100;
+      if (pctDrop >= dropPct) {
+        pullbackDurations.push(end - start);
+        break;
+      }
+    }
+  }
+  let analogDays = null;
+  if (pullbackDurations.length >= 3) {
+    pullbackDurations.sort((a, b) => a - b);
+    // p50 (median) — pullback không có thêm "trend bonus" optimistic
+    analogDays = pullbackDurations[Math.floor(pullbackDurations.length * 0.50)];
+  }
+
+  // ── 3. Mean Reversion Speed ───────────────────────────────────────────────
+  // Nếu giá đang quá xa MA20 → pullback về nhanh hơn
+  let reversionDays = null;
+  const ma20Now = ma20Arr ? ma20Arr[n - 1] : null;
+  if (ma20Now && ma20Now > 0) {
+    const devFromMA = (currentPrice - ma20Now) / ma20Now * 100; // % trên MA20
+    // Nếu giá gần MA20 rồi thì pullback chậm/ít, xa thì nhanh hơn
+    if (devFromMA > 0 && avgDownMove && avgDownMove > 0) {
+      // Tốc độ reversion ~ tỷ lệ thuận với độ lệch
+      const revSpeed = latestATR
+        ? latestATR * (0.3 + Math.min(devFromMA / 20, 0.4)) // tốc độ tăng theo mức lệch
+        : avgDownMove;
+      reversionDays = Math.round(dropNeeded / revSpeed);
+    }
+  }
+
+  // ── Kết hợp ───────────────────────────────────────────────────────────────
+  const sources = [atrDays, analogDays, reversionDays];
+  const weights  = [0.40, 0.40, 0.20];
+  const valid    = sources.filter(d => d != null && d > 0 && d <= 120);
+  if (valid.length === 0) return null;
+
+  let weightedDays = 0, totalW = 0;
+  sources.forEach((d, i) => {
+    if (d != null && d > 0 && d <= 120) {
+      weightedDays += d * weights[i];
+      totalW       += weights[i];
+    }
+  });
+  const estimate  = totalW > 0 ? Math.round(weightedDays / totalW) : null;
+  if (!estimate) return null;
+
+  const finalDays = Math.max(1, estimate);
+  const minDays   = Math.max(1, Math.round(finalDays * 0.6));
+  const maxDays   = Math.round(finalDays * 1.5);
+
+  const label = finalDays <= 3   ? "Rất sớm (2–3 phiên)"
+              : finalDays <= 7   ? "Trong tuần này"
+              : finalDays <= 15  ? "Khoảng 2–3 tuần"
+              : finalDays <= 30  ? "Khoảng 1 tháng"
+              : "Hơn 1 tháng";
+
+  const spread = valid.length > 1 ? Math.max(...valid) - Math.min(...valid) : 0;
+  const convergence = valid.length >= 3 && spread < 5  ? "Cao"
+                    : valid.length >= 2 && spread < 15 ? "Trung bình"
+                    : "Thấp";
+
+  return {
+    days: finalDays,
+    minDays,
+    maxDays,
+    label,
+    convergence,
+    dropPct: round2(dropPct),
+    immediate: false,
+    methods: {
+      atr:       atrDays       ? { days: atrDays,       label: "ATR pullback" }        : null,
+      analog:    analogDays    ? { days: analogDays,    label: "Lịch sử pullback",
+                                   sampleSize: pullbackDurations.length }               : null,
+      reversion: reversionDays ? { days: reversionDays, label: "Mean reversion MA20" } : null,
+    },
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // Predictions & Strategy
 // ══════════════════════════════════════════════════════════════════════════════
 
@@ -580,8 +849,13 @@ function generatePredictions(
   bb,
   rsi,
   macd,
-  precomputedAtr = null
+  precomputedAtr = null,
+  volData = null,
+  budget = 50_000_000,
+  prices = null,
+  ma20Arr = null
 ) {
+  const priceArr = prices ?? data.map(d => d.price).filter(Boolean);
   const latest = data[data.length - 1];
   const price = latest.price;
   const currentRSI = rsi[rsi.length - 1];
@@ -708,6 +982,56 @@ function generatePredictions(
     const confLabel =
       confidenceScore >= 75 ? "Rất tốt" : confidenceScore >= 50 ? "Khá" : "Yếu";
 
+    // ── Volume liquidity assessment ──────────────────────────────────────────
+    const avgVol20 = volData ? volData.ma20 : 0; // TB khối lượng 20 phiên
+    const avgVol50 = volData ? volData.ma50 : 0;
+    // Phân loại thanh khoản
+    let liquidityLevel, liquidityLabel, liquidityWarning, maxLotPerOrder;
+    if (avgVol20 >= 1_000_000) {
+      liquidityLevel = "high";
+      liquidityLabel = "Thanh khoản cao";
+      liquidityWarning = null;
+      maxLotPerOrder = null; // Không giới hạn
+    } else if (avgVol20 >= 300_000) {
+      liquidityLevel = "medium";
+      liquidityLabel = "Thanh khoản trung bình";
+      liquidityWarning = "Nên mua tối đa 5-10% khối lượng TB/phiên để không đẩy giá";
+      maxLotPerOrder = Math.floor((avgVol20 * 0.1) / 100) * 100; // 10% vol TB, làm tròn lô 100
+    } else if (avgVol20 >= 50_000) {
+      liquidityLevel = "low";
+      liquidityLabel = "Thanh khoản thấp";
+      liquidityWarning = "⚠ Khó vào/thoát lệnh nhanh — cần đặt lệnh giới hạn, tránh lệnh thị trường";
+      maxLotPerOrder = Math.floor((avgVol20 * 0.05) / 100) * 100; // 5% vol TB
+    } else {
+      liquidityLevel = "very_low";
+      liquidityLabel = "Thanh khoản rất thấp";
+      liquidityWarning = "🚨 Rủi ro thanh khoản cao — dễ bị kẹt hàng, cân nhắc không đầu tư";
+      maxLotPerOrder = Math.floor((avgVol20 * 0.03) / 100) * 100; // 3% vol TB
+    }
+
+    // ── Helper: tính số lô (làm tròn 100 CP) và giá trị tiền ────────────────
+    const calcLot = (allocPct, price) => {
+      if (!price || price <= 0) return { lots: 0, amount: 0 };
+      const allocAmount = Math.round((budget * allocPct) / 100);
+      // Giá thực tế trên sàn × 1000 (đơn vị nghìn đồng → VNĐ)
+      const priceVnd = price * 1000;
+      const rawLots = allocAmount / priceVnd;
+      // Làm tròn xuống lô 100
+      const lots = Math.max(Math.floor(rawLots / 100) * 100, 100);
+      const amount = lots * priceVnd;
+      // Cảnh báo nếu vượt maxLotPerOrder
+      const exceedsLiquidity = maxLotPerOrder != null && lots > maxLotPerOrder;
+      const adjustedLots = exceedsLiquidity ? maxLotPerOrder : lots;
+      const adjustedAmount = adjustedLots * priceVnd;
+      return {
+        lots: adjustedLots,
+        amount: adjustedAmount,
+        allocAmount,
+        exceedsLiquidity,
+        originalLots: lots,
+      };
+    };
+
     let splitStrategy;
     if (volatility > 4) {
       const alloc =
@@ -716,32 +1040,48 @@ function generatePredictions(
           : confidenceScore >= 50
           ? [30, 25, 25, 20]
           : [20, 20, 25, 35];
+      const l1 = calcLot(alloc[0], buyPrice);
+      const l2 = calcLot(alloc[1], round2(buyPrice * 0.98));
+      const l3 = calcLot(alloc[2], round2(buyPrice * 1.03));
       splitStrategy = {
         type: "aggressive_split",
+        budget,
+        liquidityLevel,
+        liquidityLabel,
+        liquidityWarning,
+        avgVol20,
         desc: `Biến động cao (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 4 lệnh`,
         orders: [
           {
             pct: alloc[0],
             action: "Mua",
             price: buyPrice,
+            lots: l1.lots,
+            amount: l1.amount,
             note: "Lệnh 1: Vào lệnh ban đầu tại vùng hỗ trợ",
           },
           {
             pct: alloc[1],
-            action: "Thêm",
+            action: "Mua thêm",
             price: round2(buyPrice * 0.98),
+            lots: l2.lots,
+            amount: l2.amount,
             note: "Lệnh 2: Nếu giá giảm thêm 2% — DCA",
           },
           {
             pct: alloc[2],
-            action: "Thêm",
+            action: "Mua thêm",
             price: round2(buyPrice * 1.03),
+            lots: l3.lots,
+            amount: l3.amount,
             note: "Lệnh 3: Xác nhận breakout +3%",
           },
           {
             pct: alloc[3],
             action: "Dự phòng",
             price: null,
+            lots: 0,
+            amount: Math.round((budget * alloc[3]) / 100),
             note: "Lệnh 4: Giữ tiền mặt chờ cơ hội hoặc thêm tại TP1",
           },
         ],
@@ -753,26 +1093,39 @@ function generatePredictions(
           : confidenceScore >= 50
           ? [40, 30, 30]
           : [30, 30, 40];
+      const l1 = calcLot(alloc[0], buyPrice);
+      const l2 = calcLot(alloc[1], round2(buyPrice * 1.02));
       splitStrategy = {
         type: "moderate_split",
+        budget,
+        liquidityLevel,
+        liquidityLabel,
+        liquidityWarning,
+        avgVol20,
         desc: `Biến động vừa (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 3 lệnh`,
         orders: [
           {
             pct: alloc[0],
             action: "Mua",
             price: buyPrice,
+            lots: l1.lots,
+            amount: l1.amount,
             note: "Lệnh 1: Vào chính tại vùng hỗ trợ",
           },
           {
             pct: alloc[1],
-            action: "Thêm",
+            action: "Mua thêm",
             price: round2(buyPrice * 1.02),
+            lots: l2.lots,
+            amount: l2.amount,
             note: "Lệnh 2: Xác nhận tăng +2%",
           },
           {
             pct: alloc[2],
             action: "Dự phòng",
             price: null,
+            lots: 0,
+            amount: Math.round((budget * alloc[2]) / 100),
             note: "Lệnh 3: Giữ chờ pullback hoặc thêm khi breakout",
           },
         ],
@@ -784,25 +1137,44 @@ function generatePredictions(
           : confidenceScore >= 50
           ? [60, 40]
           : [45, 55];
+      const l1 = calcLot(alloc[0], buyPrice);
+      const l2 = calcLot(alloc[1], round2(buyPrice * 1.02));
       splitStrategy = {
         type: "conservative",
+        budget,
+        liquidityLevel,
+        liquidityLabel,
+        liquidityWarning,
+        avgVol20,
         desc: `Biến động thấp (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 2 lệnh`,
         orders: [
           {
             pct: alloc[0],
             action: "Mua",
             price: buyPrice,
+            lots: l1.lots,
+            amount: l1.amount,
             note: "Lệnh 1: Vào chính tại vùng hỗ trợ",
           },
           {
             pct: alloc[1],
-            action: "Thêm",
+            action: "Mua thêm",
             price: round2(buyPrice * 1.02),
+            lots: l2.lots,
+            amount: l2.amount,
             note: "Lệnh 2: Xác nhận xu hướng",
           },
         ],
       };
     }
+
+    // ── Thêm daysEstimate (pullback) vào từng lệnh mua ───────────────────────
+    splitStrategy.currentPrice = price; // lưu để FE biết
+    splitStrategy.orders = splitStrategy.orders.map(o => {
+      if (!o.price) return o; // lệnh Dự phòng không có giá
+      const est = estimateDaysToPullback(data, priceArr, price, o.price, atrArr, rsi, ma20Arr);
+      return { ...o, daysEstimate: est };
+    });
 
     // ── Sell strategy by trade type ──
     const sellAlloc = isTrend
@@ -861,6 +1233,11 @@ function generatePredictions(
       },
     };
 
+    // ── Time-to-target estimates ──────────────────────────────────────────────
+    const tp1Days = estimateDaysToTarget(data, priceArr, buyPrice, tp1, atrArr, rsi, trend);
+    const tp2Days = estimateDaysToTarget(data, priceArr, buyPrice, tp2, atrArr, rsi, trend);
+    const tp3Days = estimateDaysToTarget(data, priceArr, buyPrice, tp3, atrArr, rsi, trend);
+
     predictions.bestBuy = {
       price: buyPrice,
       reason: `Vùng hỗ trợ mạnh (${s1.touches} lần chạm). ${
@@ -883,6 +1260,9 @@ function generatePredictions(
       tp1Pct: pctOf(tp1),
       tp2Pct: pctOf(tp2),
       tp3Pct: pctOf(tp3),
+      tp1Days,
+      tp2Days,
+      tp3Days,
       riskPerShare: round2(riskPerShare),
       volatility: round2(volatility),
       splitStrategy,
@@ -2449,7 +2829,11 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     bb,
     rsi,
     macd,
-    atr
+    atr,
+    vol,          // truyền volume data để tính thanh khoản
+    50_000_000,   // ngân sách 50 triệu / cổ phiếu
+    prices,       // mảng giá để estimate days
+    ma20          // MA20 cho mean reversion
   );
   const mtfPatterns = detectMultiTimeframePatterns(
     stockData,
