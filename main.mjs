@@ -19,7 +19,25 @@ import url from "url";
 import { analyzeAll } from "./analyze.mjs";
 
 const PORT = 3000;
-const TMP_DIR = "tmp";
+const TMP_DIR      = "tmp";
+const SETTINGS_DIR = "settings";
+const LIKES_FILE   = path.join(SETTINGS_DIR, "likes.csv");
+
+// ─── Likes helpers ───────────────────────────────────────────────────────────
+function readLikes() {
+  try {
+    if (!fs.existsSync(LIKES_FILE)) return [];
+    return fs.readFileSync(LIKES_FILE, "utf8")
+      .split("\n")
+      .map(s => s.trim().toUpperCase())
+      .filter(Boolean);
+  } catch { return []; }
+}
+
+function writeLikes(symbols) {
+  fs.mkdirSync(SETTINGS_DIR, { recursive: true });
+  fs.writeFileSync(LIKES_FILE, [...new Set(symbols)].join("\n"), "utf8");
+}
 
 // ─── Helpers (giống download_stock.mjs) ─────────────────────────────────────
 
@@ -103,7 +121,7 @@ function fetchFromCafeF(targetUrl, symbol, redirectCount = 0) {
 
 function setCORS(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
@@ -204,6 +222,28 @@ const server = http.createServer(async (req, res) => {
     const maPeriod = parseInt(parsed.query.ma) || 20;
     const result = await analyzeAll(TMP_DIR, { threshold, maPeriod });
     return sendJSON(res, result.error ? 400 : 200, result);
+  }
+
+  // ── GET /likes ──────────────────────────────────────────────────────────────
+  if (pathname === "/likes" && req.method === "GET") {
+    return sendJSON(res, 200, { symbols: readLikes() });
+  }
+
+  // ── POST /likes/:symbol ───────────────────────────────────────────────────
+  if (pathname.startsWith("/likes/") && req.method === "POST") {
+    const sym = pathname.slice(7).toUpperCase().trim();
+    if (!sym) return sendJSON(res, 400, { error: "Thiếu symbol" });
+    const list = readLikes();
+    if (!list.includes(sym)) { list.push(sym); writeLikes(list); }
+    return sendJSON(res, 200, { ok: true, symbols: list });
+  }
+
+  // ── DELETE /likes/:symbol ─────────────────────────────────────────────────
+  if (pathname.startsWith("/likes/") && req.method === "DELETE") {
+    const sym = pathname.slice(7).toUpperCase().trim();
+    const list = readLikes().filter(s => s !== sym);
+    writeLikes(list);
+    return sendJSON(res, 200, { ok: true, symbols: list });
   }
 
   if (pathname === "/download" && req.method === "GET") {

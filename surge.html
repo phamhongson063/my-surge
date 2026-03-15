@@ -144,128 +144,29 @@
         <div
           id="statsBlock"
           class="rounded-2xl p-4"
-          style="
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            opacity: 0.35;
-            transition: opacity 0.3s;
-          "
+          style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);opacity:.35;transition:opacity .3s"
         >
-          <div
-            style="
-              font-size: 15px;
-              font-weight: 600;
-              color: rgba(255, 255, 255, 0.3);
-              letter-spacing: 1.5px;
-              text-transform: uppercase;
-              margin-bottom: 12px;
-            "
-          >
-            Kết quả quét
-          </div>
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <div
-                class="w-7 h-7 rounded-lg flex items-center justify-center"
-                style="background: rgba(224, 49, 49, 0.15)"
-              >
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#e03131"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                >
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Kết quả quét</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <!-- Mã đột biến -->
+            <div style="flex:1;background:rgba(224,49,49,.08);border-radius:12px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.5px;margin-bottom:4px">ĐỘT BIẾN</div>
+              <div style="display:flex;align-items:baseline;gap:4px">
+                <span id="statSurge" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:24px;color:#e03131;line-height:1">—</span>
+                <span style="font-size:10px;color:rgba(255,255,255,.25)">mã</span>
               </div>
-              <span style="font-size: 13px; color: rgba(255, 255, 255, 0.5)"
-                >Mã đột biến</span
-              >
             </div>
-            <span
-              id="statSurge"
-              style="
-                font-family: 'IBM Plex Mono', monospace;
-                font-weight: 700;
-                font-size: 28px;
-                color: #e03131;
-                line-height: 1;
-              "
-              >—</span
-            >
-          </div>
-          <div
-            style="
-              border-top: 1px solid rgba(255, 255, 255, 0.07);
-              padding-top: 10px;
-              display: flex;
-              flex-direction: column;
-              gap: 7px;
-            "
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="rgba(255,255,255,.3)"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                >
-                  <path
-                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                  />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                <span style="font-size: 15px; color: rgba(255, 255, 255, 0.3)"
-                  >File đã quét</span
-                >
+            <!-- File đã quét -->
+            <div style="flex:1;background:rgba(255,255,255,.04);border-radius:12px;padding:10px 12px">
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.5px;margin-bottom:4px">ĐÃ QUÉT</div>
+              <div style="display:flex;align-items:baseline;gap:4px">
+                <span id="statFiles" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:24px;color:rgba(255,255,255,.7);line-height:1">—</span>
+                <span style="font-size:10px;color:rgba(255,255,255,.25)">file</span>
               </div>
-              <span
-                id="statFiles"
-                style="
-                  font-family: 'IBM Plex Mono', monospace;
-                  font-size: 13px;
-                  color: rgba(255, 255, 255, 0.5);
-                "
-                >—</span
-              >
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="rgba(255,255,255,.3)"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-                <span style="font-size: 15px; color: rgba(255, 255, 255, 0.3)"
-                  >Ngưỡng / MA</span
-                >
-              </div>
-              <span
-                id="statConfig"
-                style="
-                  font-family: 'IBM Plex Mono', monospace;
-                  font-size: 13px;
-                  color: rgba(255, 255, 255, 0.5);
-                "
-                >—</span
-              >
             </div>
           </div>
+          <!-- statConfig ẩn, giữ để JS không lỗi -->
+          <span id="statConfig" style="display:none"></span>
         </div>
 
         <div
@@ -904,11 +805,23 @@
         renderGrid();
       }
 
-      function loadLikes() {
-        try { likedSymbols = new Set(JSON.parse(localStorage.getItem("surgeLikes") || "[]")); } catch(e) {}
+      // ── Likes: load/save qua server API (settings/likes.csv) ─────────────────
+      async function loadLikes() {
+        try {
+          const res = await fetch(`${SERVER}/likes`);
+          const json = await res.json();
+          likedSymbols = new Set((json.symbols ?? []).map(s => s.toUpperCase()));
+        } catch(e) {
+          // fallback localStorage nếu server chưa có API
+          try { likedSymbols = new Set(JSON.parse(localStorage.getItem("surgeLikes") || "[]")); } catch(_) {}
+        }
       }
-      function saveLikes() {
-        try { localStorage.setItem("surgeLikes", JSON.stringify([...likedSymbols])); } catch(e) {}
+      async function saveLike(symbol, liked) {
+        try {
+          await fetch(`${SERVER}/likes/${encodeURIComponent(symbol)}`, {
+            method: liked ? "POST" : "DELETE",
+          });
+        } catch(e) { console.warn("saveLike error:", e); }
       }
       // ── Ticker bar ───────────────────────────────────────────────────────────────
       function buildTicker() {
@@ -963,16 +876,38 @@
         }
       }
 
+      // Hiển thị ticker ngay sau load likes — giá 0, chờ runScan update
+      function buildTickerPlaceholder() {
+        if (likedSymbols.size === 0) return;
+        const bar   = document.getElementById("tickerBar");
+        const track = document.getElementById("tickerTrack");
+        if (!bar || !track) return;
+        bar.style.display = "block";
+        track.style.animation = "none";
+        track.innerHTML = [...likedSymbols].map(sym => `
+          <div class="ticker-item">
+            <div class="ticker-row1">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px">${sym}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:#475569">—</span>
+            </div>
+            <div class="ticker-row2">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:rgba(255,255,255,.25)">Đang tải…</span>
+            </div>
+          </div>`).join("");
+      }
+
       function toggleLike(symbol) {
-        if (likedSymbols.has(symbol)) likedSymbols.delete(symbol);
-        else likedSymbols.add(symbol);
-        saveLikes();
+        const nowLiked = !likedSymbols.has(symbol);
+        if (nowLiked) likedSymbols.add(symbol);
+        else likedSymbols.delete(symbol);
         // Cập nhật icon ngôi sao ngay lập tức
         const btn = document.getElementById("like-" + symbol);
-        if (btn) applyStarUI(btn, likedSymbols.has(symbol));
+        if (btn) applyStarUI(btn, nowLiked);
         buildTicker();
         // Re-sort grid để liked items lên trên
         renderGrid();
+        // Lưu lên server async (không block UI)
+        saveLike(symbol, nowLiked);
       }
       function applyStarUI(btn, liked) {
         btn.innerHTML = liked
@@ -980,7 +915,7 @@
           : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
         btn.title = liked ? "Bỏ yêu thích" : "Thêm vào yêu thích";
       }
-      loadLikes();
+      // loadLikes() được gọi async trong window load
 
       // ── Filter logic ─────────────────────────────────────────────────────────
       function toggleFilter(key) {
@@ -2658,7 +2593,7 @@
       }
 
       // ── Init ──────────────────────────────────────────────────────────────────────
-      window.addEventListener("load", () => {
+      window.addEventListener("load", async () => {
         // Áp dụng settings đã load vào UI
         applyMarkerSwitchUI();
         applySurgeFilterUI(surgeFilterEnabled);
@@ -2667,6 +2602,12 @@
         applyFilterUI();
         const vxi = document.getElementById("volHighlightInput");
         if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+
+        // Load likes từ server trước — hiển thị ticker với giá 0 ngay
+        await loadLikes();
+        buildTickerPlaceholder();
+
+        // Sau đó scan để lấy dữ liệu thật
         runScan();
       });
     </script>
