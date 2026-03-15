@@ -16,8 +16,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { analyzeAll } from "./analyze.mjs";
-import { analyzeDetail } from "./analyzeDetail.mjs";
+import { analyzeAll, analyzeDetail } from "./analyze.mjs";
 import { scanWatchlist, parseBody } from "./watchlist.mjs";
 
 const PORT = 3000;

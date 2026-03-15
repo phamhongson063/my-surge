@@ -13,7 +13,7 @@
 
 import fs from "fs";
 import path from "path";
-import { analyzeDetail } from "./analyzeDetail.mjs";
+import { analyzeDetail } from "./analyze.mjs";
 
 const WATCHLIST_FILE = path.join("settings", "watchlist.json");
 const TMP_DIR = "tmp";
