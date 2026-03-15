@@ -612,7 +612,18 @@ function generatePredictions(
     const atrPct = latestATR ? ((latestATR / buyPrice) * 100).toFixed(2) : null;
     const riskPerShare = Math.max(buyPrice - stoploss, buyPrice * 0.01);
 
-    // Target levels
+    // ── Trade type classification: TREND vs SWING ──
+    const isTrend =
+      trend.alignment === "STRONG_UP" ||
+      (trend.alignment === "MODERATE_UP" && trend.longTerm.direction === "UPTREND");
+    const tradeType = isTrend ? "TREND" : "SWING";
+
+    // R-multiples by trade type
+    const rMultiples = isTrend
+      ? { tp1: 2, tp2: 3.5, tp3: 6 }
+      : { tp1: 1.2, tp2: 2, tp3: 3 };
+
+    // Target levels — resistance caps
     const r1 =
       sr.resistances.length > 0
         ? sr.resistances[0].price
@@ -622,9 +633,15 @@ function generatePredictions(
         ? sr.resistances[1].price
         : round2(price * 1.15);
 
-    const tp1 = Math.min(r1, round2(buyPrice + riskPerShare * 1.5));
-    const tp2 = Math.min(r2, round2(buyPrice + riskPerShare * 2.5));
-    const tp3 = round2(buyPrice + riskPerShare * 4);
+    // In strong uptrend, don't cap TP by resistance (resistance may break)
+    const capByResistance = !isTrend;
+    const rawTp1 = round2(buyPrice + riskPerShare * rMultiples.tp1);
+    const rawTp2 = round2(buyPrice + riskPerShare * rMultiples.tp2);
+    const rawTp3 = round2(buyPrice + riskPerShare * rMultiples.tp3);
+
+    const tp1 = capByResistance ? Math.min(r1, rawTp1) : rawTp1;
+    const tp2 = capByResistance ? Math.min(r2, rawTp2) : rawTp2;
+    const tp3 = rawTp3;
 
     const pctOf = (target) =>
       (((target - buyPrice) / buyPrice) * 100).toFixed(1);
@@ -640,34 +657,89 @@ function generatePredictions(
         20) *
       100;
 
+    // Confidence score (0-100) — determines how aggressively to allocate
+    const rrTP2 = riskPerShare > 0 ? (tp2 - buyPrice) / riskPerShare : 0;
+    const confidenceDetails = {
+      trend: {
+        score:
+          trend.alignment === "STRONG_UP" ? 30
+          : trend.alignment === "MODERATE_UP" ? 20
+          : trend.alignment === "MIXED" ? 10
+          : trend.alignment === "MODERATE_DOWN" ? 5
+          : 0,
+        max: 30,
+        reason: trend.alignment,
+      },
+      rsi: {
+        score:
+          currentRSI < 30 ? 25
+          : currentRSI < 40 ? 20
+          : currentRSI < 50 ? 15
+          : currentRSI < 60 ? 10
+          : 5,
+        max: 25,
+        reason: `RSI=${currentRSI?.toFixed(0)}`,
+      },
+      support: {
+        score:
+          s1.touches >= 4 ? 20
+          : s1.touches >= 3 ? 15
+          : s1.touches >= 2 ? 10
+          : 5,
+        max: 20,
+        reason: `${s1.touches} touches`,
+      },
+      riskReward: {
+        score:
+          rrTP2 >= 3 ? 25
+          : rrTP2 >= 2.5 ? 20
+          : rrTP2 >= 2 ? 15
+          : rrTP2 >= 1.5 ? 10
+          : 5,
+        max: 25,
+        reason: `RR=${rrTP2.toFixed(1)}`,
+      },
+    };
+    const confidenceScore =
+      confidenceDetails.trend.score +
+      confidenceDetails.rsi.score +
+      confidenceDetails.support.score +
+      confidenceDetails.riskReward.score;
+    const confLabel =
+      confidenceScore >= 75 ? "Rất tốt" : confidenceScore >= 50 ? "Khá" : "Yếu";
+
     let splitStrategy;
     if (volatility > 4) {
+      const alloc =
+        confidenceScore >= 75
+          ? [40, 25, 20, 15]
+          : confidenceScore >= 50
+          ? [30, 25, 25, 20]
+          : [20, 20, 25, 35];
       splitStrategy = {
         type: "aggressive_split",
-        desc: `Biến động cao (${volatility.toFixed(
-          1
-        )}%/ngày) — chia làm 4 lệnh`,
+        desc: `Biến động cao (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 4 lệnh`,
         orders: [
           {
-            pct: 25,
+            pct: alloc[0],
             action: "Mua",
             price: buyPrice,
             note: "Lệnh 1: Vào lệnh ban đầu tại vùng hỗ trợ",
           },
           {
-            pct: 25,
+            pct: alloc[1],
             action: "Thêm",
             price: round2(buyPrice * 0.98),
             note: "Lệnh 2: Nếu giá giảm thêm 2% — DCA",
           },
           {
-            pct: 25,
+            pct: alloc[2],
             action: "Thêm",
             price: round2(buyPrice * 1.03),
             note: "Lệnh 3: Xác nhận breakout +3%",
           },
           {
-            pct: 25,
+            pct: alloc[3],
             action: "Dự phòng",
             price: null,
             note: "Lệnh 4: Giữ tiền mặt chờ cơ hội hoặc thêm tại TP1",
@@ -675,26 +747,30 @@ function generatePredictions(
         ],
       };
     } else if (volatility > 2.5) {
+      const alloc =
+        confidenceScore >= 75
+          ? [55, 25, 20]
+          : confidenceScore >= 50
+          ? [40, 30, 30]
+          : [30, 30, 40];
       splitStrategy = {
         type: "moderate_split",
-        desc: `Biến động vừa (${volatility.toFixed(
-          1
-        )}%/ngày) — chia làm 3 lệnh`,
+        desc: `Biến động vừa (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 3 lệnh`,
         orders: [
           {
-            pct: 40,
+            pct: alloc[0],
             action: "Mua",
             price: buyPrice,
             note: "Lệnh 1: Vào chính tại vùng hỗ trợ",
           },
           {
-            pct: 30,
+            pct: alloc[1],
             action: "Thêm",
             price: round2(buyPrice * 1.02),
             note: "Lệnh 2: Xác nhận tăng +2%",
           },
           {
-            pct: 30,
+            pct: alloc[2],
             action: "Dự phòng",
             price: null,
             note: "Lệnh 3: Giữ chờ pullback hoặc thêm khi breakout",
@@ -702,20 +778,24 @@ function generatePredictions(
         ],
       };
     } else {
+      const alloc =
+        confidenceScore >= 75
+          ? [70, 30]
+          : confidenceScore >= 50
+          ? [60, 40]
+          : [45, 55];
       splitStrategy = {
         type: "conservative",
-        desc: `Biến động thấp (${volatility.toFixed(
-          1
-        )}%/ngày) — chia làm 2 lệnh`,
+        desc: `Biến động thấp (${volatility.toFixed(1)}%/ngày), tin cậy ${confLabel} (${confidenceScore}đ) — chia làm 2 lệnh`,
         orders: [
           {
-            pct: 60,
+            pct: alloc[0],
             action: "Mua",
             price: buyPrice,
             note: "Lệnh 1: Vào chính tại vùng hỗ trợ",
           },
           {
-            pct: 40,
+            pct: alloc[1],
             action: "Thêm",
             price: round2(buyPrice * 1.02),
             note: "Lệnh 2: Xác nhận xu hướng",
@@ -724,41 +804,60 @@ function generatePredictions(
       };
     }
 
-    const trailingPct = volatility > 3 ? 7 : 5;
+    // ── Sell strategy by trade type ──
+    const sellAlloc = isTrend
+      ? { tp1: 20, tp2: 30, tp3: 50 }
+      : { tp1: 40, tp2: 40, tp3: 20 };
+    const trailingPct = isTrend
+      ? (volatility > 3 ? 10 : 8)
+      : (volatility > 3 ? 6 : 5);
+
+    const tradeLabel = isTrend ? "TREND (dài hạn)" : "SWING (ngắn hạn)";
     const sellStrategy = {
-      desc: "Bán từng phần theo mục tiêu — bảo vệ lợi nhuận, để phần còn lại chạy",
+      tradeType,
+      desc: isTrend
+        ? `${tradeLabel} — Uptrend mạnh, để lợi nhuận chạy xa, trailing stop rộng`
+        : `${tradeLabel} — Sóng ngắn/sideway, chốt lời nhanh, bảo toàn vốn`,
       targets: [
         {
-          name: "TP1 — Chốt nhanh",
+          name: isTrend ? "TP1 — Bảo vệ vốn" : "TP1 — Chốt nhanh",
           price: tp1,
           pct: pctOf(tp1),
-          sellPct: 30,
+          sellPct: sellAlloc.tp1,
           rr: rrOf(tp1),
-          action: `Bán 30% tại ${tp1}`,
-          note: "Bảo toàn vốn — dời stoploss về điểm hòa vốn",
+          action: `Bán ${sellAlloc.tp1}% tại ${tp1}`,
+          note: isTrend
+            ? "Chốt ít, dời stoploss về hòa vốn — giữ vị thế lớn cho xu hướng"
+            : "Bảo toàn vốn — dời stoploss về điểm hòa vốn",
         },
         {
-          name: "TP2 — Mục tiêu chính",
+          name: isTrend ? "TP2 — Chốt một phần" : "TP2 — Mục tiêu chính",
           price: tp2,
           pct: pctOf(tp2),
-          sellPct: 40,
+          sellPct: sellAlloc.tp2,
           rr: rrOf(tp2),
-          action: `Bán 40% tại ${tp2}`,
-          note: "Dời stoploss về TP1 — lợi nhuận đã khóa",
+          action: `Bán ${sellAlloc.tp2}% tại ${tp2}`,
+          note: isTrend
+            ? "Dời stoploss về TP1 — vẫn giữ 50% cho sóng lớn"
+            : "Dời stoploss về TP1 — lợi nhuận đã khóa",
         },
         {
-          name: "TP3 — Để xu hướng quyết định",
+          name: isTrend ? "TP3 — Để xu hướng quyết định" : "TP3 — Mục tiêu cuối",
           price: tp3,
           pct: pctOf(tp3),
-          sellPct: 30,
+          sellPct: sellAlloc.tp3,
           rr: rrOf(tp3),
-          action: `Bán 30% còn lại hoặc dùng trailing stop`,
-          note: `Trailing stop ${trailingPct}% — để xu hướng quyết định`,
+          action: `Bán ${sellAlloc.tp3}% còn lại hoặc dùng trailing stop`,
+          note: isTrend
+            ? `Trailing stop ${trailingPct}% — để xu hướng dài hạn quyết định`
+            : `Chốt hết phần còn lại — không tham khi sóng ngắn`,
         },
       ],
       trailingStop: {
         pct: trailingPct,
-        desc: `Trailing stop ${trailingPct}% phần còn lại — tự động bán khi đảo chiều`,
+        desc: isTrend
+          ? `Trailing stop ${trailingPct}% — rộng để không bị quét bởi rung lắc`
+          : `Trailing stop ${trailingPct}% — chặt để bảo toàn lợi nhuận sóng ngắn`,
       },
     };
 
@@ -770,6 +869,8 @@ function generatePredictions(
           : "Chờ RSI < 40 để xác nhận."
       }`,
       quality,
+      confidenceScore,
+      confidenceDetails,
       stoploss,
       stoplossPct: pctOf(stoploss),
       atrPct,
