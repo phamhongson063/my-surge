@@ -16,8 +16,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { analyzeAll, analyzeDetail } from "./analyze.mjs";
-import { scanWatchlist, parseBody } from "./watchlist.mjs";
+import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist } from "./analyze.mjs";
 
 const PORT = 3000;
 const TMP_DIR = "tmp";
@@ -255,44 +254,29 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // ─── Likes + Watchlist — dùng chung watchlist.json ──────────────────────────
-  const WL_FILE = path.join("settings", "watchlist.json");
-  function loadWL() {
-    try {
-      if (!fs.existsSync(WL_FILE)) return { symbols: [], lastScan: null, alerts: [] };
-      return JSON.parse(fs.readFileSync(WL_FILE, "utf8"));
-    } catch { return { symbols: [], lastScan: null, alerts: [] }; }
-  }
-  function saveWL(wl) {
-    try {
-      fs.mkdirSync("settings", { recursive: true });
-      fs.writeFileSync(WL_FILE, JSON.stringify(wl, null, 2), "utf8");
-    } catch(e) { console.warn("[WL] Save error:", e.message); }
-  }
-
-  // /watchlist — dùng bởi surge.html, detail.html và watchlist.html
+  // ─── Watchlist — dùng chung watchlist.json ──────────────────────────────────
   if (pathname.startsWith("/watchlist")) {
     let body = {};
     if (req.method === "POST") body = await parseBody(req);
 
     if (pathname === "/watchlist" && req.method === "GET") {
-      return sendJSON(res, 200, loadWL());
+      return sendJSON(res, 200, loadWatchlist());
     }
     if (pathname === "/watchlist/add" && req.method === "POST") {
       const sym = (body?.symbol ?? "").toUpperCase().trim();
       if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym))
         return sendJSON(res, 400, { error: "Mã không hợp lệ" });
-      const wl = loadWL();
+      const wl = loadWatchlist();
       if (!wl.symbols.includes(sym)) wl.symbols.push(sym);
-      saveWL(wl);
+      saveWatchlist(wl);
       console.log(`[Watchlist] ➕ ${sym} | tổng: ${wl.symbols.length} mã`);
       return sendJSON(res, 200, { ok: true, symbols: wl.symbols });
     }
     if (pathname === "/watchlist/remove" && req.method === "POST") {
       const sym = (body?.symbol ?? "").toUpperCase().trim();
-      const wl = loadWL();
+      const wl = loadWatchlist();
       wl.symbols = wl.symbols.filter(s => s !== sym);
-      saveWL(wl);
+      saveWatchlist(wl);
       console.log(`[Watchlist] ➖ ${sym} | còn: ${wl.symbols.length} mã`);
       return sendJSON(res, 200, { ok: true, symbols: wl.symbols });
     }
