@@ -793,6 +793,7 @@
         symbolQuery = val.trim().toUpperCase();
         const clearBtn = document.getElementById("symbolSearchClear");
         if (clearBtn) clearBtn.style.display = symbolQuery ? "flex" : "none";
+        saveSettings();
         renderGrid();
       }
 
@@ -802,6 +803,7 @@
         if (inp) inp.value = '';
         const clearBtn = document.getElementById("symbolSearchClear");
         if (clearBtn) clearBtn.style.display = "none";
+        saveSettings();
         renderGrid();
       }
 
@@ -922,12 +924,14 @@
         if (activeFilters.has(key)) activeFilters.delete(key);
         else activeFilters.add(key);
         applyFilterUI();
+        saveSettings();
         renderGrid();
       }
 
       function clearFilters() {
         activeFilters.clear();
         applyFilterUI();
+        saveSettings();
         renderGrid();
       }
 
@@ -997,15 +1001,24 @@
       function loadSettings() {
         try {
           const s = JSON.parse(localStorage.getItem("surgeSettings") || "{}");
-          if (s.showMarkers   !== undefined) showMarkers   = s.showMarkers;
-          if (s.displayLimit  !== undefined) displayLimit  = s.displayLimit;
-          if (s.volHighlightX !== undefined) volHighlightX = s.volHighlightX;
+          if (s.showMarkers        !== undefined) showMarkers        = s.showMarkers;
+          if (s.displayLimit       !== undefined) displayLimit       = s.displayLimit;
+          if (s.volHighlightX      !== undefined) volHighlightX      = s.volHighlightX;
           if (s.surgeFilterEnabled !== undefined) surgeFilterEnabled = s.surgeFilterEnabled;
+          if (s.activeFilters      !== undefined) activeFilters      = new Set(s.activeFilters);
+          if (s.symbolQuery        !== undefined) symbolQuery        = s.symbolQuery;
+          if (s.sortMode           !== undefined) sortMode           = s.sortMode;
+          if (s.rangeN             !== undefined) rangeN             = s.rangeN;
+          if (s.chartMode          !== undefined) chartMode          = s.chartMode;
         } catch(e) {}
       }
       function saveSettings() {
         try {
-          localStorage.setItem("surgeSettings", JSON.stringify({ showMarkers, displayLimit, volHighlightX, surgeFilterEnabled }));
+          localStorage.setItem("surgeSettings", JSON.stringify({
+            showMarkers, displayLimit, volHighlightX, surgeFilterEnabled,
+            activeFilters: [...activeFilters],
+            symbolQuery, sortMode, rangeN, chartMode,
+          }));
         } catch(e) {}
       }
       loadSettings();
@@ -1026,6 +1039,7 @@
           }
         });
         // Re-render charts với range mới (không cần gọi lại API)
+        saveSettings();
         renderGrid();
       }
 
@@ -1180,6 +1194,7 @@
           // Mặc định 3 tháng khi xem nến
           if (rangeN === 22) setRange(66);
         }
+        saveSettings();
         renderGrid();
       }
 
@@ -1201,6 +1216,7 @@
             btn.style.color = "rgba(255,255,255,.45)";
           }
         });
+        saveSettings();
         destroyCharts();
         renderGrid();
       }
@@ -1611,9 +1627,11 @@
       <!-- Pattern badges -->
       <div id="pb-${r.symbol}" style="display:flex;gap:4px;flex-wrap:nowrap;overflow:hidden;max-width:240px"></div>
 
-      <!-- Right: RSI badge + like + surge pill -->
+      <!-- Right: RSI badge + MACD badge + GT badge + like + surge pill -->
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto">
         <div id="rsi-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">RSI —</div>
+        <div id="macd-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">MACD —</div>
+        <div id="val-badge-${r.symbol}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb">GT —</div>
         <div class="surge-pill" style="align-items:center;gap:4px;background:linear-gradient(135deg,#fff5f5,#ffe4e4);border:1px solid #ffc9c9;color:#e03131;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.3px;white-space:nowrap">
           ⚡ SURGE
         </div>
@@ -1633,8 +1651,16 @@
         <div id="chart-vol-wrap-${r.symbol}" style="display:none;position:relative;height:110px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
           <canvas id="chart-vol-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
         </div>
-        <div id="chart-rsi-wrap-${r.symbol}" style="display:none;position:relative;height:80px;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;flex-shrink:0">
-          <canvas id="chart-rsi-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        <!-- RSI + MACD side by side -->
+        <div id="chart-indicators-${r.symbol}" style="display:none;flex-shrink:0;border-top:1px solid rgba(0,0,0,.06);margin-top:4px;gap:1px;background:#f1f5f9;border-radius:0 0 4px 4px;overflow:hidden">
+          <div style="display:flex;height:80px">
+            <div id="chart-rsi-wrap-${r.symbol}" style="display:none;flex:1;position:relative;min-width:0">
+              <canvas id="chart-rsi-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+            </div>
+            <div id="chart-macd-wrap-${r.symbol}" style="display:none;flex:1;position:relative;min-width:0;border-left:1px solid rgba(0,0,0,.06)">
+              <canvas id="chart-macd-${r.symbol}" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+            </div>
+          </div>
         </div>
       </div>
       <div id="info-${
@@ -1696,6 +1722,87 @@
             rsiBadgeTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
           });
           _rsiBadge.addEventListener("mouseleave", () => { rsiBadgeTip.style.display = "none"; });
+        }
+
+        // Inject MACD badge
+        const _macdPrices = (r.chart.prices ?? []).filter(p => p != null);
+        if (_macdPrices.length >= 35) {
+          const { macdLine, signalLine, histogram } = calcMACD(_macdPrices);
+          const _macdNow  = macdLine.filter(v => v != null).at(-1) ?? null;
+          const _sigNow   = signalLine.filter(v => v != null).at(-1) ?? null;
+          const _histNow  = histogram.filter(v => v != null).at(-1) ?? null;
+          const _macdBadge = div.querySelector(`#macd-badge-${r.symbol}`);
+          if (_macdBadge && _macdNow != null) {
+            const { text, color } = macdLabel(_macdNow, _sigNow, _histNow);
+            const bg = color === "#2f9e44" || color === "#059669" ? "#f0fdf4" :
+                       color === "#e03131" ? "#fff5f5" :
+                       color === "#f59e0b" ? "#fffbeb" : "#f3f4f6";
+            const bd = color === "#2f9e44" || color === "#059669" ? "#bbf7d0" :
+                       color === "#e03131" ? "#ffc9c9" :
+                       color === "#f59e0b" ? "#fde68a" : "#e5e7eb";
+            _macdBadge.textContent = text;
+            _macdBadge.style.color = color;
+            _macdBadge.style.background = bg;
+            _macdBadge.style.borderColor = bd;
+            _macdBadge.style.cursor = "help";
+
+            const macdDesc =
+              _histNow > 0 && _macdNow > 0  ? "MACD > 0, Histogram dương: Xu hướng tăng mạnh. Đường MACD trên Signal và trên 0 — momentum tăng đang chiếm ưu thế." :
+              _histNow > 0 && _macdNow <= 0 ? "MACD < 0 nhưng Histogram dương: Đang phục hồi từ vùng âm. MACD cắt lên Signal — tín hiệu đảo chiều tăng sớm." :
+              _histNow < 0 && _macdNow < 0  ? "MACD < 0, Histogram âm: Xu hướng giảm. Đường MACD dưới Signal và dưới 0 — momentum giảm đang chiếm ưu thế." :
+                                              "MACD > 0 nhưng Histogram âm: Xu hướng tăng đang suy yếu. MACD cắt xuống Signal — cảnh báo đảo chiều giảm.";
+            const macdTip = document.createElement("div");
+            macdTip.textContent = macdDesc;
+            macdTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+            document.body.appendChild(macdTip);
+            _macdBadge.addEventListener("mouseenter", () => {
+              const rect = _macdBadge.getBoundingClientRect();
+              macdTip.style.display = "block";
+              const tipH = macdTip.offsetHeight || 80;
+              const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+              macdTip.style.top  = top + "px";
+              macdTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+            });
+            _macdBadge.addEventListener("mouseleave", () => { macdTip.style.display = "none"; });
+          }
+        }
+
+        // Inject GT (giá trị khớp lệnh) badge
+        const _valBadge = div.querySelector(`#val-badge-${r.symbol}`);
+        if (_valBadge && r.session?.val != null) {
+          const valTy = r.session.val / 1e9; // tỷ đồng
+          const valStr = valTy >= 1000 ? (valTy / 1000).toFixed(1) + " nghìn tỷ"
+                       : valTy >= 1   ? valTy.toFixed(1) + " tỷ"
+                       : (valTy * 1000).toFixed(0) + " triệu";
+          const isLarge = valTy >= 100;
+          const isMed   = valTy >= 10;
+          const valColor = isLarge ? "#7c3aed" : isMed ? "#0369a1" : "#6b7280";
+          const valBg    = isLarge ? "#f5f3ff" : isMed ? "#f0f9ff" : "#f3f4f6";
+          const valBd    = isLarge ? "#ddd6fe" : isMed ? "#bae6fd" : "#e5e7eb";
+          _valBadge.textContent = "GT " + valStr;
+          _valBadge.style.color = valColor;
+          _valBadge.style.background = valBg;
+          _valBadge.style.borderColor = valBd;
+          _valBadge.style.cursor = "help";
+
+          const valDesc = isLarge
+            ? `Giá trị khớp lệnh ${valStr} — dòng tiền lớn, đây là tín hiệu đáng tin cậy. Tổ chức/quỹ đầu tư đang tham gia tích cực.`
+            : isMed
+            ? `Giá trị khớp lệnh ${valStr} — dòng tiền trung bình, tín hiệu đáng chú ý.`
+            : `Giá trị khớp lệnh ${valStr} — dòng tiền nhỏ, cần thận trọng khi đánh giá tín hiệu KL đột biến.`;
+          const valTip = document.createElement("div");
+          valTip.textContent = valDesc;
+          valTip.style.cssText = "display:none;position:fixed;background:#1e293b;color:#f1f5f9;font-size:11px;font-weight:400;line-height:1.6;padding:10px 14px;border-radius:10px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,.3);z-index:9999;white-space:normal;pointer-events:none";
+          document.body.appendChild(valTip);
+          _valBadge.addEventListener("mouseenter", () => {
+            const rect = _valBadge.getBoundingClientRect();
+            valTip.style.display = "block";
+            const tipH = valTip.offsetHeight || 70;
+            const top  = rect.top - tipH - 8 > 0 ? rect.top - tipH - 8 : rect.bottom + 8;
+            valTip.style.top  = top + "px";
+            valTip.style.left = Math.min(rect.left, window.innerWidth - 256) + "px";
+          });
+          _valBadge.addEventListener("mouseleave", () => { valTip.style.display = "none"; });
         }
 
         // Inject star icon
@@ -1948,7 +2055,7 @@
 
           // Tìm symbol: chart-VCB → VCB, chart-vol-VCB → VCB, chart-rsi-VCB → VCB
           const rawId = chart.canvas?.id ?? "";
-          const sym = rawId.replace(/^chart-(vol-|rsi-)?/, "");
+          const sym = rawId.replace(/^chart-(vol-|rsi-|macd-)?/, "");
           if (!sym) return;
           const group = chartMap[sym];
           if (!Array.isArray(group) || group.length < 2) return;
@@ -2052,6 +2159,153 @@
         return { text: `RSI ${val.toFixed(0)}`, color: "#6366f1" };
       }
 
+      // ── MACD ──────────────────────────────────────────────────────────────────────
+      function calcEMA(prices, period) {
+        const ema = new Array(prices.length).fill(null);
+        const k = 2 / (period + 1);
+        let started = false;
+        let prev = 0;
+        for (let i = 0; i < prices.length; i++) {
+          if (prices[i] == null) continue;
+          if (!started) {
+            // seed: SMA của period đầu tiên
+            if (i < period - 1) continue;
+            let sum = 0, cnt = 0;
+            for (let j = i - period + 1; j <= i; j++) {
+              if (prices[j] != null) { sum += prices[j]; cnt++; }
+            }
+            prev = sum / cnt;
+            ema[i] = prev;
+            started = true;
+          } else {
+            prev = prices[i] * k + prev * (1 - k);
+            ema[i] = prev;
+          }
+        }
+        return ema;
+      }
+
+      function calcMACD(prices, fast = 12, slow = 26, signal = 9) {
+        const emaFast   = calcEMA(prices, fast);
+        const emaSlow   = calcEMA(prices, slow);
+        const macdLine  = prices.map((_, i) =>
+          emaFast[i] != null && emaSlow[i] != null ? parseFloat((emaFast[i] - emaSlow[i]).toFixed(4)) : null
+        );
+        const macdNotNull = macdLine.map(v => v ?? 0); // seed EMA signal từ macd
+        const signalLine  = calcEMA(macdNotNull, signal).map((v, i) => macdLine[i] == null ? null : parseFloat(v.toFixed(4)));
+        const histogram   = macdLine.map((v, i) =>
+          v != null && signalLine[i] != null ? parseFloat((v - signalLine[i]).toFixed(4)) : null
+        );
+        return { macdLine, signalLine, histogram };
+      }
+
+      function macdLabel(macd, signal, hist) {
+        if (macd == null || signal == null || hist == null) return { text: "MACD —", color: "#9ca3af" };
+        if (hist > 0 && macd > 0)  return { text: `MACD ↑ Tăng`,    color: "#2f9e44" };
+        if (hist > 0 && macd <= 0) return { text: `MACD ↑ Phục hồi`, color: "#059669" };
+        if (hist < 0 && macd < 0)  return { text: `MACD ↓ Giảm`,    color: "#e03131" };
+        if (hist < 0 && macd >= 0) return { text: `MACD ↓ Yếu dần`, color: "#f59e0b" };
+        return { text: "MACD ~", color: "#9ca3af" };
+      }
+
+      // ── External tooltip (HTML custom, hỗ trợ màu sắc per-token) ────────────────
+      (function setupExternalTooltip() {
+        const tip = document.createElement("div");
+        tip.id = "chartTooltip";
+        tip.style.cssText = [
+          "position:fixed",
+          "pointer-events:none",
+          "z-index:9999",
+          "opacity:0",
+          "background:rgba(13,19,28,0.93)",
+          "border:1px solid rgba(255,255,255,.1)",
+          "border-radius:10px",
+          "padding:9px 13px",
+          "min-width:180px",
+          "box-shadow:0 4px 20px rgba(0,0,0,.4)",
+          "font-family:'IBM Plex Mono',monospace",
+          // transform cho vị trí mượt, opacity cho fade
+          "transition:opacity .15s ease,transform .08s ease",
+          "transform:translate(0,0)",
+          "will-change:transform,opacity",
+        ].join(";");
+        document.body.appendChild(tip);
+        window._chartTooltipEl = tip;
+        window._chartTooltipKey = "";  // cache để tránh rewrite HTML
+      })();
+
+      function showExternalTooltip(chart, tooltipModel) {
+        const tip = window._chartTooltipEl;
+        if (!tip) return;
+
+        if (tooltipModel.opacity === 0) {
+          tip.style.opacity = "0";
+          return;
+        }
+
+        const dp = tooltipModel.dataPoints?.[0];
+        if (!dp) return;
+
+        const ds    = dp.dataset;
+        const idx   = dp.dataIndex;
+        const label = tooltipModel.title?.[0] ?? "";
+
+        // Chỉ rewrite HTML khi dữ liệu thực sự thay đổi → không reflow liên tục
+        const cacheKey = `${ds.label}-${idx}-${label}`;
+        if (window._chartTooltipKey !== cacheKey) {
+          window._chartTooltipKey = cacheKey;
+
+          const fmt2 = v => v?.toLocaleString("vi-VN",{minimumFractionDigits:2,maximumFractionDigits:2}) ?? "—";
+          let html = `<div style="font-size:10px;color:#64748b;margin-bottom:6px;letter-spacing:.5px">${label}</div>`;
+
+          if (ds.label === "Nến") {
+            const d = ds.data[idx];
+            if (!d) return;
+            const isUp   = d.c >= d.o;
+            const color  = isUp ? "#4ade80" : "#f87171";
+            const arrow  = isUp ? "▲" : "▼";
+            const chg    = (d.c ?? 0) - (d.o ?? 0);
+            const chgPct = d.o ? chg / d.o * 100 : 0;
+            const sign   = chg >= 0 ? "+" : "";
+            html += `<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">
+              <span style="font-size:14px;font-weight:700;color:${color}">${arrow} ${fmt2(d.c)}</span>
+              <span style="font-size:11px;font-weight:600;color:${color}">${sign}${chg.toFixed(2)} (${sign}${chgPct.toFixed(2)}%)</span>
+            </div>
+            <div style="display:flex;gap:12px;font-size:10px;color:#94a3b8">
+              <span>Mở&nbsp;<b style="color:#e2e8f0">${fmt2(d.o)}</b></span>
+              <span>Cao&nbsp;<b style="color:#4ade80">${fmt2(d.h)}</b></span>
+              <span>Thấp&nbsp;<b style="color:#f87171">${fmt2(d.l)}</b></span>
+            </div>`;
+          } else if (ds.label === "Giá đóng cửa") {
+            const v = dp.parsed.y;
+            html += `<div style="font-size:14px;font-weight:700;color:#4ade80">${fmt2(v)}</div>`;
+          } else {
+            return;
+          }
+
+          tip.innerHTML = html;
+        }
+
+        // Vị trí dùng transform thay vì left/top → GPU composite, không reflow
+        const rect   = chart.canvas.getBoundingClientRect();
+        const mx     = rect.left + tooltipModel.caretX;
+        const my     = rect.top  + tooltipModel.caretY;
+        const tw     = 200;  // ước lượng cố định, tránh offsetWidth trigger reflow
+        const th     = 68;
+        const margin = 14;
+
+        let x = mx + margin;
+        let y = my - th / 2;
+        if (x + tw > window.innerWidth  - 8) x = mx - tw - margin;
+        if (y < 8)                            y = 8;
+        if (y + th > window.innerHeight - 8)  y = window.innerHeight - th - 8;
+
+        tip.style.transform = `translate(${x}px,${y}px)`;
+        tip.style.left = "0";
+        tip.style.top  = "0";
+        tip.style.opacity = "1";
+      }
+
       // ── Chart ─────────────────────────────────────────────────────────────────────
       function buildChart(r) {
         const canvas = document.getElementById(`chart-${r.symbol}`);
@@ -2090,7 +2344,9 @@
           const rsiWrap   = document.getElementById(`chart-rsi-wrap-${r.symbol}`);
           const rsiCanvas = document.getElementById(`chart-rsi-${r.symbol}`);
           if (!rsiWrap || !rsiCanvas) return null;
-          rsiWrap.style.display = "block";
+          rsiWrap.style.display = "flex";
+          const _indWrap = document.getElementById(`chart-indicators-${r.symbol}`);
+          if (_indWrap) _indWrap.style.display = "block";
 
           const rsiColors = rsiSlice.map(v =>
             v == null ? "transparent" :
@@ -2155,6 +2411,89 @@
                   afterFit: ax => { if (axisWidth) ax.width = axisWidth; },
                   ticks:{ maxTicksLimit:3, font:{ size:8, family:"'IBM Plex Mono'" }, color:"#adb5bd",
                     callback: v => v===70?"70":v===30?"30":v===50?"RSI":"" },
+                  grid:{ color:"rgba(0,0,0,.04)" },
+                }
+              }
+            }
+          });
+        }
+
+        // ── Tính MACD từ toàn bộ giá rồi slice ────────────────────────────────
+        const allPricesForMacd = r.chart.prices ?? [];
+        const pricesNotNull = allPricesForMacd.filter(p => p != null);
+        let macdSlice = labels.map(() => null);
+        let signalSlice = labels.map(() => null);
+        let histSlice = labels.map(() => null);
+        if (pricesNotNull.length >= 35) {
+          const { macdLine, signalLine, histogram } = calcMACD(pricesNotNull);
+          const notNullIdx = allPricesForMacd.map((p, i) => p != null ? i : -1).filter(i => i >= 0);
+          const startGlobal = allPricesForMacd.length - sliceN;
+          macdSlice   = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? macdLine[ni]   : null; });
+          signalSlice = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? signalLine[ni] : null; });
+          histSlice   = labels.map((_, li) => { const gi = startGlobal + li; const ni = notNullIdx.indexOf(gi); return ni >= 0 ? histogram[ni]  : null; });
+        }
+
+        function buildMacdChart(axisWidth) {
+          const wrap   = document.getElementById(`chart-macd-wrap-${r.symbol}`);
+          const canvas = document.getElementById(`chart-macd-${r.symbol}`);
+          if (!wrap || !canvas) return null;
+          wrap.style.display = "flex";
+          const _indWrap2 = document.getElementById(`chart-indicators-${r.symbol}`);
+          if (_indWrap2) _indWrap2.style.display = "block";
+
+          const histColors = histSlice.map(v =>
+            v == null ? "transparent" : v >= 0 ? "rgba(47,158,68,.65)" : "rgba(224,49,49,.65)"
+          );
+
+          return safeChart(canvas, {
+            data: {
+              labels,
+              datasets: [
+                { type:"bar",  label:"Histogram", data:histSlice, backgroundColor:histColors, borderRadius:1, yAxisID:"yMacd", order:3 },
+                { type:"line", label:"MACD",      data:macdSlice,   borderColor:"#3b82f6", borderWidth:1.75, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yMacd", order:1 },
+                { type:"line", label:"Signal",    data:signalSlice, borderColor:"#f59e0b", borderWidth:1.25, pointRadius:0, tension:0.3, spanGaps:true, fill:false, yAxisID:"yMacd", order:2, borderDash:[3,2] },
+              ],
+            },
+            options: {
+              responsive:true, maintainAspectRatio:false,
+              animation:{ duration:350 },
+              interaction:{ mode:"index", intersect:false },
+              plugins:{
+                legend:{ display:false },
+                tooltip:{
+                  enabled:true,
+                  displayColors:true,
+                  backgroundColor:"rgba(15,25,35,0.92)",
+                  titleColor:"#94a3b8",
+                  titleFont:{ family:"'IBM Plex Mono'", size:10 },
+                  bodyFont:{ family:"'IBM Plex Mono'", size:11, weight:"700" },
+                  bodyColor:"#fff",
+                  padding:8, cornerRadius:8,
+                  callbacks:{
+                    title: items => items[0]?.label ?? "",
+                    label: ctx => {
+                      const v = ctx.parsed.y;
+                      if (v == null) return null;
+                      if (ctx.dataset.label === "Histogram") return `Hist: ${v > 0 ? "+" : ""}${v.toFixed(3)}`;
+                      if (ctx.dataset.label === "MACD")      return `MACD: ${v.toFixed(3)}`;
+                      if (ctx.dataset.label === "Signal")    return `Signal: ${v.toFixed(3)}`;
+                      return null;
+                    },
+                    labelColor: ctx => ({
+                      borderColor: ctx.dataset.borderColor ?? "#888",
+                      backgroundColor: ctx.dataset.borderColor ?? "#888",
+                      borderRadius: 3,
+                    }),
+                  },
+                },
+              },
+              scales:{
+                x:{ display:false },
+                yMacd:{
+                  position:"left",
+                  afterFit: ax => { if (axisWidth) ax.width = axisWidth; },
+                  ticks:{ maxTicksLimit:3, font:{ size:8, family:"'IBM Plex Mono'" }, color:"#adb5bd",
+                    callback: v => v === 0 ? "0" : v.toFixed(2) },
                   grid:{ color:"rgba(0,0,0,.04)" },
                 }
               }
@@ -2269,43 +2608,8 @@
               plugins: {
                 legend: { display: false },
                 tooltip: {
-                  displayColors: false,
-                  backgroundColor: "rgba(15,25,35,0.92)",
-                  titleColor: "#fff",
-                  titleFont: { family: "'IBM Plex Mono'", size: 11, weight: "700" },
-                  bodyFont: { family: "'IBM Plex Mono'", size: 11 },
-                  padding: 10,
-                  cornerRadius: 8,
-                  callbacks: {
-                    title: (items) => items[0]?.label ?? "",
-                    label: (ctx) => {
-                      if (ctx.dataset.label === "Nến") {
-                        const d = ctx.dataset.data[ctx.dataIndex];
-                        if (!d) return null;
-                        const isUp = d.c >= d.o;
-                        const arrow = isUp ? "▲" : "▼";
-                        const chg = d.c != null && d.o != null ? (d.c - d.o).toFixed(2) : "—";
-                        const chgPct = d.o ? ((d.c - d.o) / d.o * 100).toFixed(2) : "—";
-                        return [
-                          `${arrow}  Đóng  ${fvPrice(d.c)}   (${isUp ? "+" : ""}${chg} / ${isUp ? "+" : ""}${chgPct}%)`,
-                          `   Mở    ${fvPrice(d.o)}`,
-                          `   Cao   ${fvPrice(d.h)}`,
-                          `   Thấp  ${fvPrice(d.l)}`,
-                        ];
-                      }
-                      const v = ctx.parsed.y;
-                      return v != null ? `${ctx.dataset.label}: ${fvPrice(v)}` : null;
-                    },
-                    labelColor: (ctx) => {
-                      if (ctx.dataset.label === "Nến") {
-                        const d = ctx.dataset.data[ctx.dataIndex];
-                        const isUp = d && d.c >= d.o;
-                        const col = isUp ? "#2f9e44" : "#e03131";
-                        return { borderColor: col, backgroundColor: col, borderRadius: 3 };
-                      }
-                      return { borderColor: ctx.dataset.borderColor, backgroundColor: ctx.dataset.borderColor, borderRadius: 3 };
-                    },
-                  },
+                  enabled: false,
+                  external: (ctx) => showExternalTooltip(ctx.chart, ctx.tooltip),
                 },
               },
               scales: {
@@ -2391,11 +2695,11 @@
             },
           });
 
-          const chartRsi = buildRsiChart(syncedAxisWidth);
-          chartMap[r.symbol] = [chartPrice, chartVol, chartRsi].filter(Boolean);
-          // Tăng chiều cao row khi có 3 panel
+          const chartRsi  = buildRsiChart(syncedAxisWidth);
+          const chartMacd = buildMacdChart(syncedAxisWidth);
+          chartMap[r.symbol] = [chartPrice, chartVol, chartRsi, chartMacd].filter(Boolean);
           const rowEl = document.getElementById(`chart-row-${r.symbol}`);
-          if (rowEl) rowEl.style.minHeight = "510px";
+          if (rowEl) rowEl.style.minHeight = "420px";
 
           return;
         }
@@ -2454,15 +2758,8 @@
             plugins: {
               legend: { display: false },
               tooltip: {
-                callbacks: {
-                  label: (ctx) => {
-                    if (ctx.dataset.yAxisID === "yPrice") {
-                      const v = ctx.parsed.y;
-                      return v != null ? `${ctx.dataset.label}: ${v.toLocaleString("vi-VN")}` : null;
-                    }
-                    return `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`;
-                  },
-                },
+                enabled: false,
+                external: (ctx) => showExternalTooltip(ctx.chart, ctx.tooltip),
               },
             },
             scales: {
@@ -2494,8 +2791,8 @@
               } : {}),
             },
           },
-        }), buildRsiChart(syncedAxisWidthLine)].filter(Boolean);
-        if (rowEl) rowEl.style.minHeight = "390px";
+        }), buildRsiChart(syncedAxisWidthLine), buildMacdChart(syncedAxisWidthLine)].filter(Boolean);
+        if (rowEl) rowEl.style.minHeight = "380px";
       }
       function destroyCharts() {
         Object.values(chartMap).forEach((c) => {
@@ -2594,14 +2891,40 @@
 
       // ── Init ──────────────────────────────────────────────────────────────────────
       window.addEventListener("load", async () => {
-        // Áp dụng settings đã load vào UI
+        // ── Restore tất cả UI state từ settings ─────────────────────────────────
         applyMarkerSwitchUI();
         applySurgeFilterUI(surgeFilterEnabled);
+
+        // Display limit
         const inp = document.getElementById("displayLimitInput");
         if (inp && displayLimit > 0) inp.value = displayLimit;
-        applyFilterUI();
+
+        // volHighlightX
         const vxi = document.getElementById("volHighlightInput");
         if (vxi) vxi.textContent = volHighlightX % 1 === 0 ? volHighlightX : parseFloat(volHighlightX).toFixed(1);
+
+        // Range buttons
+        setRange(rangeN);
+
+        // Chart mode buttons
+        setChartMode(chartMode);
+
+        // Sort buttons
+        setSort(sortMode);
+
+        // Symbol search input
+        if (symbolQuery) {
+          const si = document.getElementById("symbolSearch");
+          if (si) {
+            si.value = symbolQuery;
+            si.style.width = "180px";
+          }
+          const scb = document.getElementById("symbolSearchClear");
+          if (scb) scb.style.display = "flex";
+        }
+
+        // activeFilters UI (pattern buttons sẽ được rebuild sau khi có data)
+        applyFilterUI();
 
         // Load likes từ server trước — hiển thị ticker với giá 0 ngay
         await loadLikes();
