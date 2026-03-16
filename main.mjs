@@ -16,7 +16,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist } from "./analyze.mjs";
+import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist, loadPortfolio, savePortfolio } from "./analyze.mjs";
 
 const PORT = process.env.PORT || 3000;
 const TMP_DIR = "tmp";
@@ -103,7 +103,7 @@ function fetchFromCafeF(targetUrl, symbol, redirectCount = 0) {
 
 function setCORS(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
@@ -291,6 +291,42 @@ const server = http.createServer(async (req, res) => {
         console.error(`   ❌ ${err.message}`);
         return sendJSON(res, 500, { error: err.message });
       }
+    }
+  }
+
+  // ─── Portfolio — quản lý vị thế đã mua ──────────────────────────────────────
+  if (pathname.startsWith("/portfolio")) {
+    let body = {};
+    if (req.method === "POST") body = await parseBody(req);
+
+    if (pathname === "/portfolio" && req.method === "GET") {
+      return sendJSON(res, 200, loadPortfolio());
+    }
+    if (pathname === "/portfolio/add" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym))
+        return sendJSON(res, 400, { error: "Mã không hợp lệ" });
+      const qty = parseInt(body?.qty);
+      const price = parseFloat(body?.price);
+      const date = body?.date || new Date().toISOString().slice(0, 10);
+      if (!qty || qty <= 0 || !price || price <= 0)
+        return sendJSON(res, 400, { error: "Khối lượng hoặc giá không hợp lệ" });
+      const pf = loadPortfolio();
+      if (!pf[sym]) pf[sym] = [];
+      pf[sym].push({ qty, price, date, id: Date.now() });
+      savePortfolio(pf);
+      console.log(`[Portfolio] ➕ ${sym} ${qty}@${price} | tổng lệnh: ${pf[sym].length}`);
+      return sendJSON(res, 200, { ok: true, positions: pf[sym] });
+    }
+    if (pathname === "/portfolio/remove" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      const id = body?.id;
+      const pf = loadPortfolio();
+      if (pf[sym]) pf[sym] = pf[sym].filter(p => p.id !== id);
+      if (pf[sym] && !pf[sym].length) delete pf[sym];
+      savePortfolio(pf);
+      console.log(`[Portfolio] ➖ ${sym} id:${id}`);
+      return sendJSON(res, 200, { ok: true, positions: pf[sym] || [] });
     }
   }
 

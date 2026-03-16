@@ -3261,6 +3261,26 @@ export function saveWatchlist(data) {
   }
 }
 
+// ── Đọc / ghi portfolio ─────────────────────────────────────────────────────
+const PORTFOLIO_FILE = path.join("settings", "portfolio.json");
+
+export function loadPortfolio() {
+  try {
+    if (fs.existsSync(PORTFOLIO_FILE))
+      return JSON.parse(fs.readFileSync(PORTFOLIO_FILE, "utf8"));
+  } catch {}
+  return {};
+}
+
+export function savePortfolio(data) {
+  try {
+    fs.mkdirSync("settings", { recursive: true });
+    fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    console.warn("[Portfolio] Save error:", e.message);
+  }
+}
+
 // ── Phân tích tín hiệu từ result của analyzeDetail ────────────────────────────
 function extractSignals(result) {
   const signals = [];

@@ -240,6 +240,17 @@
       </div>
     </div>
 
+    <!-- ═══ Quản lý vị thế đã mua ═══ -->
+    <div class="card an a3" style="margin-bottom:20px">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="sec-title">📊 Quản lý vị thế</div>
+        <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray500)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </div>
+      <div class="card-body">
+        <div id="portfolioContent"></div>
+      </div>
+    </div>
+
     <!-- ═══ ROW: Mẫu hình nến + Hỗ trợ & Kháng cự (2 cột, sát nhau) ═══ -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;align-items:start">
       <!-- Mẫu hình nến -->
@@ -607,6 +618,8 @@ function renderAll(d){
   renderMTFPatterns(d.multiTimeframePatterns, d.patternVerdict);
   if(d.scoring) renderScoring(d.scoring);
   if(d.investmentProfile) renderInvestProfile(d.investmentProfile);
+  renderPortfolio();
+  migratePortfolioIfNeeded();
   updateFloatingPrice(d);
 }
 
@@ -1137,6 +1150,395 @@ function renderPredictions(pred){
     ${mkW('Mua tệ nhất',pred.worstBuy)}
     ${mkW('Bán tệ nhất',pred.worstSell)}
   </div>`:''}`;
+}
+
+// ═══ QUẢN LÝ VỊ THẾ (Portfolio) ═══════════════════════════════════════════
+async function getPortfolio(){
+  try{const r=await fetch(`${SERVER}/portfolio`);return await r.json();}catch(e){return{}}
+}
+
+async function addPosition(sym){
+  const qtyEl=document.getElementById('pfQty');
+  const priceEl=document.getElementById('pfPrice');
+  const dateEl=document.getElementById('pfDate');
+  const qty=parseInt(qtyEl.value);
+  const price=parseFloat(priceEl.value);
+  const date=dateEl.value||new Date().toISOString().slice(0,10);
+  if(!qty||qty<=0||!price||price<=0){alert('Vui lòng nhập khối lượng và giá hợp lệ');return}
+  try{await fetch(`${SERVER}/portfolio/add`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,qty,price,date})})}catch(e){console.error('Add failed:',e)}
+  qtyEl.value='';priceEl.value='';dateEl.value='';
+  renderPortfolio();
+}
+
+async function removePosition(sym,id){
+  try{await fetch(`${SERVER}/portfolio/remove`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,id})})}catch(e){console.error('Remove failed:',e)}
+  renderPortfolio();
+}
+
+// ── One-time migration from localStorage ──
+async function migratePortfolioIfNeeded(){
+  const local=localStorage.getItem('portfolio');
+  if(!local)return;
+  try{
+    const localPf=JSON.parse(local);
+    const serverPf=await getPortfolio();
+    if(Object.keys(serverPf).length>0){localStorage.removeItem('portfolio');return}
+    for(const[sym,positions]of Object.entries(localPf)){
+      for(const p of positions){
+        await fetch(`${SERVER}/portfolio/add`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,qty:p.qty,price:p.price,date:p.date})});
+      }
+    }
+    localStorage.removeItem('portfolio');
+  }catch(e){console.warn('Portfolio migration failed:',e)}
+}
+
+// ── Health Score ──
+function calcHealthScore(pnlPct,d){
+  let s=50;
+  // P&L
+  if(pnlPct>20)s+=15;else if(pnlPct>10)s+=10;else if(pnlPct>0)s+=5;
+  else if(pnlPct>-5)s-=5;else if(pnlPct>-10)s-=10;else if(pnlPct>-20)s-=15;else s-=20;
+  // Trend
+  const al=d?.trend?.alignment;
+  if(al==='STRONG_UP')s+=15;else if(al==='MODERATE_UP')s+=8;else if(al==='MODERATE_DOWN')s-=8;else if(al==='STRONG_DOWN')s-=15;
+  // Scoring
+  [d?.scoring?.canslim?.grade,d?.scoring?.sepa?.grade,d?.scoring?.momentum?.grade].forEach(g=>{if(g==='A')s+=5;else if(g==='D')s-=5});
+  // Pattern verdict
+  const vs=d?.patternVerdict?.overall?.score;
+  if(vs!=null)s+=Math.round((vs-50)/10);
+  // Volume confirmation
+  if(d?.volume?.isSurge&&d?.trend?.shortTerm?.direction==='UPTREND')s+=5;
+  // RSI extremes
+  const rsi=d?.indicators?.rsi14;
+  if(rsi>80)s-=5;if(rsi<20)s-=5;
+  return Math.max(0,Math.min(100,s));
+}
+
+function generateAdvisory(avgPrice,curPrice,pnlPct,positions,d){
+  const pred=d?.predictions;
+  const trend=d?.trend;
+  const ind=d?.indicators;
+  const sr=d?.supportResistance;
+  const vol=d?.volume;
+  const scoring=d?.scoring;
+  const profile=d?.investmentProfile;
+  const verdict=d?.patternVerdict;
+
+  const rsi=ind?.rsi14;
+  const macd=ind?.macdHistogram;
+  const ma20=ind?.ma20,ma50=ind?.ma50,ma200=ind?.ma200;
+  const bestBuy=pred?.bestBuy;
+  const sellTargets=bestBuy?.sellStrategy?.targets||[];
+  const stoploss=bestBuy?.stoploss;
+  const slFromAvg=stoploss?((stoploss-avgPrice)/avgPrice*100).toFixed(1):null;
+  const nearSup=sr?.supports?.[0]?.price;
+  const nearRes=sr?.resistances?.[0]?.price;
+  const trendShort=trend?.shortTerm?.direction;
+  const trendMid=trend?.midTerm?.direction;
+  const trendLong=trend?.longTerm?.direction;
+  const alignment=trend?.alignment;
+  const aboveMa50=ma50&&curPrice>ma50;
+  const aboveMa200=ma200&&curPrice>ma200;
+  const volRatio=vol?.ratio;
+  const health=calcHealthScore(pnlPct,d);
+
+  // helpers
+  const tag=(label,color)=>`<span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:${color}15;color:${color};border:1px solid ${color}30;margin-right:4px">${label}</span>`;
+  const gc=g=>g==='A'?'var(--up)':g==='B'?'var(--navy)':g==='C'?'var(--am)':'var(--dn)';
+  const hc=health>=70?'var(--up)':health>=45?'var(--am)':'var(--dn)';
+  const hLabel=health>=70?'MẠNH':health>=45?'TRUNG BÌNH':'YẾU';
+  const pSign=pnlPct>=0?'+':'';
+
+  // scoring tags HTML
+  const canG=scoring?.canslim?.grade,sepaG=scoring?.sepa?.grade,momG=scoring?.momentum?.grade;
+  const scoreTags=[
+    canG?tag(`CANSLIM ${canG}`,gc(canG)):'',
+    sepaG?tag(`SEPA ${sepaG}`,gc(sepaG)):'',
+    momG?tag(`Mom. ${momG}`,gc(momG)):''
+  ].filter(Boolean).join('');
+
+  // health bar HTML
+  const healthHtml=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <div style="font-size:11px;font-weight:700;color:var(--gray400)">HEALTH</div>
+    <div style="flex:1;height:6px;border-radius:3px;background:var(--gray200);overflow:hidden"><div style="height:100%;width:${health}%;background:${hc};border-radius:3px;transition:width .5s"></div></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:${hc}">${health}<span style="font-size:11px;font-weight:600;color:var(--gray400)">/100</span></div>
+    <div style="font-size:11px;font-weight:700;color:${hc}">${hLabel}</div>
+  </div>`;
+
+  // volume line
+  const volLine=volRatio?`<div style="font-size:12px;color:var(--gray500);margin-top:4px">Volume ${volRatio.toFixed(1)}x TB20 ${vol?.isSurge?'<span style="color:var(--up);font-weight:700">SURGE</span>':vol?.trend==='increasing'?'<span style="color:var(--up)">tang</span>':'<span style="color:var(--gray400)">'+vol?.trendDesc+'</span>'}</div>`:'';
+
+  // S/R levels compact
+  const srLine=(()=>{
+    const sups=(sr?.supports||[]).slice(0,3).map(s=>`<span style="color:var(--up)">${fp(s.price)}</span> <span style="font-size:10px;color:var(--gray400)">(${s.touches}t)</span>`);
+    const ress=(sr?.resistances||[]).slice(0,3).map(r=>`<span style="color:var(--dn)">${fp(r.price)}</span> <span style="font-size:10px;color:var(--gray400)">(${r.touches}t)</span>`);
+    if(!sups.length&&!ress.length)return'';
+    return`<div style="font-size:12px;margin-top:6px"><span style="color:var(--gray400)">S:</span> ${sups.join(' · ')||'—'} &nbsp; <span style="color:var(--gray400)">R:</span> ${ress.join(' · ')||'—'}</div>`;
+  })();
+
+  // sell targets compact
+  const tpLine=(()=>{
+    if(!sellTargets.length)return'';
+    const ts=sellTargets.map((t,i)=>`TP${i+1} <span style="font-weight:700;color:var(--up)">${fp(t.price)}</span> <span style="color:var(--gray400)">(+${parseFloat(t.pct).toFixed(1)}% R:R ${t.rr})</span>`);
+    return`<div style="font-size:12px;margin-top:4px">${ts.join(' &nbsp;·&nbsp; ')}</div>`;
+  })();
+
+  // stoploss from avg
+  const slLine=stoploss?`<div style="font-size:12px;margin-top:4px"><span style="color:var(--gray400)">SL</span> <span style="font-weight:700;color:var(--dn)">${fp(stoploss)}</span> <span style="color:var(--gray400)">(${slFromAvg}% từ giá vốn)</span></div>`:'';
+
+  // ═══ SHORT TERM (1-2 weeks) ═══
+  let shortAdv='',shortColor='var(--gray700)',shortActions=[];
+  const verdictShort=verdict?.perTimeframe?.shortTerm;
+  const profileShort=profile?.shortTerm;
+
+  if(pnlPct<=-7){
+    shortColor='var(--dn)';
+    if(stoploss&&curPrice<=stoploss){
+      shortAdv=`<b>Giá phá stoploss ${fp(stoploss)}</b> — vị thế lỗ nặng ${pnlPct.toFixed(1)}%.`;
+      shortActions=['Cắt lỗ ngay để bảo toàn vốn','Không DCA khi trend đang giảm','Chờ tín hiệu đảo chiều rõ ràng mới vào lại'];
+    }else if(nearSup&&curPrice>nearSup){
+      shortAdv=`Lỗ nặng ${pnlPct.toFixed(1)}%. Hỗ trợ gần nhất <b>${fp(nearSup)}</b> (${((nearSup-curPrice)/curPrice*100).toFixed(1)}%).`;
+      shortActions=[`Nếu mất ${fp(nearSup)} → cắt lỗ ngay`,`Nếu giữ hỗ trợ → chờ phản ứng, volume phải tăng`,rsi&&rsi<30?`RSI ${rsi.toFixed(0)} quá bán — có thể phản hồi kỹ thuật ngắn hạn`:`RSI ${rsi?rsi.toFixed(0):'—'} — chưa oversold, áp lực bán vẫn còn`];
+    }else{
+      shortAdv=`Lỗ nặng ${pnlPct.toFixed(1)}%. Xu hướng ngắn hạn yếu.`;
+      shortActions=['Cắt lỗ hoặc giảm 50%+ vị thế','Đặt SL chặt tại '+(stoploss?fp(stoploss):'dưới hỗ trợ gần nhất'),'Chỉ giữ nếu có catalyst đặc biệt'];
+    }
+  }else if(pnlPct<=-3){
+    shortColor='var(--am)';
+    shortAdv=`Lỗ nhẹ ${pnlPct.toFixed(1)}%.`;
+    if(rsi&&rsi<30){shortAdv+=` RSI <b>${rsi.toFixed(0)}</b> quá bán.`;shortActions=['Có thể phản hồi kỹ thuật ngắn hạn','Đặt SL tại '+(stoploss?fp(stoploss):'hỗ trợ'),'Nếu phục hồi, bán 30% để giảm rủi ro'];}
+    else if(trendShort==='UPTREND'){shortAdv+=` Xu hướng ngắn hạn vẫn tăng.`;shortActions=['Giữ vị thế, chờ phục hồi về giá vốn','SL tại '+(stoploss?fp(stoploss):'hỗ trợ gần nhất'),'Theo dõi volume — cần tăng để xác nhận'];}
+    else{shortActions=['Đặt SL chặt tại '+(stoploss?`${fp(stoploss)} (${slFromAvg}% từ vốn)`:'dưới hỗ trợ'),'Theo dõi volume và RSI','Không thêm vị thế khi xu hướng chưa rõ'];}
+  }else if(pnlPct<=3){
+    shortColor='var(--navy)';
+    shortAdv=`Hòa vốn (${pSign}${pnlPct.toFixed(1)}%).`;
+    if(trendShort==='UPTREND'&&rsi&&rsi<70){shortActions=['Giữ vị thế — trend tốt, RSI '+rsi.toFixed(0)+' chưa quá mua','Đặt SL tại '+(stoploss?fp(stoploss):fp(avgPrice*0.95)),'Theo dõi breakout qua '+(nearRes?fp(nearRes):'kháng cự')];}
+    else if(rsi&&rsi>70){shortActions=['RSI '+rsi.toFixed(0)+' quá mua — cân nhắc chốt 30%','Dời SL lên sát giá vốn '+fp(avgPrice),'Chờ RSI hạ nhiệt rồi đánh giá lại'];}
+    else{shortActions=['Giữ, theo dõi tín hiệu breakout/breakdown','SL tại '+(stoploss?fp(stoploss):fp(avgPrice*0.95)),'Volume cần xác nhận hướng đi'];}
+  }else if(pnlPct<=10){
+    shortColor='var(--up)';
+    shortAdv=`Lãi <b>+${pnlPct.toFixed(1)}%</b>.`;
+    const tp1=sellTargets[0];
+    if(tp1&&curPrice>=tp1.price){shortActions=[`TP1 đạt ${fp(tp1.price)} → bán ${tp1.sellPct}% chốt lời`,`Dời SL lên giá vốn ${fp(avgPrice)}`,`Target tiếp: ${sellTargets[1]?fp(sellTargets[1].price):'theo trailing stop'}`];}
+    else if(rsi&&rsi>75){shortActions=[`RSI ${rsi.toFixed(0)} quá mua → chốt 30-50%`,`Bảo vệ lợi nhuận, dời SL lên ${fp(avgPrice)}`,tp1?`TP1 tại ${fp(tp1.price)} (+${parseFloat(tp1.pct).toFixed(1)}%)`:'Trailing stop 5%'];}
+    else{shortActions=[`Dời SL lên giá vốn ${fp(avgPrice)}`,`Để lợi nhuận chạy — RSI ${rsi?rsi.toFixed(0):'—'} còn room`,tp1?`TP1: ${fp(tp1.price)} (R:R ${tp1.rr})`:'Trailing stop 5%'];}
+  }else{
+    shortColor='var(--up)';
+    shortAdv=`Lãi mạnh <b>+${pnlPct.toFixed(1)}%</b>!`;
+    const tp2=sellTargets[1],tp3=sellTargets[2];
+    if(tp3&&curPrice>=tp3.price){shortActions=['Vượt TP3! Chốt 70-80% bảo vệ siêu lợi nhuận','Giữ 20% với trailing stop '+(bestBuy?.sellStrategy?.trailingStop?.pct||5)+'%','Tái đầu tư phần chốt vào cơ hội khác'];}
+    else if(tp2&&curPrice>=tp2.price){shortActions=[`TP2 đạt ${fp(tp2.price)} → bán thêm 30%`,`Giữ 30-40% với trailing stop`,tp3?`Target cuối TP3: ${fp(tp3.price)}`:'Trailing stop chặt'];}
+    else{shortActions=[`Chốt 30-50% bảo vệ lãi`,`Dời SL lên ${fp(avgPrice*1.03)} (+3% vốn)`,`Để phần còn lại chạy theo trend`];}
+  }
+
+  const shortHtml=healthHtml+`<div style="font-size:13px;color:${shortColor};line-height:1.6;margin-bottom:8px">${shortAdv}</div>`
+    +`<div style="margin:8px 0">${shortActions.map((a,i)=>`<div style="font-size:12px;color:var(--gray700);padding:3px 0;display:flex;gap:6px"><span style="color:var(--gray400);font-weight:700;min-width:16px">${i+1}.</span><span>${a}</span></div>`).join('')}</div>`
+    +volLine+slLine+tpLine
+    +(verdictShort?`<div style="font-size:11px;color:var(--gray400);margin-top:6px">Pattern: ${verdictShort.grade} (${verdictShort.score}/100) · Confluence: ${verdictShort.confluenceLevel||'—'}</div>`:'')
+    +`<div style="margin-top:8px">${scoreTags}</div>`
+    +(profileShort?`<div style="margin-top:4px">${tag(profileShort.grade+' '+profileShort.suitability,gc(profileShort.grade))}</div>`:'');
+
+  // ═══ MID TERM (1-3 months) ═══
+  let midAdv='',midColor='var(--gray700)',midActions=[];
+  const profileMid=profile?.midTerm;
+  const verdictMid=verdict?.perTimeframe?.midTerm;
+
+  // MA structure
+  const maStruct=`<div style="font-size:12px;margin-top:6px;color:var(--gray500)">MA50 <b style="color:${aboveMa50?'var(--up)':'var(--dn)'}"">${ma50?fp(ma50):'—'}</b> ${aboveMa50?'(trên)':'(dưới)'} · MA200 <b style="color:${aboveMa200?'var(--up)':'var(--dn)'}">${ma200?fp(ma200):'—'}</b> ${aboveMa200?'(trên)':'(dưới)'}</div>`;
+
+  if(pnlPct<=-15){
+    midColor='var(--dn)';
+    midAdv=`Lỗ sâu <b>${pnlPct.toFixed(1)}%</b>.`;
+    if(!aboveMa50&&!aboveMa200){midActions=['Cấu trúc trung hạn hỏng — giá dưới MA50 và MA200','Cắt hoặc giảm 50%+ vị thế','Chỉ mua lại khi giá lấy lại MA50 với volume tăng','Xem xét chuyển vốn sang mã có xu hướng tốt hơn'];}
+    else{midActions=['Tìm vùng tích lũy nếu fundamentals vẫn tốt',aboveMa200?'Giá vẫn trên MA200 — cấu trúc dài hạn chưa hỏng':'Giá dưới MA200 — cẩn trọng','DCA nhỏ nếu giá về hỗ trợ mạnh '+(nearSup?fp(nearSup):'')];}
+  }else if(pnlPct<0){
+    midColor=aboveMa50?'var(--am)':'var(--dn)';
+    midAdv=`Đang lỗ <b>${pnlPct.toFixed(1)}%</b>.`;
+    if(aboveMa50){midActions=[`Giá trên MA50 ${fp(ma50)} — cấu trúc trung hạn chưa hỏng`,`DCA nếu giá về hỗ trợ ${nearSup?fp(nearSup):'mạnh'}`,`Theo dõi MA50 làm hỗ trợ động`];}
+    else if(aboveMa200){midActions=['Giá dưới MA50 nhưng trên MA200 — đang điều chỉnh','Chờ giá lấy lại MA50 trước khi thêm','Không DCA thêm ở vùng này'];}
+    else{midActions=['Giá dưới MA200 — xu hướng giảm trung hạn','Không DCA thêm, xem xét cắt giảm','Chờ tín hiệu đảo chiều rõ ràng: golden cross, volume surge'];}
+  }else if(pnlPct<=15){
+    midColor='var(--up)';
+    midAdv=`Lãi <b>+${pnlPct.toFixed(1)}%</b>.`;
+    if(trendMid==='UPTREND'&&aboveMa50){midActions=['Xu hướng trung hạn tăng, giá trên MA50 → giữ','Trailing stop 8-10% từ đỉnh gần nhất',nearRes?`Kháng cự tiếp ${fp(nearRes)} — breakout sẽ mở rộng target`:'Theo dõi kháng cự mới'];}
+    else{midActions=[`MA50 ${ma50?fp(ma50):'—'} làm hỗ trợ động`,`Nếu phá MA50 → giảm 30-50% vị thế`,`Volume trend: ${vol?.trendDesc||'—'}`];}
+  }else{
+    midColor='var(--up)';
+    midAdv=`Lãi tốt <b>+${pnlPct.toFixed(1)}%</b>!`;
+    midActions=['Trailing stop 10-12% từ đỉnh',nearRes?`Kháng cự ${fp(nearRes)} — vượt sẽ mở rộng target`:'Để profit chạy','Chỉ thoát khi phá MA50 với volume lớn'];
+  }
+
+  const midHtml=`<div style="font-size:13px;color:${midColor};line-height:1.6;margin-bottom:8px">${midAdv}</div>`
+    +`<div style="margin:8px 0">${midActions.map((a,i)=>`<div style="font-size:12px;color:var(--gray700);padding:3px 0;display:flex;gap:6px"><span style="color:var(--gray400);font-weight:700;min-width:16px">${i+1}.</span><span>${a}</span></div>`).join('')}</div>`
+    +maStruct+srLine
+    +(vol?`<div style="font-size:12px;color:var(--gray500);margin-top:4px">Volume: ${volRatio?.toFixed(1)}x TB · Trend: ${vol.trendDesc||'—'}</div>`:'')
+    +(verdictMid?`<div style="font-size:11px;color:var(--gray400);margin-top:6px">Pattern trung hạn: ${verdictMid.grade} (${verdictMid.score}/100)</div>`:'')
+    +(profileMid?`<div style="margin-top:8px">${tag(profileMid.grade+' — '+profileMid.suitability,gc(profileMid.grade))}</div><div style="font-size:11px;color:var(--gray500);margin-top:2px">${profileMid.suggestion||''}</div>`:'');
+
+  // ═══ LONG TERM (6-12 months) ═══
+  let longAdv='',longColor='var(--gray700)',longActions=[];
+  const profileLong=profile?.longTerm;
+  const overallVerdict=verdict?.overall;
+
+  if(pnlPct<=-20){
+    longColor='var(--dn)';
+    longAdv=`Lỗ nặng dài hạn <b>${pnlPct.toFixed(1)}%</b>.`;
+    longActions=['Đánh giá lại fundamentals: doanh thu, lợi nhuận, triển vọng ngành',aboveMa200?'Giá trên MA200 — có thể phục hồi nếu cơ bản tốt':'Giá dưới MA200 — cân nhắc thoát, phân bổ vốn tốt hơn','Nếu giữ: đặt SL rộng, chấp nhận recovery dài','Xem xét tax-loss harvesting nếu phù hợp'];
+  }else if(pnlPct<0){
+    longColor='var(--am)';
+    longAdv=`Đang lỗ <b>${pnlPct.toFixed(1)}%</b>.`;
+    if(trendLong==='UPTREND'){longActions=['Xu hướng dài hạn tăng — kiên nhẫn giữ','DCA dần vào vùng hỗ trợ mạnh khi có cơ hội','MA200 là mốc quan trọng: '+(ma200?fp(ma200):'—')];}
+    else{longActions=['Xu hướng dài hạn chưa rõ','Giữ vị thế nhỏ, không DCA thêm','Chờ giá lấy lại MA200 '+(ma200?fp(ma200):''),'Đa dạng hóa sang mã có trend tốt hơn'];}
+  }else if(pnlPct<=30){
+    longColor='var(--up)';
+    longAdv=`Lãi <b>+${pnlPct.toFixed(1)}%</b>.`;
+    if(trendLong==='UPTREND'){longActions=['Xu hướng dài hạn tốt → giữ core 70-80%','Chốt 20-30% khi lãi >25% để tái phân bổ','Trailing stop 15% từ đỉnh','Theo dõi quarterly earnings'];}
+    else{longActions=['Trend dài hạn không rõ → chốt 40-50%','Giữ phần còn lại với SL rộng 15-20%','Tái đánh giá khi có tín hiệu trend mới'];}
+  }else{
+    longColor='var(--up)';
+    longAdv=`Lãi xuất sắc <b>+${pnlPct.toFixed(1)}%</b>!`;
+    longActions=['Chốt 30-40% tái cân bằng danh mục','Giữ 60-70% core với trailing stop 15-20%','Vị thế lớn → xem xét hedge hoặc diversify','Tái đầu tư lợi nhuận chốt được'];
+  }
+
+  // scoring detail
+  const scoreDetail=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">`
+    +(scoring?.canslim?`<div style="padding:8px;border-radius:8px;background:${gc(canG)}10;border:1px solid ${gc(canG)}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">CANSLIM</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(canG)}">${scoring.canslim.total}/${scoring.canslim.maxTotal||70}</div><div style="font-size:11px;color:${gc(canG)}">${scoring.canslim.verdict||canG}</div></div>`:'')
+    +(scoring?.sepa?`<div style="padding:8px;border-radius:8px;background:${gc(sepaG)}10;border:1px solid ${gc(sepaG)}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">SEPA</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(sepaG)}">${scoring.sepa.total}/${scoring.sepa.maxTotal||80}</div><div style="font-size:11px;color:${gc(sepaG)}">${scoring.sepa.verdict||sepaG}</div></div>`:'')
+    +(scoring?.momentum?`<div style="padding:8px;border-radius:8px;background:${gc(momG)}10;border:1px solid ${gc(momG)}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">MOMENTUM</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(momG)}">${scoring.momentum.total}/${scoring.momentum.maxTotal||70}</div><div style="font-size:11px;color:${gc(momG)}">${scoring.momentum.verdict||momG}</div></div>`:'')
+    +`</div>`;
+
+  const longHtml=`<div style="font-size:13px;color:${longColor};line-height:1.6;margin-bottom:8px">${longAdv}</div>`
+    +`<div style="margin:8px 0">${longActions.map((a,i)=>`<div style="font-size:12px;color:var(--gray700);padding:3px 0;display:flex;gap:6px"><span style="color:var(--gray400);font-weight:700;min-width:16px">${i+1}.</span><span>${a}</span></div>`).join('')}</div>`
+    +(overallVerdict?`<div style="font-size:12px;margin-top:6px"><span style="color:var(--gray400)">Technical Grade:</span> <b style="color:${overallVerdict.color==='up'?'var(--up)':overallVerdict.color==='dn'?'var(--dn)':'var(--am)'}">${overallVerdict.grade}</b> — ${overallVerdict.label} (${overallVerdict.score}/100)</div>`:'')
+    +scoreDetail
+    +(profileLong?`<div style="margin-top:8px">${tag(profileLong.grade+' — '+profileLong.suitability,gc(profileLong.grade))}</div><div style="font-size:11px;color:var(--gray500);margin-top:2px">${profileLong.suggestion||''}</div>`:'')
+    +(profile?.bestFit?`<div style="font-size:11px;color:var(--navy);font-weight:600;margin-top:4px">Best fit: ${profile.bestFit.label||profile.bestFit}</div>`:'');
+
+  return {
+    short:{text:shortHtml,color:shortColor},
+    mid:{text:midHtml,color:midColor},
+    long:{text:longHtml,color:longColor}
+  };
+}
+
+async function renderPortfolio(){
+  const el=document.getElementById('portfolioContent');
+  if(!el)return;
+  const sym=document.getElementById('symbolBadge')?.textContent;
+  if(!sym){el.innerHTML='<div style="padding:20px;color:var(--gray400)">Chọn mã cổ phiếu trước</div>';return}
+
+  const pf=await getPortfolio();
+  const positions=pf[sym]||[];
+  const curPrice=analysisData?.latestPrice;
+
+  // ── Form nhập ──
+  let html=`
+  <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:20px;border-bottom:2px solid var(--gray100)">
+    <div style="flex:1;min-width:120px">
+      <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">KHỐI LƯỢNG (CP)</label>
+      <input id="pfQty" type="number" min="100" step="100" placeholder="VD: 500" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+    </div>
+    <div style="flex:1;min-width:120px">
+      <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">GIÁ MUA (nghìn đ)</label>
+      <input id="pfPrice" type="number" min="0" step="0.1" placeholder="VD: 85.0" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+    </div>
+    <div style="flex:1;min-width:130px">
+      <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">NGÀY MUA</label>
+      <input id="pfDate" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+    </div>
+    <button onclick="addPosition('${sym}')" style="padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Thêm lệnh</button>
+  </div>`;
+
+  if(!positions.length){
+    html+=`<div style="padding:32px;text-align:center;color:var(--gray400);font-size:14px">Chưa có vị thế nào. Nhập khối lượng và giá mua để bắt đầu theo dõi.</div>`;
+    el.innerHTML=html;
+    return;
+  }
+
+  // ── Tính toán tổng hợp ──
+  const totalQty=positions.reduce((s,p)=>s+p.qty,0);
+  const totalCost=positions.reduce((s,p)=>s+p.qty*p.price,0);
+  const avgPrice=totalCost/totalQty;
+  const marketValue=curPrice?totalQty*curPrice:0;
+  const pnl=curPrice?marketValue-totalCost:0;
+  const pnlPct=totalCost>0?(pnl/totalCost*100):0;
+  const pnlColor=pnl>0?'var(--up)':pnl<0?'var(--dn)':'var(--gray700)';
+  const pnlSign=pnl>0?'+':'';
+
+  // ── Tổng quan vị thế ──
+  html+=`
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div style="padding:14px 18px;border-radius:12px;background:var(--navy-l);border:1px solid var(--gray200)">
+      <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">TỔNG CP</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--navy)">${totalQty.toLocaleString('vi-VN')}</div>
+    </div>
+    <div style="padding:14px 18px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200)">
+      <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">GIÁ VỐN TB</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--gray900)">${fp(avgPrice)}</div>
+    </div>
+    <div style="padding:14px 18px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200)">
+      <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">GIÁ TRỊ</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--gray900)">${curPrice?((marketValue/1e3).toFixed(1)+' tr'):'—'}</div>
+      <div style="font-size:11px;color:var(--gray400);margin-top:2px">Vốn: ${(totalCost/1e3).toFixed(1)} tr</div>
+    </div>
+    <div style="padding:14px 18px;border-radius:12px;background:${pnl>0?'var(--up-bg)':pnl<0?'var(--dn-bg)':'var(--gray50)'};border:1px solid ${pnl>0?'var(--up-bd)':pnl<0?'var(--dn-bd)':'var(--gray200)'}">
+      <div style="font-size:11px;font-weight:700;color:${pnlColor};letter-spacing:.6px;margin-bottom:6px">LÃI / LỖ</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:${pnlColor}">${pnlSign}${(pnl/1e3).toFixed(2)} tr</div>
+      <div style="font-size:12px;font-weight:700;color:${pnlColor};margin-top:2px">${pnlSign}${pnlPct.toFixed(2)}%</div>
+    </div>
+  </div>`;
+
+  // ── Bảng chi tiết từng lệnh ──
+  html+=`<div style="border-top:2px solid var(--gray200);margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:36px 100px 90px 90px 90px 1fr 36px;font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;padding:10px 0;border-bottom:2px solid var(--gray200)">
+      <span>#</span><span>NGÀY</span><span style="text-align:right">KL</span><span style="text-align:right">GIÁ MUA</span><span style="text-align:right">LÃI/LỖ</span><span></span><span></span>
+    </div>`;
+  positions.forEach((p,i)=>{
+    const pl=curPrice?(curPrice-p.price)*p.qty:0;
+    const plPct=p.price>0?((curPrice-p.price)/p.price*100):0;
+    const pc=pl>0?'var(--up)':pl<0?'var(--dn)':'var(--gray500)';
+    const ps=pl>0?'+':'';
+    html+=`
+    <div style="display:grid;grid-template-columns:36px 100px 90px 90px 90px 1fr 36px;padding:10px 0;border-bottom:1px solid var(--gray100);align-items:center">
+      <span style="font-size:12px;color:var(--gray400)">${i+1}</span>
+      <span style="font-size:13px;color:var(--gray700)">${p.date}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${p.qty.toLocaleString('vi-VN')}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--gray900)">${fp(p.price)}</span>
+      <span style="text-align:right">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${pc}">${ps}${(pl/1e3).toFixed(1)} tr</div>
+        <div style="font-size:11px;color:${pc}">${ps}${plPct.toFixed(1)}%</div>
+      </span>
+      <span></span>
+      <button onclick="removePosition('${sym}',${p.id})" style="width:28px;height:28px;border:1px solid var(--gray200);border-radius:8px;background:var(--gray50);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.background='var(--dn-bg)';this.style.borderColor='var(--dn-bd)'" onmouseout="this.style.background='var(--gray50)';this.style.borderColor='var(--gray200)'" title="Xóa lệnh">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dn)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // ── Tư vấn chi tiết ──
+  if(curPrice&&analysisData){
+    const adv=generateAdvisory(avgPrice,curPrice,pnlPct,positions,analysisData);
+    const advTab=(label,icon,a,period)=>`
+    <div style="padding:16px 20px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200);margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:16px">${icon}</span>
+        <span style="font-size:13px;font-weight:700;color:var(--gray700);letter-spacing:.6px">${label}</span>
+        <span style="font-size:11px;color:var(--gray400)">${period}</span>
+      </div>
+      <div style="line-height:1.5">${a.text}</div>
+    </div>`;
+
+    html+=`
+    <div style="border-top:2px solid var(--gray200);padding-top:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:12px">TƯ VẤN VỊ THẾ</div>
+      ${advTab('NGẮN HẠN','⚡',adv.short,'1-2 tuần')}
+      ${advTab('TRUNG HẠN','📈',adv.mid,'1-3 tháng')}
+      ${advTab('DÀI HẠN','🏦',adv.long,'6-12 tháng')}
+    </div>`;
+  }
+
+  el.innerHTML=html;
 }
 
 function renderSR(sr,price){
