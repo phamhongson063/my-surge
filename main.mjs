@@ -18,7 +18,7 @@ import path from "path";
 import url from "url";
 import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist } from "./analyze.mjs";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const TMP_DIR = "tmp";
 
 // ─── Helpers (giống download_stock.mjs) ─────────────────────────────────────

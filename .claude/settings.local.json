@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/son.ph/my-surge/*.mjs /Users/son.ph/my-surge/*.json)",
+      "Bash(ls /Users/son.ph/my-surge/*.mjs)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:3000/analyze-detail?symbol=VNM)",
+      "Bash(node -e \":*)",
+      "Bash(kill 79993)"
+    ]
+  }
+}

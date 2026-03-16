@@ -1569,24 +1569,28 @@ function detectMultiTimeframePatterns(
           bullish.push({
             name: "Hammer",
             strength: 70,
+            cat: "candle",
             desc: "Nến Hammer — tín hiệu đảo chiều tăng",
           });
         if (cl0 < o0 && uShadow > body0 * 2 && lShadow < body0 * 0.3)
           bearish.push({
             name: "Shooting Star",
             strength: 70,
+            cat: "candle",
             desc: "Nến Shooting Star — tín hiệu đảo chiều giảm",
           });
         if (cl1 < o1 && cl0 > o0 && cl0 > o1 && o0 < cl1)
           bullish.push({
             name: "Bullish Engulfing",
             strength: 80,
+            cat: "candle",
             desc: "Nến nhấn chìm tăng — bên mua áp đảo bên bán",
           });
         if (cl1 > o1 && cl0 < o0 && cl0 < o1 && o0 > cl1)
           bearish.push({
             name: "Bearish Engulfing",
             strength: 80,
+            cat: "candle",
             desc: "Nến nhấn chìm giảm — bên bán áp đảo bên mua",
           });
         if (body0 / range0 < 0.1) {
@@ -1594,12 +1598,14 @@ function detectMultiTimeframePatterns(
             bearish.push({
               name: "Doji tại đỉnh",
               strength: 65,
+              cat: "candle",
               desc: "Doji gần vùng cao — do dự, có thể đảo chiều giảm",
             });
           else if (pctFromLow < 5)
             bullish.push({
               name: "Doji tại đáy",
               strength: 65,
+              cat: "candle",
               desc: "Doji gần vùng thấp — do dự, có thể đảo chiều tăng",
             });
         }
@@ -1607,12 +1613,14 @@ function detectMultiTimeframePatterns(
           bullish.push({
             name: "Bullish Marubozu",
             strength: 75,
+            cat: "candle",
             desc: "Nến tăng dài — áp lực mua rất mạnh",
           });
         if (cl0 < o0 && body0 / range0 > 0.7)
           bearish.push({
             name: "Bearish Marubozu",
             strength: 75,
+            cat: "candle",
             desc: "Nến giảm dài — áp lực bán rất mạnh",
           });
 
@@ -1629,6 +1637,7 @@ function detectMultiTimeframePatterns(
             bullish.push({
               name: "Morning Star",
               strength: 85,
+              cat: "candle",
               desc: "Sao mai — đảo chiều tăng mạnh (3 nến)",
             });
           if (
@@ -1640,6 +1649,7 @@ function detectMultiTimeframePatterns(
             bearish.push({
               name: "Evening Star",
               strength: 85,
+              cat: "candle",
               desc: "Sao hôm — đảo chiều giảm mạnh (3 nến)",
             });
         }
@@ -1655,12 +1665,14 @@ function detectMultiTimeframePatterns(
           bullish.push({
             name: "Golden Cross (MA20×MA50)",
             strength: 85,
+            cat: "ma",
             desc: "MA20 cắt lên MA50 — tín hiệu tăng trung hạn",
           });
         if (m20p > m50p && m20 < m50)
           bearish.push({
             name: "Death Cross (MA20×MA50)",
             strength: 85,
+            cat: "ma",
             desc: "MA20 cắt xuống MA50 — tín hiệu giảm trung hạn",
           });
       }
@@ -1673,12 +1685,14 @@ function detectMultiTimeframePatterns(
           bullish.push({
             name: "Golden Cross (MA50×MA200)",
             strength: 90,
+            cat: "ma",
             desc: "MA50 cắt lên MA200 — tín hiệu tăng dài hạn mạnh",
           });
         if (m50p > m200p && m50 < m200v)
           bearish.push({
             name: "Death Cross (MA50×MA200)",
             strength: 90,
+            cat: "ma",
             desc: "MA50 cắt xuống MA200 — tín hiệu giảm dài hạn mạnh",
           });
       }
@@ -1689,24 +1703,28 @@ function detectMultiTimeframePatterns(
       bullish.push({
         name: "Breakout MA20",
         strength: 70,
+        cat: "ma",
         desc: "Giá vượt MA20 — xu hướng tăng ngắn hạn",
       });
     if (m20 != null && latest < m20 && prev >= m20)
       bearish.push({
         name: "Breakdown MA20",
         strength: 70,
+        cat: "ma",
         desc: "Giá xuyên thủng MA20 — xu hướng giảm ngắn hạn",
       });
     if (m50 != null && latest > m50 && prev <= m50)
       bullish.push({
         name: "Breakout MA50",
         strength: 75,
+        cat: "ma",
         desc: "Giá vượt MA50 — xu hướng tăng được xác nhận",
       });
     if (m50 != null && latest < m50 && prev >= m50)
       bearish.push({
         name: "Breakdown MA50",
         strength: 75,
+        cat: "ma",
         desc: "Giá xuyên thủng MA50 — xu hướng giảm được xác nhận",
       });
 
@@ -1716,12 +1734,14 @@ function detectMultiTimeframePatterns(
         bullish.push({
           name: "RSI Quá bán (<30)",
           strength: 70,
+          cat: "rsi",
           desc: `RSI = ${rsiNow.toFixed(1)} — có thể phục hồi`,
         });
       if (rsiNow > 70)
         bearish.push({
           name: "RSI Quá mua (>70)",
           strength: 70,
+          cat: "rsi",
           desc: `RSI = ${rsiNow.toFixed(1)} — có thể điều chỉnh`,
         });
       if (rsiPrev != null) {
@@ -1729,12 +1749,14 @@ function detectMultiTimeframePatterns(
           bullish.push({
             name: "RSI thoát vùng quá bán",
             strength: 75,
+            cat: "rsi",
             desc: "RSI vượt lên 30 — tín hiệu phục hồi",
           });
         if (rsiPrev > 70 && rsiNow < 70)
           bearish.push({
             name: "RSI thoát vùng quá mua",
             strength: 75,
+            cat: "rsi",
             desc: "RSI rớt xuống 70 — tín hiệu suy yếu",
           });
       }
@@ -1747,6 +1769,7 @@ function detectMultiTimeframePatterns(
         bearish.push({
           name: "Phân kỳ giảm RSI",
           strength: 80,
+          cat: "rsi",
           desc: "Giá tạo đỉnh cao hơn nhưng RSI thấp hơn — suy yếu",
         });
       if (
@@ -1757,6 +1780,7 @@ function detectMultiTimeframePatterns(
         bullish.push({
           name: "Phân kỳ tăng RSI",
           strength: 80,
+          cat: "rsi",
           desc: "Giá tạo đáy thấp hơn nhưng RSI cao hơn — tích lũy",
         });
     }
@@ -1767,24 +1791,28 @@ function detectMultiTimeframePatterns(
         bullish.push({
           name: "MACD cắt lên 0",
           strength: 75,
+          cat: "macd",
           desc: "Histogram chuyển dương — động lực tăng",
         });
       if (macdPrev > 0 && macdNow < 0)
         bearish.push({
           name: "MACD cắt xuống 0",
           strength: 75,
+          cat: "macd",
           desc: "Histogram chuyển âm — động lực giảm",
         });
       if (macdNow > 0 && macdNow > macdPrev)
         bullish.push({
           name: "MACD tăng tốc",
           strength: 65,
+          cat: "macd",
           desc: "Histogram dương đang nở rộng — động lực tốt",
         });
       if (macdNow < 0 && macdNow < macdPrev)
         bearish.push({
           name: "MACD giảm tốc",
           strength: 65,
+          cat: "macd",
           desc: "Histogram âm đang nở rộng — động lực xấu",
         });
     }
@@ -1795,12 +1823,14 @@ function detectMultiTimeframePatterns(
         bearish.push({
           name: "Trên BB Upper",
           strength: 65,
+          cat: "bb",
           desc: "Giá vượt dải Bollinger trên — quá mua, có thể quay về",
         });
       if (latest < bbL)
         bullish.push({
           name: "Dưới BB Lower",
           strength: 65,
+          cat: "bb",
           desc: "Giá dưới dải Bollinger dưới — quá bán, có thể bật lên",
         });
       const bbWidth = bbU - bbL;
@@ -1808,6 +1838,7 @@ function detectMultiTimeframePatterns(
         bullish.push({
           name: "BB Squeeze",
           strength: 70,
+          cat: "bb",
           desc: "Dải Bollinger thu hẹp — sắp có biến động lớn (breakout)",
         });
     }
@@ -1817,12 +1848,14 @@ function detectMultiTimeframePatterns(
       bullish.push({
         name: "Đỉnh cao hơn + Đáy cao hơn",
         strength: 80,
+        cat: "structure",
         desc: "Cấu trúc tăng: đỉnh cao hơn và đáy cao hơn",
       });
     if (lh && ll)
       bearish.push({
         name: "Đỉnh thấp hơn + Đáy thấp hơn",
         strength: 80,
+        cat: "structure",
         desc: "Cấu trúc giảm: đỉnh thấp hơn và đáy thấp hơn",
       });
 
@@ -1839,6 +1872,7 @@ function detectMultiTimeframePatterns(
         bullish.push({
           name: "Hai đáy (Double Bottom)",
           strength: 85,
+          cat: "structure",
           desc: `Hai đáy tương đương (~${l1.p.toFixed(
             1
           )}) — tín hiệu đảo chiều tăng`,
@@ -1856,6 +1890,7 @@ function detectMultiTimeframePatterns(
         bearish.push({
           name: "Hai đỉnh (Double Top)",
           strength: 85,
+          cat: "structure",
           desc: `Hai đỉnh tương đương (~${h1.p.toFixed(
             1
           )}) — tín hiệu đảo chiều giảm`,
@@ -1867,6 +1902,7 @@ function detectMultiTimeframePatterns(
       bullish.push({
         name: "Khối lượng đột biến + giá tăng",
         strength: 75,
+        cat: "volume",
         desc: `Khối lượng ${volRatio.toFixed(
           1
         )}x trung bình — xác nhận áp lực mua`,
@@ -1875,6 +1911,7 @@ function detectMultiTimeframePatterns(
       bearish.push({
         name: "Khối lượng đột biến + giá giảm",
         strength: 75,
+        cat: "volume",
         desc: `Khối lượng ${volRatio.toFixed(
           1
         )}x trung bình — xác nhận áp lực bán`,
@@ -1890,6 +1927,251 @@ function detectMultiTimeframePatterns(
     shortTerm: scan("Ngắn hạn (20 phiên)", 20),
     midTerm: scan("Trung hạn (60 phiên)", 60),
     longTerm: scan("Dài hạn (200 phiên)", Math.min(200, data.length)),
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Pattern Verdict — aggregate assessment & investment recommendation
+// ══════════════════════════════════════════════════════════════════════════════
+
+function computePatternVerdict(mtfPatterns) {
+  const CATS = ["candle", "ma", "rsi", "macd", "bb", "structure", "volume"];
+  const CAT_LABELS = {
+    candle: "Nến",
+    ma: "Đường MA",
+    rsi: "RSI",
+    macd: "MACD",
+    bb: "Bollinger",
+    structure: "Cấu trúc giá",
+    volume: "Khối lượng",
+  };
+
+  function assessTimeframe(tf) {
+    if (!tf) return null;
+    const { bullish, bearish } = tf;
+
+    // Weighted power: sum of strength values
+    const bullPower = bullish.reduce((s, p) => s + p.strength, 0);
+    const bearPower = bearish.reduce((s, p) => s + p.strength, 0);
+    const totalPower = bullPower + bearPower;
+
+    // Score 0-100: 50 = neutral, >50 = bullish, <50 = bearish
+    let score;
+    if (totalPower === 0) {
+      score = 50;
+    } else {
+      score = Math.round((bullPower / totalPower) * 100);
+    }
+
+    // Confluence: which category groups have signals and in which direction
+    const bullCats = new Set(bullish.map((p) => p.cat));
+    const bearCats = new Set(bearish.map((p) => p.cat));
+    const confluenceDetails = [];
+    let bullGroups = 0,
+      bearGroups = 0;
+    for (const cat of CATS) {
+      const hasBull = bullCats.has(cat);
+      const hasBear = bearCats.has(cat);
+      if (hasBull && !hasBear) {
+        bullGroups++;
+        confluenceDetails.push({ cat, label: CAT_LABELS[cat], dir: "bull" });
+      } else if (hasBear && !hasBull) {
+        bearGroups++;
+        confluenceDetails.push({ cat, label: CAT_LABELS[cat], dir: "bear" });
+      } else if (hasBull && hasBear) {
+        confluenceDetails.push({ cat, label: CAT_LABELS[cat], dir: "mixed" });
+      }
+    }
+    const dominantGroups = Math.max(bullGroups, bearGroups);
+    const confluenceLevel =
+      dominantGroups >= 5
+        ? "very_strong"
+        : dominantGroups >= 4
+        ? "strong"
+        : dominantGroups >= 3
+        ? "moderate"
+        : dominantGroups >= 2
+        ? "weak"
+        : "none";
+    const confluenceLabel =
+      confluenceLevel === "very_strong"
+        ? "Hội tụ rất mạnh"
+        : confluenceLevel === "strong"
+        ? "Hội tụ mạnh"
+        : confluenceLevel === "moderate"
+        ? "Hội tụ vừa"
+        : confluenceLevel === "weak"
+        ? "Hội tụ yếu"
+        : "Không hội tụ";
+
+    // Grade & verdict
+    let grade, verdict, verdictColor;
+    if (score >= 80) {
+      grade = "A";
+      verdict = "Rất tích cực — Đáng đầu tư";
+      verdictColor = "up";
+    } else if (score >= 65) {
+      grade = "B";
+      verdict = "Tích cực — Đáng cân nhắc";
+      verdictColor = "up";
+    } else if (score >= 45) {
+      grade = "C";
+      verdict = "Trung tính — Chờ tín hiệu rõ hơn";
+      verdictColor = "am";
+    } else if (score >= 30) {
+      grade = "D";
+      verdict = "Tiêu cực — Nên thận trọng";
+      verdictColor = "dn";
+    } else {
+      grade = "F";
+      verdict = "Rất tiêu cực — Không nên đầu tư";
+      verdictColor = "dn";
+    }
+
+    // Risk level
+    const conflictCount = confluenceDetails.filter(
+      (c) => c.dir === "mixed"
+    ).length;
+    const strongBearish = bearish.filter((p) => p.strength >= 80).length;
+    let riskLevel, riskLabel;
+    if (conflictCount >= 3 || strongBearish >= 3) {
+      riskLevel = 4;
+      riskLabel = "Rất cao";
+    } else if (conflictCount >= 2 || strongBearish >= 2) {
+      riskLevel = 3;
+      riskLabel = "Cao";
+    } else if (conflictCount >= 1 || strongBearish >= 1) {
+      riskLevel = 2;
+      riskLabel = "Trung bình";
+    } else {
+      riskLevel = 1;
+      riskLabel = "Thấp";
+    }
+
+    // Build reasons
+    const reasons = [];
+    if (bullish.length > 0) {
+      const top = bullish[0];
+      reasons.push(
+        `${bullish.length} tín hiệu tăng (mạnh nhất: ${top.name} ${top.strength}%)`
+      );
+    }
+    if (bearish.length > 0) {
+      const top = bearish[0];
+      reasons.push(
+        `${bearish.length} tín hiệu giảm (mạnh nhất: ${top.name} ${top.strength}%)`
+      );
+    }
+    if (confluenceLevel === "strong" || confluenceLevel === "very_strong") {
+      const dir = bullGroups > bearGroups ? "tăng" : "giảm";
+      reasons.push(
+        `${dominantGroups}/${CATS.length} nhóm chỉ báo đồng thuận ${dir}`
+      );
+    } else if (conflictCount >= 2) {
+      reasons.push(
+        `${conflictCount} nhóm chỉ báo mâu thuẫn — tín hiệu chưa rõ ràng`
+      );
+    }
+    if (bullish.length === 0 && bearish.length === 0) {
+      reasons.push("Không phát hiện tín hiệu nổi bật");
+    }
+
+    return {
+      score,
+      grade,
+      verdict,
+      verdictColor,
+      bullCount: bullish.length,
+      bearCount: bearish.length,
+      bullPower,
+      bearPower,
+      confluence: {
+        level: confluenceLevel,
+        label: confluenceLabel,
+        bullGroups,
+        bearGroups,
+        details: confluenceDetails,
+      },
+      risk: { level: riskLevel, label: riskLabel },
+      reasons,
+    };
+  }
+
+  const short = assessTimeframe(mtfPatterns.shortTerm);
+  const mid = assessTimeframe(mtfPatterns.midTerm);
+  const long = assessTimeframe(mtfPatterns.longTerm);
+
+  // Cross-timeframe alignment
+  const scores = [short?.score ?? 50, mid?.score ?? 50, long?.score ?? 50];
+  const allBullish = scores.every((s) => s >= 60);
+  const allBearish = scores.every((s) => s <= 40);
+  const mostlyBullish = scores.filter((s) => s >= 60).length >= 2;
+  const mostlyBearish = scores.filter((s) => s <= 40).length >= 2;
+
+  let alignLabel, alignDesc;
+  if (allBullish) {
+    alignLabel = "Đồng thuận TĂNG";
+    alignDesc =
+      "Cả 3 khung thời gian đều cho tín hiệu tích cực — xu hướng tăng rõ ràng";
+  } else if (allBearish) {
+    alignLabel = "Đồng thuận GIẢM";
+    alignDesc =
+      "Cả 3 khung thời gian đều cho tín hiệu tiêu cực — xu hướng giảm rõ ràng";
+  } else if (mostlyBullish) {
+    alignLabel = "Xu hướng tăng";
+    alignDesc = "2/3 khung thời gian tích cực — xu hướng chủ đạo là tăng";
+  } else if (mostlyBearish) {
+    alignLabel = "Xu hướng giảm";
+    alignDesc = "2/3 khung thời gian tiêu cực — xu hướng chủ đạo là giảm";
+  } else {
+    alignLabel = "Mâu thuẫn";
+    alignDesc =
+      "Các khung thời gian trái chiều — cần thận trọng, chờ tín hiệu rõ hơn";
+  }
+
+  // Overall verdict = weighted average (short 30%, mid 40%, long 30%)
+  const overallScore = Math.round(
+    (short?.score ?? 50) * 0.3 +
+      (mid?.score ?? 50) * 0.4 +
+      (long?.score ?? 50) * 0.3
+  );
+  let overallGrade, overallLabel, overallColor;
+  if (overallScore >= 80) {
+    overallGrade = "A";
+    overallLabel = "Rất đáng đầu tư";
+    overallColor = "up";
+  } else if (overallScore >= 65) {
+    overallGrade = "B";
+    overallLabel = "Đáng cân nhắc";
+    overallColor = "up";
+  } else if (overallScore >= 45) {
+    overallGrade = "C";
+    overallLabel = "Trung tính";
+    overallColor = "am";
+  } else if (overallScore >= 30) {
+    overallGrade = "D";
+    overallLabel = "Nên thận trọng";
+    overallColor = "dn";
+  } else {
+    overallGrade = "F";
+    overallLabel = "Không nên đầu tư";
+    overallColor = "dn";
+  }
+
+  return {
+    perTimeframe: { shortTerm: short, midTerm: mid, longTerm: long },
+    alignment: {
+      label: alignLabel,
+      desc: alignDesc,
+      allBullish,
+      allBearish,
+    },
+    overall: {
+      score: overallScore,
+      grade: overallGrade,
+      label: overallLabel,
+      color: overallColor,
+    },
   };
 }
 
@@ -2843,6 +3125,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     bb,
     { ma20, ma50, ma200 }
   );
+  const patternVerdict = computePatternVerdict(mtfPatterns);
 
   const vols = stockData.map((d) => d.volume);
   const canslim = scoreCANSLIM(
@@ -2916,6 +3199,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     rsVsIndex: rs,
     predictions,
     multiTimeframePatterns: mtfPatterns,
+    patternVerdict,
     scoring: { canslim, sepa, momentum },
     investmentProfile: investProfile,
     chart: {
