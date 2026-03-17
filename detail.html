@@ -1175,6 +1175,52 @@ async function removePosition(sym,id){
   renderPortfolio();
 }
 
+let editingPositionId=null;
+function editPosition(sym,id,qty,price,date){
+  const qtyEl=document.getElementById('pfQty');
+  const priceEl=document.getElementById('pfPrice');
+  const dateEl=document.getElementById('pfDate');
+  const btn=document.getElementById('pfSubmitBtn');
+  qtyEl.value=qty;
+  priceEl.value=price;
+  dateEl.value=date;
+  editingPositionId={sym,id};
+  btn.textContent='✓ Cập nhật';
+  btn.style.background='var(--up)';
+  // show cancel button
+  document.getElementById('pfCancelBtn').style.display='inline-flex';
+  qtyEl.focus();
+}
+
+function cancelEdit(){
+  const qtyEl=document.getElementById('pfQty');
+  const priceEl=document.getElementById('pfPrice');
+  const dateEl=document.getElementById('pfDate');
+  const btn=document.getElementById('pfSubmitBtn');
+  qtyEl.value='';priceEl.value='';dateEl.value='';
+  editingPositionId=null;
+  btn.textContent='+ Thêm lệnh';
+  btn.style.background='var(--navy)';
+  document.getElementById('pfCancelBtn').style.display='none';
+}
+
+async function submitPosition(sym){
+  if(editingPositionId){
+    const qtyEl=document.getElementById('pfQty');
+    const priceEl=document.getElementById('pfPrice');
+    const dateEl=document.getElementById('pfDate');
+    const qty=parseInt(qtyEl.value);
+    const price=parseFloat(priceEl.value);
+    const date=dateEl.value||new Date().toISOString().slice(0,10);
+    if(!qty||qty<=0||!price||price<=0){alert('Vui lòng nhập khối lượng và giá hợp lệ');return}
+    try{await fetch(`${SERVER}/portfolio/edit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:editingPositionId.sym,id:editingPositionId.id,qty,price,date})})}catch(e){console.error('Edit failed:',e)}
+    cancelEdit();
+    renderPortfolio();
+  }else{
+    addPosition(sym);
+  }
+}
+
 // ── One-time migration from localStorage ──
 async function migratePortfolioIfNeeded(){
   const local=localStorage.getItem('portfolio');
@@ -1446,7 +1492,8 @@ async function renderPortfolio(){
       <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">NGÀY MUA</label>
       <input id="pfDate" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
     </div>
-    <button onclick="addPosition('${sym}')" style="padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Thêm lệnh</button>
+    <button id="pfSubmitBtn" onclick="submitPosition('${sym}')" style="padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Thêm lệnh</button>
+    <button id="pfCancelBtn" onclick="cancelEdit()" style="display:none;padding:10px 16px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='var(--gray200)'" onmouseout="this.style.background='var(--gray100)'">Hủy</button>
   </div>`;
 
   if(!positions.length){
@@ -1489,29 +1536,36 @@ async function renderPortfolio(){
   </div>`;
 
   // ── Bảng chi tiết từng lệnh ──
-  html+=`<div style="border-top:2px solid var(--gray200);margin-bottom:20px">
-    <div style="display:grid;grid-template-columns:36px 100px 90px 90px 90px 1fr 36px;font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;padding:10px 0;border-bottom:2px solid var(--gray200)">
-      <span>#</span><span>NGÀY</span><span style="text-align:right">KL</span><span style="text-align:right">GIÁ MUA</span><span style="text-align:right">LÃI/LỖ</span><span></span><span></span>
+  html+=`<div style="margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:32px 1fr 90px 90px 110px 64px;font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;text-transform:uppercase;padding:8px 12px;background:var(--gray50);border-radius:10px;margin-bottom:4px">
+      <span>#</span><span>Ngày</span><span style="text-align:right">KL</span><span style="text-align:right">Giá mua</span><span style="text-align:right">Lãi / Lỗ</span><span></span>
     </div>`;
   positions.forEach((p,i)=>{
     const pl=curPrice?(curPrice-p.price)*p.qty:0;
     const plPct=p.price>0?((curPrice-p.price)/p.price*100):0;
-    const pc=pl>0?'var(--up)':pl<0?'var(--dn)':'var(--gray500)';
+    const pc=pl>0?'var(--up)':pl<0?'var(--dn)':'var(--gray400)';
     const ps=pl>0?'+':'';
+    const plBg=pl>0?'#f0faf4':pl<0?'#fff5f5':'var(--gray50)';
     html+=`
-    <div style="display:grid;grid-template-columns:36px 100px 90px 90px 90px 1fr 36px;padding:10px 0;border-bottom:1px solid var(--gray100);align-items:center">
-      <span style="font-size:12px;color:var(--gray400)">${i+1}</span>
-      <span style="font-size:13px;color:var(--gray700)">${p.date}</span>
-      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${p.qty.toLocaleString('vi-VN')}</span>
-      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--gray900)">${fp(p.price)}</span>
+    <div style="display:grid;grid-template-columns:32px 1fr 90px 90px 110px 64px;padding:10px 12px;border-radius:10px;align-items:center;transition:background .15s;cursor:default" onmouseover="this.style.background='var(--gray50)'" onmouseout="this.style.background='transparent'">
+      <span style="font-size:11px;color:var(--gray300);font-weight:600">${i+1}</span>
+      <span style="font-size:12px;color:var(--gray500);font-family:'IBM Plex Mono',monospace">${p.date}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--navy)">${p.qty.toLocaleString('vi-VN')}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--gray700)">${fp(p.price)}</span>
       <span style="text-align:right">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${pc}">${ps}${(pl/1e3).toFixed(1)} tr</div>
-        <div style="font-size:11px;color:${pc}">${ps}${plPct.toFixed(1)}%</div>
+        <span style="display:inline-flex;flex-direction:column;align-items:flex-end;background:${plBg};padding:3px 8px;border-radius:6px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${pc};white-space:nowrap">${ps}${(pl/1e3).toFixed(1)} tr</span>
+          <span style="font-size:10px;color:${pc}">${ps}${plPct.toFixed(1)}%</span>
+        </span>
       </span>
-      <span></span>
-      <button onclick="removePosition('${sym}',${p.id})" style="width:28px;height:28px;border:1px solid var(--gray200);border-radius:8px;background:var(--gray50);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s" onmouseover="this.style.background='var(--dn-bg)';this.style.borderColor='var(--dn-bd)'" onmouseout="this.style.background='var(--gray50)';this.style.borderColor='var(--gray200)'" title="Xóa lệnh">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--dn)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <span style="display:flex;gap:4px;justify-content:flex-end;opacity:0.4;transition:opacity .15s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'">
+        <button onclick="editPosition('${sym}',${p.id},${p.qty},${p.price},'${p.date}')" style="width:26px;height:26px;border:1px solid var(--gray200);border-radius:7px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.background='#e8f4fd';this.style.borderColor='#90caf9'" onmouseout="this.style.background='white';this.style.borderColor='var(--gray200)'" title="Sửa">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1976d2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button onclick="removePosition('${sym}',${p.id})" style="width:26px;height:26px;border:1px solid var(--gray200);border-radius:7px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.background='var(--dn-bg)';this.style.borderColor='var(--dn-bd)'" onmouseout="this.style.background='white';this.style.borderColor='var(--gray200)'" title="Xóa">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--dn)" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </span>
     </div>`;
   });
   html+=`</div>`;

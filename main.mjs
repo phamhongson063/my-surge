@@ -318,6 +318,29 @@ const server = http.createServer(async (req, res) => {
       console.log(`[Portfolio] ➕ ${sym} ${qty}@${price} | tổng lệnh: ${pf[sym].length}`);
       return sendJSON(res, 200, { ok: true, positions: pf[sym] });
     }
+    if (pathname === "/portfolio/edit" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      const id = body?.id;
+      const qty = parseInt(body?.qty);
+      const price = parseFloat(body?.price);
+      const date = body?.date;
+      if (!sym || !id) return sendJSON(res, 400, { error: "Thiếu mã hoặc id" });
+      if (!qty || qty <= 0 || !price || price <= 0)
+        return sendJSON(res, 400, { error: "Khối lượng hoặc giá không hợp lệ" });
+      const pf = loadPortfolio();
+      if (pf[sym]) {
+        const pos = pf[sym].find(p => p.id === id);
+        if (pos) {
+          pos.qty = qty;
+          pos.price = price;
+          if (date) pos.date = date;
+          savePortfolio(pf);
+          console.log(`[Portfolio] ✏️ ${sym} id:${id} → ${qty}@${price}`);
+          return sendJSON(res, 200, { ok: true, positions: pf[sym] });
+        }
+      }
+      return sendJSON(res, 404, { error: "Không tìm thấy lệnh" });
+    }
     if (pathname === "/portfolio/remove" && req.method === "POST") {
       const sym = (body?.symbol ?? "").toUpperCase().trim();
       const id = body?.id;
@@ -348,6 +371,7 @@ const server = http.createServer(async (req, res) => {
     "/detail.html":    { file: "detail.html",     mime: "text/html; charset=utf-8" },
     "/watchlist.html": { file: "watchlist.html",  mime: "text/html; charset=utf-8" },
     "/watcher.html":   { file: "watcher.html",    mime: "text/html; charset=utf-8" },
+    "/portfolio.html": { file: "portfolio.html",  mime: "text/html; charset=utf-8" },
     "/stocks.csv":     { file: "stocks.csv",      mime: "text/csv; charset=utf-8" },
   };
   if (staticFiles[pathname]) {

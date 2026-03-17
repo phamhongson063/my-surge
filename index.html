@@ -3,384 +3,808 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>My Stock — Trang chủ</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Noto+Sans:wght@400;600;800&display=swap" rel="stylesheet"/>
+<title>My Stock — Desktop</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --red:    #c32022;
-  --navy:   #004370;
-  --green:  #33a42e;
-  --purple: #6d28d9;
-  --teal:   #0f766e;
-  --bg:     #f0f4f8;
-  --card:   #ffffff;
-  --border: rgba(0,0,0,0.09);
-  --text:   #161616;
-  --muted:  #6b7280;
-  --mono:   'IBM Plex Mono', monospace;
-  --sans:   'Noto Sans', sans-serif;
+  --glass: rgba(255,255,255,0.12);
+  --glass-border: rgba(255,255,255,0.2);
+  --glass-hover: rgba(255,255,255,0.22);
+  --taskbar: rgba(20,20,30,0.72);
+  --accent: #60a5fa;
+  --text-primary: #fff;
+  --text-secondary: rgba(255,255,255,0.75);
+  --text-muted: rgba(255,255,255,0.45);
+  --shadow: 0 8px 32px rgba(0,0,0,0.35);
+  --font: 'Segoe UI', system-ui, sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; user-select: none; }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-
+/* ── Wallpaper ── */
 body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
+  font-family: var(--font);
+  background: #0a0e1a;
+  color: var(--text-primary);
   position: relative;
 }
 
-/* Grid background */
-body::after {
+.wallpaper {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(56,100,200,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(120,60,200,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 60% 80%, rgba(20,140,200,0.35) 0%, transparent 55%),
+    linear-gradient(135deg, #050a18 0%, #0d1635 40%, #0a1228 100%);
+}
+
+/* Subtle light ray */
+.wallpaper::after {
   content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(0,67,112,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,67,112,0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none; z-index: 0;
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 120% 80% at 30% 50%, rgba(100,160,255,0.07) 0%, transparent 60%);
 }
 
-/* ── Layout: 2 cột, full height ── */
-.layout {
-  position: relative; z-index: 1;
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  height: 100vh;
+/* Mountain silhouette */
+.mountain {
+  position: fixed; bottom: 48px; left: 0; right: 0; z-index: 1;
+  height: 220px;
+  background:
+    linear-gradient(to top, rgba(10,20,50,0.8) 0%, transparent 100%);
+  clip-path: polygon(0 100%, 0 70%, 8% 45%, 16% 62%, 24% 30%, 32% 55%, 38% 38%, 45% 20%, 52% 40%, 58% 25%, 65% 45%, 72% 30%, 80% 55%, 88% 38%, 94% 52%, 100% 35%, 100% 100%);
 }
 
-/* ── Cột trái: header ── */
-.sidebar {
+/* ── Desktop area ── */
+.desktop {
+  position: relative; z-index: 2;
+  height: calc(100vh - 48px);
+  padding: 28px 32px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 40px 36px;
-  border-right: 1.5px solid var(--border);
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  animation: fadeIn .4s ease .05s forwards;
+  gap: 0;
 }
 
-.logo-wrap {
-  display: inline-flex;
-  align-items: center; justify-content: center;
-  width: 52px; height: 52px;
-  background: var(--navy);
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0,67,112,0.25);
-  margin-bottom: 20px;
-}
-
-.tagline-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-family: var(--mono);
-  font-size: 11px; font-weight: 600;
-  color: var(--muted);
-  margin-bottom: 16px;
-  width: fit-content;
-  letter-spacing: .5px;
-}
-.tagline-badge .dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-h1 {
-  font-size: 30px; font-weight: 800;
-  color: var(--navy);
-  letter-spacing: -1px;
-  line-height: 1.1;
-  margin-bottom: 10px;
-}
-h1 span { color: var(--red); }
-
-.subtitle {
-  font-size: 13px; color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 32px;
-}
-
-.footer-note {
-  font-size: 11px; color: #adb5bd;
-  line-height: 1.6;
-  margin-top: auto;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
-.footer-note code {
-  background: #e2e8f0; padding: 1px 5px;
-  border-radius: 4px; font-family: var(--mono); font-size: 10px;
-}
-
-/* ── Cột phải: grid cards ── */
-.main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  gap: 16px;
-  padding: 28px;
-  align-content: stretch;
-}
-
-/* ── Card ── */
-.nav-card {
+/* Top bar: time + system tray minimal */
+.topbar {
   display: flex;
-  text-decoration: none;
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  opacity: 0;
-  animation: fadeUp .4s ease forwards;
-  position: relative;
-  overflow: hidden;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 
-.nav-card:nth-child(1){animation-delay:.12s}
-.nav-card:nth-child(2){animation-delay:.18s}
-.nav-card:nth-child(3){animation-delay:.24s}
-.nav-card:nth-child(4){animation-delay:.30s}
-.nav-card:nth-child(5){animation-delay:.36s}
-
-/* Card chiếm 2 cột — Tải dữ liệu ít quan trọng hơn, để nhỏ */
-/* Watcher span full width hàng cuối */
-.nav-card.watcher {
-  grid-column: span 2;
+.desktop-clock {
+  text-align: left;
+}
+.clock-time {
+  font-size: 48px;
+  font-weight: 200;
+  letter-spacing: -2px;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.clock-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
 }
 
-.nav-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 4px; height: 100%;
-  border-radius: 4px 0 0 4px;
-  transition: width .2s ease;
+.server-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 5px 14px 5px 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  backdrop-filter: blur(8px);
 }
-.nav-card.download::before  { background: var(--navy); }
-.nav-card.surge::before     { background: var(--red); }
-.nav-card.detail::before    { background: var(--teal); }
-.nav-card.watchlist::before { background: var(--purple); }
-.nav-card.watcher::before   { background: var(--green); }
+.server-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+  animation: pulse 2.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 
-.nav-card:hover {
+/* ── Icon grid: free-position ── */
+.icons-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Desktop Icon ── */
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 6px 8px;
+  border-radius: 8px;
+  cursor: default;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background .12s;
+  position: absolute;
+  width: 84px;
+  pointer-events: all;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+.desktop-icon:hover { background: rgba(255,255,255,0.12); }
+.desktop-icon.selected {
+  background: rgba(96,165,250,0.25);
+  outline: 1px solid rgba(96,165,250,0.5);
+}
+.desktop-icon.dragging {
+  opacity: 0.75;
+  z-index: 999;
+  transition: none;
+  cursor: grabbing !important;
+}
+.desktop-icon.dragging .icon-img {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.65);
+}
+
+/* Icon image (colored box) */
+.icon-img {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: transform .12s, box-shadow .12s;
+}
+.desktop-icon:hover .icon-img {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
 }
-.nav-card.download:hover  { border-color: rgba(0,67,112,.3); }
-.nav-card.surge:hover     { border-color: rgba(195,32,34,.3); }
-.nav-card.detail:hover    { border-color: rgba(15,118,110,.3); }
-.nav-card.watchlist:hover { border-color: rgba(109,40,217,.3); }
-.nav-card.watcher:hover   { border-color: rgba(51,164,46,.3); }
-.nav-card:hover::before   { width: 5px; }
-
-/* Card top: icon + arrow */
-.card-top {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 14px;
+.desktop-icon:active .icon-img {
+  transform: translateY(0) scale(0.96);
 }
 
-.card-icon {
-  width: 40px; height: 40px; border-radius: 10px;
-  display: grid; place-items: center; flex-shrink: 0;
-}
-.nav-card.download  .card-icon { background: rgba(0,67,112,.1); }
-.nav-card.surge     .card-icon { background: rgba(195,32,34,.08); }
-.nav-card.detail    .card-icon { background: rgba(15,118,110,.1); }
-.nav-card.watchlist .card-icon { background: rgba(109,40,217,.08); }
-.nav-card.watcher   .card-icon { background: rgba(51,164,46,.08); }
+/* Icon colors */
+.icon-download  { background: linear-gradient(145deg, #1e6fdc, #0a4faa); }
+.icon-surge     { background: linear-gradient(145deg, #dc2626, #991b1b); }
+.icon-detail    { background: linear-gradient(145deg, #0891b2, #0e7490); }
+.icon-watchlist { background: linear-gradient(145deg, #7c3aed, #5b21b6); }
+.icon-portfolio { background: linear-gradient(145deg, #d97706, #b45309); }
+.icon-watcher   { background: linear-gradient(145deg, #16a34a, #15803d); }
 
-.card-arrow {
-  color: #c8d3dd;
-  transition: transform .18s ease, color .18s ease;
-  margin-top: 2px;
+.icon-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.92);
+  text-align: center;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6);
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.nav-card:hover .card-arrow { transform: translateX(3px) translateY(-3px); }
-.nav-card.download:hover  .card-arrow { color: var(--navy); }
-.nav-card.surge:hover     .card-arrow { color: var(--red); }
-.nav-card.detail:hover    .card-arrow { color: var(--teal); }
-.nav-card.watchlist:hover .card-arrow { color: var(--purple); }
-.nav-card.watcher:hover   .card-arrow { color: var(--green); }
 
-.card-title {
-  font-size: 15px; font-weight: 800;
-  color: var(--text); letter-spacing: -.3px;
+/* ── Window / App modal ── */
+.window-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(4px);
+  display: none;
+  animation: fadeIn .15s ease;
+}
+.window-overlay.open { display: flex; align-items: center; justify-content: center; }
+
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes windowOpen {
+  from { opacity:0; transform: scale(0.94) translateY(8px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.app-window {
+  background: rgba(28,32,48,0.92);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  width: 480px;
+  max-width: 92vw;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  backdrop-filter: blur(24px);
+  animation: windowOpen .2s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
+}
+
+/* Title bar */
+.win-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+}
+.win-controls {
+  display: flex; gap: 6px;
+}
+.win-btn {
+  width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer;
+  transition: filter .1s;
+}
+.win-btn:hover { filter: brightness(1.2); }
+.win-btn.close  { background: #ff5f57; }
+.win-btn.min    { background: #febc2e; }
+.win-btn.max    { background: #28c840; }
+.win-title-text {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-right: 52px; /* offset controls */
+}
+
+/* Window body */
+.win-body {
+  padding: 24px;
+}
+
+.win-icon-large {
+  width: 64px; height: 64px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.win-app-name {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
   margin-bottom: 6px;
 }
-.card-desc {
-  font-size: 12px; color: var(--muted);
-  line-height: 1.55; flex: 1;
+.win-app-desc {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
+.win-tags {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  margin-bottom: 24px;
+}
+.win-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.05);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.win-open-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: filter .15s, transform .1s;
+  color: #fff;
+  letter-spacing: .2px;
+}
+.win-open-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.win-open-btn:active { transform: translateY(0); filter: brightness(0.95); }
 
-/* watcher card: horizontal layout */
-.nav-card.watcher {
-  flex-direction: row;
+/* ── Taskbar ── */
+.taskbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  height: 48px;
+  background: var(--taskbar);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
   align-items: center;
-  gap: 24px;
-}
-.nav-card.watcher .card-top { margin-bottom: 0; flex-direction: column; gap: 10px; }
-.nav-card.watcher .card-body { flex: 1; }
-
-.card-tags {
-  display: flex; gap: 5px; flex-wrap: wrap;
-  margin-top: 10px;
-}
-.tag {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 600; letter-spacing: .5px;
-  padding: 2px 7px; border-radius: 20px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: #f7fafc;
+  justify-content: space-between;
+  padding: 0 16px;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Center: pinned apps */
+.taskbar-center {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 4px;
 }
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
+
+.tb-app {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background .12s, transform .1s;
+  position: relative;
+  text-decoration: none;
+}
+.tb-app:hover { background: rgba(255,255,255,0.12); }
+.tb-app:active { transform: scale(0.93); }
+.tb-app .tb-icon {
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+/* active dot under icon */
+.tb-app.active::after {
+  content: '';
+  position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent);
+}
+
+.taskbar-right {
+  display: flex; align-items: center; gap: 14px;
+  margin-left: auto;
+}
+.tb-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+.tb-tray {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.tb-tray:hover { background: rgba(255,255,255,0.1); }
+
+/* Start button */
+.taskbar-start {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.taskbar-start:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Context menu on right-click desktop ── */
+.ctx-menu {
+  position: fixed; z-index: 200;
+  background: rgba(30,34,52,0.96);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 4px;
+  min-width: 200px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+  display: none;
+  animation: fadeIn .1s ease;
+}
+.ctx-menu.open { display: block; }
+.ctx-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background .1s;
+}
+.ctx-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.ctx-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 3px 8px; }
+
+/* Double-click ripple */
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.6; }
+  to   { transform: scale(3); opacity: 0; }
+}
+.ripple-circle {
+  position: fixed; width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(96,165,250,0.4);
+  pointer-events: none; z-index: 999;
+  animation: ripple .4s ease forwards;
+  margin-left: -20px; margin-top: -20px;
 }
 </style>
 </head>
 <body>
-<div class="layout">
 
-  <!-- ── Sidebar trái ── -->
-  <aside class="sidebar">
-    <div class="logo-wrap">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-        <path d="M3 17l5-5 4 4 5-6 4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M3 21h18" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+<div class="wallpaper"></div>
+<div class="mountain"></div>
+
+<!-- ── Desktop ── -->
+<div class="desktop" id="desktop">
+  <div class="topbar">
+    <div class="desktop-clock">
+      <div class="clock-time" id="clockTime">00:00</div>
+      <div class="clock-date" id="clockDate">Thứ Hai, 1 tháng 1</div>
     </div>
-    <div class="tagline-badge">
-      <span class="dot"></span>
-      <span>CafeF · localhost:3000</span>
+    <div class="server-badge">
+      <span class="server-dot"></span>
+      <span>localhost:3000</span>
     </div>
-    <h1>My <span>Stock</span></h1>
-    <p class="subtitle">Công cụ tải & phân tích dữ liệu cổ phiếu từ CafeF — chạy hoàn toàn trên máy bạn.</p>
-    <div class="footer-note">
-      Yêu cầu <code>node main.mjs</code> đang chạy trên cổng <code>3000</code>
+  </div>
+
+  <div class="icons-grid" id="iconsGrid">
+
+    <div class="desktop-icon" data-href="/front.html" data-app="download"
+      >
+      <div class="icon-img icon-download">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </div>
+      <span class="icon-label">Tải dữ liệu</span>
     </div>
-  </aside>
 
-  <!-- ── Grid cards phải ── -->
-  <main class="main">
+    <div class="desktop-icon" data-href="/surge.html" data-app="surge"
+      >
+      <div class="icon-img icon-surge">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+      </div>
+      <span class="icon-label">Đột biến</span>
+    </div>
 
-    <a href="/front.html" class="nav-card download">
-      <div class="card-top">
-        <div class="card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004370" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-        </div>
-        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    <div class="desktop-icon" data-href="/detail.html" data-app="detail"
+      >
+      <div class="icon-img icon-detail">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
       </div>
-      <div>
-        <div class="card-title">Tải dữ liệu</div>
-        <div class="card-desc">Nhập mã, chọn khoảng thời gian và lưu file Excel về <code style="font-family:monospace;font-size:10px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code></div>
-        <div class="card-tags">
-          <span class="tag">XLSX</span>
-          <span class="tag">CafeF API</span>
-        </div>
-      </div>
-    </a>
+      <span class="icon-label">Phân tích</span>
+    </div>
 
-    <a href="/surge.html" class="nav-card surge">
-      <div class="card-top">
-        <div class="card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c32022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 20V10M12 20V4M6 20v-6"/>
-          </svg>
-        </div>
-        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    <div class="desktop-icon" data-href="/watchlist.html" data-app="watchlist"
+      >
+      <div class="icon-img icon-watchlist">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
       </div>
-      <div>
-        <div class="card-title">Phân tích đột biến</div>
-        <div class="card-desc">Phát hiện mã có khối lượng tăng đột biến so với MA, biểu đồ nến và xuất ảnh.</div>
-        <div class="card-tags">
-          <span class="tag">🔥 Surge</span>
-          <span class="tag">MA20</span>
-          <span class="tag">Chart</span>
-        </div>
-      </div>
-    </a>
+      <span class="icon-label">Watchlist</span>
+    </div>
 
-    <a href="/detail.html" class="nav-card detail">
-      <div class="card-top">
-        <div class="card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-        </div>
-        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    <div class="desktop-icon" data-href="/portfolio.html" data-app="portfolio"
+      >
+      <div class="icon-img icon-portfolio">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
       </div>
-      <div>
-        <div class="card-title">Phân tích chi tiết</div>
-        <div class="card-desc">RSI, MACD, BB, hỗ trợ/kháng cự, mẫu nến, scoring CANSLIM/SEPA cho một mã.</div>
-        <div class="card-tags">
-          <span class="tag">RSI · MACD</span>
-          <span class="tag">Nến Nhật</span>
-        </div>
-      </div>
-    </a>
+      <span class="icon-label">Portfolio</span>
+    </div>
 
-    <a href="/watchlist.html" class="nav-card watchlist">
-      <div class="card-top">
-        <div class="card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </div>
-        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    <div class="desktop-icon" data-href="/watcher.html" data-app="watcher"
+      >
+      <div class="icon-img icon-watcher">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
       </div>
-      <div>
-        <div class="card-title">Watchlist</div>
-        <div class="card-desc">Theo dõi mã yêu thích, quét tín hiệu mua/bán tự động và cảnh báo realtime.</div>
-        <div class="card-tags">
-          <span class="tag">❤️ Yêu thích</span>
-          <span class="tag">Tín hiệu</span>
-        </div>
-      </div>
-    </a>
+      <span class="icon-label">Watcher</span>
+    </div>
 
-    <a href="/watcher.html" class="nav-card watcher">
-      <div class="card-top">
-        <div class="card-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#33a42e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </div>
-        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Watcher — Toàn thị trường</div>
-        <div class="card-desc">Quét và xếp hạng toàn bộ mã trong <code style="font-family:monospace;font-size:10px;background:#f0f4f8;padding:1px 4px;border-radius:3px">tmp/</code> theo thứ tự ưu tiên mua → bán → chờ.</div>
-        <div class="card-tags">
-          <span class="tag">📊 Toàn bộ</span>
-          <span class="tag">Xếp hạng</span>
-          <span class="tag">Batch scan</span>
-        </div>
-      </div>
-    </a>
-
-  </main>
+  </div>
 </div>
+
+<!-- ── App Window Modal ── -->
+<div class="window-overlay" id="windowOverlay">
+  <div class="app-window" id="appWindow">
+    <div class="win-titlebar">
+      <div class="win-controls">
+        <button class="win-btn close"></button>
+        <button class="win-btn min"></button>
+        <button class="win-btn max"></button>
+      </div>
+      <div class="win-title-text" id="winTitle">App</div>
+    </div>
+    <div class="win-body">
+      <div class="win-icon-large" id="winIcon"></div>
+      <div class="win-app-name" id="winName"></div>
+      <div class="win-app-desc" id="winDesc"></div>
+      <div class="win-tags" id="winTags"></div>
+      <a class="win-open-btn" id="winOpenBtn" href="#">Mở ứng dụng →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Context Menu ── -->
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    Làm mới Desktop
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    Đóng menu
+  </div>
+</div>
+
+<!-- ── Taskbar ── -->
+<div class="taskbar">
+  <div class="taskbar-start">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="3" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+      <rect x="13" y="3" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+      <rect x="3" y="13" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+      <rect x="13" y="13" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+    </svg>
+    <span>My Stock</span>
+  </div>
+
+  <div class="taskbar-center">
+    <a class="tb-app active" href="/" title="Desktop">
+      <div class="tb-icon icon-download" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg>
+      </div>
+    </a>
+    <a class="tb-app" href="/portfolio.html" title="Portfolio">
+      <div class="tb-icon icon-portfolio" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      </div>
+    </a>
+    <a class="tb-app" href="/watchlist.html" title="Watchlist">
+      <div class="tb-icon icon-watchlist" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+    </a>
+    <a class="tb-app" href="/detail.html" title="Phân tích">
+      <div class="tb-icon icon-detail" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+    </a>
+  </div>
+
+  <div class="taskbar-right">
+    <div class="tb-tray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"><path d="M1.05 12C2.1 6.92 6.97 3.5 12 3.5S21.9 6.92 22.95 12c-1.05 5.08-5.92 8.5-10.95 8.5S2.1 17.08 1.05 12z"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div class="tb-time" id="tbTime">
+      <div id="tbTimeLine">00:00</div>
+      <div id="tbDateLine" style="font-size:11px;color:rgba(255,255,255,0.45)">1/1/2026</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// App data
+const apps = {
+  download: {
+    name: 'Tải dữ liệu',
+    desc: 'Nhập mã cổ phiếu, chọn khoảng thời gian và lưu file Excel về thư mục tmp/ để phân tích.',
+    tags: ['XLSX', 'CafeF API', 'Lịch sử'],
+    color: 'linear-gradient(145deg,#1e6fdc,#0a4faa)',
+    href: '/front.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+  },
+  surge: {
+    name: 'Phân tích đột biến',
+    desc: 'Phát hiện mã có khối lượng tăng đột biến so với MA. Biểu đồ nến chi tiết và xuất ảnh.',
+    tags: ['🔥 Surge', 'MA20', 'Biểu đồ nến'],
+    color: 'linear-gradient(145deg,#dc2626,#991b1b)',
+    href: '/surge.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`
+  },
+  detail: {
+    name: 'Phân tích chi tiết',
+    desc: 'RSI, MACD, Bollinger Bands, hỗ trợ/kháng cự, mẫu nến Nhật và scoring CANSLIM/SEPA.',
+    tags: ['RSI · MACD', 'BB', 'CANSLIM', 'Nến Nhật'],
+    color: 'linear-gradient(145deg,#0891b2,#0e7490)',
+    href: '/detail.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`
+  },
+  watchlist: {
+    name: 'Watchlist',
+    desc: 'Theo dõi các mã yêu thích, quét tín hiệu mua/bán tự động và nhận cảnh báo realtime.',
+    tags: ['❤️ Yêu thích', 'Tín hiệu', 'Alerts'],
+    color: 'linear-gradient(145deg,#7c3aed,#5b21b6)',
+    href: '/watchlist.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
+  },
+  portfolio: {
+    name: 'Portfolio',
+    desc: 'Tổng quan vị thế đã mua, biểu đồ phân bổ donut, P&L realtime từng mã và toàn danh mục.',
+    tags: ['P&L', 'Realtime', 'Donut chart'],
+    color: 'linear-gradient(145deg,#d97706,#b45309)',
+    href: '/portfolio.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`
+  },
+  watcher: {
+    name: 'Watcher',
+    desc: 'Quét và xếp hạng toàn bộ mã trong tmp/ theo thứ tự ưu tiên: mua → bán → chờ.',
+    tags: ['📊 Toàn bộ', 'Xếp hạng', 'Batch scan'],
+    color: 'linear-gradient(145deg,#16a34a,#15803d)',
+    href: '/watcher.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
+  }
+};
+
+// Clock
+function updateClock(){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+  const months = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6','tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
+  document.getElementById('clockTime').textContent = `${hh}:${mm}`;
+  document.getElementById('clockDate').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('tbTimeLine').textContent = `${hh}:${mm}`;
+  document.getElementById('tbDateLine').textContent = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+}
+updateClock();
+setInterval(updateClock, 15000);
+
+// ── Icon positions (drag & drop) ──
+const ICON_W = 84, ICON_H = 100;
+const COLS = 1, ROWS = 1; // dynamic
+const STORAGE_KEY = 'mystock-icon-positions';
+
+const defaultPositions = {
+  download:  {col:0, row:0},
+  surge:     {col:0, row:1},
+  detail:    {col:0, row:2},
+  watchlist: {col:0, row:3},
+  portfolio: {col:0, row:4},
+  watcher:   {col:0, row:5},
+};
+
+function getGridOrigin(){
+  // Start after topbar (~100px from top of desktop)
+  return { x: 24, y: 100 };
+}
+
+function colRowToXY(col, row){
+  const o = getGridOrigin();
+  return { x: o.x + col * (ICON_W + 10), y: o.y + row * (ICON_H + 8) };
+}
+
+function loadPositions(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch{ return {}; }
+}
+function resetIconPositions(){
+  localStorage.removeItem(STORAGE_KEY);
+  applyPositions();
+  closeCtx();
+}
+function savePositions(pos){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+}
+
+function applyPositions(){
+  const saved = loadPositions();
+  document.querySelectorAll('.desktop-icon').forEach(icon => {
+    const key = icon.dataset.app;
+    let pos;
+    if(saved[key]){
+      pos = saved[key]; // {x, y} absolute
+    } else {
+      const cr = defaultPositions[key] || {col:0,row:0};
+      pos = colRowToXY(cr.col, cr.row);
+    }
+    icon.style.left = pos.x + 'px';
+    icon.style.top  = pos.y + 'px';
+  });
+}
+
+// ── Drag & Drop ──
+let dragging = null, dragOffX = 0, dragOffY = 0, didDrag = false;
+let selectedIcon = null;
+
+function selectIcon(el){
+  if(selectedIcon) selectedIcon.classList.remove('selected');
+  el.classList.add('selected');
+  selectedIcon = el;
+}
+
+function getDesktopBounds(){
+  const d = document.getElementById('desktop');
+  return d.getBoundingClientRect();
+}
+
+function clampPosition(x, y){
+  const b = getDesktopBounds();
+  const maxX = b.width - ICON_W;
+  const maxY = b.height - ICON_H - 8;
+  return {
+    x: Math.max(0, Math.min(x, maxX)),
+    y: Math.max(0, Math.min(y, maxY))
+  };
+}
+
+document.querySelectorAll('.desktop-icon').forEach(icon => {
+  // Mouse down → start drag tracking
+  icon.addEventListener('mousedown', e => {
+    if(e.button !== 0) return;
+    e.preventDefault();
+
+    selectIcon(icon);
+
+    const rect = icon.getBoundingClientRect();
+    dragOffX = e.clientX - rect.left;
+    dragOffY = e.clientY - rect.top;
+    dragging = icon;
+    didDrag = false;
+  });
+});
+
+document.addEventListener('mousemove', e => {
+  if(!dragging) return;
+  const db = getDesktopBounds();
+  let x = e.clientX - db.left - dragOffX;
+  let y = e.clientY - db.top  - dragOffY;
+  const clamped = clampPosition(x, y);
+
+  if(Math.abs(x - parseFloat(dragging.style.left)) > 4 ||
+     Math.abs(y - parseFloat(dragging.style.top))  > 4){
+    didDrag = true;
+  }
+
+  if(didDrag){
+    dragging.classList.add('dragging');
+    dragging.style.left = clamped.x + 'px';
+    dragging.style.top  = clamped.y + 'px';
+  }
+});
+
+document.addEventListener('mouseup', e => {
+  if(!dragging) return;
+  if(didDrag){
+    const saved = loadPositions();
+    saved[dragging.dataset.app] = {
+      x: parseFloat(dragging.style.left),
+      y: parseFloat(dragging.style.top)
+    };
+    savePositions(saved);
+    dragging.classList.remove('dragging');
+  }
+  dragging = null;
+  didDrag = false;
+});
+
+// Deselect on desktop bg click
+document.getElementById('desktop').addEventListener('mousedown', e => {
+  if(!e.target.closest('.desktop-icon')){
+    if(selectedIcon){ selectedIcon.classList.remove('selected'); selectedIcon = null; }
+  }
+});
+
+// ESC
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeWindow(); });
+
+// Double-click → navigate (only if not dragging)
+document.querySelectorAll('.desktop-icon').forEach(icon => {
+  icon.addEventListener('dblclick', e => {
+    e.preventDefault();
+    if(!didDrag){
+      const href = icon.dataset.href;
+      if(href) window.location.href = href;
+    }
+  });
+});
+
+applyPositions();
+</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "node",
+      "runtimeExecutable": "/Users/son.ph/.nvm/versions/node/v22.12.0/bin/node",
       "runtimeArgs": ["main.mjs"],
       "port": 3000,
       "autoPort": true

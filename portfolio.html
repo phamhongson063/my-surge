@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#0f1923;--bg2:#172a3a;--bg3:#1e3448;--card:#1a2f42;--card2:#213a50;
+      --border:#2a4a63;--border2:#345a75;
+      --t1:#e8edf2;--t2:#a8bfd0;--t3:#6b8ba4;
+      --navy:#4da3ff;--navy-bg:rgba(77,163,255,.1);--navy-bd:rgba(77,163,255,.25);
+      --up:#00d26a;--up-bg:rgba(0,210,106,.08);--up-bd:rgba(0,210,106,.2);--up2:#00e676;
+      --dn:#ff4757;--dn-bg:rgba(255,71,87,.08);--dn-bd:rgba(255,71,87,.2);--dn2:#ff6b81;
+      --am:#ffb300;--am-bg:rgba(255,179,0,.08);
+      --hdr-bg:rgba(15,25,35,.92);--row-hover:rgba(77,163,255,.04);--expand-bg:rgba(23,42,58,.5);
+      --btn-primary-bg:linear-gradient(135deg,#4da3ff,#0066cc);--btn-primary-shadow:rgba(77,163,255,.25);
+      --hero-bg:linear-gradient(135deg,#172a3a,#1e3448);--hero-glow:rgba(77,163,255,.06);
+    }
+    html.light{
+      --bg:#f0f2f5;--bg2:#e8ecf0;--bg3:#dfe4ea;--card:#ffffff;--card2:#f8f9fb;
+      --border:#d1d5db;--border2:#b0b8c4;
+      --t1:#1a1a2e;--t2:#374151;--t3:#6b7280;
+      --navy:#0066cc;--navy-bg:rgba(0,102,204,.08);--navy-bd:rgba(0,102,204,.2);
+      --up:#2f9e44;--up-bg:rgba(47,158,68,.06);--up-bd:rgba(47,158,68,.2);--up2:#2f9e44;
+      --dn:#e03131;--dn-bg:rgba(224,49,49,.06);--dn-bd:rgba(224,49,49,.2);--dn2:#e03131;
+      --am:#d97706;--am-bg:rgba(217,119,6,.06);
+      --hdr-bg:rgba(240,242,245,.92);--row-hover:rgba(0,102,204,.04);--expand-bg:rgba(232,236,240,.7);
+      --btn-primary-bg:linear-gradient(135deg,#0066cc,#004999);--btn-primary-shadow:rgba(0,102,204,.2);
+      --hero-bg:linear-gradient(135deg,#ffffff,#f0f4f8);--hero-glow:rgba(0,102,204,.04);
+    }
+    *{box-sizing:border-box;margin:0}
+    body{background:var(--bg);color:var(--t1);font-family:'Noto Sans',sans-serif;font-size:15px;line-height:1.5}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:100;background:var(--hdr-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;gap:14px}
+    header a{text-decoration:none;color:var(--t3);font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px;transition:color .15s}
+    header a:hover{color:var(--navy)}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo-icon{width:32px;height:32px;background:var(--btn-primary-bg);border-radius:9px;display:flex;align-items:center;justify-content:center}
+    .logo-text{font-family:'Inter',sans-serif;font-weight:800;font-size:18px;color:var(--t1)}
+    .hdr-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+    .btn-primary{background:var(--btn-primary-bg);color:white;box-shadow:0 2px 12px var(--btn-primary-shadow)}
+    .btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+    .btn-ghost{background:var(--bg3);color:var(--t2);border:1px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--border2);background:var(--card2)}
+
+    main{max-width:960px;margin:0 auto;padding:20px 20px 60px}
+
+    /* Hero Summary */
+    .hero{background:var(--hero-bg);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;animation:fi .4s ease both;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:0;right:0;width:260px;height:260px;background:radial-gradient(circle,var(--hero-glow) 0%,transparent 70%);pointer-events:none}
+    .hero-body{display:flex;align-items:center;gap:28px;margin-bottom:24px}
+    .hero-info{flex:1;min-width:0}
+    .hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+    .hero-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+    .hero-value{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:32px;color:var(--t1)}
+    .hero-sub{font-size:12px;color:var(--t3);margin-top:4px;display:flex;align-items:center;gap:8px}
+    .hero-pnl{text-align:right}
+    .hero-pnl-val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:28px}
+    .hero-pnl-pct{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-top:2px}
+    .hero-legend{display:flex;flex-direction:column;gap:5px;margin-top:12px}
+    .hero-legend-item{display:flex;align-items:center;gap:7px;padding:3px 5px;border-radius:5px;cursor:pointer;transition:background .12s}
+    .hero-legend-item:hover{background:var(--row-hover)}
+    .hero-legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+    .hero-legend-sym{font-family:'Inter',sans-serif;font-weight:800;font-size:11px;color:var(--t1);min-width:40px}
+    .hero-legend-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--t2)}
+    .hero-legend-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);margin-left:auto}
+    /* Donut inside hero */
+    .hero-donut{flex-shrink:0;position:relative;width:220px;height:220px}
+    .hero-donut svg{width:220px;height:220px;transform:rotate(-90deg)}
+    .hero-donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+    .hero-donut-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap}
+    .hero-donut-lbl{font-size:10px;color:var(--t3);margin-top:2px;white-space:nowrap}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-top:20px;border-top:1px solid var(--border)}
+    .hero-stat{text-align:center}
+    .hero-stat-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+    .hero-stat-val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--t2)}
+
+    /* Warning icon + tooltip trên badge */
+    .badge-wrap{position:relative;display:inline-block;width:36px;height:36px}
+    .warn-dot{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;
+      border:2px solid var(--bg);transition:transform .15s}
+    .warn-dot:hover{transform:scale(1.15)}
+    .warn-dot.danger{background:var(--dn)}
+    .warn-dot.warn{background:var(--am)}
+    .warn-tooltip{position:absolute;min-width:240px;max-width:300px;
+      background:var(--card);border:1px solid var(--border2);
+      border-radius:10px;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.3);
+      z-index:9999;display:none;pointer-events:none}
+    .warn-tooltip.visible{display:block}
+    .tt-item{display:flex;gap:7px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border)}
+    .tt-item:last-child{border-bottom:none;padding-bottom:0}
+    .tt-item:first-child{padding-top:0}
+    .tt-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0;margin-top:4px}
+    .tt-dot.danger{background:var(--dn)}
+    .tt-dot.warn{background:var(--am)}
+    .tt-title{font-size:11px;font-weight:700;color:var(--t1);line-height:1.3}
+    .tt-desc{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.4}
+
+    /* Table */
+    .tbl-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;animation:fi .4s ease both;animation-delay:.1s}
+    .tbl-header{display:grid;grid-template-columns:44px minmax(100px,1fr) 80px 80px 90px 140px 40px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3)}
+    .tbl-row{display:grid;grid-template-columns:44px minmax(100px,1fr) 80px 80px 90px 140px 40px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s;cursor:pointer}
+    .tbl-row:last-child{border-bottom:none}
+    .tbl-row:hover{background:var(--row-hover)}
+    .tbl-row:hover .row-actions{opacity:1}
+    .sym-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:800;font-size:11px;color:white;background:linear-gradient(135deg,#4da3ff,#0055bb)}
+    .sym-info{display:flex;flex-direction:column;gap:1px}
+    .sym-link{font-family:'Inter',sans-serif;font-weight:800;font-size:14px;color:var(--t1);text-decoration:none;transition:color .12s}
+    .sym-link:hover{color:var(--navy)}
+    .sym-chg{font-size:11px;font-weight:600}
+    .mono{font-family:'IBM Plex Mono',monospace}
+    .pl-chip{display:inline-flex;flex-direction:column;align-items:flex-end;padding:4px 10px;border-radius:8px}
+    .pl-chip-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;white-space:nowrap}
+    .pl-chip-pct{font-size:10px;font-weight:600}
+    .row-actions{opacity:0;transition:opacity .15s;display:flex;gap:3px;justify-content:flex-end}
+    .act-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s}
+    .act-btn:hover{border-color:var(--border2)}
+    .act-btn.edit:hover{background:var(--navy-bg);border-color:var(--navy-bd)}
+    .act-btn.del:hover{background:var(--dn-bg);border-color:var(--dn-bd)}
+
+    /* Expand */
+    .row-expand{display:none;padding:0 16px 12px 60px;background:var(--expand-bg)}
+    .row-expand.open{display:block}
+    .sub-header{display:grid;grid-template-columns:24px 1fr 80px 80px 120px 50px;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);padding:6px 8px;background:var(--bg2);border-radius:6px;margin-bottom:2px}
+    .sub-row{display:grid;grid-template-columns:24px 1fr 80px 80px 120px 50px;padding:6px 8px;border-radius:6px;align-items:center;font-size:12px;transition:background .1s}
+    .sub-row:hover{background:var(--row-hover)}
+    .sub-row:hover .sub-actions{opacity:1}
+    .sub-actions{opacity:0;transition:opacity .12s;display:flex;gap:2px;justify-content:flex-end}
+    .sub-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
+    .sub-btn.edit:hover{background:var(--navy-bg);border-color:var(--navy-bd)}
+    .sub-btn.del:hover{background:var(--dn-bg);border-color:var(--dn-bd)}
+
+    /* Add form */
+    .add-form{background:var(--card);border:1px solid var(--navy-bd);border-radius:14px;padding:20px;margin-bottom:16px;display:none;animation:fi .25s ease both}
+    .add-form.open{display:block}
+    .form-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+    .fg{display:flex;flex-direction:column;gap:4px}
+    .fg label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3)}
+    .fg input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'IBM Plex Mono',monospace;background:var(--bg2);color:var(--t1);outline:none;transition:border-color .15s}
+    .fg input:focus{border-color:var(--navy)}
+    .fg input::placeholder{color:var(--t3)}
+
+    /* Edit inline */
+    .edit-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--navy-bg);border:1px solid var(--navy-bd);border-radius:8px;margin-bottom:6px}
+    .edit-bar input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;background:var(--bg2);color:var(--t1);outline:none;width:90px}
+    .edit-bar input:focus{border-color:var(--navy)}
+
+    /* States */
+    .empty-state{text-align:center;padding:80px 20px}
+    .empty-state svg{margin-bottom:20px;opacity:.3}
+    .empty-state p{color:var(--t3);font-size:14px;margin-bottom:20px}
+    .loading-state{display:flex;flex-direction:column;align-items:center;gap:14px;padding:100px 20px;color:var(--t3)}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:sp .7s linear infinite}
+
+    /* Theme toggle */
+    .theme-toggle{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;overflow:hidden}
+    .theme-toggle:hover{border-color:var(--border2);background:var(--card2)}
+    .theme-toggle svg{transition:transform .3s,opacity .3s}
+    .theme-toggle .sun{position:absolute;opacity:0;transform:rotate(-90deg) scale(.5)}
+    .theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
+    html.light .theme-toggle .sun{opacity:1;transform:rotate(0) scale(1)}
+    html.light .theme-toggle .moon{opacity:0;transform:rotate(90deg) scale(.5)}
+
+    /* Alert banners */
+    .alerts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;animation:fi .35s ease both}
+    .alert-banner{border-radius:11px;padding:11px 14px;display:flex;align-items:flex-start;gap:10px;border:1px solid}
+    .alert-banner.danger{background:var(--dn-bg);border-color:var(--dn-bd)}
+    .alert-banner.warn{background:var(--am-bg);border-color:rgba(255,179,0,.28)}
+    .alert-icon{flex-shrink:0;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .alert-banner.danger .alert-icon{background:rgba(255,71,87,.15)}
+    .alert-banner.warn .alert-icon{background:rgba(255,179,0,.15)}
+    .alert-body{flex:1;min-width:0}
+    .alert-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px}
+    .alert-sym{font-family:'Inter',sans-serif;font-weight:800;font-size:13px}
+    .alert-banner.danger .alert-sym{color:var(--dn)}
+    .alert-banner.warn .alert-sym{color:var(--am)}
+    .alert-title{font-size:12px;font-weight:700;color:var(--t1)}
+    .alert-desc{font-size:11px;color:var(--t3);line-height:1.45}
+    .alert-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+    .alert-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.3px}
+    .alert-chip.danger{background:rgba(255,71,87,.12);color:var(--dn);border:1px solid var(--dn-bd)}
+    .alert-chip.warn{background:rgba(255,179,0,.12);color:var(--am);border:1px solid rgba(255,179,0,.28)}
+    .alert-dismiss{flex-shrink:0;width:22px;height:22px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all .12s;margin-left:4px}
+    .alert-dismiss:hover{background:var(--bg3);color:var(--t1)}
+
+    /* Pie Chart */
+    .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;animation:fi .4s ease both;animation-delay:.05s}
+    .chart-title{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);margin-bottom:16px;display:flex;align-items:center;gap:6px}
+    .chart-inner{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+    .chart-svg-wrap{flex-shrink:0;position:relative;width:180px;height:180px}
+    .chart-svg-wrap svg{width:180px;height:180px;transform:rotate(-90deg)}
+    .chart-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+    .chart-center-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap}
+    .chart-center-lbl{font-size:10px;color:var(--t3);margin-top:2px}
+    .chart-legend{flex:1;min-width:160px;display:flex;flex-direction:column;gap:7px}
+    .legend-item{display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:background .12s}
+    .legend-item:hover{background:var(--row-hover)}
+    .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    .legend-sym{font-family:'Inter',sans-serif;font-weight:800;font-size:12px;color:var(--t1);min-width:48px}
+    .legend-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--t2);margin-left:auto}
+    .legend-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--t3);min-width:60px;text-align:right}
+
+    @media(max-width:700px){
+      header{padding:10px 14px}
+      main{padding:14px 10px 40px}
+      .hero{padding:20px}
+      .hero-body{flex-direction:column;align-items:center}
+      .hero-donut{width:180px;height:180px}
+      .hero-donut svg{width:180px;height:180px}
+      .hero-value{font-size:24px}
+      .hero-pnl-val{font-size:22px}
+      .hero-stats{grid-template-columns:1fr 1fr 1fr;gap:10px}
+      .tbl-header,.tbl-row{grid-template-columns:44px 1fr 80px 100px 50px}
+      .tbl-header span:nth-child(3),.tbl-row>span:nth-child(3),
+      .tbl-header span:nth-child(4),.tbl-row>span:nth-child(4){display:none}
+      .sub-header,.sub-row{grid-template-columns:20px 1fr 70px 70px 40px}
+      .sub-header span:nth-child(4),.sub-row span:nth-child(4){display:none}
+      .form-row{flex-direction:column}.fg{width:100%}.fg input{width:100%}
+    }
+
+    /* ── Windows Desktop Wallpaper ── */
+    html { height: 100%; }
+    body {
+      background: #0a0e1a !important;
+      min-height: 100vh;
+      padding: 0 !important;
+    }
+    .win-wallpaper {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 40%, rgba(56,100,200,0.55) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 20%, rgba(120,60,200,0.4) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 60% 80%, rgba(20,140,200,0.35) 0%, transparent 55%),
+        linear-gradient(135deg, #050a18 0%, #0d1635 40%, #0a1228 100%);
+      pointer-events: none;
+    }
+    .win-wallpaper::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(96,165,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .win-mountain {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 1;
+      height: 180px;
+      background: linear-gradient(to top, rgba(5,10,24,0.85) 0%, transparent 100%);
+      clip-path: polygon(0 100%, 0 65%, 8% 42%, 16% 60%, 24% 28%, 32% 52%, 38% 36%, 45% 18%, 52% 38%, 58% 23%, 65% 43%, 72% 28%, 80% 52%, 88% 36%, 94% 50%, 100% 33%, 100% 100%);
+      pointer-events: none;
+    }
+
+    /* ── Window container ── */
+    .win-desktop {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px 70px;
+    }
+    .win-frame {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(15,25,35,0.82);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      animation: winOpen .25s cubic-bezier(0.34,1.2,0.64,1) both;
+    }
+    @keyframes winOpen {
+      from { opacity:0; transform: scale(0.97) translateY(10px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+
+    /* ── Win Titlebar (replaces old header) ── */
+    .win-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(10,18,30,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-app-region: drag;
+    }
+    .win-controls {
+      display: flex; gap: 7px; align-items: center;
+      flex-shrink: 0;
+    }
+    .win-btn {
+      width: 13px; height: 13px; border-radius: 50%;
+      border: none; cursor: pointer;
+      transition: filter .1s, transform .1s;
+      position: relative;
+    }
+    .win-btn:hover { filter: brightness(1.15); transform: scale(1.1); }
+    .win-btn.close  { background: #ff5f57; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+    .win-btn.min    { background: #febc2e; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+    .win-btn.max    { background: #28c840; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+    .win-btn.close:hover::before  { content:'×'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; font-weight:700; color:rgba(0,0,0,0.5); line-height:1; }
+    .win-btn.min:hover::before    { content:'−'; position:absolute; top:50%; left:50%; transform:translate(-50%,-55%); font-size:10px; font-weight:700; color:rgba(0,0,0,0.5); line-height:1; }
+    .win-btn.max:hover::before    { content:'+'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; font-weight:700; color:rgba(0,0,0,0.5); line-height:1; }
+    .win-divider { width:1px; height:18px; background:rgba(255,255,255,0.1); }
+    .win-app-icon {
+      width:24px; height:24px; border-radius:7px;
+      background: linear-gradient(145deg,#d97706,#b45309);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .win-title-text {
+      font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      flex: 1;
+      text-align: center;
+      margin-right: 80px; /* offset left controls */
+      letter-spacing: .2px;
+    }
+    .win-hdr-actions {
+      margin-left: auto;
+      display: flex; gap: 7px; align-items: center;
+    }
+
+    /* ── Taskbar ── */
+    .win-taskbar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      height: 44px;
+      background: rgba(10,14,26,0.82);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center;
+      padding: 0 16px;
+    }
+    .win-tb-back {
+      display: flex; align-items: center; gap: 7px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: background .12s, color .12s;
+    }
+    .win-tb-back:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+    .win-tb-center {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .win-tb-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(145deg,#d97706,#b45309);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .win-tb-name {
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+    .win-tb-right {
+      margin-left: auto;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    /* Override old header to hidden */
+    header { display: none !important; }
+    /* Override main padding — handled by win-frame */
+    main { max-width: 100% !important; padding: 16px 20px 40px !important; }
+  </style>
+</head>
+<body>
+<div class="win-wallpaper"></div>
+<div class="win-mountain"></div>
+
+<div class="win-desktop">
+<div class="win-frame">
+
+<!-- Windows Titlebar -->
+<div class="win-titlebar">
+  <div class="win-controls">
+    <button class="win-btn close" onclick="window.location.href='/'"></button>
+    <button class="win-btn min"></button>
+    <button class="win-btn max"></button>
+  </div>
+  <div class="win-divider"></div>
+  <div class="win-app-icon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+  </div>
+  <div class="win-title-text">Portfolio — My Stock</div>
+  <div class="win-hdr-actions">
+    <button class="btn btn-primary" onclick="toggleAddForm()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Thêm lệnh
+    </button>
+    <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển theme">
+      <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</div>
+
+<main>
+  <div id="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span style="font-size:13px">Đang tải danh mục...</span>
+  </div>
+
+  <div id="empty" class="empty-state" style="display:none">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    <p>Chưa có vị thế nào trong danh mục</p>
+    <button class="btn btn-primary" onclick="toggleAddForm()">Thêm lệnh đầu tiên</button>
+  </div>
+
+  <div id="content" style="display:none">
+    <div id="addForm" class="add-form">
+      <div class="form-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm lệnh mới
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Mã CK</label>
+          <input type="text" id="fSym" placeholder="VD: PGC" style="width:90px;text-transform:uppercase"/>
+        </div>
+        <div class="fg">
+          <label>Khối lượng</label>
+          <input type="number" id="fQty" placeholder="500" min="100" step="100" style="width:100px"/>
+        </div>
+        <div class="fg">
+          <label>Giá mua (nghìn đ)</label>
+          <input type="number" id="fPrice" placeholder="85.0" step="0.05" style="width:110px"/>
+        </div>
+        <div class="fg">
+          <label>Ngày mua</label>
+          <input type="date" id="fDate" style="width:145px"/>
+        </div>
+        <button class="btn btn-primary" onclick="submitAdd()" id="addBtn">Thêm</button>
+        <button class="btn btn-ghost" onclick="toggleAddForm()">Hủy</button>
+      </div>
+    </div>
+    <div id="heroSection"></div>
+    <div id="tableSection"></div>
+  </div>
+</main>
+
+<script>
+// Theme
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('pf-theme',document.documentElement.classList.contains('light')?'light':'dark');
+}
+if(localStorage.getItem('pf-theme')==='light') document.documentElement.classList.add('light');
+
+const SERVER='';
+let portfolio={},prices={},editingId=null,openSyms=new Set();
+
+function showTooltip(e, id){
+  const tt=document.getElementById(id);
+  if(!tt) return;
+  // Move to body to escape any overflow:hidden parent
+  if(tt.parentElement!==document.body) document.body.appendChild(tt);
+  const dot=e.currentTarget;
+  const r=dot.getBoundingClientRect();
+  const vw=window.innerWidth;
+  const ttW=260;
+  let left=r.left;
+  if(left+ttW>vw-12) left=vw-ttW-12;
+  if(left<8) left=8;
+  tt.style.top=(r.bottom+window.scrollY+6)+'px';
+  tt.style.left=left+'px';
+  tt.style.position='absolute';
+  tt.classList.add('visible');
+}
+function hideTooltip(id){
+  const tt=document.getElementById(id);
+  if(tt) tt.classList.remove('visible');
+}
+
+const fp=v=>{if(v==null)return"—";return parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2})};
+const fMoney=v=>{
+  const a=Math.abs(v);
+  if(a>=1e6) return (v/1e6).toFixed(2)+' tỷ';
+  if(a>=1e3) return (v/1e3).toFixed(1)+' tr';
+  return v.toFixed(0)+' ng';
+};
+const pColor=(v)=>v>0?'var(--up)':v<0?'var(--dn)':'var(--t3)';
+const pSign=(v)=>v>0?'+':'';
+const pBg=(v)=>v>0?'var(--up-bg)':v<0?'var(--dn-bg)':'transparent';
+
+function toggleAddForm(){
+  const f=document.getElementById('addForm');
+  f.classList.toggle('open');
+  if(f.classList.contains('open')){
+    document.getElementById('fDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('fSym').focus();
+  }
+}
+
+const CAFEF_PRICE='https://cafef.vn/du-lieu/Ajax/PageNew/PriceRealTimeHeader.ashx?Symbol=';
+
+async function fetchRealtimePrice(sym){
+  try{
+    const r=await fetch(CAFEF_PRICE+sym);
+    const d=await r.json();
+    if(d.Success&&d.Data&&d.Data.Gia!=null){
+      const ref=d.Data.GiaThamChieu||0;
+      const gia=d.Data.Gia;
+      const chgVal=ref>0?gia-ref:null;
+      const chgPct=ref>0?((gia-ref)/ref*100):null;
+      const chgStr=chgVal!=null?`${chgVal>0?'+':''}${chgVal.toFixed(1)}(${chgVal>0?'+':''}${chgPct.toFixed(2)}%)`:null;
+      return{price:gia, change:chgStr, ref};
+    }
+  }catch(e){}
+  return null;
+}
+
+async function fetchTechnical(sym){
+  try{
+    const r=await fetch(SERVER+'/analyze-detail?symbol='+sym);
+    const d=await r.json();
+    if(d.latestPrice!=null) return{
+      trend:d.trend||null, indicators:d.indicators||null,
+      supportResistance:d.supportResistance||null,
+      volume:d.volume||null, predictions:d.predictions||null,
+    };
+  }catch(e){}
+  return null;
+}
+
+async function init(){
+  document.getElementById('loading').style.display='flex';
+  document.getElementById('content').style.display='none';
+  document.getElementById('empty').style.display='none';
+  try{const r=await fetch(SERVER+'/portfolio');portfolio=await r.json();}catch(e){portfolio={};}
+  const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
+  if(syms.length===0){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('empty').style.display='';
+    return;
+  }
+
+  // Bước 1: Lấy giá realtime từ CafeF — nhanh, render ngay
+  const rtResults=await Promise.allSettled(syms.map(s=>fetchRealtimePrice(s)));
+  rtResults.forEach((r,i)=>{
+    if(r.status==='fulfilled'&&r.value){
+      prices[syms[i]]={...prices[syms[i]]||{},...r.value};
+    }
+  });
+  document.getElementById('loading').style.display='none';
+  document.getElementById('content').style.display='';
+  render();
+
+  // Bước 2: Load data kỹ thuật ngầm — chỉ cập nhật badge alerts, không redraw toàn trang
+  const techResults=await Promise.allSettled(syms.map(s=>fetchTechnical(s)));
+  techResults.forEach((r,i)=>{
+    if(r.status==='fulfilled'&&r.value){
+      prices[syms[i]]={...prices[syms[i]]||{},...r.value};
+    }
+  });
+  updateAlertBadges();
+}
+
+function render(){renderHero();renderTable();}
+
+// Cập nhật chỉ badge warning — không redraw toàn bộ, tránh giật
+function updateAlertBadges(){
+  const colors=['#4da3ff','#00d26a','#ff4757','#ffb300','#a855f7','#06b6d4','#f97316','#ec4899'];
+  const warnIconSvg=`<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
+  Object.keys(portfolio).filter(s=>portfolio[s]?.length>0).forEach(sym=>{
+    const pd=prices[sym];
+    if(!pd) return;
+    const symAlerts=extractSignals(sym,pd);
+    const topLevel=symAlerts.some(a=>a.level==='danger')?'danger':symAlerts.length?'warn':null;
+    const bgColor=colors[sym.charCodeAt(0)%colors.length];
+    // Tìm cell chứa badge của sym này trong bảng
+    const rows=document.querySelectorAll('.tbl-row');
+    rows.forEach(row=>{
+      const link=row.querySelector('.sym-link');
+      if(!link||link.textContent.trim()!==sym) return;
+      const cell=row.querySelector('span:first-child');
+      if(!cell) return;
+      if(topLevel){
+        const ttHtml=symAlerts.map(a=>`
+          <div class="tt-item">
+            <div class="tt-dot ${a.level}"></div>
+            <div><div class="tt-title">${a.title}</div><div class="tt-desc">${a.desc}</div></div>
+          </div>`).join('');
+        cell.innerHTML=`
+          <div class="badge-wrap">
+            <div class="sym-badge" style="background:linear-gradient(135deg,${bgColor},${bgColor}cc)">${sym.slice(0,3)}</div>
+            <div class="warn-dot ${topLevel}"
+              onclick="event.stopPropagation()"
+              onmouseenter="showTooltip(event,'tt-${sym}')"
+              onmouseleave="hideTooltip('tt-${sym}')">
+              ${warnIconSvg}
+            </div>
+            <div class="warn-tooltip" id="tt-${sym}">${ttHtml}</div>
+          </div>`;
+      } else {
+        cell.innerHTML=`<div class="sym-badge" style="background:linear-gradient(135deg,${bgColor},${bgColor}cc)">${sym.slice(0,3)}</div>`;
+      }
+    });
+  });
+}
+
+function buildDonutPaths(data,total,cx,cy,r,inner){
+  let startAngle=0,paths='',labels='';
+  const midR=(r+inner)/2; // radius at center of the ring
+  data.forEach(d=>{
+    const pct=d.val/total;
+    const angle=pct*2*Math.PI;
+    const endAngle=startAngle+angle;
+    const gap=data.length>1?0.016:0;
+    const sa=startAngle+gap,ea=endAngle-gap;
+    const ox1=cx+r*Math.cos(sa),oy1=cy+r*Math.sin(sa);
+    const ox2=cx+r*Math.cos(ea),oy2=cy+r*Math.sin(ea);
+    const lrg=angle>Math.PI?1:0;
+    const iox1=cx+inner*Math.cos(sa),ioy1=cy+inner*Math.sin(sa);
+    const iox2=cx+inner*Math.cos(ea),ioy2=cy+inner*Math.sin(ea);
+    paths+=`<path d="M${ox1},${oy1} A${r},${r} 0 ${lrg},1 ${ox2},${oy2} L${iox2},${ioy2} A${inner},${inner} 0 ${lrg},0 ${iox1},${ioy1} Z"
+      fill="${d.color}" opacity="0.9"
+      onmouseenter="chartHover('${d.sym}','${d.color}',${(pct*100).toFixed(1)},${d.val})"
+      onmouseleave="chartHoverReset()"
+      style="cursor:pointer;transition:all .15s"
+      onmouseover="this.style.opacity=1;this.style.filter='brightness(1.15)'" onmouseout="this.style.opacity=0.9;this.style.filter=''"/>`;
+    // Label: chỉ hiển thị nếu mảnh đủ lớn (>= 6%)
+    if(pct>=0.06){
+      const midAngle=startAngle+angle/2;
+      const lx=cx+midR*Math.cos(midAngle);
+      const ly=cy+midR*Math.sin(midAngle);
+      // Rotation để chữ luôn thẳng đứng (counter-rotate 90deg do SVG đã rotate -90)
+      labels+=`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}"
+        text-anchor="middle" dominant-baseline="middle"
+        transform="rotate(90,${lx.toFixed(1)},${ly.toFixed(1)})"
+        font-family='Inter,sans-serif' font-weight="800"
+        font-size="${pct>=0.15?'11':pct>=0.09?'10':'9'}"
+        fill="white" opacity="0.95"
+        pointer-events="none"
+        style="text-shadow:0 1px 3px rgba(0,0,0,.4)">${d.sym}</text>`;
+    }
+    startAngle=endAngle;
+  });
+  return paths+labels;
+}
+
+function extractSignals(sym, pd){
+  const alerts=[];
+  const ind=pd.indicators, trend=pd.trend, vol=pd.volume, sr=pd.supportResistance;
+  const price=pd.price;
+  if(!ind||!price) return alerts;
+
+  // ── TREND_STRONG_DOWN ─────────────────────────────────────────────────────
+  if(trend?.alignment==='STRONG_DOWN'){
+    alerts.push({
+      level:'danger', key:'TREND_STRONG_DOWN',
+      title:'3/3 khung đồng thuận GIẢM',
+      desc:trend.alignmentDesc||'Tất cả khung thời gian đều cho tín hiệu giảm — cân nhắc cắt lỗ hoặc giảm tỷ trọng.',
+      chips:['Xu hướng giảm mạnh']
+    });
+  }
+
+  // ── NEAR_RESISTANCE ────────────────────────────────────────────────────────
+  if(sr?.resistances){
+    sr.resistances.forEach(r=>{
+      const pct=((r.price-price)/price*100);
+      if(pct>=0&&pct<3){
+        alerts.push({
+          level:'warn', key:'NEAR_RESISTANCE_'+r.price,
+          title:`Đang tiến sát kháng cự ${fp(r.price)}`,
+          desc:`Giá hiện tại ${fp(price)} cách kháng cự ${fp(r.price)} chỉ ${pct.toFixed(1)}% (vùng này đã test ${r.touches} lần). Cân nhắc chốt một phần.`,
+          chips:[`Còn ${pct.toFixed(1)}% đến kháng cự`, `${r.touches} lần test`]
+        });
+      }
+    });
+  }
+
+  // ── RSI OVERBOUGHT ─────────────────────────────────────────────────────────
+  if(ind.rsi!=null&&ind.rsi>75){
+    alerts.push({
+      level:'warn', key:'RSI_OB',
+      title:`RSI quá mua (${ind.rsi.toFixed(1)})`,
+      desc:`RSI ${ind.rsi.toFixed(1)} vượt ngưỡng 75 — vùng quá mua mạnh, xác suất điều chỉnh ngắn hạn tăng cao.`,
+      chips:[`RSI ${ind.rsi.toFixed(1)}`,'Quá mua']
+    });
+  }
+
+  // ── MACD BEAR CROSS ────────────────────────────────────────────────────────
+  if(ind.macd!=null&&ind.macdSignal!=null&&ind.macdHistogram!=null){
+    if(ind.macdHistogram<0&&ind.macd<ind.macdSignal){
+      alerts.push({
+        level:'warn', key:'MACD_BEAR',
+        title:'MACD cắt xuống Signal',
+        desc:`MACD (${ind.macd.toFixed(3)}) vừa cắt xuống dưới Signal (${ind.macdSignal.toFixed(3)}) — tín hiệu đà giảm đang hình thành.`,
+        chips:['MACD ↓ Signal','Đà giảm']
+      });
+    }
+  }
+
+  // ── BB UPPER TOUCH ─────────────────────────────────────────────────────────
+  if(ind.bbUpper!=null&&price>ind.bbUpper*0.995){
+    alerts.push({
+      level:'warn', key:'BB_UPPER',
+      title:'Giá chạm dải BB trên',
+      desc:`Giá ${fp(price)} đang chạm/vượt Bollinger Band trên (${fp(ind.bbUpper)}) — thường báo hiệu mua quá mức ngắn hạn.`,
+      chips:['BB Upper','Mua quá mức']
+    });
+  }
+
+  return alerts;
+}
+
+function renderHero(){
+  const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
+  let totalCost=0,totalValue=0,totalQty=0;
+  syms.forEach(s=>{
+    const cur=prices[s]?.price;
+    portfolio[s].forEach(p=>{
+      totalCost+=p.qty*p.price;
+      totalQty+=p.qty;
+      totalValue+=p.qty*(cur||p.price);
+    });
+  });
+  const pnl=totalValue-totalCost;
+  const pnlPct=totalCost>0?(pnl/totalCost*100):0;
+  const c=pColor(pnl),s=pSign(pnl);
+
+  // Per-symbol stats
+  let bestSym='',bestPct=-Infinity,worstSym='',worstPct=Infinity;
+  syms.forEach(sym=>{
+    const cur=prices[sym]?.price;
+    if(!cur)return;
+    const ps=portfolio[sym];
+    const cost=ps.reduce((a,p)=>a+p.qty*p.price,0);
+    const qty=ps.reduce((a,p)=>a+p.qty,0);
+    const avg=cost/qty;
+    const pct=(cur-avg)/avg*100;
+    if(pct>bestPct){bestPct=pct;bestSym=sym;}
+    if(pct<worstPct){worstPct=pct;worstSym=sym;}
+  });
+
+  // Donut data
+  const PIE_COLORS=['#4da3ff','#00d26a','#ffb300','#a855f7','#06b6d4','#f97316','#ff4757','#ec4899','#14b8a6','#eab308'];
+  const chartData=syms.map((sym,i)=>{
+    const ps=portfolio[sym];
+    const cur=prices[sym]?.price;
+    const val=ps.reduce((acc,p)=>acc+p.qty*(cur||p.price),0);
+    return{sym,val,color:PIE_COLORS[i%PIE_COLORS.length]};
+  }).sort((a,b)=>b.val-a.val);
+
+  const chartTotal=chartData.reduce((acc,d)=>acc+d.val,0);
+  const donutPaths=chartTotal>0?buildDonutPaths(chartData,chartTotal,110,110,95,54):'';
+
+  const legendItems=chartData.map(d=>{
+    const pct=(d.val/chartTotal*100).toFixed(1);
+    return`<div class="hero-legend-item" onmouseenter="chartHover('${d.sym}','${d.color}',${pct},${d.val})" onmouseleave="chartHoverReset()">
+      <div class="hero-legend-dot" style="background:${d.color}"></div>
+      <span class="hero-legend-sym">${d.sym}</span>
+      <span class="hero-legend-pct">${pct}%</span>
+      <span class="hero-legend-val">${fMoney(d.val)}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('heroSection').innerHTML=`
+    <div class="hero">
+      <div class="hero-body">
+        <div class="hero-info">
+          <div class="hero-top">
+            <div>
+              <div class="hero-label">Giá trị danh mục</div>
+              <div class="hero-value">${fMoney(totalValue)}</div>
+              <div class="hero-sub">
+                <span>Vốn: ${fMoney(totalCost)}</span>
+                <span style="color:var(--border)">|</span>
+                <span>${syms.length} mã · ${totalQty.toLocaleString('vi-VN')} CP</span>
+              </div>
+            </div>
+            <div class="hero-pnl">
+              <div class="hero-label">Lãi / Lỗ</div>
+              <div class="hero-pnl-val" style="color:${c}">${s}${fMoney(pnl)}</div>
+              <div class="hero-pnl-pct" style="color:${c}">${s}${pnlPct.toFixed(2)}%</div>
+            </div>
+          </div>
+          <div class="hero-legend">${legendItems}</div>
+        </div>
+        <div class="hero-donut">
+          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">${donutPaths}</svg>
+          <div class="hero-donut-center" id="chartCenter">
+            <div class="hero-donut-val">${syms.length} mã</div>
+            <div class="hero-donut-lbl">${fMoney(chartTotal)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-label">Tổng vốn đầu tư</div>
+          <div class="hero-stat-val">${fMoney(totalCost)}</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Mã tốt nhất</div>
+          <div class="hero-stat-val" style="color:var(--up)">${bestSym?bestSym+' '+pSign(bestPct)+bestPct.toFixed(1)+'%':'—'}</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Mã yếu nhất</div>
+          <div class="hero-stat-val" style="color:var(--dn)">${worstSym?worstSym+' '+pSign(worstPct)+worstPct.toFixed(1)+'%':'—'}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function chartHover(sym,color,pct,val){
+  const el=document.getElementById('chartCenter');
+  if(el)el.innerHTML=`<div class="hero-donut-val" style="color:${color}">${sym}</div><div class="hero-donut-lbl">${pct}%</div><div class="hero-donut-lbl">${fMoney(val)}</div>`;
+}
+function chartHoverReset(){
+  const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
+  const total=syms.reduce((s,sym)=>{
+    const cur=prices[sym]?.price;
+    return s+portfolio[sym].reduce((a,p)=>a+p.qty*(cur||p.price),0);
+  },0);
+  const el=document.getElementById('chartCenter');
+  if(el)el.innerHTML=`<div class="hero-donut-val">${syms.length} mã</div><div class="hero-donut-lbl">${fMoney(total)}</div>`;
+}
+
+function renderTable(){
+  const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
+  syms.sort((a,b)=>{
+    const va=portfolio[a].reduce((s,p)=>s+p.qty*(prices[a]?.price||p.price),0);
+    const vb=portfolio[b].reduce((s,p)=>s+p.qty*(prices[b]?.price||p.price),0);
+    return vb-va;
+  });
+
+  let html=`
+    <div class="tbl-card">
+      <div class="tbl-header">
+        <span></span><span>Mã</span><span style="text-align:right">KL</span><span style="text-align:right">Giá vốn</span><span style="text-align:right">Giá trị</span><span style="text-align:right">Lãi / Lỗ</span><span></span>
+      </div>`;
+
+  syms.forEach((sym,si)=>{
+    const ps=portfolio[sym];
+    const cur=prices[sym]?.price;
+    const chg=prices[sym]?.change;
+    const totalQty=ps.reduce((s,p)=>s+p.qty,0);
+    const totalCost=ps.reduce((s,p)=>s+p.qty*p.price,0);
+    const avgPrice=totalCost/totalQty;
+    const mktVal=cur?cur*totalQty:totalCost;
+    const pnl=cur?(cur-avgPrice)*totalQty:0;
+    const pnlPct=avgPrice>0&&cur?((cur-avgPrice)/avgPrice*100):0;
+    const c=pColor(pnl),sg=pSign(pnl);
+    const isOpen=openSyms.has(sym);
+
+    let chgHtml='';
+    if(chg){
+      const cm=String(chg).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
+      if(cm){
+        const cv=parseFloat(cm[1].replace(',','.'));
+        chgHtml=`<span class="sym-chg" style="color:${pColor(cv)}">${pSign(cv)}${cm[2]}%</span>`;
+      }
+    }
+
+    // Color hash for badge
+    const colors=['#4da3ff','#00d26a','#ff4757','#ffb300','#a855f7','#06b6d4','#f97316','#ec4899'];
+    const bgColor=colors[sym.charCodeAt(0)%colors.length];
+
+    // Warning icon + tooltip
+    const symAlerts=extractSignals(sym,prices[sym]||{price:cur});
+    const topLevel=symAlerts.some(a=>a.level==='danger')?'danger':symAlerts.length?'warn':null;
+    const badgeHtml=topLevel?`
+      <div class="badge-wrap">
+        <div class="sym-badge" style="background:linear-gradient(135deg,${bgColor},${bgColor}cc)">${sym.slice(0,3)}</div>
+        <div class="warn-dot ${topLevel}"
+          onclick="event.stopPropagation()"
+          onmouseenter="showTooltip(event,'tt-${sym}')"
+          onmouseleave="hideTooltip('tt-${sym}')">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="warn-tooltip" id="tt-${sym}">
+          ${symAlerts.map(a=>`
+            <div class="tt-item">
+              <div class="tt-dot ${a.level}"></div>
+              <div>
+                <div class="tt-title">${a.title}</div>
+                <div class="tt-desc">${a.desc}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`
+    :`<div class="sym-badge" style="background:linear-gradient(135deg,${bgColor},${bgColor}cc)">${sym.slice(0,3)}</div>`;
+
+    html+=`
+      <div class="tbl-row" onclick="toggleSym('${sym}')">
+        <span>${badgeHtml}</span>
+        <span class="sym-info">
+          <div style="display:flex;align-items:center;gap:8px">
+            <a href="/detail.html?s=${sym}" class="sym-link" onclick="event.stopPropagation()">${sym}</a>
+            ${chgHtml}
+          </div>
+          <span style="font-size:11px;color:var(--t3)" class="mono">${cur?fp(cur):'N/A'}</span>
+        </span>
+        <span style="text-align:right" class="mono" style="font-weight:700;font-size:13px;color:var(--t2)">${totalQty.toLocaleString('vi-VN')}</span>
+        <span style="text-align:right;color:var(--t3)" class="mono" style="font-size:13px">${fp(avgPrice)}</span>
+        <span style="text-align:right;font-weight:600" class="mono" style="font-size:13px;color:var(--t2)">${fMoney(mktVal)}</span>
+        <span style="text-align:right">
+          <div class="pl-chip" style="background:${pBg(pnl)}">
+            <span class="pl-chip-val" style="color:${c}">${sg}${fMoney(pnl)}</span>
+            <span class="pl-chip-pct" style="color:${c}">${sg}${pnlPct.toFixed(1)}%</span>
+          </div>
+        </span>
+        <span style="text-align:center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" style="transition:transform .2s;transform:rotate(${isOpen?180:0}deg)"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </div>
+      <div class="row-expand${isOpen?' open':''}" id="expand-${sym}">
+        <div id="edit-${sym}" style="margin-top:8px"></div>
+        <div class="sub-header">
+          <span>#</span><span>Ngày</span><span style="text-align:right">KL</span><span style="text-align:right">Giá mua</span><span style="text-align:right">Lãi/Lỗ</span><span></span>
+        </div>`;
+
+    ps.forEach((p,i)=>{
+      const pl=cur?(cur-p.price)*p.qty:0;
+      const plPct2=p.price>0&&cur?((cur-p.price)/p.price*100):0;
+      html+=`
+        <div class="sub-row">
+          <span style="font-size:10px;color:var(--t3)">${i+1}</span>
+          <span style="color:var(--t3)" class="mono">${p.date}</span>
+          <span style="text-align:right;font-weight:700;color:var(--t2)" class="mono">${p.qty.toLocaleString('vi-VN')}</span>
+          <span style="text-align:right;color:var(--t3)" class="mono">${fp(p.price)}</span>
+          <span style="text-align:right">
+            <span style="font-weight:700;color:${pColor(pl)}" class="mono">${pSign(pl)}${(pl/1e3).toFixed(1)} tr</span>
+          </span>
+          <span class="sub-actions">
+            <button class="sub-btn edit" onclick="event.stopPropagation();startEdit('${sym}',${p.id},${p.qty},${p.price},'${p.date}')" title="Sửa">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="sub-btn del" onclick="event.stopPropagation();removePos('${sym}',${p.id})" title="Xóa">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--dn)" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </span>
+        </div>`;
+    });
+
+    html+=`</div>`;
+  });
+
+  html+=`</div>`;
+  document.getElementById('tableSection').innerHTML=html;
+}
+
+function toggleSym(sym){
+  if(openSyms.has(sym))openSyms.delete(sym);else openSyms.add(sym);
+  const el=document.getElementById('expand-'+sym);
+  if(el)el.classList.toggle('open');
+}
+
+async function submitAdd(){
+  const sym=document.getElementById('fSym').value.trim().toUpperCase();
+  const qty=parseInt(document.getElementById('fQty').value);
+  const price=parseFloat(document.getElementById('fPrice').value);
+  const date=document.getElementById('fDate').value;
+  if(!sym||!qty||!price||!date){alert('Vui lòng điền đầy đủ thông tin');return;}
+  const btn=document.getElementById('addBtn');
+  btn.disabled=true;btn.textContent='Đang thêm...';
+  try{
+    await fetch(SERVER+'/portfolio/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,qty,price,date})});
+    document.getElementById('fSym').value='';
+    document.getElementById('fQty').value='';
+    document.getElementById('fPrice').value='';
+    if(!prices[sym]){
+      const rt=await fetchRealtimePrice(sym);
+      if(rt) prices[sym]={...rt};
+      // Load technical data in background
+      fetchTechnical(sym).then(tech=>{if(tech){prices[sym]={...prices[sym],...tech};render();}});
+    }
+    await refreshPortfolio();
+  }catch(e){alert('Lỗi: '+e.message);}
+  btn.disabled=false;btn.textContent='Thêm';
+}
+
+function startEdit(sym,id,qty,price,date){
+  editingId={sym,id};
+  const el=document.getElementById('edit-'+sym);
+  if(!openSyms.has(sym)){openSyms.add(sym);document.getElementById('expand-'+sym)?.classList.add('open');}
+  el.innerHTML=`
+    <div class="edit-bar">
+      <span style="font-size:11px;font-weight:700;color:var(--navy)">Sửa lệnh</span>
+      <input type="number" id="eQty" value="${qty}" min="100" step="100" placeholder="KL"/>
+      <input type="number" id="ePrice" value="${price}" step="0.05" placeholder="Giá"/>
+      <input type="date" id="eDate" value="${date}"/>
+      <button class="btn btn-primary" style="padding:6px 12px;font-size:11px" onclick="submitEdit()">Lưu</button>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:11px" onclick="cancelEdit('${sym}')">Hủy</button>
+    </div>
+  `;
+  document.getElementById('eQty').focus();
+}
+
+async function submitEdit(){
+  if(!editingId)return;
+  const qty=parseInt(document.getElementById('eQty').value);
+  const price=parseFloat(document.getElementById('ePrice').value);
+  const date=document.getElementById('eDate').value;
+  if(!qty||!price||!date)return;
+  await fetch(SERVER+'/portfolio/edit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:editingId.sym,id:editingId.id,qty,price,date})});
+  cancelEdit(editingId.sym);editingId=null;
+  await refreshPortfolio();
+}
+
+function cancelEdit(sym){editingId=null;const el=document.getElementById('edit-'+sym);if(el)el.innerHTML='';}
+
+async function removePos(sym,id){
+  if(!confirm('Xóa lệnh này?'))return;
+  await fetch(SERVER+'/portfolio/remove',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,id})});
+  await refreshPortfolio();
+}
+
+async function refreshPortfolio(){
+  try{const r=await fetch(SERVER+'/portfolio');portfolio=await r.json();}catch(e){portfolio={};}
+  const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
+  if(syms.length===0){document.getElementById('content').style.display='none';document.getElementById('empty').style.display='';return;}
+  document.getElementById('content').style.display='';document.getElementById('empty').style.display='none';
+  // Refresh giá realtime cho các sym chưa có giá
+  const missing=syms.filter(s=>!prices[s]?.price);
+  if(missing.length){
+    const rts=await Promise.allSettled(missing.map(s=>fetchRealtimePrice(s)));
+    rts.forEach((r,i)=>{if(r.status==='fulfilled'&&r.value) prices[missing[i]]={...prices[missing[i]]||{},...r.value};});
+  }
+  render();
+}
+
+async function refreshAll(){
+  const btn=document.getElementById('refreshBtn');
+  btn.disabled=true;btn.style.opacity='.5';prices={};
+  await init();
+  btn.disabled=false;btn.style.opacity='1';
+}
+
+document.getElementById('fDate').value=new Date().toISOString().split('T')[0];
+init();
+</script>
+</div><!-- win-frame -->
+</div><!-- win-desktop -->
+
+<!-- Taskbar -->
+<div class="win-taskbar">
+  <a class="win-tb-back" href="/">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Desktop
+  </a>
+  <div class="win-tb-center">
+    <div class="win-tb-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    </div>
+    <span class="win-tb-name">Portfolio</span>
+  </div>
+  <div class="win-tb-right" id="tbTime"></div>
+</div>
+
+<script>
+// Taskbar clock
+(function(){
+  function tick(){
+    const n=new Date();
+    const hh=String(n.getHours()).padStart(2,'0');
+    const mm=String(n.getMinutes()).padStart(2,'0');
+    const el=document.getElementById('tbTime');
+    if(el) el.innerHTML=hh+':'+mm+'<br>'+n.getDate()+'/'+(n.getMonth()+1)+'/'+n.getFullYear();
+  }
+  tick(); setInterval(tick,15000);
+})();
+</script>
+
+</body>
+</html>

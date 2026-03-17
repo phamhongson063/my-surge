@@ -1,188 +1,1249 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Watchlist</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root{
-      --bg:#f0f2f5;--wht:#fff;--gray50:#f8f9fb;--gray100:#f1f3f5;--gray200:#e5e7eb;--gray400:#9ca3af;--gray500:#6b7280;--gray700:#374151;--gray900:#1a1a2e;
-      --navy:#003a6b;--navy-l:#e8f0f7;
-      --up:#2f9e44;--up-bg:#f0fdf4;--up-bd:#bbf7d0;
-      --dn:#e03131;--dn-bg:#fff5f5;--dn-bd:#ffc9c9;
-      --am:#f59e0b;--am-bg:#fffbeb;--am-bd:#fde68a;
-    }
-    *{box-sizing:border-box;margin:0}
-    body{background:var(--bg);color:var(--gray900);font-family:'Noto Sans',sans-serif;font-size:15px}
-    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
-    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700}
-    .b-buy{background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)}
-    .b-sell{background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)}
-    .b-watch{background:var(--am-bg);color:var(--am);border:1px solid var(--am-bd)}
-    .b-hold{background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)}
-    @keyframes sp{to{transform:rotate(360deg)}}
-    @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    .row-an{animation:fi .25s ease both}
-    .sig-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;margin:2px}
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watchlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1923;
+        --wht: #1a2f42;
+        --gray50: #172a3a;
+        --gray100: #1e3448;
+        --gray200: #2a4a63;
+        --gray400: #6b8ba4;
+        --gray500: #a8bfd0;
+        --gray700: #c8dce8;
+        --gray900: #e8edf2;
+        --navy: #4da3ff;
+        --navy-l: rgba(77, 163, 255, 0.12);
+        --up: #00d26a;
+        --up-bg: rgba(0, 210, 106, 0.08);
+        --up-bd: rgba(0, 210, 106, 0.2);
+        --dn: #ff4757;
+        --dn-bg: rgba(255, 71, 87, 0.08);
+        --dn-bd: rgba(255, 71, 87, 0.2);
+        --am: #ffb300;
+        --am-bg: rgba(255, 179, 0, 0.08);
+        --am-bd: rgba(255, 179, 0, 0.25);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        background: transparent;
+        color: var(--gray900);
+        font-family: "Noto Sans", sans-serif;
+        font-size: 15px;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--gray200);
+        border-radius: 3px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .b-buy {
+        background: var(--up-bg);
+        color: var(--up);
+        border: 1px solid var(--up-bd);
+      }
+      .b-sell {
+        background: var(--dn-bg);
+        color: var(--dn);
+        border: 1px solid var(--dn-bd);
+      }
+      .b-watch {
+        background: var(--am-bg);
+        color: var(--am);
+        border: 1px solid var(--am-bd);
+      }
+      .b-hold {
+        background: var(--gray100);
+        color: var(--gray500);
+        border: 1px solid var(--gray200);
+      }
 
-<header style="background:var(--wht);border-bottom:1px solid var(--gray200);position:sticky;top:0;z-index:50">
-  <div style="max-width:1400px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:16px">
-      <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--gray400);font-size:14px;font-weight:600;transition:color .15s" onmouseenter="this.style.color='var(--navy)'" onmouseleave="this.style.color='var(--gray400)'">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Quay lại</a>
-      <div style="width:1px;height:24px;background:var(--gray200)"></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:36px;height:36px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--navy)">Watchlist</span>
-        <span id="countBadge" style="display:none;background:var(--navy-l);color:var(--navy);padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700"></span>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span id="lastScanTime" style="font-size:12px;color:var(--gray400)"></span>
-      <button id="scanBtn" onclick="runScan(false)"
-        style="height:38px;padding:0 20px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
-        onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Quét tín hiệu</button>
-      <button onclick="runScan(true)"
-        style="height:38px;padding:0 16px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);color:var(--gray500);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s"
-        onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray500)'"
-        title="Tải lại dữ liệu mới + quét">↺ Làm mới</button>
-    </div>
-  </div>
-</header>
+      html.light {
+        --bg: #f0f4f8;
+        --wht: #ffffff;
+        --gray50: #f5f7fa;
+        --gray100: #edf0f4;
+        --gray200: #d8dee6;
+        --gray400: #7a8a9a;
+        --gray500: #506070;
+        --gray700: #2a3848;
+        --gray900: #111c28;
+        --navy: #0055cc;
+        --navy-l: rgba(0, 85, 204, 0.08);
+        --up: #1a8a3a;
+        --up-bg: rgba(26, 138, 58, 0.07);
+        --up-bd: rgba(26, 138, 58, 0.2);
+        --dn: #cc2020;
+        --dn-bg: rgba(204, 32, 32, 0.06);
+        --dn-bd: rgba(204, 32, 32, 0.2);
+        --am: #b06000;
+        --am-bg: rgba(176, 96, 0, 0.07);
+        --am-bd: rgba(176, 96, 0, 0.2);
+      }
+      /* Wallpaper: giữ nguyên dark, chỉ đổi window */
+      html.light .win-frame {
+        background: rgba(244, 247, 251, 0.97) !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18),
+          0 0 0 1px rgba(255, 255, 255, 0.9) !important;
+      }
+      html.light .win-titlebar {
+        background: rgba(30, 42, 60, 0.96) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      }
+      /* Table & content inside frame */
+      html.light #tableWrap {
+        background: #fff !important;
+        border-color: var(--gray200) !important;
+      }
+      html.light table thead tr {
+        background: var(--gray50) !important;
+        border-bottom: 2px solid var(--gray200) !important;
+      }
+      html.light table thead th {
+        color: var(--gray500) !important;
+      }
+      html.light table tbody tr {
+        border-bottom-color: var(--gray100) !important;
+      }
+      html.light table tbody tr:hover {
+        background: var(--gray50) !important;
+      }
+      html.light #summaryBar > div {
+        background: #fff !important;
+      }
+      html.light #symbolsGrid > div {
+        background: #fff !important;
+        border-color: var(--gray200) !important;
+      }
+      html.light main {
+        background: var(--bg) !important;
+      }
+      /* Taskbar stays dark always */
 
-<main style="max-width:1400px;margin:0 auto;padding:24px 32px 60px">
+      /* Theme toggle button */
+      .theme-toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.07);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+      html.light .theme-toggle {
+        border-color: rgba(0, 0, 0, 0.12);
+        background: rgba(0, 0, 0, 0.04);
+      }
+      html.light .theme-toggle:hover {
+        background: rgba(0, 0, 0, 0.08);
+      }
+      .theme-toggle svg {
+        transition: transform 0.3s, opacity 0.3s;
+        position: absolute;
+      }
+      .theme-toggle .t-sun {
+        opacity: 0;
+        transform: rotate(-90deg) scale(0.5);
+      }
+      .theme-toggle .t-moon {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+      html.light .theme-toggle .t-sun {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+      }
+      html.light .theme-toggle .t-moon {
+        opacity: 0;
+        transform: rotate(90deg) scale(0.5);
+      }
 
-  <!-- Add symbol bar -->
-  <div style="display:flex;gap:10px;margin-bottom:24px">
-    <div style="display:flex;align-items:center;gap:8px;background:var(--wht);border:1.5px solid var(--gray200);border-radius:10px;padding:8px 16px;flex:1;max-width:320px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <input id="addInput" type="text" placeholder="Thêm mã…" autocomplete="off"
-        style="border:none;outline:none;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy);text-transform:uppercase;background:transparent;width:100%"
-        onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();addSymbol(this.value)}"/>
-    </div>
-    <button onclick="addSymbol(document.getElementById('addInput').value)"
-      style="height:42px;padding:0 20px;border-radius:10px;border:none;background:var(--up);color:#fff;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .15s"
-      onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">Thêm</button>
-  </div>
+      /* ── Dark theme overrides ── */
+      /* Summary bar */
+      #summaryBar > div {
+        border-color: var(--gray200) !important;
+      }
+      /* Table wrapper */
+      #tableWrap {
+        background: transparent !important;
+        border-color: var(--gray200) !important;
+        border-radius: 10px !important;
+        overflow: hidden;
+      }
+      /* Table header */
+      table thead tr {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border-bottom-color: var(--gray200) !important;
+      }
+      table thead th {
+        color: var(--gray400) !important;
+      }
+      /* Table rows */
+      table tbody tr {
+        border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+      }
+      table tbody tr:hover {
+        background: rgba(77, 163, 255, 0.04) !important;
+      }
+      /* Add input bar */
+      #addInput {
+        color: var(--navy) !important;
+      }
+      /* Symbols grid */
+      #symbolsGrid > div {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border-color: var(--gray200) !important;
+      }
+      #symbolsGrid > div:hover {
+        background: var(--navy-l) !important;
+        border-color: var(--navy) !important;
+      }
+      /* Loading/empty state */
+      #loadingMsg {
+        color: var(--gray400) !important;
+      }
+      /* Count badge */
+      #countBadge {
+        background: var(--navy-l) !important;
+        color: var(--navy) !important;
+      }
+      /* Scan time */
+      #lastScanTime {
+        color: var(--gray400) !important;
+      }
+      /* Remove symbol btn */
+      table tbody td button {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: var(--gray200) !important;
+        color: var(--gray400) !important;
+      }
+      /* Add input wrapper */
+      .add-bar {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: var(--gray200) !important;
+      }
 
-  <!-- States -->
-  <div id="emptyState" style="text-align:center;padding:80px 0;display:none">
-    <div style="font-size:40px;margin-bottom:12px">🔍</div>
-    <div style="font-size:18px;font-weight:700;color:var(--gray900);margin-bottom:8px">Watchlist trống</div>
-    <div style="font-size:14px;color:var(--gray500)">Thêm mã cổ phiếu bên trên để bắt đầu theo dõi</div>
-  </div>
-  <div id="loadingState" style="text-align:center;padding:80px 0;display:none">
-    <div style="width:40px;height:40px;border-radius:50%;border:3px solid var(--navy-l);border-top-color:var(--navy);animation:sp .7s linear infinite;margin:0 auto 14px"></div>
-    <div id="loadingMsg" style="color:var(--gray500);font-size:15px">Đang tải…</div>
-  </div>
+      /* ── Windows Desktop ── */
+      html,
+      body {
+        height: 100%;
+        min-height: 100vh;
+      }
+      .win-wallpaper {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: radial-gradient(
+            ellipse 80% 60% at 20% 40%,
+            rgba(56, 100, 200, 0.55) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 60% 80% at 80% 20%,
+            rgba(120, 60, 200, 0.4) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 50% 50% at 60% 80%,
+            rgba(20, 140, 200, 0.35) 0%,
+            transparent 55%
+          ),
+          linear-gradient(135deg, #050a18 0%, #0d1635 40%, #0a1228 100%);
+        pointer-events: none;
+      }
+      .win-wallpaper::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+            rgba(96, 165, 255, 0.03) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(96, 165, 255, 0.03) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+      .win-mountain {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        height: 180px;
+        background: linear-gradient(
+          to top,
+          rgba(5, 10, 24, 0.85) 0%,
+          transparent 100%
+        );
+        clip-path: polygon(
+          0 100%,
+          0 65%,
+          8% 42%,
+          16% 60%,
+          24% 28%,
+          32% 52%,
+          38% 36%,
+          45% 18%,
+          52% 38%,
+          58% 23%,
+          65% 43%,
+          72% 28%,
+          80% 52%,
+          88% 36%,
+          94% 50%,
+          100% 33%,
+          100% 100%
+        );
+        pointer-events: none;
+      }
+      .win-desktop {
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 20px 60px;
+      }
+      .win-frame {
+        width: 100%;
+        max-width: 1200px;
+        background: rgba(15, 25, 35, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px);
+        overflow: hidden;
+        animation: winOpen 0.25s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+      }
+      @keyframes winOpen {
+        from {
+          opacity: 0;
+          transform: scale(0.97) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
 
-  <!-- Summary bar -->
-  <div id="summaryBar" style="display:none;gap:12px;margin-bottom:20px;flex-wrap:wrap"></div>
+      /* Titlebar */
+      .win-titlebar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: rgba(8, 14, 26, 0.92);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(16px);
+      }
+      .win-controls {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .win-btn {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        transition: filter 0.1s, transform 0.1s;
+        position: relative;
+      }
+      .win-btn:hover {
+        filter: brightness(1.15);
+        transform: scale(1.1);
+      }
+      .win-btn.close {
+        background: #ff5f57;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+      }
+      .win-btn.min {
+        background: #febc2e;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+      }
+      .win-btn.max {
+        background: #28c840;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+      }
+      .win-btn.close:hover::before {
+        content: "×";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.5);
+        line-height: 1;
+      }
+      .win-btn.min:hover::before {
+        content: "−";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -55%);
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.5);
+        line-height: 1;
+      }
+      .win-btn.max:hover::before {
+        content: "+";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(0, 0, 0, 0.5);
+        line-height: 1;
+      }
+      .win-divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .win-app-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        background: linear-gradient(145deg, #7c3aed, #5b21b6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .win-title-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.65);
+        flex: 1;
+        text-align: center;
+        letter-spacing: 0.2px;
+      }
+      .win-hdr-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
 
-  <!-- Table -->
-  <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;overflow:hidden">
-    <table style="width:100%;border-collapse:collapse">
-      <thead>
-        <tr style="background:var(--gray50);border-bottom:2px solid var(--gray200)">
-          <th style="padding:14px 20px;text-align:left;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>
-          <th style="padding:14px 16px;text-align:right;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">GIÁ</th>
-          <th style="padding:14px 16px;text-align:right;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">THAY ĐỔI</th>
-          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">RSI</th>
-          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">XU HƯỚNG</th>
-          <th style="padding:14px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU</th>
-          <th style="padding:14px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KHUYẾN NGHỊ</th>
-          <th style="padding:14px 20px;text-align:center;font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px"></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
+      /* Override old header */
+      header {
+        display: none !important;
+      }
 
-  <!-- No-scan state: show symbols only -->
-  <div id="symbolsGrid" style="display:none;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px"></div>
+      /* Taskbar */
+      .win-taskbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        height: 44px;
+        background: rgba(8, 12, 24, 0.88);
+        backdrop-filter: blur(20px) saturate(180%);
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+      }
+      .win-tb-back {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 12px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        transition: background 0.12s, color 0.12s;
+      }
+      .win-tb-back:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .win-tb-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .win-tb-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: linear-gradient(145deg, #7c3aed, #5b21b6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .win-tb-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .win-tb-right {
+        margin-left: auto;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.38);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        line-height: 1.4;
+      }
 
-</main>
+      /* Override inline styles for dark theme */
+      main {
+        max-width: 100% !important;
+        padding: 16px 24px 40px !important;
+      }
 
-<script>
-const SERVER=`http://${location.hostname}:3000`;
-const fp=v=>{if(v==null)return"—";return parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2})};
+      @keyframes sp {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes fi {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .row-an {
+        animation: fi 0.25s ease both;
+      }
+      .sig-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        margin: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="win-wallpaper"></div>
+    <div class="win-mountain"></div>
+    <div class="win-desktop">
+      <div class="win-frame">
+        <!-- Titlebar -->
+        <div class="win-titlebar">
+          <div class="win-controls">
+            <button
+              class="win-btn close"
+              onclick="window.location.href='/'"
+            ></button>
+            <button class="win-btn min"></button>
+            <button class="win-btn max"></button>
+          </div>
+          <div class="win-divider"></div>
+          <div class="win-app-icon">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              stroke-width="2.5"
+              stroke-linecap="round"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </div>
+          <div class="win-title-text">Watchlist — My Stock</div>
+          <div class="win-hdr-actions">
+            <span
+              id="lastScanTimeHdr"
+              style="font-size: 11px; color: rgba(255, 255, 255, 0.35)"
+            ></span>
+            <button
+              id="scanBtn"
+              onclick="runScan(false)"
+              style="
+                height: 32px;
+                padding: 0 14px;
+                border-radius: 8px;
+                border: none;
+                background: linear-gradient(135deg, #7c3aed, #5b21b6);
+                color: #fff;
+                font-weight: 700;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                transition: filter 0.15s;
+              "
+              onmouseenter="this.style.filter='brightness(1.12)'"
+              onmouseleave="this.style.filter=''"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Quét
+            </button>
+            <button
+              onclick="runScan(true)"
+              style="
+                height: 32px;
+                padding: 0 12px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                background: rgba(255, 255, 255, 0.07);
+                color: rgba(255, 255, 255, 0.6);
+                font-weight: 600;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.15s;
+              "
+              onmouseenter="this.style.background='rgba(255,255,255,.12)';this.style.color='#fff'"
+              onmouseleave="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.6)'"
+              title="Tải lại + quét"
+            >
+              ↺ Làm mới
+            </button>
+            <button
+              class="theme-toggle"
+              onclick="toggleTheme()"
+              title="Chuyển theme"
+            >
+              <svg
+                class="t-moon"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+              <svg
+                class="t-sun"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
-let watchlistData=null;
+        <header
+          style="
+            background: var(--wht);
+            border-bottom: 1px solid var(--gray200);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+          "
+        >
+          <div
+            style="
+              max-width: 1400px;
+              margin: 0 auto;
+              padding: 14px 32px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 16px">
+              <a
+                href="/"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  text-decoration: none;
+                  color: var(--gray400);
+                  font-size: 14px;
+                  font-weight: 600;
+                  transition: color 0.15s;
+                "
+                onmouseenter="this.style.color='var(--navy)'"
+                onmouseleave="this.style.color='var(--gray400)'"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <polyline points="15 18 9 12 15 6" /></svg
+                >Quay lại</a
+              >
+              <div
+                style="width: 1px; height: 24px; background: var(--gray200)"
+              ></div>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <div
+                  style="
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 10px;
+                    background: var(--navy);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                    />
+                  </svg>
+                </div>
+                <span
+                  style="
+                    font-family: 'Syne', sans-serif;
+                    font-weight: 800;
+                    font-size: 17px;
+                    color: var(--navy);
+                  "
+                  >Watchlist</span
+                >
+                <span
+                  id="countBadge"
+                  style="
+                    display: none;
+                    background: var(--navy-l);
+                    color: var(--navy);
+                    padding: 2px 10px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 700;
+                  "
+                ></span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span
+                id="lastScanTime"
+                style="font-size: 12px; color: var(--gray400)"
+              ></span>
+              <button
+                id="scanBtn"
+                onclick="runScan(false)"
+                style="
+                  height: 38px;
+                  padding: 0 20px;
+                  border-radius: 10px;
+                  border: none;
+                  background: var(--navy);
+                  color: #fff;
+                  font-weight: 700;
+                  font-size: 14px;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  transition: opacity 0.15s;
+                "
+                onmouseenter="this.style.opacity='.85'"
+                onmouseleave="this.style.opacity='1'"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Quét tín hiệu
+              </button>
+              <button
+                onclick="runScan(true)"
+                style="
+                  height: 38px;
+                  padding: 0 16px;
+                  border-radius: 10px;
+                  border: 1.5px solid var(--gray200);
+                  background: var(--wht);
+                  color: var(--gray500);
+                  font-weight: 700;
+                  font-size: 13px;
+                  cursor: pointer;
+                  transition: all 0.15s;
+                "
+                onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+                onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray500)'"
+                title="Tải lại dữ liệu mới + quét"
+              >
+                ↺ Làm mới
+              </button>
+            </div>
+          </div>
+        </header>
 
-// ── Load initial state ────────────────────────────────────────────────────────
-async function init(){
-  setLoading("Đang tải watchlist…");
-  try{
-    const r=await fetch(`${SERVER}/watchlist`);
-    const d=await r.json();
-    watchlistData=d;
-    if(!d.symbols?.length){showEmpty();return;}
-    // Có data scan cũ → hiển thị luôn
-    if(d.symbols.length && d.lastScan && d.alerts){
-      renderTable(buildRows(d));
-    } else {
-      showSymbolsGrid(d.symbols);
-    }
-    updateLastScan(d.lastScan);
-  }catch(e){setLoading("Lỗi kết nối server");console.error(e)}
-}
+        <main
+          style="max-width: 1400px; margin: 0 auto; padding: 24px 32px 60px"
+        >
+          <!-- Add symbol bar -->
+          <div style="display: flex; gap: 10px; margin-bottom: 24px">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--wht);
+                border: 1.5px solid var(--gray200);
+                border-radius: 10px;
+                padding: 8px 16px;
+                flex: 1;
+                max-width: 320px;
+              "
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--gray400)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <input
+                id="addInput"
+                type="text"
+                placeholder="Thêm mã…"
+                autocomplete="off"
+                style="
+                  border: none;
+                  outline: none;
+                  font-family: 'IBM Plex Mono', monospace;
+                  font-weight: 700;
+                  font-size: 15px;
+                  color: var(--navy);
+                  text-transform: uppercase;
+                  background: transparent;
+                  width: 100%;
+                "
+                onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();addSymbol(this.value)}"
+              />
+            </div>
+            <button
+              onclick="addSymbol(document.getElementById('addInput').value)"
+              style="
+                height: 42px;
+                padding: 0 20px;
+                border-radius: 10px;
+                border: none;
+                background: var(--up);
+                color: #fff;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                transition: opacity 0.15s;
+              "
+              onmouseenter="this.style.opacity='.85'"
+              onmouseleave="this.style.opacity='1'"
+            >
+              Thêm
+            </button>
+          </div>
 
-function buildRows(d){
-  // Merge symbols list với alerts data
-  const alertMap={};
-  (d.alerts||[]).forEach(a=>{alertMap[a.symbol]=a;});
-  return (d.symbols||[]).map(sym=>{
-    const a=alertMap[sym];
-    return{symbol:sym,price:a?.price,date:a?.date,signals:a?.signals||[],
-      rsi:null,trend:null,recommendation:null,recColor:null,change:null,error:null};
-  });
-}
+          <!-- States -->
+          <div
+            id="emptyState"
+            style="text-align: center; padding: 80px 0; display: none"
+          >
+            <div style="font-size: 40px; margin-bottom: 12px">🔍</div>
+            <div
+              style="
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--gray900);
+                margin-bottom: 8px;
+              "
+            >
+              Watchlist trống
+            </div>
+            <div style="font-size: 14px; color: var(--gray500)">
+              Thêm mã cổ phiếu bên trên để bắt đầu theo dõi
+            </div>
+          </div>
+          <div
+            id="loadingState"
+            style="text-align: center; padding: 80px 0; display: none"
+          >
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 3px solid var(--navy-l);
+                border-top-color: var(--navy);
+                animation: sp 0.7s linear infinite;
+                margin: 0 auto 14px;
+              "
+            ></div>
+            <div id="loadingMsg" style="color: var(--gray500); font-size: 15px">
+              Đang tải…
+            </div>
+          </div>
 
-async function runScan(forceRefresh=false){
-  if(!watchlistData?.symbols?.length){showEmpty();return;}
-  const btn=document.getElementById("scanBtn");
-  btn.disabled=true;btn.style.opacity='.5';
-  setLoading(forceRefresh?"Đang tải dữ liệu mới + quét tín hiệu…":"Đang quét tín hiệu…");
+          <!-- Summary bar -->
+          <div
+            id="summaryBar"
+            style="
+              display: none;
+              gap: 12px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+            "
+          ></div>
 
-  try{
-    const url=`${SERVER}/watchlist/scan${forceRefresh?'?refresh=1':''}`;
-    const r=await fetch(url);
-    const d=await r.json();
-    if(d.error)throw new Error(d.error);
+          <!-- Table -->
+          <div
+            id="tableWrap"
+            style="
+              display: none;
+              background: var(--wht);
+              border: 1px solid var(--gray200);
+              border-radius: 16px;
+              overflow: hidden;
+            "
+          >
+            <table style="width: 100%; border-collapse: collapse">
+              <thead>
+                <tr
+                  style="
+                    background: var(--gray50);
+                    border-bottom: 2px solid var(--gray200);
+                  "
+                >
+                  <th
+                    style="
+                      padding: 14px 20px;
+                      text-align: left;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    MÃ
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: right;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    GIÁ
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: right;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    THAY ĐỔI
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: center;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    RSI
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: center;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    XU HƯỚNG
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: left;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    TÍN HIỆU
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 16px;
+                      text-align: center;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  >
+                    KHUYẾN NGHỊ
+                  </th>
+                  <th
+                    style="
+                      padding: 14px 20px;
+                      text-align: center;
+                      font-size: 12px;
+                      font-weight: 700;
+                      color: var(--gray500);
+                      letter-spacing: 0.5px;
+                    "
+                  ></th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
 
-    // Merge vào watchlistData
-    watchlistData={...watchlistData,lastScan:d.scanTime,alerts:d.alerts,symbols:watchlistData.symbols};
-    updateLastScan(d.scanTime);
-    renderTable(d.symbols||[]);
-  }catch(e){
-    alert("Lỗi quét: "+e.message);
-    document.getElementById("loadingState").style.display="none";
-    document.getElementById("tableWrap").style.display="block";
-  }finally{
-    btn.disabled=false;btn.style.opacity='1';
-  }
-}
+          <!-- No-scan state: show symbols only -->
+          <div
+            id="symbolsGrid"
+            style="
+              display: none;
+              grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+              gap: 10px;
+            "
+          ></div>
+        </main>
 
-function renderTable(rows){
-  document.getElementById("loadingState").style.display="none";
-  document.getElementById("emptyState").style.display="none";
-  document.getElementById("symbolsGrid").style.display="none";
+        <script>
+          function toggleTheme() {
+            document.documentElement.classList.toggle("light");
+            localStorage.setItem(
+              "wl-theme",
+              document.documentElement.classList.contains("light")
+                ? "light"
+                : "dark"
+            );
+          }
+          if (localStorage.getItem("wl-theme") === "light")
+            document.documentElement.classList.add("light");
 
-  // Summary
-  const buyC=rows.filter(r=>r.buySignals>0).length;
-  const sellC=rows.filter(r=>r.sellSignals>0).length;
-  const totalSig=rows.reduce((s,r)=>(s+(r.signals?.length||0)),0);
-  const sb=document.getElementById("summaryBar");
-  sb.style.display="flex";
-  sb.innerHTML=`
+          const SERVER = `http://${location.hostname}:3000`;
+          const fp = (v) => {
+            if (v == null) return "—";
+            return parseFloat(v).toLocaleString("vi-VN", {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 2,
+            });
+          };
+
+          let watchlistData = null;
+
+          // ── Load initial state ────────────────────────────────────────────────────────
+          async function init() {
+            setLoading("Đang tải watchlist…");
+            try {
+              const r = await fetch(`${SERVER}/watchlist`);
+              const d = await r.json();
+              watchlistData = d;
+              if (!d.symbols?.length) {
+                showEmpty();
+                return;
+              }
+              // Có data scan cũ → hiển thị luôn
+              if (d.symbols.length && d.lastScan && d.alerts) {
+                renderTable(buildRows(d));
+              } else {
+                showSymbolsGrid(d.symbols);
+              }
+              updateLastScan(d.lastScan);
+            } catch (e) {
+              setLoading("Lỗi kết nối server");
+              console.error(e);
+            }
+          }
+
+          function buildRows(d) {
+            // Merge symbols list với alerts data
+            const alertMap = {};
+            (d.alerts || []).forEach((a) => {
+              alertMap[a.symbol] = a;
+            });
+            return (d.symbols || []).map((sym) => {
+              const a = alertMap[sym];
+              return {
+                symbol: sym,
+                price: a?.price,
+                date: a?.date,
+                signals: a?.signals || [],
+                rsi: null,
+                trend: null,
+                recommendation: null,
+                recColor: null,
+                change: null,
+                error: null,
+              };
+            });
+          }
+
+          async function runScan(forceRefresh = false) {
+            if (!watchlistData?.symbols?.length) {
+              showEmpty();
+              return;
+            }
+            const btn = document.getElementById("scanBtn");
+            btn.disabled = true;
+            btn.style.opacity = ".5";
+            setLoading(
+              forceRefresh
+                ? "Đang tải dữ liệu mới + quét tín hiệu…"
+                : "Đang quét tín hiệu…"
+            );
+
+            try {
+              const url = `${SERVER}/watchlist/scan${
+                forceRefresh ? "?refresh=1" : ""
+              }`;
+              const r = await fetch(url);
+              const d = await r.json();
+              if (d.error) throw new Error(d.error);
+
+              // Merge vào watchlistData
+              watchlistData = {
+                ...watchlistData,
+                lastScan: d.scanTime,
+                alerts: d.alerts,
+                symbols: watchlistData.symbols,
+              };
+              updateLastScan(d.scanTime);
+              updateLastScan(d.scanTime);
+              renderTable(d.symbols || []);
+            } catch (e) {
+              alert("Lỗi quét: " + e.message);
+              document.getElementById("loadingState").style.display = "none";
+              document.getElementById("tableWrap").style.display = "block";
+            } finally {
+              btn.disabled = false;
+              btn.style.opacity = "1";
+            }
+          }
+
+          function renderTable(rows) {
+            document.getElementById("loadingState").style.display = "none";
+            document.getElementById("emptyState").style.display = "none";
+            document.getElementById("symbolsGrid").style.display = "none";
+
+            // Summary
+            const buyC = rows.filter((r) => r.buySignals > 0).length;
+            const sellC = rows.filter((r) => r.sellSignals > 0).length;
+            const totalSig = rows.reduce(
+              (s, r) => s + (r.signals?.length || 0),
+              0
+            );
+            const sb = document.getElementById("summaryBar");
+            sb.style.display = "flex";
+            sb.innerHTML = `
     <div style="padding:10px 18px;border-radius:10px;background:var(--wht);border:1px solid var(--gray200);font-size:13px">
       <span style="color:var(--gray500)">Tổng mã</span>
       <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--gray900);margin-left:8px">${rows.length}</span>
@@ -200,50 +1261,128 @@ function renderTable(rows){
       <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--am);margin-left:8px">${totalSig}</span>
     </div>`;
 
-  // Table
-  const tbody=document.getElementById("tableBody");
-  document.getElementById("tableWrap").style.display="block";
-  document.getElementById("countBadge").style.display="inline";
-  document.getElementById("countBadge").textContent=`${rows.length} mã`;
+            // Table
+            const tbody = document.getElementById("tableBody");
+            document.getElementById("tableWrap").style.display = "block";
+            document.getElementById("countBadge").style.display = "inline";
+            document.getElementById(
+              "countBadge"
+            ).textContent = `${rows.length} mã`;
 
-  tbody.innerHTML=rows.map((r,i)=>{
-    const changeStr=parseChange(r.change);
-    const changeColor=changeStr.dir>0?"var(--up)":changeStr.dir<0?"var(--dn)":"var(--gray500)";
-    const changeText=changeStr.val!=null?`${changeStr.dir>0?"+":""}${changeStr.pct?.toFixed(2)}%`:"—";
+            tbody.innerHTML = rows
+              .map((r, i) => {
+                const changeStr = parseChange(r.change);
+                const changeColor =
+                  changeStr.dir > 0
+                    ? "var(--up)"
+                    : changeStr.dir < 0
+                    ? "var(--dn)"
+                    : "var(--gray500)";
+                const changeText =
+                  changeStr.val != null
+                    ? `${changeStr.dir > 0 ? "+" : ""}${changeStr.pct?.toFixed(
+                        2
+                      )}%`
+                    : "—";
 
-    const rsiColor=r.rsi>70?"var(--dn)":r.rsi<30?"var(--up)":"var(--gray700)";
-    const rsiText=r.rsi!=null?r.rsi.toFixed(1):"—";
+                const rsiColor =
+                  r.rsi > 70
+                    ? "var(--dn)"
+                    : r.rsi < 30
+                    ? "var(--up)"
+                    : "var(--gray700)";
+                const rsiText = r.rsi != null ? r.rsi.toFixed(1) : "—";
 
-    const trendMap={"STRONG_UP":"⚡ 3/3 Tăng","MODERATE_UP":"↑ Tăng vừa","STRONG_DOWN":"⚡ 3/3 Giảm","MODERATE_DOWN":"↓ Giảm vừa","MIXED":"↔ Hỗn hợp"};
-    const trendColor={"STRONG_UP":"var(--up)","MODERATE_UP":"var(--up)","STRONG_DOWN":"var(--dn)","MODERATE_DOWN":"var(--dn)","MIXED":"var(--am)"};
-    const trendText=r.trend?trendMap[r.trend]||r.trend:"—";
-    const trendC=r.trend?trendColor[r.trend]||"var(--gray500)":"var(--gray400)";
+                const trendMap = {
+                  STRONG_UP: "⚡ 3/3 Tăng",
+                  MODERATE_UP: "↑ Tăng vừa",
+                  STRONG_DOWN: "⚡ 3/3 Giảm",
+                  MODERATE_DOWN: "↓ Giảm vừa",
+                  MIXED: "↔ Hỗn hợp",
+                };
+                const trendColor = {
+                  STRONG_UP: "var(--up)",
+                  MODERATE_UP: "var(--up)",
+                  STRONG_DOWN: "var(--dn)",
+                  MODERATE_DOWN: "var(--dn)",
+                  MIXED: "var(--am)",
+                };
+                const trendText = r.trend ? trendMap[r.trend] || r.trend : "—";
+                const trendC = r.trend
+                  ? trendColor[r.trend] || "var(--gray500)"
+                  : "var(--gray400)";
 
-    // Top 3 signals
-    const sigs=(r.signals||[]).slice(0,3).map(s=>{
-      const bg=s.level==="buy"?"var(--up-bg)":s.level==="sell"?"var(--dn-bg)":"var(--am-bg)";
-      const c=s.level==="buy"?"var(--up)":s.level==="sell"?"var(--dn)":"var(--am)";
-      const bd=s.level==="buy"?"var(--up-bd)":s.level==="sell"?"var(--dn-bd)":"var(--am-bd)";
-      return`<span class="sig-chip" style="background:${bg};color:${c};border:1px solid ${bd}">${s.title}</span>`;
-    }).join('');
-    const extraSigs=(r.signals?.length||0)>3?`<span class="sig-chip" style="background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)">+${r.signals.length-3}</span>`:'';
+                // Top 3 signals
+                const sigs = (r.signals || [])
+                  .slice(0, 3)
+                  .map((s) => {
+                    const bg =
+                      s.level === "buy"
+                        ? "var(--up-bg)"
+                        : s.level === "sell"
+                        ? "var(--dn-bg)"
+                        : "var(--am-bg)";
+                    const c =
+                      s.level === "buy"
+                        ? "var(--up)"
+                        : s.level === "sell"
+                        ? "var(--dn)"
+                        : "var(--am)";
+                    const bd =
+                      s.level === "buy"
+                        ? "var(--up-bd)"
+                        : s.level === "sell"
+                        ? "var(--dn-bd)"
+                        : "var(--am-bd)";
+                    return `<span class="sig-chip" style="background:${bg};color:${c};border:1px solid ${bd}">${s.title}</span>`;
+                  })
+                  .join("");
+                const extraSigs =
+                  (r.signals?.length || 0) > 3
+                    ? `<span class="sig-chip" style="background:var(--gray100);color:var(--gray500);border:1px solid var(--gray200)">+${
+                        r.signals.length - 3
+                      }</span>`
+                    : "";
 
-    const recClass=r.recommendation==="MUA"?"b-buy":r.recommendation==="BÁN"?"b-sell":r.recommendation?.includes("THEO")?"b-watch":"b-hold";
+                const recClass =
+                  r.recommendation === "MUA"
+                    ? "b-buy"
+                    : r.recommendation === "BÁN"
+                    ? "b-sell"
+                    : r.recommendation?.includes("THEO")
+                    ? "b-watch"
+                    : "b-hold";
 
-    return`<tr class="row-an" style="border-bottom:1px solid var(--gray100);animation-delay:${i*0.03}s;cursor:pointer"
+                return `<tr class="row-an" style="border-bottom:1px solid var(--gray100);animation-delay:${
+                  i * 0.03
+                }s;cursor:pointer"
         onclick="openDetail('${r.symbol}')"
         onmouseenter="this.style.background='var(--gray50)'" onmouseleave="this.style.background=''">
       <td style="padding:14px 20px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${r.symbol}</div>
-        ${r.error?`<div style="font-size:11px;color:var(--dn)">${r.error}</div>`:`<div style="font-size:11px;color:var(--gray400)">${r.date||''}</div>`}
+        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${
+          r.symbol
+        }</div>
+        ${
+          r.error
+            ? `<div style="font-size:11px;color:var(--dn)">${r.error}</div>`
+            : `<div style="font-size:11px;color:var(--gray400)">${
+                r.date || ""
+              }</div>`
+        }
       </td>
-      <td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px">${fp(r.price)}</td>
+      <td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px">${fp(
+        r.price
+      )}</td>
       <td style="padding:14px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${changeColor}">${changeText}</td>
       <td style="padding:14px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:${rsiColor}">${rsiText}</td>
       <td style="padding:14px 16px;text-align:center;font-size:13px;font-weight:600;color:${trendC}">${trendText}</td>
       <td style="padding:10px 16px;max-width:280px">${sigs}${extraSigs}</td>
       <td style="padding:14px 16px;text-align:center">
-        ${r.recommendation?`<span class="badge ${recClass}">${r.recommendation}</span>`:'<span style="color:var(--gray400);font-size:13px">—</span>'}
+        ${
+          r.recommendation
+            ? `<span class="badge ${recClass}">${r.recommendation}</span>`
+            : '<span style="color:var(--gray400);font-size:13px">—</span>'
+        }
       </td>
       <td style="padding:14px 20px;text-align:center" onclick="event.stopPropagation()">
         <button onclick="removeSymbol('${r.symbol}')"
@@ -254,93 +1393,197 @@ function renderTable(rows){
         </button>
       </td>
     </tr>`;
-  }).join('');
-}
+              })
+              .join("");
+          }
 
-function showSymbolsGrid(symbols){
-  document.getElementById("loadingState").style.display="none";
-  document.getElementById("tableWrap").style.display="none";
-  document.getElementById("summaryBar").style.display="none";
-  document.getElementById("countBadge").style.display="inline";
-  document.getElementById("countBadge").textContent=`${symbols.length} mã`;
-  const g=document.getElementById("symbolsGrid");
-  g.style.display="grid";
-  g.innerHTML=symbols.map(s=>`
+          function showSymbolsGrid(symbols) {
+            document.getElementById("loadingState").style.display = "none";
+            document.getElementById("tableWrap").style.display = "none";
+            document.getElementById("summaryBar").style.display = "none";
+            document.getElementById("countBadge").style.display = "inline";
+            document.getElementById(
+              "countBadge"
+            ).textContent = `${symbols.length} mã`;
+            const g = document.getElementById("symbolsGrid");
+            g.style.display = "grid";
+            g.innerHTML = symbols
+              .map(
+                (s) => `
     <div onclick="openDetail('${s}')"
       style="padding:16px;background:var(--wht);border:1px solid var(--gray200);border-radius:12px;cursor:pointer;text-align:center;transition:all .15s"
       onmouseenter="this.style.borderColor='var(--navy)';this.style.background='var(--navy-l)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.background='var(--wht)'">
       <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${s}</div>
-    </div>`).join('');
-}
+    </div>`
+              )
+              .join("");
+          }
 
-function showEmpty(){
-  document.getElementById("loadingState").style.display="none";
-  document.getElementById("tableWrap").style.display="none";
-  document.getElementById("symbolsGrid").style.display="none";
-  document.getElementById("summaryBar").style.display="none";
-  document.getElementById("emptyState").style.display="block";
-  document.getElementById("countBadge").style.display="none";
-}
+          function showEmpty() {
+            document.getElementById("loadingState").style.display = "none";
+            document.getElementById("tableWrap").style.display = "none";
+            document.getElementById("symbolsGrid").style.display = "none";
+            document.getElementById("summaryBar").style.display = "none";
+            document.getElementById("emptyState").style.display = "block";
+            document.getElementById("countBadge").style.display = "none";
+          }
 
-function setLoading(msg){
-  document.getElementById("tableWrap").style.display="none";
-  document.getElementById("symbolsGrid").style.display="none";
-  document.getElementById("emptyState").style.display="none";
-  document.getElementById("loadingState").style.display="block";
-  document.getElementById("loadingMsg").textContent=msg;
-}
+          function setLoading(msg) {
+            document.getElementById("tableWrap").style.display = "none";
+            document.getElementById("symbolsGrid").style.display = "none";
+            document.getElementById("emptyState").style.display = "none";
+            document.getElementById("loadingState").style.display = "block";
+            document.getElementById("loadingMsg").textContent = msg;
+          }
 
-function updateLastScan(t){
-  if(!t)return;
-  const el=document.getElementById("lastScanTime");
-  const d=new Date(t);
-  el.textContent=`Quét lúc ${d.toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}`;
-}
+          function updateLastScan(t) {
+            if (!t) return;
+            const d = new Date(t);
+            const txt = `Quét lúc ${d.toLocaleTimeString("vi-VN", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
+            const el = document.getElementById("lastScanTime");
+            if (el) el.textContent = txt;
+            const el2 = document.getElementById("lastScanTimeHdr");
+            if (el2) el2.textContent = txt;
+          }
 
-function parseChange(r){
-  if(!r)return{val:null,pct:null,dir:0};
-  const m=String(r).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
-  if(!m)return{val:null,pct:null,dir:0};
-  const v=parseFloat(m[1].replace(",",".")),p=parseFloat(m[2].replace(",","."));
-  return{val:v,pct:p,dir:v>0?1:v<0?-1:0};
-}
+          function parseChange(r) {
+            if (!r) return { val: null, pct: null, dir: 0 };
+            const m = String(r).match(
+              /^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/
+            );
+            if (!m) return { val: null, pct: null, dir: 0 };
+            const v = parseFloat(m[1].replace(",", ".")),
+              p = parseFloat(m[2].replace(",", "."));
+            return { val: v, pct: p, dir: v > 0 ? 1 : v < 0 ? -1 : 0 };
+          }
 
-function openDetail(sym){
-  window.open(`/detail.html?s=${sym}`,"_blank");
-}
+          function openDetail(sym) {
+            window.open(`/detail.html?s=${sym}`, "_blank");
+          }
 
-async function addSymbol(sym){
-  sym=(sym||"").toUpperCase().trim();
-  if(!sym||!/^[A-Z0-9]{1,10}$/.test(sym)){alert("Mã không hợp lệ");return;}
-  try{
-    const r=await fetch(`${SERVER}/watchlist/add`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:sym})});
-    const d=await r.json();
-    if(!d.ok)throw new Error(d.error||"Lỗi");
-    document.getElementById("addInput").value="";
-    watchlistData={...watchlistData,symbols:d.symbols};
-    showSymbolsGrid(d.symbols);
-    document.getElementById("countBadge").style.display="inline";
-    document.getElementById("countBadge").textContent=`${d.symbols.length} mã`;
-  }catch(e){alert("Lỗi: "+e.message)}
-}
+          async function addSymbol(sym) {
+            sym = (sym || "").toUpperCase().trim();
+            if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym)) {
+              alert("Mã không hợp lệ");
+              return;
+            }
+            try {
+              const r = await fetch(`${SERVER}/watchlist/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ symbol: sym }),
+              });
+              const d = await r.json();
+              if (!d.ok) throw new Error(d.error || "Lỗi");
+              document.getElementById("addInput").value = "";
+              watchlistData = { ...watchlistData, symbols: d.symbols };
+              showSymbolsGrid(d.symbols);
+              document.getElementById("countBadge").style.display = "inline";
+              document.getElementById(
+                "countBadge"
+              ).textContent = `${d.symbols.length} mã`;
+            } catch (e) {
+              alert("Lỗi: " + e.message);
+            }
+          }
 
-async function removeSymbol(sym){
-  if(!confirm(`Xóa ${sym} khỏi watchlist?`))return;
-  try{
-    const r=await fetch(`${SERVER}/watchlist/remove`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({symbol:sym})});
-    const d=await r.json();
-    if(!d.ok)throw new Error(d.error||"Lỗi");
-    watchlistData={...watchlistData,symbols:d.symbols};
-    if(!d.symbols.length){showEmpty();return;}
-    // Re-render table với row đó bị xóa
-    const tbody=document.getElementById("tableBody");
-    const rows=tbody.querySelectorAll("tr");
-    rows.forEach(row=>{if(row.textContent.includes(sym))row.remove();});
-    document.getElementById("countBadge").textContent=`${d.symbols.length} mã`;
-  }catch(e){alert("Lỗi: "+e.message)}
-}
+          async function removeSymbol(sym) {
+            if (!confirm(`Xóa ${sym} khỏi watchlist?`)) return;
+            try {
+              const r = await fetch(`${SERVER}/watchlist/remove`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ symbol: sym }),
+              });
+              const d = await r.json();
+              if (!d.ok) throw new Error(d.error || "Lỗi");
+              watchlistData = { ...watchlistData, symbols: d.symbols };
+              if (!d.symbols.length) {
+                showEmpty();
+                return;
+              }
+              // Re-render table với row đó bị xóa
+              const tbody = document.getElementById("tableBody");
+              const rows = tbody.querySelectorAll("tr");
+              rows.forEach((row) => {
+                if (row.textContent.includes(sym)) row.remove();
+              });
+              document.getElementById(
+                "countBadge"
+              ).textContent = `${d.symbols.length} mã`;
+            } catch (e) {
+              alert("Lỗi: " + e.message);
+            }
+          }
 
-window.addEventListener("load",init);
-</script>
-</body>
+          window.addEventListener("load", init);
+        </script>
+      </div>
+      <!-- win-frame -->
+    </div>
+    <!-- win-desktop -->
+
+    <!-- Taskbar -->
+    <div class="win-taskbar">
+      <a class="win-tb-back" href="/">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+        >
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Desktop
+      </a>
+      <div class="win-tb-center">
+        <div class="win-tb-icon">
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            />
+          </svg>
+        </div>
+        <span class="win-tb-name">Watchlist</span>
+      </div>
+      <div class="win-tb-right" id="tbTime"></div>
+    </div>
+    <script>
+      (function () {
+        function tick() {
+          const n = new Date(),
+            hh = String(n.getHours()).padStart(2, "0"),
+            mm = String(n.getMinutes()).padStart(2, "0");
+          const el = document.getElementById("tbTime");
+          if (el)
+            el.innerHTML =
+              hh +
+              ":" +
+              mm +
+              "<br>" +
+              n.getDate() +
+              "/" +
+              (n.getMonth() + 1) +
+              "/" +
+              n.getFullYear();
+        }
+        tick();
+        setInterval(tick, 15000);
+      })();
+    </script>
+  </body>
 </html>

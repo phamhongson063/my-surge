@@ -6,29 +6,8 @@
     "ADG",
     "NVL"
   ],
-  "lastScan": "2026-03-15T11:41:34.233Z",
+  "lastScan": "2026-03-16T18:17:12.161Z",
   "alerts": [
-    {
-      "symbol": "NVL",
-      "signals": [
-        {
-          "type": "MACD_BULL_CROSS",
-          "level": "buy",
-          "title": "MACD cắt lên Signal",
-          "desc": "MACD (-0.307) vượt Signal (-0.367)",
-          "value": 0.06
-        },
-        {
-          "type": "VOLUME_SURGE",
-          "level": "watch",
-          "title": "Khối lượng đột biến ×2.8",
-          "desc": "KLGD 2.8× trung bình 20 phiên",
-          "value": 2.83
-        }
-      ],
-      "price": 12.65,
-      "date": "13/03/2026"
-    },
     {
       "symbol": "GEG",
       "signals": [
@@ -36,8 +15,8 @@
           "type": "MACD_BULL_CROSS",
           "level": "buy",
           "title": "MACD cắt lên Signal",
-          "desc": "MACD (0.309) vượt Signal (0.162)",
-          "value": 0.146
+          "desc": "MACD (0.308) vượt Signal (0.192)",
+          "value": 0.116
         },
         {
           "type": "VOLUME_SURGE",
@@ -45,10 +24,17 @@
           "title": "Khối lượng đột biến ×2.3",
           "desc": "KLGD 2.3× trung bình 20 phiên",
           "value": 2.27
+        },
+        {
+          "type": "NEAR_SUPPORT",
+          "level": "buy",
+          "title": "Giá gần hỗ trợ 15.6 (+1.3%)",
+          "desc": "Vùng hỗ trợ 398 lần test — cơ hội mua tốt",
+          "value": 1.282051282051289
         }
       ],
-      "price": 16.75,
-      "date": "13/03/2026"
+      "price": 15.8,
+      "date": "16/03/2026"
     },
     {
       "symbol": "DGC",
@@ -57,12 +43,12 @@
           "type": "MACD_BULL_CROSS",
           "level": "buy",
           "title": "MACD cắt lên Signal",
-          "desc": "MACD (1.973) vượt Signal (1.252)",
-          "value": 0.722
+          "desc": "MACD (1.746) vượt Signal (1.351)",
+          "value": 0.396
         }
       ],
-      "price": 77.4,
-      "date": "13/03/2026"
+      "price": 73.9,
+      "date": "16/03/2026"
     },
     {
       "symbol": "VSI",
@@ -87,6 +73,13 @@
           "title": "Khối lượng đột biến ×3.4",
           "desc": "KLGD 3.4× trung bình 20 phiên",
           "value": 3.38
+        },
+        {
+          "type": "TREND_STRONG_UP",
+          "level": "buy",
+          "title": "3/3 khung đồng thuận TĂNG",
+          "desc": "3/3 khung thời gian đồng thuận TĂNG — xác suất cao nhất",
+          "value": 3
         }
       ],
       "price": 28.1,
@@ -99,18 +92,39 @@
           "type": "MACD_BULL_CROSS",
           "level": "buy",
           "title": "MACD cắt lên Signal",
-          "desc": "MACD (0.103) vượt Signal (0.055)",
-          "value": 0.047
+          "desc": "MACD (0.097) vượt Signal (0.064)",
+          "value": 0.033
         },
         {
-          "type": "TREND_STRONG_UP",
+          "type": "NEAR_SUPPORT",
           "level": "buy",
-          "title": "3/3 khung đồng thuận TĂNG",
-          "desc": "⚡ 3/3 khung đồng thuận TĂNG — xác suất tăng cao nhất",
-          "value": 3
+          "title": "Giá gần hỗ trợ 9.23 (+0.0%)",
+          "desc": "Vùng hỗ trợ 395 lần test — cơ hội mua tốt",
+          "value": 0
         }
       ],
-      "price": 9.45,
+      "price": 9.23,
+      "date": "16/03/2026"
+    },
+    {
+      "symbol": "NVL",
+      "signals": [
+        {
+          "type": "MACD_BULL_CROSS",
+          "level": "buy",
+          "title": "MACD cắt lên Signal",
+          "desc": "MACD (-0.307) vượt Signal (-0.367)",
+          "value": 0.06
+        },
+        {
+          "type": "VOLUME_SURGE",
+          "level": "watch",
+          "title": "Khối lượng đột biến ×2.8",
+          "desc": "KLGD 2.8× trung bình 20 phiên",
+          "value": 2.83
+        }
+      ],
+      "price": 12.65,
       "date": "13/03/2026"
     }
   ]

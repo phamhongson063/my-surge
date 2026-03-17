@@ -6,7 +6,10 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(curl -s http://localhost:3000/analyze-detail?symbol=VNM)",
       "Bash(node -e \":*)",
-      "Bash(kill 79993)"
+      "Bash(kill 79993)",
+      "Bash(grep -l \"portfolio\\\\|position\\\\|order\" /Users/son.ph/my-surge/*.html)",
+      "Bash(source ~/.zshrc)",
+      "Bash(wc -l /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.mjs /Users/son.ph/my-surge/*.css)"
     ]
   }
 }
