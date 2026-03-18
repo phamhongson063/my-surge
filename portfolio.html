@@ -414,6 +414,85 @@
     .hist-row{display:grid;grid-template-columns:80px 1fr 80px 80px 80px 100px;padding:11px 16px;border-bottom:1px solid var(--border);align-items:center;font-size:12px}
     .hist-row:last-child{border-bottom:none}
     .hist-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+
+    /* ── Responsive: Tablet (≤ 900px) ── */
+    @media(max-width:900px){
+      .win-desktop{padding:16px 12px 60px}
+      .win-title-text{margin-right:20px;font-size:12px}
+      .win-frame{max-width:100%}
+      .hist-header,.hist-row{grid-template-columns:70px 1fr 75px 75px 90px}
+      .hist-header span:nth-child(6),.hist-row span:nth-child(6){display:none}
+      .hero-value{font-size:28px}
+      .hero-pnl-val{font-size:24px}
+    }
+
+    /* ── Responsive: Mobile (≤ 640px) ── */
+    @media(max-width:640px){
+      .win-desktop{padding:0 0 44px}
+      .win-frame{border-radius:0;border-left:none;border-right:none}
+      .win-titlebar{padding:8px 10px;gap:6px}
+      .win-title-text{display:none}
+      .win-hdr-actions{gap:4px}
+      .win-hdr-actions .btn-ghost{font-size:0;gap:0;padding:7px 8px}
+      .win-hdr-actions .btn-ghost svg{flex-shrink:0}
+      .win-hdr-actions .btn-primary{padding:6px 11px;font-size:11px}
+      main{padding:10px 10px 24px !important}
+
+      /* Hero — compact, no donut */
+      .hero{padding:14px;margin-bottom:12px}
+      .hero-body{flex-direction:row;margin-bottom:12px;gap:0}
+      .hero-donut{display:none}
+      .hero-info{width:100%}
+      .hero-top{flex-direction:row;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+      .hero-pnl{text-align:right}
+      .hero-value{font-size:22px}
+      .hero-label{font-size:10px;margin-bottom:2px}
+      .hero-pnl-val{font-size:18px}
+      .hero-pnl-pct{font-size:12px}
+      /* Legend: 2-col grid */
+      .hero-legend{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:8px}
+      .hero-legend-item{padding:3px 4px}
+      .hero-legend-val{display:none}
+      /* Stats: compact */
+      .hero-stats{padding-top:12px;gap:6px}
+      .hero-stat-val{font-size:13px}
+      .hero-stat-label{font-size:9px}
+
+      /* Hide standalone chart card — already visible in hero legend */
+      .chart-card{display:none}
+
+      /* Table — ẩn badge col */
+      .tbl-header,.tbl-row{grid-template-columns:1fr 86px 108px 32px;padding:9px 10px}
+      .tbl-header span:nth-child(1),.tbl-row>span:nth-child(1){display:none}
+      .tbl-header span:nth-child(3),.tbl-row>span:nth-child(3),
+      .tbl-header span:nth-child(4),.tbl-row>span:nth-child(4){display:none}
+      .sym-link{font-size:13px}
+      .row-expand{padding:0 10px 10px 12px}
+      .sub-header,.sub-row{grid-template-columns:16px 1fr 62px 62px 32px}
+
+      /* History */
+      .hist-header,.hist-row{grid-template-columns:60px 1fr 68px 76px;padding:8px 10px}
+      .hist-header span:nth-child(4),.hist-row span:nth-child(4),
+      .hist-header span:nth-child(5),.hist-row span:nth-child(5),
+      .hist-header span:nth-child(6),.hist-row span:nth-child(6){display:none}
+      .hist-summary{grid-template-columns:1fr 1fr;gap:8px}
+
+      /* Taskbar */
+      .win-tb-right{display:none}
+
+      /* Sell modal */
+      .sell-modal-fields{grid-template-columns:1fr}
+      .sell-modal-fields .s-fg:last-child{grid-column:auto}
+    }
+
+    /* ── Responsive: Small Mobile (≤ 380px) ── */
+    @media(max-width:380px){
+      .win-hdr-actions .btn-primary{font-size:0;gap:0;padding:7px 8px}
+      .win-hdr-actions .btn-primary svg{flex-shrink:0}
+      .hero-value{font-size:20px}
+      .hero-pnl-val{font-size:16px}
+      .tbl-header,.tbl-row{grid-template-columns:1fr 80px 100px 28px;padding:8px 8px}
+    }
   </style>
 </head>
 <body>
@@ -774,7 +853,7 @@ function toggleAddForm(){
   }
 }
 
-const CAFEF_PRICE='https://cafef.vn/du-lieu/Ajax/PageNew/PriceRealTimeHeader.ashx?Symbol=';
+const CAFEF_PRICE=SERVER+'/price?symbol=';
 
 async function fetchRealtimePrice(sym){
   try{

@@ -224,6 +224,20 @@ const server = http.createServer(async (req, res) => {
     return handleDownload(req, res, parsed.query);
   }
 
+  // ─── Proxy giá realtime từ CafeF (tránh CORS trên mobile) ──────────────────
+  if (pathname === "/price" && req.method === "GET") {
+    const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!sym) return sendJSON(res, 400, { error: "Thiếu symbol" });
+    const priceUrl = `https://cafef.vn/du-lieu/Ajax/PageNew/PriceRealTimeHeader.ashx?Symbol=${sym}`;
+    try {
+      const { buffer } = await fetchFromCafeF(priceUrl, sym);
+      const json = JSON.parse(buffer.toString("utf8"));
+      return sendJSON(res, 200, json);
+    } catch (err) {
+      return sendJSON(res, 502, { error: err.message });
+    }
+  }
+
   // Serve front.html tại /front.html, index.html tại /
   if (pathname === "/" || pathname === "/index.html") {
     const htmlPath = path.join(

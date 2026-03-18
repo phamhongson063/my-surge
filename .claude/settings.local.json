@@ -9,7 +9,8 @@
       "Bash(kill 79993)",
       "Bash(grep -l \"portfolio\\\\|position\\\\|order\" /Users/son.ph/my-surge/*.html)",
       "Bash(source ~/.zshrc)",
-      "Bash(wc -l /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.mjs /Users/son.ph/my-surge/*.css)"
+      "Bash(wc -l /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.mjs /Users/son.ph/my-surge/*.css)",
+      "Bash(curl -s \"http://localhost:54090/price?symbol=PGC\")"
     ]
   }
 }
