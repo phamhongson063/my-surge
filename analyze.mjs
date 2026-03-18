@@ -3281,6 +3281,25 @@ export function savePortfolio(data) {
   }
 }
 
+const HISTORY_FILE = path.join("settings", "history.json");
+
+export function loadHistory() {
+  try {
+    if (fs.existsSync(HISTORY_FILE))
+      return JSON.parse(fs.readFileSync(HISTORY_FILE, "utf8"));
+  } catch {}
+  return [];
+}
+
+export function saveHistory(data) {
+  try {
+    fs.mkdirSync("settings", { recursive: true });
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    console.warn("[History] Save error:", e.message);
+  }
+}
+
 // ── Phân tích tín hiệu từ result của analyzeDetail ────────────────────────────
 function extractSignals(result) {
   const signals = [];

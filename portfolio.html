@@ -152,6 +152,30 @@
     .fg input:focus{border-color:var(--navy)}
     .fg input::placeholder{color:var(--t3)}
 
+    /* Sell Modal */
+    .sell-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+    .sell-modal-overlay.open{opacity:1;pointer-events:all}
+    .sell-modal{background:var(--card);border-radius:20px;padding:24px 26px;width:400px;max-width:calc(100vw - 32px);border:1px solid var(--border);transform:translateY(24px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 64px rgba(0,0,0,.4)}
+    .sell-modal-overlay.open .sell-modal{transform:translateY(0) scale(1)}
+    .sell-modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+    .sell-modal-title{font-size:16px;font-weight:800;color:var(--dn);letter-spacing:-.3px;display:flex;align-items:center;gap:7px}
+    .sell-modal-sym-label{font-size:12px;color:var(--t3);margin-top:3px;font-weight:500}
+    .sell-modal-close{background:none;border:none;cursor:pointer;color:var(--t3);padding:4px;border-radius:7px;transition:color .15s;line-height:0}
+    .sell-modal-close:hover{color:var(--t1)}
+    .sell-modal-price-bar{background:var(--dn-bg);border:1px solid var(--dn-bd);border-radius:11px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:0}
+    .sell-modal-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .sell-modal-fields .s-fg:last-child{grid-column:1/-1}
+    .s-fg{display:flex;flex-direction:column;gap:4px}
+    .s-fg label{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3)}
+    .s-fg input{padding:9px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;font-family:'IBM Plex Mono',monospace;background:var(--bg2);color:var(--t1);outline:none;transition:border-color .15s;width:100%;box-sizing:border-box}
+    .s-fg input:focus{border-color:var(--dn)}
+    .s-fg input::placeholder{color:var(--t3)}
+    .sell-preview-bar{font-size:11px;color:var(--t3);min-height:16px;margin-bottom:10px}
+    .sell-modal-actions{display:flex;gap:8px;justify-content:flex-end}
+    .sell-confirm-btn{background:var(--dn);color:#fff;display:flex;align-items:center;gap:6px;padding:9px 20px;font-size:13px;font-weight:700;border-radius:10px;border:none;cursor:pointer;transition:opacity .15s}
+    .sell-confirm-btn:hover{opacity:.88}
+    .sell-confirm-btn:disabled{opacity:.5;cursor:default}
+
     /* Edit inline */
     .edit-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;background:var(--navy-bg);border:1px solid var(--navy-bd);border-radius:8px;margin-bottom:6px}
     .edit-bar input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;background:var(--bg2);color:var(--t1);outline:none;width:90px}
@@ -383,6 +407,13 @@
     header { display: none !important; }
     /* Override main padding — handled by win-frame */
     main { max-width: 100% !important; padding: 16px 20px 40px !important; }
+
+    /* History */
+    .hist-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+    .hist-header{display:grid;grid-template-columns:80px 1fr 80px 80px 80px 100px;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3)}
+    .hist-row{display:grid;grid-template-columns:80px 1fr 80px 80px 80px 100px;padding:11px 16px;border-bottom:1px solid var(--border);align-items:center;font-size:12px}
+    .hist-row:last-child{border-bottom:none}
+    .hist-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
   </style>
 </head>
 <body>
@@ -408,6 +439,10 @@
     <button class="btn btn-primary" onclick="toggleAddForm()">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Thêm lệnh
+    </button>
+    <button class="btn btn-ghost" onclick="toggleHistoryPanel()" id="historyBtn" title="Lịch sử giao dịch">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Lịch sử
     </button>
     <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -459,7 +494,62 @@
       </div>
     </div>
     <div id="heroSection"></div>
+    <!-- Sell Modal -->
+    <div id="sellModal" class="sell-modal-overlay" onclick="if(event.target===this)toggleSellForm()">
+      <div class="sell-modal">
+        <div class="sell-modal-header">
+          <div>
+            <div class="sell-modal-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="12" x2="3" y2="12"/></svg>
+              Bán <span id="smSymName"></span>
+            </div>
+            <div class="sell-modal-sym-label" id="smSymLabel"></div>
+          </div>
+          <button class="sell-modal-close" onclick="toggleSellForm()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="sell-modal-price-bar" id="smPriceBar"></div>
+        <input type="hidden" id="sSym"/>
+        <div class="sell-modal-fields">
+          <div class="s-fg">
+            <label>KL bán (CP)</label>
+            <input type="number" id="sQty" placeholder="100" min="100" step="100" oninput="clearSellError()"/>
+          </div>
+          <div class="s-fg">
+            <label>Giá bán (nghìn đ)</label>
+            <input type="number" id="sPrice" placeholder="16.5" step="0.05"/>
+          </div>
+          <div class="s-fg">
+            <label>Ngày bán</label>
+            <input type="date" id="sDate"/>
+          </div>
+        </div>
+        <div class="sell-preview-bar" id="sellPreview"></div>
+        <div class="sell-modal-actions">
+          <button class="btn btn-ghost" onclick="toggleSellForm()">Huỷ</button>
+          <button class="sell-confirm-btn" onclick="submitSell()" id="sellBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Xác nhận bán
+          </button>
+        </div>
+      </div>
+    </div>
     <div id="tableSection"></div>
+  </div>
+
+  <!-- History Panel (hidden by default) -->
+  <div id="historyPanel" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3)">Lịch sử giao dịch đã bán</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="historyFilter" onchange="renderHistory()" style="padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--t1);font-size:12px;font-weight:600;outline:none">
+          <option value="">Tất cả mã</option>
+        </select>
+        <button class="btn btn-ghost" onclick="toggleHistoryPanel()" style="padding:5px 12px">Đóng</button>
+      </div>
+    </div>
+    <div id="historyContent"></div>
   </div>
 </main>
 
@@ -472,7 +562,175 @@ function toggleTheme(){
 if(localStorage.getItem('pf-theme')==='light') document.documentElement.classList.add('light');
 
 const SERVER='';
-let portfolio={},prices={},editingId=null,openSyms=new Set();
+let portfolio={},prices={},editingId=null,openSyms=new Set(),historyData=[];
+
+// ── Sell Modal ──────────────────────────────────────────────────────────────
+function toggleSellForm(sym){
+  const m=document.getElementById('sellModal');
+  if(sym){
+    document.getElementById('sSym').value=sym;
+    document.getElementById('sDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('sQty').value='';
+    document.getElementById('sPrice').value='';
+    document.getElementById('sellPreview').textContent='';
+    document.getElementById('smSymName').textContent=sym;
+
+    const ps=portfolio[sym];
+    const cur=prices[sym]?.price;
+    const totalQty=ps?ps.reduce((s,p)=>s+p.qty,0):0;
+    const avgPrice=ps&&totalQty>0?ps.reduce((s,p)=>s+p.qty*p.price,0)/totalQty:0;
+    document.getElementById('smSymLabel').textContent=`${totalQty.toLocaleString('vi-VN')} CP đang nắm · Giá vốn ${fp(avgPrice)}`;
+
+    const bar=document.getElementById('smPriceBar');
+    if(cur){
+      const diff=cur-avgPrice;
+      const pct=avgPrice>0?(diff/avgPrice*100):0;
+      const c=pColor(diff);
+      bar.innerHTML=`<span style="font-size:22px;font-weight:800;color:var(--t1);font-family:'IBM Plex Mono',monospace">${fp(cur)}</span><span style="font-size:12px;color:${c};margin-left:10px;font-weight:700">${pSign(diff)}${pct.toFixed(2)}%</span><span style="font-size:11px;color:var(--t3);margin-left:auto">Giá hiện tại</span>`;
+      document.getElementById('sPrice').value=cur;
+    } else {
+      bar.innerHTML=`<span style="font-size:12px;color:var(--t3)">Chưa có giá thị trường</span>`;
+    }
+
+    m.classList.add('open');
+    setTimeout(()=>document.getElementById('sQty').focus(),50);
+  } else {
+    m.classList.remove('open');
+  }
+}
+
+function showSellError(msg, highlightQty=false){
+  const el=document.getElementById('sellPreview');
+  el.innerHTML=`<span style="color:var(--dn);font-weight:600">⚠ ${msg}</span>`;
+  const qtyInput=document.getElementById('sQty');
+  if(highlightQty){
+    qtyInput.style.borderColor='var(--dn)';
+    qtyInput.style.color='var(--dn)';
+  }
+}
+
+function clearSellError(){
+  document.getElementById('sellPreview').innerHTML='';
+  const qtyInput=document.getElementById('sQty');
+  qtyInput.style.borderColor='';
+  qtyInput.style.color='';
+}
+
+async function submitSell(){
+  const sym=document.getElementById('sSym').value.trim().toUpperCase();
+  const qty=parseInt(document.getElementById('sQty').value);
+  const price=parseFloat(document.getElementById('sPrice').value);
+  const date=document.getElementById('sDate').value;
+  if(!sym||!qty||!price||!date){showSellError('Vui lòng điền đầy đủ thông tin', !qty);return;}
+  const btn=document.getElementById('sellBtn');
+  const btnOrig=btn.innerHTML;
+  btn.disabled=true;btn.innerHTML='Đang bán...';
+  clearSellError();
+  try{
+    const r=await fetch(SERVER+'/portfolio/sell',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol:sym,qty,price,date})});
+    const j=await r.json();
+    if(!r.ok||j.error){showSellError(j.error||'Không bán được', true);btn.disabled=false;btn.innerHTML=btnOrig;return;}
+    toggleSellForm();
+    const pnl=j.entry?.pnl;const pnlPct=j.entry?.pnlPct;
+    const sign=pnl>=0?'+':'';
+    showSellToast(sym,qty,price,pnl,pnlPct);
+    await refreshPortfolio();
+    await loadHistory();
+  }catch(e){showSellError(e.message);}
+  btn.disabled=false;btn.innerHTML=btnOrig;
+}
+
+function showSellToast(sym,qty,price,pnl,pnlPct){
+  let t=document.getElementById('sellToast');
+  if(!t){t=document.createElement('div');t.id='sellToast';
+    t.style.cssText='position:fixed;bottom:60px;right:20px;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;z-index:9999;transition:opacity .3s;pointer-events:none;max-width:280px;line-height:1.5';
+    document.body.appendChild(t);}
+  const sign=pnl>=0?'+':'';
+  t.style.background=pnl>=0?'#2f9e44':'#e03131';
+  t.innerHTML=`Đã bán <b>${qty} ${sym}</b> @ <b>${price}</b><br>Lãi/Lỗ: <b>${sign}${(pnl/1e3).toFixed(2)} tr (${sign}${pnlPct?.toFixed(1)}%)</b>`;
+  t.style.opacity='1';clearTimeout(t._tm);t._tm=setTimeout(()=>{t.style.opacity='0'},4000);
+}
+
+// ── History Panel ───────────────────────────────────────────────────────────
+async function loadHistory(){
+  try{const r=await fetch(SERVER+'/portfolio/history');historyData=await r.json();}catch{historyData=[];}
+}
+
+function toggleHistoryPanel(){
+  const p=document.getElementById('historyPanel');
+  const c=document.getElementById('content');
+  const showing=p.style.display!=='none';
+  if(showing){p.style.display='none';if(c)c.style.display='';}
+  else{
+    p.style.display='block';if(c)c.style.display='none';
+    renderHistory();
+  }
+}
+
+function renderHistory(){
+  const el=document.getElementById('historyContent');
+  const filter=document.getElementById('historyFilter')?.value||'';
+  const data=filter?historyData.filter(h=>h.symbol===filter):historyData;
+
+  // Update filter options
+  const sel=document.getElementById('historyFilter');
+  if(sel){
+    const syms=[...new Set(historyData.map(h=>h.symbol))].sort();
+    sel.innerHTML='<option value="">Tất cả mã</option>'+syms.map(s=>`<option value="${s}"${s===filter?' selected':''}>${s}</option>`).join('');
+  }
+
+  if(!data.length){el.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--t3);font-size:14px">Chưa có giao dịch bán nào${filter?' cho '+filter:''}</div>`;return;}
+
+  // Summary stats
+  const totalPnl=data.reduce((s,h)=>s+h.pnl,0);
+  const totalQty=data.reduce((s,h)=>s+h.qty,0);
+  const wins=data.filter(h=>h.pnl>0).length;
+  const winRate=data.length>0?(wins/data.length*100).toFixed(0):0;
+  const pnlColor=totalPnl>=0?'var(--up)':'var(--dn)';
+  const pnlSign=totalPnl>=0?'+':'';
+
+  let html=`<div class="hist-summary">
+    <div style="padding:14px 18px;border-radius:12px;background:var(--card);border:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.6px;margin-bottom:6px">TỔNG LÃI/LỖ THỰC</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:20px;color:${pnlColor}">${pnlSign}${(totalPnl/1e3).toFixed(2)} tr</div>
+    </div>
+    <div style="padding:14px 18px;border-radius:12px;background:var(--card);border:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.6px;margin-bottom:6px">SỐ LỆNH</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:20px;color:var(--t1)">${data.length}</div>
+    </div>
+    <div style="padding:14px 18px;border-radius:12px;background:var(--card);border:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.6px;margin-bottom:6px">TỶ LỆ THẮNG</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:20px;color:${winRate>=50?'var(--up)':'var(--dn)'}">${winRate}%</div>
+      <div style="font-size:11px;color:var(--t3)">${wins}/${data.length} lệnh</div>
+    </div>
+  </div>`;
+
+  html+=`<div class="hist-card">
+    <div class="hist-header">
+      <span>Ngày bán</span><span>Mã</span><span style="text-align:right">KL</span><span style="text-align:right">Giá vốn</span><span style="text-align:right">Giá bán</span><span style="text-align:right">Lãi / Lỗ</span>
+    </div>`;
+  data.forEach(h=>{
+    const pc=h.pnl>0?'var(--up)':h.pnl<0?'var(--dn)':'var(--t3)';
+    const ps=h.pnl>0?'+':'';
+    const bg=h.pnl>0?'var(--up-bg)':h.pnl<0?'var(--dn-bg)':'transparent';
+    const bd=h.pnl>0?'var(--up-bd)':h.pnl<0?'var(--dn-bd)':'transparent';
+    html+=`<div class="hist-row">
+      <span style="font-family:'IBM Plex Mono',monospace;color:var(--t3)">${h.sellDate}</span>
+      <span><a href="/detail.html?s=${h.symbol}" style="font-family:'Inter',sans-serif;font-weight:800;font-size:13px;color:var(--navy);text-decoration:none">${h.symbol}</a></span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;color:var(--t2)">${h.qty.toLocaleString('vi-VN')}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;color:var(--t3)">${h.buyPrice?.toFixed(2)??'—'}</span>
+      <span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--t1)">${h.sellPrice}</span>
+      <span style="text-align:right">
+        <span style="display:inline-flex;flex-direction:column;align-items:flex-end;padding:3px 8px;border-radius:6px;background:${bg};border:1px solid ${bd}">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${pc}">${ps}${(h.pnl/1e3).toFixed(2)} tr</span>
+          <span style="font-size:10px;color:${pc}">${ps}${h.pnlPct?.toFixed(1)}%</span>
+        </span>
+      </span>
+    </div>`;
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+}
 
 function showTooltip(e, id){
   const tt=document.getElementById(id);
@@ -552,6 +810,7 @@ async function init(){
   document.getElementById('content').style.display='none';
   document.getElementById('empty').style.display='none';
   try{const r=await fetch(SERVER+'/portfolio');portfolio=await r.json();}catch(e){portfolio={};}
+  loadHistory();
   const syms=Object.keys(portfolio).filter(s=>portfolio[s]&&portfolio[s].length>0);
   if(syms.length===0){
     document.getElementById('loading').style.display='none';
@@ -875,7 +1134,7 @@ function renderTable(){
       const cm=String(chg).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);
       if(cm){
         const cv=parseFloat(cm[1].replace(',','.'));
-        chgHtml=`<span class="sym-chg" style="color:${pColor(cv)}">${pSign(cv)}${cm[2]}%</span>`;
+        chgHtml=`<span class="sym-chg" style="color:${pColor(cv)}">${cm[2]}%</span>`;
       }
     }
 
@@ -932,7 +1191,13 @@ function renderTable(){
         </span>
       </div>
       <div class="row-expand${isOpen?' open':''}" id="expand-${sym}">
-        <div id="edit-${sym}" style="margin-top:8px"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;margin-bottom:4px">
+          <button class="btn" style="padding:5px 14px;font-size:11px;background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd);display:flex;align-items:center;gap:5px;font-weight:700;border-radius:8px" onclick="event.stopPropagation();toggleSellForm('${sym}')" title="Bán ${sym}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="12" x2="3" y2="12"/></svg>
+            Bán ${sym}
+          </button>
+        </div>
+        <div id="edit-${sym}"></div>
         <div class="sub-header">
           <span>#</span><span>Ngày</span><span style="text-align:right">KL</span><span style="text-align:right">Giá mua</span><span style="text-align:right">Lãi/Lỗ</span><span></span>
         </div>`;

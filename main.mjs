@@ -16,7 +16,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist, loadPortfolio, savePortfolio } from "./analyze.mjs";
+import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist, loadPortfolio, savePortfolio, loadHistory, saveHistory } from "./analyze.mjs";
 
 const PORT = process.env.PORT || 3000;
 const TMP_DIR = "tmp";
@@ -350,6 +350,70 @@ const server = http.createServer(async (req, res) => {
       savePortfolio(pf);
       console.log(`[Portfolio] ➖ ${sym} id:${id}`);
       return sendJSON(res, 200, { ok: true, positions: pf[sym] || [] });
+    }
+
+    // ── Bán cổ phiếu (FIFO) ──────────────────────────────────────────────────
+    if (pathname === "/portfolio/sell" && req.method === "POST") {
+      const sym = (body?.symbol ?? "").toUpperCase().trim();
+      if (!sym) return sendJSON(res, 400, { error: "Thiếu mã" });
+      const sellQty = parseInt(body?.qty);
+      const sellPrice = parseFloat(body?.price);
+      const sellDate = body?.date || new Date().toISOString().slice(0, 10);
+      if (!sellQty || sellQty <= 0 || !sellPrice || sellPrice <= 0)
+        return sendJSON(res, 400, { error: "Khối lượng hoặc giá bán không hợp lệ" });
+
+      const pf = loadPortfolio();
+      if (!pf[sym] || !pf[sym].length)
+        return sendJSON(res, 400, { error: `Không có vị thế ${sym}` });
+
+      const totalQty = pf[sym].reduce((s, p) => s + p.qty, 0);
+      if (sellQty > totalQty)
+        return sendJSON(res, 400, { error: `Chỉ có ${totalQty} CP ${sym}` });
+
+      // FIFO: consume from oldest positions first
+      let remaining = sellQty;
+      let totalBuyCost = 0;
+      const hist = loadHistory();
+
+      pf[sym] = pf[sym].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
+      for (let i = 0; i < pf[sym].length && remaining > 0; i++) {
+        const pos = pf[sym][i];
+        const consumed = Math.min(pos.qty, remaining);
+        totalBuyCost += consumed * pos.price;
+        remaining -= consumed;
+        pos.qty -= consumed;
+      }
+      // Remove exhausted positions
+      pf[sym] = pf[sym].filter(p => p.qty > 0);
+      if (!pf[sym].length) delete pf[sym];
+      savePortfolio(pf);
+
+      // Record history entry
+      const avgBuyPrice = totalBuyCost / sellQty;
+      const pnl = (sellPrice - avgBuyPrice) * sellQty;
+      const pnlPct = avgBuyPrice > 0 ? ((sellPrice - avgBuyPrice) / avgBuyPrice * 100) : 0;
+      const entry = {
+        id: Date.now(),
+        symbol: sym,
+        qty: sellQty,
+        buyPrice: parseFloat(avgBuyPrice.toFixed(4)),
+        sellPrice,
+        sellDate,
+        pnl: parseFloat(pnl.toFixed(2)),
+        pnlPct: parseFloat(pnlPct.toFixed(2))
+      };
+      hist.unshift(entry);
+      saveHistory(hist);
+      console.log(`[Portfolio] 💰 SELL ${sym} ${sellQty}@${sellPrice} PnL:${pnl.toFixed(0)}`);
+      return sendJSON(res, 200, { ok: true, entry, positions: pf[sym] || [] });
+    }
+
+    // ── Lịch sử giao dịch ────────────────────────────────────────────────────
+    if (pathname === "/portfolio/history" && req.method === "GET") {
+      const sym = ((parsed.query?.symbol) ?? "").toUpperCase().trim();
+      let hist = loadHistory();
+      if (sym) hist = hist.filter(h => h.symbol === sym);
+      return sendJSON(res, 200, hist);
     }
   }
 
