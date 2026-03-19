@@ -17,58 +17,120 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, saveWatchlist, loadPortfolio, savePortfolio, loadHistory, saveHistory } from "./analyze.mjs";
+import {
+  analyzeAll,
+  analyzeDetail,
+  scanWatchlist,
+  parseBody,
+  loadWatchlist,
+  saveWatchlist,
+  loadPortfolio,
+  savePortfolio,
+  loadHistory,
+  saveHistory,
+} from "./analyze.mjs";
 
 const PORT = process.env.PORT || 3000;
 const TMP_DIR = "tmp";
 
+// ─── SSI Token store ──────────────────────────────────────────────────────────
+const BASE_DIR_ROOT = path.dirname(url.fileURLToPath(import.meta.url));
+const SSI_TOKEN_FILE = path.join(BASE_DIR_ROOT, "database", "ssi_token.json");
+let ssiToken = null; // Bearer token, loaded from file on start
+
+function loadSsiToken() {
+  try {
+    if (fs.existsSync(SSI_TOKEN_FILE)) {
+      const { token } = JSON.parse(fs.readFileSync(SSI_TOKEN_FILE, "utf8"));
+      ssiToken = token || null;
+      if (ssiToken) console.log("[SSI] Token loaded from file");
+    }
+  } catch {}
+}
+function saveSsiToken(token) {
+  ssiToken = token;
+  fs.mkdirSync(path.dirname(SSI_TOKEN_FILE), { recursive: true });
+  fs.writeFileSync(
+    SSI_TOKEN_FILE,
+    JSON.stringify({ token, savedAt: new Date().toISOString() }, null, 2)
+  );
+  console.log("[SSI] Token saved");
+}
+loadSsiToken();
+
 // ─── SSE realtime: SignalR trước, fallback poll MSH nếu 10s không có data ─────
-const sseClients    = new Map(); // sym → Set<res>
+const sseClients = new Map(); // sym → Set<res>
 const ssePriceCache = new Map(); // sym → { data, ts }
-const symState      = new Map(); // sym → { ws, pingTimer, fallbackTimer, pollTimer, mode:'signalr'|'poll' }
+const symState = new Map(); // sym → { ws, pingTimer, fallbackTimer, pollTimer, mode:'signalr'|'poll' }
 
 const SIGNALR_HUB = "wss://realtime.cafef.vn/hub/priceshub";
-const SIGNALR_RS  = "\x1e";
+const SIGNALR_RS = "\x1e";
 const FALLBACK_MS = 10_000; // chờ 10s, nếu SignalR không gửi data thì poll
 
 function parseMshPrice(v) {
   if (!v) return null;
-  const n = x => x != null ? parseFloat(x) : null;
+  const n = (x) => (x != null ? parseFloat(x) : null);
   const price = n(v.price ?? v.Price);
-  const ref   = n(v.refPrice ?? v.refprice ?? v.RefPrice);
-  const change    = price != null && ref != null ? parseFloat((price - ref).toFixed(2)) : null;
-  const changePct = price != null && ref ? parseFloat(((price - ref) / ref * 100).toFixed(2)) : null;
-  return { price, change, changePct, ref,
-    open: n(v.openPrice), high: n(v.highPrice), low: n(v.lowPrice), volume: n(v.volume) };
+  const ref = n(v.refPrice ?? v.refprice ?? v.RefPrice);
+  const change =
+    price != null && ref != null ? parseFloat((price - ref).toFixed(2)) : null;
+  const changePct =
+    price != null && ref
+      ? parseFloat((((price - ref) / ref) * 100).toFixed(2))
+      : null;
+  return {
+    price,
+    change,
+    changePct,
+    ref,
+    open: n(v.openPrice),
+    high: n(v.highPrice),
+    low: n(v.lowPrice),
+    volume: n(v.volume),
+  };
 }
 
 function sseBroadcast(sym, data) {
   const clients = sseClients.get(sym);
   if (!clients?.size) return;
   const msg = `data: ${JSON.stringify(data)}\n\n`;
-  clients.forEach(res => { try { res.write(msg); } catch {} });
+  clients.forEach((res) => {
+    try {
+      res.write(msg);
+    } catch {}
+  });
   ssePriceCache.set(sym, { data, ts: Date.now() });
 }
 
 async function fetchMshPriceData(sym) {
   const mshUrl = `https://msh-appdata.cafef.vn/rest-api/api/v1/Watchlists/${sym}/price`;
   return new Promise((resolve, reject) => {
-    https.get(mshUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept": "application/json",
-        "Origin": "https://cafef.vn",
-        "Referer": "https://cafef.vn/",
-      }
-    }, (rsp) => {
-      const chunks = [];
-      rsp.on("data", c => chunks.push(c));
-      rsp.on("end", () => {
-        try { resolve(JSON.parse(Buffer.concat(chunks).toString("utf8"))); }
-        catch { reject(new Error("Invalid JSON from MSH")); }
-      });
-      rsp.on("error", reject);
-    }).on("error", reject);
+    https
+      .get(
+        mshUrl,
+        {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            Accept: "application/json",
+            Origin: "https://cafef.vn",
+            Referer: "https://cafef.vn/",
+          },
+        },
+        (rsp) => {
+          const chunks = [];
+          rsp.on("data", (c) => chunks.push(c));
+          rsp.on("end", () => {
+            try {
+              resolve(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+            } catch {
+              reject(new Error("Invalid JSON from MSH"));
+            }
+          });
+          rsp.on("error", reject);
+        }
+      )
+      .on("error", reject);
   });
 }
 
@@ -78,7 +140,10 @@ async function doPollOnce(sym) {
     const v = json?.data?.value;
     if (!v) return;
     const data = parseMshPrice(v);
-    if (data?.price) { sseBroadcast(sym, data); console.log(`[Poll] ✅ ${sym}: ${data.price}`); }
+    if (data?.price) {
+      sseBroadcast(sym, data);
+      console.log(`[Poll] ✅ ${sym}: ${data.price}`);
+    }
   } catch (err) {
     console.error(`[Poll] Error ${sym}:`, err.message);
   }
@@ -88,7 +153,7 @@ function startPollFallback(sym) {
   const st = symState.get(sym);
   if (!st || st.pollDone) return;
   st.pollDone = true;
-  st.mode = 'poll';
+  st.mode = "poll";
   console.log(`[Poll] ▶ Fallback ${sym} — poll 1 lần (SignalR không có data)`);
   doPollOnce(sym);
 }
@@ -96,13 +161,19 @@ function startPollFallback(sym) {
 function startSignalRForSym(sym) {
   if (symState.has(sym)) return;
   console.log(`[SignalR] ▶ Connect ${sym}`);
-  const st = { ws: null, pingTimer: null, fallbackTimer: null, pollDone: false, mode: 'signalr' };
+  const st = {
+    ws: null,
+    pingTimer: null,
+    fallbackTimer: null,
+    pollDone: false,
+    mode: "signalr",
+  };
   symState.set(sym, st);
 
   // Nếu 10s không nhận được data từ SignalR → fallback sang poll
   st.fallbackTimer = setTimeout(() => {
     st.fallbackTimer = null;
-    if (st.mode === 'signalr') startPollFallback(sym);
+    if (st.mode === "signalr") startPollFallback(sym);
   }, FALLBACK_MS);
 
   const ws = new WebSocket(SIGNALR_HUB);
@@ -113,24 +184,36 @@ function startSignalRForSym(sym) {
   });
 
   ws.addEventListener("message", (event) => {
-    const raw   = typeof event.data === "string" ? event.data : event.data.toString();
-    const parts = raw.split(SIGNALR_RS).filter(s => s.trim());
+    const raw =
+      typeof event.data === "string" ? event.data : event.data.toString();
+    const parts = raw.split(SIGNALR_RS).filter((s) => s.trim());
     for (const part of parts) {
       try {
         const msg = JSON.parse(part);
         if (!st.pingTimer) {
           // Handshake xong → join channel
-          ws.send(JSON.stringify({ type: 1, target: "JoinChannel", arguments: [sym], invocationId: "0" }) + SIGNALR_RS);
+          ws.send(
+            JSON.stringify({
+              type: 1,
+              target: "JoinChannel",
+              arguments: [sym],
+              invocationId: "0",
+            }) + SIGNALR_RS
+          );
           st.pingTimer = setInterval(() => {
-            if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 6 }) + SIGNALR_RS);
+            if (ws.readyState === WebSocket.OPEN)
+              ws.send(JSON.stringify({ type: 6 }) + SIGNALR_RS);
           }, 15_000);
           console.log(`[SignalR] ✅ Joined ${sym}`);
         }
         if (msg.type === 1 && msg.target === "RealtimePrice") {
           const data = parseMshPrice(msg.arguments?.[0]);
           if (data?.price) {
-            if (st.fallbackTimer) { clearTimeout(st.fallbackTimer); st.fallbackTimer = null; }
-            st.mode = 'signalr';
+            if (st.fallbackTimer) {
+              clearTimeout(st.fallbackTimer);
+              st.fallbackTimer = null;
+            }
+            st.mode = "signalr";
             sseBroadcast(sym, data);
           }
         }
@@ -139,8 +222,10 @@ function startSignalRForSym(sym) {
   });
 
   ws.addEventListener("close", () => {
-    clearInterval(st.pingTimer); st.pingTimer = null;
-    clearTimeout(st.fallbackTimer); st.fallbackTimer = null;
+    clearInterval(st.pingTimer);
+    st.pingTimer = null;
+    clearTimeout(st.fallbackTimer);
+    st.fallbackTimer = null;
     console.log(`[SignalR] ❌ Closed ${sym}`);
     if (sseClients.get(sym)?.size > 0) {
       setTimeout(() => {
@@ -160,7 +245,9 @@ function stopSignalRForSym(sym) {
   if (!st) return;
   clearInterval(st.pingTimer);
   clearTimeout(st.fallbackTimer);
-  try { st.ws?.close(); } catch {}
+  try {
+    st.ws?.close();
+  } catch {}
   symState.delete(sym);
   console.log(`[SignalR] ⏹ Stop ${sym}`);
 }
@@ -240,6 +327,103 @@ function fetchFromCafeF(targetUrl, symbol, redirectCount = 0) {
         res.on("error", reject);
       })
       .on("error", reject);
+  });
+}
+
+// ─── CafeF history fetch (fallback) ──────────────────────────────────────────
+function fetchHistoryCafeF(sym, days, res) {
+  return new Promise((resolve) => {
+    const endDate = new Date();
+    const startDate = new Date(endDate.getTime() - days * 86400_000);
+    const fmt = (d) =>
+      `${String(d.getMonth() + 1).padStart(2, "0")}/${String(
+        d.getDate()
+      ).padStart(2, "0")}/${d.getFullYear()}`;
+    const pageSize = Math.min(days + 50, 500);
+    const histUrl = `https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?Symbol=${sym}&StartDate=${fmt(
+      startDate
+    )}&EndDate=${fmt(endDate)}&PageIndex=1&PageSize=${pageSize}`;
+
+    https
+      .get(
+        histUrl,
+        {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            Referer: `https://cafef.vn/du-lieu/lich-su-giao-dich-${sym.toLowerCase()}-1.chn`,
+            Accept: "application/json",
+          },
+        },
+        (rsp) => {
+          const chunks = [];
+          rsp.on("data", (c) => chunks.push(c));
+          rsp.on("end", () => {
+            try {
+              const json = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+              const rows = json?.Data?.Data;
+              if (!Array.isArray(rows) || rows.length === 0) {
+                sendJSON(res, 200, {
+                  ok: false,
+                  symbol: sym,
+                  message: "Không có dữ liệu",
+                });
+                return resolve();
+              }
+              const records = rows
+                .map((r) => {
+                  const [d, m, y] = (r.Ngay || "").split("/");
+                  return {
+                    date: `${y}-${m}-${d}`,
+                    open: r.GiaMoCua,
+                    high: r.GiaCaoNhat,
+                    low: r.GiaThapNhat,
+                    close: r.GiaDongCua,
+                    volume: r.KhoiLuongKhopLenh,
+                  };
+                })
+                .filter(
+                  (r) => r.date && r.date !== "undefined-undefined-undefined"
+                )
+                .sort((a, b) => a.date.localeCompare(b.date));
+
+              const histDir = path.join(BASE_DIR_ROOT, "database", "history");
+              fs.mkdirSync(histDir, { recursive: true });
+              fs.writeFileSync(
+                path.join(histDir, `${sym}.json`),
+                JSON.stringify(
+                  {
+                    symbol: sym,
+                    source: "cafef",
+                    updated: new Date().toISOString(),
+                    records,
+                  },
+                  null,
+                  2
+                )
+              );
+              console.log(`[History/CafeF] ✅ ${sym}: ${records.length} phiên`);
+              sendJSON(res, 200, {
+                ok: true,
+                symbol: sym,
+                count: records.length,
+                source: "cafef",
+              });
+            } catch (e) {
+              sendJSON(res, 502, { error: e.message });
+            }
+            resolve();
+          });
+          rsp.on("error", (e) => {
+            sendJSON(res, 502, { error: e.message });
+            resolve();
+          });
+        }
+      )
+      .on("error", (e) => {
+        sendJSON(res, 502, { error: e.message });
+        resolve();
+      });
   });
 }
 
@@ -354,7 +538,11 @@ const server = http.createServer(async (req, res) => {
     const symbol = (parsed.query.symbol ?? "").toUpperCase().trim();
     if (!symbol) return sendJSON(res, 400, { error: "Thiếu tham số symbol" });
 
-    console.log(`\n[${new Date().toLocaleTimeString("vi-VN")}] 🔍 Phân tích chi tiết: ${symbol}`);
+    console.log(
+      `\n[${new Date().toLocaleTimeString(
+        "vi-VN"
+      )}] 🔍 Phân tích chi tiết: ${symbol}`
+    );
     try {
       const result = await analyzeDetail(TMP_DIR, symbol);
       return sendJSON(res, result.error ? 400 : 200, result);
@@ -383,12 +571,16 @@ const server = http.createServer(async (req, res) => {
   // ─── SSE stream: browser giữ 1 kết nối, server poll MSH mỗi 10s ─────────────
   if (pathname === "/msh-stream" && req.method === "GET") {
     const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
-    if (!sym) { res.writeHead(400); res.end(); return; }
+    if (!sym) {
+      res.writeHead(400);
+      res.end();
+      return;
+    }
 
     res.writeHead(200, {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
+      Connection: "keep-alive",
       "Access-Control-Allow-Origin": "*",
       "X-Accel-Buffering": "no",
     });
@@ -405,8 +597,16 @@ const server = http.createServer(async (req, res) => {
 
     req.on("close", () => {
       const clients = sseClients.get(sym);
-      if (clients) { clients.delete(res); if (!clients.size) { sseClients.delete(sym); stopSignalRForSym(sym); } }
-      console.log(`[SSE] ➖ ${sym} (clients: ${sseClients.get(sym)?.size ?? 0})`);
+      if (clients) {
+        clients.delete(res);
+        if (!clients.size) {
+          sseClients.delete(sym);
+          stopSignalRForSym(sym);
+        }
+      }
+      console.log(
+        `[SSE] ➖ ${sym} (clients: ${sseClients.get(sym)?.size ?? 0})`
+      );
     });
     return; // giữ kết nối mở
   }
@@ -429,7 +629,8 @@ const server = http.createServer(async (req, res) => {
   if (pathname === "/" || pathname === "/index.html") {
     const htmlPath = path.join(
       path.dirname(url.fileURLToPath(import.meta.url)),
-      "public", "index.html"
+      "public",
+      "index.html"
     );
     if (fs.existsSync(htmlPath)) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -443,7 +644,8 @@ const server = http.createServer(async (req, res) => {
   if (pathname === "/front.html") {
     const htmlPath = path.join(
       path.dirname(url.fileURLToPath(import.meta.url)),
-      "public", "front.html"
+      "public",
+      "front.html"
     );
     if (fs.existsSync(htmlPath)) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -476,17 +678,23 @@ const server = http.createServer(async (req, res) => {
     if (pathname === "/watchlist/remove" && req.method === "POST") {
       const sym = (body?.symbol ?? "").toUpperCase().trim();
       const wl = loadWatchlist();
-      wl.symbols = wl.symbols.filter(s => s !== sym);
+      wl.symbols = wl.symbols.filter((s) => s !== sym);
       saveWatchlist(wl);
       console.log(`[Watchlist] ➖ ${sym} | còn: ${wl.symbols.length} mã`);
       return sendJSON(res, 200, { ok: true, symbols: wl.symbols });
     }
     if (pathname === "/watchlist/scan" && req.method === "GET") {
       const forceRefresh = parsed.query.refresh === "1";
-      console.log(`\n[${new Date().toLocaleTimeString("vi-VN")}] 📡 Scan watchlist${forceRefresh ? " (force)" : ""}...`);
+      console.log(
+        `\n[${new Date().toLocaleTimeString("vi-VN")}] 📡 Scan watchlist${
+          forceRefresh ? " (force)" : ""
+        }...`
+      );
       try {
         const result = await scanWatchlist(forceRefresh);
-        console.log(`   ✅ ${result.scanned} mã | ${result.alerts.length} alerts`);
+        console.log(
+          `   ✅ ${result.scanned} mã | ${result.alerts.length} alerts`
+        );
         return sendJSON(res, 200, result);
       } catch (err) {
         console.error(`   ❌ ${err.message}`);
@@ -511,12 +719,16 @@ const server = http.createServer(async (req, res) => {
       const price = parseFloat(body?.price);
       const date = body?.date || new Date().toISOString().slice(0, 10);
       if (!qty || qty <= 0 || !price || price <= 0)
-        return sendJSON(res, 400, { error: "Khối lượng hoặc giá không hợp lệ" });
+        return sendJSON(res, 400, {
+          error: "Khối lượng hoặc giá không hợp lệ",
+        });
       const pf = loadPortfolio();
       if (!pf[sym]) pf[sym] = [];
       pf[sym].push({ qty, price, date, id: Date.now() });
       savePortfolio(pf);
-      console.log(`[Portfolio] ➕ ${sym} ${qty}@${price} | tổng lệnh: ${pf[sym].length}`);
+      console.log(
+        `[Portfolio] ➕ ${sym} ${qty}@${price} | tổng lệnh: ${pf[sym].length}`
+      );
       return sendJSON(res, 200, { ok: true, positions: pf[sym] });
     }
     if (pathname === "/portfolio/edit" && req.method === "POST") {
@@ -527,10 +739,12 @@ const server = http.createServer(async (req, res) => {
       const date = body?.date;
       if (!sym || !id) return sendJSON(res, 400, { error: "Thiếu mã hoặc id" });
       if (!qty || qty <= 0 || !price || price <= 0)
-        return sendJSON(res, 400, { error: "Khối lượng hoặc giá không hợp lệ" });
+        return sendJSON(res, 400, {
+          error: "Khối lượng hoặc giá không hợp lệ",
+        });
       const pf = loadPortfolio();
       if (pf[sym]) {
-        const pos = pf[sym].find(p => p.id === id);
+        const pos = pf[sym].find((p) => p.id === id);
         if (pos) {
           pos.qty = qty;
           pos.price = price;
@@ -546,7 +760,7 @@ const server = http.createServer(async (req, res) => {
       const sym = (body?.symbol ?? "").toUpperCase().trim();
       const id = body?.id;
       const pf = loadPortfolio();
-      if (pf[sym]) pf[sym] = pf[sym].filter(p => p.id !== id);
+      if (pf[sym]) pf[sym] = pf[sym].filter((p) => p.id !== id);
       if (pf[sym] && !pf[sym].length) delete pf[sym];
       savePortfolio(pf);
       console.log(`[Portfolio] ➖ ${sym} id:${id}`);
@@ -561,7 +775,9 @@ const server = http.createServer(async (req, res) => {
       const sellPrice = parseFloat(body?.price);
       const sellDate = body?.date || new Date().toISOString().slice(0, 10);
       if (!sellQty || sellQty <= 0 || !sellPrice || sellPrice <= 0)
-        return sendJSON(res, 400, { error: "Khối lượng hoặc giá bán không hợp lệ" });
+        return sendJSON(res, 400, {
+          error: "Khối lượng hoặc giá bán không hợp lệ",
+        });
 
       const pf = loadPortfolio();
       if (!pf[sym] || !pf[sym].length)
@@ -576,7 +792,9 @@ const server = http.createServer(async (req, res) => {
       let totalBuyCost = 0;
       const hist = loadHistory();
 
-      pf[sym] = pf[sym].sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
+      pf[sym] = pf[sym].sort(
+        (a, b) => a.date.localeCompare(b.date) || a.id - b.id
+      );
       for (let i = 0; i < pf[sym].length && remaining > 0; i++) {
         const pos = pf[sym][i];
         const consumed = Math.min(pos.qty, remaining);
@@ -585,14 +803,15 @@ const server = http.createServer(async (req, res) => {
         pos.qty -= consumed;
       }
       // Remove exhausted positions
-      pf[sym] = pf[sym].filter(p => p.qty > 0);
+      pf[sym] = pf[sym].filter((p) => p.qty > 0);
       if (!pf[sym].length) delete pf[sym];
       savePortfolio(pf);
 
       // Record history entry
       const avgBuyPrice = totalBuyCost / sellQty;
       const pnl = (sellPrice - avgBuyPrice) * sellQty;
-      const pnlPct = avgBuyPrice > 0 ? ((sellPrice - avgBuyPrice) / avgBuyPrice * 100) : 0;
+      const pnlPct =
+        avgBuyPrice > 0 ? ((sellPrice - avgBuyPrice) / avgBuyPrice) * 100 : 0;
       const entry = {
         id: Date.now(),
         symbol: sym,
@@ -601,19 +820,23 @@ const server = http.createServer(async (req, res) => {
         sellPrice,
         sellDate,
         pnl: parseFloat(pnl.toFixed(2)),
-        pnlPct: parseFloat(pnlPct.toFixed(2))
+        pnlPct: parseFloat(pnlPct.toFixed(2)),
       };
       hist.unshift(entry);
       saveHistory(hist);
-      console.log(`[Portfolio] 💰 SELL ${sym} ${sellQty}@${sellPrice} PnL:${pnl.toFixed(0)}`);
+      console.log(
+        `[Portfolio] 💰 SELL ${sym} ${sellQty}@${sellPrice} PnL:${pnl.toFixed(
+          0
+        )}`
+      );
       return sendJSON(res, 200, { ok: true, entry, positions: pf[sym] || [] });
     }
 
     // ── Lịch sử giao dịch ────────────────────────────────────────────────────
     if (pathname === "/portfolio/history" && req.method === "GET") {
-      const sym = ((parsed.query?.symbol) ?? "").toUpperCase().trim();
+      const sym = (parsed.query?.symbol ?? "").toUpperCase().trim();
       let hist = loadHistory();
-      if (sym) hist = hist.filter(h => h.symbol === sym);
+      if (sym) hist = hist.filter((h) => h.symbol === sym);
       return sendJSON(res, 200, hist);
     }
   }
@@ -621,154 +844,348 @@ const server = http.createServer(async (req, res) => {
   // ─── Symbols — list mã đã có data trong tmp/ ────────────────────────────────
   if (pathname === "/symbols" && req.method === "GET") {
     try {
-      const files = fs.existsSync(TMP_DIR)
-        ? fs.readdirSync(TMP_DIR).filter(f => /\.xlsx$/i.test(f) && f !== "VNINDEX.xlsx")
-            .map(f => f.replace(/\.xlsx$/i,"").toUpperCase()).sort()
+      const histDir = path.join(BASE_DIR_ROOT, "database", "history");
+      const files = fs.existsSync(histDir)
+        ? fs
+            .readdirSync(histDir)
+            .filter((f) => /\.json$/i.test(f))
+            .map((f) => f.replace(/\.json$/i, "").toUpperCase())
+            .sort()
         : [];
       return sendJSON(res, 200, { symbols: files });
-    } catch(e) { return sendJSON(res, 500, { error: e.message }); }
+    } catch (e) {
+      return sendJSON(res, 500, { error: e.message });
+    }
   }
 
   // ─── API: Proxy iboard-query.ssi.com.vn ─────────────────────────────────────
   if (pathname === "/api/board") {
-    const group    = parsed.query.group;    // VN30, HNX30, ...
+    const group = parsed.query.group; // VN30, HNX30, ...
     const exchange = parsed.query.exchange; // hose, hnx, upcom
-    const indexId  = parsed.query.index;   // VNINDEX, VN30, HNXIndex, HNX30
+    const indexId = parsed.query.index; // VNINDEX, VN30, HNXIndex, HNX30
 
     let targetUrl;
     if (indexId) {
-      targetUrl = `https://iboard-query.ssi.com.vn/exchange-index/${encodeURIComponent(indexId)}?hasHistory=false`;
+      targetUrl = `https://iboard-query.ssi.com.vn/exchange-index/${encodeURIComponent(
+        indexId
+      )}?hasHistory=false`;
     } else if (group) {
-      targetUrl = `https://iboard-query.ssi.com.vn/stock/group/${encodeURIComponent(group)}`;
+      targetUrl = `https://iboard-query.ssi.com.vn/stock/group/${encodeURIComponent(
+        group
+      )}`;
     } else if (exchange) {
-      targetUrl = `https://iboard-query.ssi.com.vn/stock/exchange/${encodeURIComponent(exchange)}`;
+      targetUrl = `https://iboard-query.ssi.com.vn/stock/exchange/${encodeURIComponent(
+        exchange
+      )}`;
     } else {
       return sendJSON(res, 400, { error: "Cần group, exchange hoặc index" });
     }
 
     return new Promise((resolve) => {
-      https.get(targetUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-          "Origin": "https://iboard.ssi.com.vn",
-          "Referer": "https://iboard.ssi.com.vn/",
-          "Accept": "application/json",
-        }
-      }, (rsp) => {
-        const chunks = [];
-        rsp.on("data", c => chunks.push(c));
-        rsp.on("end", () => {
-          res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(Buffer.concat(chunks));
+      https
+        .get(
+          targetUrl,
+          {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+              Origin: "https://iboard.ssi.com.vn",
+              Referer: "https://iboard.ssi.com.vn/",
+              Accept: "application/json",
+            },
+          },
+          (rsp) => {
+            const chunks = [];
+            rsp.on("data", (c) => chunks.push(c));
+            rsp.on("end", () => {
+              res.writeHead(200, { "Content-Type": "application/json" });
+              res.end(Buffer.concat(chunks));
+              resolve();
+            });
+            rsp.on("error", (e) => {
+              sendJSON(res, 502, { error: e.message });
+              resolve();
+            });
+          }
+        )
+        .on("error", (e) => {
+          sendJSON(res, 502, { error: e.message });
           resolve();
         });
-        rsp.on("error", (e) => { sendJSON(res, 502, { error: e.message }); resolve(); });
-      }).on("error", (e) => { sendJSON(res, 502, { error: e.message }); resolve(); });
     });
   }
 
-  // ─── API: Sectors — đọc database/stocks.csv và nhóm ngành ─────────────────
+  // ─── API: SSI Token management ───────────────────────────────────────────────
+  if (pathname === "/api/ssi-token" && req.method === "GET") {
+    return sendJSON(res, 200, {
+      hasToken: !!ssiToken,
+      savedAt: ssiToken
+        ? (() => {
+            try {
+              return JSON.parse(fs.readFileSync(SSI_TOKEN_FILE, "utf8"))
+                .savedAt;
+            } catch {
+              return null;
+            }
+          })()
+        : null,
+    });
+  }
+  if (pathname === "/api/ssi-token" && req.method === "POST") {
+    const body = await parseBody(req);
+    const token = (body?.token ?? "").trim();
+    if (!token) return sendJSON(res, 400, { error: "Thiếu token" });
+    saveSsiToken(token);
+    return sendJSON(res, 200, { ok: true });
+  }
+
+  // ─── API: Fetch & save historical price (SSI nếu có token, fallback CafeF) ──
+  if (pathname === "/api/history-fetch" && req.method === "GET") {
+    const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
+    const days = parseInt(parsed.query.days) || 420;
+    if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym))
+      return sendJSON(res, 400, { error: "Mã không hợp lệ" });
+
+    // ── SSI statistics API (không cần token) ─────────────────────────────────
+    const now = Math.floor(Date.now() / 1000);
+    const from = now - days * 86400;
+    const ssiUrl = `https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=${sym}&from=${from}&to=${now}`;
+
+    return new Promise((resolve) => {
+      https
+        .get(
+          ssiUrl,
+          {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+              Origin: "https://iboard.ssi.com.vn",
+              Referer: "https://iboard.ssi.com.vn/",
+              Accept: "application/json",
+            },
+          },
+          (rsp) => {
+            const chunks = [];
+            rsp.on("data", (c) => chunks.push(c));
+            rsp.on("end", async () => {
+              try {
+                const json = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+                const d = json?.data;
+                if (
+                  json.code === "SUCCESS" &&
+                  Array.isArray(d?.t) &&
+                  d.t.length > 0
+                ) {
+                  const records = d.t
+                    .map((ts, i) => ({
+                      date: new Date(ts * 1000).toISOString().slice(0, 10),
+                      open: d.o[i],
+                      high: d.h[i],
+                      low: d.l[i],
+                      close: d.c[i],
+                      volume: d.v[i],
+                    }))
+                    .sort((a, b) => a.date.localeCompare(b.date));
+
+                  const histDir = path.join(
+                    BASE_DIR_ROOT,
+                    "database",
+                    "history"
+                  );
+                  fs.mkdirSync(histDir, { recursive: true });
+                  fs.writeFileSync(
+                    path.join(histDir, `${sym}.json`),
+                    JSON.stringify(
+                      {
+                        symbol: sym,
+                        source: "ssi",
+                        updated: new Date().toISOString(),
+                        records,
+                      },
+                      null,
+                      2
+                    )
+                  );
+                  console.log(
+                    `[History/SSI] ✅ ${sym}: ${records.length} phiên`
+                  );
+                  sendJSON(res, 200, {
+                    ok: true,
+                    symbol: sym,
+                    count: records.length,
+                    source: "ssi",
+                  });
+                  return resolve();
+                }
+                console.warn(
+                  `[History/SSI] ⚠️ ${sym}: no data → fallback CafeF`
+                );
+              } catch (e) {
+                console.warn(
+                  `[History/SSI] Parse error ${sym}: ${e.message} → fallback CafeF`
+                );
+              }
+              await fetchHistoryCafeF(sym, days, res);
+              resolve();
+            });
+            rsp.on("error", async () => {
+              await fetchHistoryCafeF(sym, days, res);
+              resolve();
+            });
+          }
+        )
+        .on("error", async () => {
+          await fetchHistoryCafeF(sym, days, res);
+          resolve();
+        });
+    });
+  }
+
+  // ─── API: Sectors — đọc database/ssi_sectors.csv (ICB SSI) ─────────────────
   if (pathname === "/api/sectors") {
     const BASE_DIR = path.dirname(url.fileURLToPath(import.meta.url));
-    const csvPath = path.join(BASE_DIR, "database", "stocks.csv");
-    if (!fs.existsSync(csvPath)) return sendJSON(res, 404, { error: "stocks.csv not found" });
+    const ssiPath = path.join(BASE_DIR, "database", "ssi_sectors.csv");
+    const stocksPath = path.join(BASE_DIR, "database", "stocks.csv");
 
-    // Bảng nhóm ngành: key = tên hiển thị, value = mảng các giá trị gốc thuộc nhóm đó
-    const SECTOR_MAP = {
-      "Ngân hàng":               ["Ngân hàng thương mại"],
-      "Tài chính":               ["Tài chính","Công ty Tài chính","Công ty đầu tư tài chính"],
-      "Chứng khoán & Quỹ":       ["Công ty Chứng khoán","Chứng khoán và Đầu tư","Chứng chỉ Quỹ","Quản lý quỹ"],
-      "Bảo hiểm":                ["Bảo hiểm","Bảo hiểm hỗn hợp","Bảo hiểm phi nhân thọ"],
-      "Bất động sản":            ["Bất động sản","Bất động sản du lịch","Bất động sản và Xây dựng","Phát triển bất động sản","Môi giới và quản lý bất động sản","Môi giới và quản lý bất động sản; Lương thực; Dược phẩm; Môi giới và quản lý bất động sản","Khu công nghiệp"],
-      "Xây dựng":                ["Xây dựng","Xây dựng chuyên biệt","Xây dựng hạ tầng giao thông","Phát triển Hạ tầng giao thông"],
-      "Vật liệu xây dựng":       ["Vật liệu xây dựng","VLXD tổng hợp","Xi măng","Bê tông thương phẩm","Gạch"],
-      "Điện năng":               ["Điện năng","Nhiệt điện","Thủy điện","Sản xuất điện năng","Phát triển điện năng","Truyền tải và phân phối điện năng"],
-      "Dầu khí & Năng lượng":    ["Dầu khí","Hóa dầu","Dịch vụ khai thác Dầu khí","Tổ hợp lọc hóa dầu","Vận tải và kho bãi dầu khí","Kinh doanh gas và nhiên liệu","Kinh doanh sản phẩm khí đốt","Kinh doanh xăng dầu"],
-      "Thực phẩm & Đồ uống":     ["Thực phẩm","Chế biến thực phẩm","Bánh kẹo","Lương thực","Sản phẩm sữa","Bia rượu","Nước giải khát","Mía đường","Cà phê","Thuốc lá"],
-      "Thủy sản":                ["Thủy sản","Chế biến thủy sản","Chế biến cá tra","Chế biến tôm"],
-      "Nông nghiệp & Phân bón":  ["Nông nghiệp","Kinh doanh nông sản","Sản phẩm nông nghiệp tổng hợp","Vật tư nông nghiệp tổng hợp","Hóa chất nông nghiệp","Phân bón","Thức ăn chăn nuôi","Cao su tự nhiên","Lâm nghiệp"],
-      "Công nghệ thông tin":     ["Phần mềm","Phần mềm và dịch vụ","Dịch vụ công nghệ thông tin","Gia công phần mềm; Ðiện tự động; Giao thông Thông minh","Thiết bị và công nghệ phần cứng","Hạ tầng viễn thông"],
-      "Điện tử & Thiết bị":      ["Thiết bị điện tử","Điện tử gia dụng","Thiết bị điện","Dây và cáp"],
-      "Dược phẩm & Y tế":        ["Dược phẩm","Kinh doanh dược phẩm","Thiết bị y tế","Bệnh viện"],
-      "Thép & Kim loại":         ["Sản xuất Thép","Chế tạo kết cấu thép","Kim loại và khai khoáng","Kinh doanh thép và vật tư"],
-      "Khai khoáng & Than":      ["Than","Khai khoáng và luyện kim"],
-      "Hóa chất":                ["Hóa chất","Hóa chất chuyên biệt"],
-      "Dệt may":                 ["Dệt may"],
-      "Nhựa & Bao bì":           ["Nhựa","Bao bì","Bao bì nhựa"],
-      "Vận tải & Logistics":     ["Vận tải đường bộ","Giao nhận - tiếp vận","Logistics","Giao thông vận tải","Hàng hải","Hàng không","Dịch vụ sân bay","Vận hành cảng biển","Bưu chính - chuyển phát nhanh","Taxi và vận tải hành khách","Bến xe"],
-      "Cơ khí & Sản xuất":       ["Cơ khí","Cơ khí Lắp máy","Gia công Cơ khí","Chế tạo máy","Sản xuất","Tổ hợp công nghiệp"],
-      "Ô tô & Phụ tùng":         ["Ô tô và Phụ tùng","Phụ tùng ô tô","Kinh doanh ô tô","Săm lốp"],
-      "Bán lẻ & Thương mại":     ["Thương mại","Thương mại tổng hợp","Kinh doanh hàng điện tử","Kinh doanh Vàng bạc đá quý"],
-      "Du lịch & Giải trí":      ["Du lịch","Khách sạn","Phim ảnh và Giải trí"],
-      "Giáo dục & Sách":         ["Giáo dục và dịch vụ chuyên nghiệp","Sách và thiết bị giáo dục","Sách và In ấn"],
-      "Nội thất & Gia dụng":     ["Nội thất","Sản xuất Đồ gia dụng","Sản phẩm gia dụng","Giấy","Văn phòng phẩm"],
-      "Quảng cáo & Truyền thông":["Quảng cáo"],
-      "Dịch vụ & Tiện ích":      ["Dịch vụ","Dịch vụ công nghiệp","Dịch vụ tổng hợp","Tư vấn","Cấp thoát nước"],
-      "Đa ngành":                ["Tập đoàn đa ngành","Hàng công nghiệp","Hàng tiêu dùng","Nguyên vật liệu","Nguyên vật liệu tổng hợp","Công nghiệp"],
-    };
+    if (!fs.existsSync(ssiPath))
+      return sendJSON(res, 404, {
+        error:
+          "ssi_sectors.csv not found. Chạy: node batch/fetch_ssi_sectors.mjs",
+      });
 
-    // Tạo reverse map: rawNganh → groupName
-    const reverseMap = {};
-    for (const [group, raws] of Object.entries(SECTOR_MAP)) {
-      for (const raw of raws) reverseMap[raw] = group;
-    }
-
-    const lines = fs.readFileSync(csvPath, "utf8").replace(/^\uFEFF/, "").split("\n");
-    const headers = lines[0].split(",");
-    const iSymbol = headers.indexOf("Symbol");
-    const iTitle  = headers.indexOf("Title");
-    const iSan    = headers.indexOf("Sàn giao dịch");
-    const iNganh  = headers.indexOf("Ngành");
-
-    const groups = {}; // groupName → [{ symbol, title, san, nganh }]
-
-    for (const line of lines.slice(1)) {
-      if (!line.trim()) continue;
-      // parse csv-aware
+    // Helper: parse một dòng CSV đơn giản (hỗ trợ field có dấu ngoặc kép)
+    function parseCSVLine(line) {
       const cols = [];
-      let cur = "", inQ = false;
+      let cur = "",
+        inQ = false;
       for (const ch of line) {
-        if (ch === '"') { inQ = !inQ; continue; }
-        if (ch === "," && !inQ) { cols.push(cur); cur = ""; continue; }
+        if (ch === '"') {
+          inQ = !inQ;
+          continue;
+        }
+        if (ch === "," && !inQ) {
+          cols.push(cur);
+          cur = "";
+          continue;
+        }
         cur += ch;
       }
       cols.push(cur);
-
-      const symbol = cols[iSymbol]?.trim() ?? "";
-      const title  = cols[iTitle]?.trim() ?? "";
-      const san    = cols[iSan]?.trim() ?? "";
-      const nganh  = cols[iNganh]?.trim() ?? "";
-      if (!symbol) continue;
-
-      // Bỏ qua trái phiếu / chứng chỉ: ký hiệu có chữ số ở cuối (vd: BID122028, BAB122030)
-      if (/^[A-Z]{2,4}\d{4,}/.test(symbol)) continue;
-
-      const group = reverseMap[nganh] ?? (nganh ? "Khác" : "Chưa phân loại");
-      if (!groups[group]) groups[group] = [];
-      groups[group].push({ symbol, title, san, nganh });
+      return cols;
     }
 
-    const result = Object.entries(groups)
-      .map(([name, stocks]) => ({ name, count: stocks.length, stocks }))
-      .sort((a, b) => b.count - a.count);
+    // Bước 1: Đọc stocks.csv → symbol → san (chỉ cần sàn giao dịch, title đã có trong ssi_sectors.csv)
+    const sanInfo = {}; // sym → san
+    if (fs.existsSync(stocksPath)) {
+      const sLines = fs
+        .readFileSync(stocksPath, "utf8")
+        .replace(/^\uFEFF/, "")
+        .split("\n");
+      const sHdr = sLines[0].split(",");
+      const iSym = sHdr.indexOf("Symbol");
+      const iSan = sHdr.indexOf("Sàn giao dịch");
+      for (const line of sLines.slice(1)) {
+        if (!line.trim()) continue;
+        const c = parseCSVLine(line);
+        const sym = c[iSym]?.trim() ?? "";
+        if (!sym) continue;
+        sanInfo[sym] = c[iSan]?.trim() ?? "";
+      }
+    }
+
+    // Bước 2: Đọc ssi_sectors.csv → nhóm theo ICB code
+    // Columns: STT, Symbol, ICB Code, Ngành (VI), Ngành (EN), Tên công ty, Sàn, Hủy niêm yết
+    const ssiLines = fs.readFileSync(ssiPath, "utf8").split("\n");
+    const sectors = new Map(); // icbCode → { name, nameEn, icbCode, stocks[] }
+
+    for (const line of ssiLines.slice(1)) {
+      if (!line.trim()) continue;
+      const c = parseCSVLine(line);
+      const symbol = c[1]?.trim() ?? "";
+      const icbCode = c[2]?.trim() ?? "";
+      const nameVi = c[3]?.trim() ?? "";
+      const nameEn = c[4]?.trim() ?? "";
+      const title = c[5]?.trim() ?? "";
+      const san = c[6]?.trim() ?? "";
+      const delisted = c[7]?.trim() ?? "";
+      if (!symbol || !icbCode) continue;
+      if (delisted === "Y") continue; // bỏ qua mã đã hủy niêm yết
+
+      if (!sectors.has(icbCode)) {
+        sectors.set(icbCode, { name: nameVi, nameEn, icbCode, stocks: [] });
+      }
+      sectors.get(icbCode).stocks.push({
+        symbol,
+        title,
+        san: san || (sanInfo[symbol] ?? ""),
+        nganh: nameVi,
+      });
+    }
+
+    const result = [...sectors.values()].map((sec) => ({
+      name: sec.name,
+      nameEn: sec.nameEn,
+      icbCode: sec.icbCode,
+      count: sec.stocks.length,
+      stocks: sec.stocks,
+    }));
 
     return sendJSON(res, 200, result);
   }
 
   const staticFiles = {
-    "/css/style.css":          { file: "public/css/style.css",          mime: "text/css; charset=utf-8" },
-    "/js/app.js":              { file: "public/js/app.js",              mime: "application/javascript; charset=utf-8" },
-    "/surge.html":             { file: "public/surge.html",             mime: "text/html; charset=utf-8" },
-    "/detail.html":            { file: "public/detail.html",            mime: "text/html; charset=utf-8" },
-    "/watchlist.html":         { file: "public/watchlist.html",         mime: "text/html; charset=utf-8" },
-    "/watcher.html":           { file: "public/watcher.html",           mime: "text/html; charset=utf-8" },
-    "/portfolio.html":         { file: "public/portfolio.html",         mime: "text/html; charset=utf-8" },
-    "/css/portfolio.css":      { file: "public/css/portfolio.css",      mime: "text/css; charset=utf-8" },
-    "/js/portfolio.js":        { file: "public/js/portfolio.js",        mime: "application/javascript; charset=utf-8" },
-    "/stocks.csv":             { file: "public/stocks.csv",             mime: "text/csv; charset=utf-8" },
-    "/sector.html":            { file: "public/sector.html",            mime: "text/html; charset=utf-8" },
-    "/sector-detail.html":     { file: "public/sector-detail.html",     mime: "text/html; charset=utf-8" },
-    "/price-board.html":       { file: "public/price-board.html",       mime: "text/html; charset=utf-8" },
+    "/css/style.css": {
+      file: "public/css/style.css",
+      mime: "text/css; charset=utf-8",
+    },
+    "/js/app.js": {
+      file: "public/js/app.js",
+      mime: "application/javascript; charset=utf-8",
+    },
+    "/surge.html": {
+      file: "public/surge.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/detail.html": {
+      file: "public/detail.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/watchlist.html": {
+      file: "public/watchlist.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/watcher.html": {
+      file: "public/watcher.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/portfolio.html": {
+      file: "public/portfolio.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/css/portfolio.css": {
+      file: "public/css/portfolio.css",
+      mime: "text/css; charset=utf-8",
+    },
+    "/js/portfolio.js": {
+      file: "public/js/portfolio.js",
+      mime: "application/javascript; charset=utf-8",
+    },
+    "/stocks.csv": {
+      file: "public/stocks.csv",
+      mime: "text/csv; charset=utf-8",
+    },
+    "/sector.html": {
+      file: "public/sector.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/sector-detail.html": {
+      file: "public/sector-detail.html",
+      mime: "text/html; charset=utf-8",
+    },
+    "/price-board.html": {
+      file: "public/price-board.html",
+      mime: "text/html; charset=utf-8",
+    },
   };
   if (staticFiles[pathname]) {
     const { file, mime } = staticFiles[pathname];
@@ -791,8 +1208,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-  const lanIp = Object.values(os.networkInterfaces()).flat()
-    .find(i => i.family === "IPv4" && !i.internal)?.address ?? "?";
+  const lanIp =
+    Object.values(os.networkInterfaces())
+      .flat()
+      .find((i) => i.family === "IPv4" && !i.internal)?.address ?? "?";
   console.log("╔══════════════════════════════════════════════╗");
   console.log(`║  CafeF Stock Downloader Server               ║`);
   console.log(`║  Local:   http://localhost:${PORT}               ║`);

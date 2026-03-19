@@ -10,6 +10,7 @@
 
 import fs from "fs";
 import path from "path";
+import url from "url";
 import zlib from "zlib";
 import { promisify } from "util";
 
@@ -124,6 +125,41 @@ function parsePrice(raw) {
   return raw
     ? parseFloat(String(raw).replace(/\./g, "").replace(",", ".")) || null
     : null;
+}
+
+// ── Read database/history/<SYMBOL>.json → array of session objects ───────────
+
+const BASE_DIR = path.dirname(url.fileURLToPath(import.meta.url));
+const HISTORY_DIR = path.join(BASE_DIR, "database", "history");
+
+function readHistoryJson(symbol) {
+  const filePath = path.join(HISTORY_DIR, `${symbol}.json`);
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const { records } = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    if (!Array.isArray(records) || records.length === 0) return null;
+    return records
+      .map((r) => {
+        const ts = new Date(r.date).getTime();
+        if (!ts || isNaN(ts)) return null;
+        return {
+          date: r.date,
+          volume: r.volume || 0,
+          price: r.close || null,
+          open: r.open || null,
+          high: r.high || null,
+          low: r.low || null,
+          adj: r.close || null,
+          val: null,
+          change: null,
+          ts,
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.ts - b.ts);
+  } catch {
+    return null;
+  }
 }
 
 // ── Read xlsx → array of session objects, sorted old→new ────────────────────
@@ -3058,18 +3094,10 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     }
   }
 
-  const stockFile = path.join(tmpDir, `${symbol}.xlsx`);
-  const indexFile = path.join(tmpDir, "VNINDEX.xlsx");
-
-  if (!fs.existsSync(stockFile))
-    return { error: `Không tìm thấy file: ${stockFile}` };
-
   let stockData, indexData;
-  try {
-    stockData = await readXlsx(stockFile);
-  } catch (e) {
-    return { error: `Không thể đọc ${symbol}: ${e.message}` };
-  }
+  stockData = readHistoryJson(symbol);
+  if (!stockData)
+    return { error: `Không tìm thấy dữ liệu cho ${symbol}` };
 
   if (!stockData || stockData.length < 30)
     return {
@@ -3078,11 +3106,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
       } phiên, cần >=30)`,
     };
 
-  try {
-    indexData = fs.existsSync(indexFile) ? await readXlsx(indexFile) : null;
-  } catch {
-    indexData = null;
-  }
+  indexData = null;
 
   const prices = stockData.map((d) => d.price).filter(Boolean);
   const n = prices.length;

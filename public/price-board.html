@@ -311,6 +311,44 @@ body {
   transition: color 0.15s, background 0.15s;
 }
 .nav-link:hover { color: var(--text2); background: var(--bg3); }
+
+/* Sector dropdown */
+#sectorTabWrap { position: relative; }
+#sectorDropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 200px;
+  max-height: 340px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+#sectorDropdown.open { display: block; }
+.sector-opt {
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+.sector-opt:hover { background: var(--bg3); color: var(--text); }
+.sector-opt.active { color: #60a5fa; }
+.sector-opt-count {
+  color: var(--text3);
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  flex-shrink: 0;
+}
 </style>
 </head>
 <body>
@@ -369,6 +407,10 @@ body {
   <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
   <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
   <button class="tab-btn" data-tab="upcom" onclick="switchTab(this)">UPCOM <span class="tab-count" id="cnt-upcom">...</span></button>
+  <div id="sectorTabWrap">
+    <button class="tab-btn" id="sectorTabBtn" onclick="toggleSectorDropdown(event)">CP Ngành<span id="sectorTabLabel"></span> <span style="font-size:9px;opacity:.7">▾</span></button>
+    <div id="sectorDropdown" role="listbox"></div>
+  </div>
 </div>
 
 <!-- TABLE AREA -->
@@ -445,6 +487,10 @@ let sortDir    = -1;   // -1 = desc, 1 = asc
 let liveTimer  = null;
 let isLive     = true;
 const REFRESH_MS = 4000;
+
+// Sector state
+let sectorSymbols = {}; // sectorName → Set<symbol>
+let activeSector  = null;
 
 const TABS = {
   'VN30':  { type: 'group',    id: 'VN30'  },
@@ -687,6 +733,9 @@ async function switchTab(btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentTab = btn.dataset.tab;
+  // Reset sector
+  activeSector = null;
+  document.getElementById('sectorTabLabel').textContent = '';
 
   if (!allData[currentTab]) {
     showLoading(true);
@@ -720,14 +769,27 @@ function startLive() {
   stopLive();
   liveTimer = setInterval(async () => {
     try {
-      // refresh current tab + indexes concurrently
-      const [newData] = await Promise.all([
-        fetchTab(currentTab),
-        refreshIndexes(),
-      ]);
-      flashChanges(allData[currentTab] ?? [], newData);
-      allData[currentTab] = newData;
-      document.getElementById(`cnt-${currentTab}`).textContent = newData.length;
+      if (currentTab === 'sector' && activeSector) {
+        // Refresh all 3 exchanges in parallel
+        const [hose, hnx, upcom] = await Promise.all([
+          fetchTab('hose'),
+          fetchTab('hnx'),
+          fetchTab('upcom'),
+          refreshIndexes(),
+        ]);
+        allData['hose'] = hose;
+        allData['hnx']  = hnx;
+        allData['upcom'] = upcom;
+        allData['sector'] = getDataForSector(activeSector);
+      } else {
+        const [newData] = await Promise.all([
+          fetchTab(currentTab),
+          refreshIndexes(),
+        ]);
+        flashChanges(allData[currentTab] ?? [], newData);
+        allData[currentTab] = newData;
+        document.getElementById(`cnt-${currentTab}`).textContent = newData.length;
+      }
       renderTable();
       updateTimestamp();
     } catch(e) { console.warn('Refresh error:', e); }
@@ -766,16 +828,79 @@ function showLoading(v) {
   document.getElementById('loadingOverlay').classList.toggle('hidden', !v);
 }
 
+// ──── Sector ───────────────────────────────────────────────────────────────────
+function getDataForSector(name) {
+  const syms = sectorSymbols[name];
+  if (!syms) return [];
+  return [
+    ...(allData['hose']  ?? []),
+    ...(allData['hnx']   ?? []),
+    ...(allData['upcom'] ?? []),
+  ].filter(s => syms.has(s.stockSymbol ?? s.code ?? ''));
+}
+
+function buildSectorDropdown(sectors) {
+  sectorSymbols = {};
+  const dd = document.getElementById('sectorDropdown');
+  dd.innerHTML = sectors.map(sec => {
+    sectorSymbols[sec.name] = new Set(sec.stocks.map(s => s.symbol));
+    const safeName = sec.name.replace(/'/g, "\\'");
+    return `<div class="sector-opt" onclick="selectSector('${safeName}')" data-sector="${sec.name}">
+      <span>${sec.name}</span>
+      <span class="sector-opt-count">${sec.count}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleSectorDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('sectorDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', () => {
+  document.getElementById('sectorDropdown')?.classList.remove('open');
+});
+
+async function selectSector(name) {
+  document.getElementById('sectorDropdown').classList.remove('open');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sectorTabBtn').classList.add('active');
+  activeSector = name;
+  currentTab = 'sector';
+  document.getElementById('sectorTabLabel').textContent = ': ' + name;
+  // Update active item highlight
+  document.querySelectorAll('.sector-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.sector === name);
+  });
+  // Ensure all exchange data is loaded
+  const missing = ['hose', 'hnx', 'upcom'].filter(t => !allData[t]);
+  if (missing.length > 0) {
+    showLoading(true);
+    try {
+      await Promise.all(missing.map(async t => {
+        allData[t] = await fetchTab(t);
+        document.getElementById(`cnt-${t}`).textContent = allData[t].length;
+      }));
+    } finally {
+      showLoading(false);
+    }
+  }
+  allData['sector'] = getDataForSector(name);
+  renderTable();
+}
+
 // ──── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   showLoading(true);
   try {
-    const [data] = await Promise.all([
+    const [data, sectors] = await Promise.all([
       fetchTab('VN30'),
+      fetch('/api/sectors').then(r => r.json()),
       refreshIndexes(),
     ]);
     allData['VN30'] = data;
     document.getElementById('cnt-VN30').textContent = data.length;
+    buildSectorDropdown(sectors);
     // prefetch counts for other tabs (non-blocking)
     prefetchCounts();
   } finally {

@@ -108,7 +108,7 @@
     </nav>
 
     <div style="padding:14px 20px;border-top:1px solid #f1f5f9;font-size:12px;color:#94a3b8">
-      Nguồn: CafeF
+      Nguồn: SSI iBoard (ICB)
     </div>
   </aside>
 
@@ -117,7 +117,7 @@
     <!-- Header -->
     <div class="main-header" style="padding:32px 36px 24px;background:#fff;border-bottom:1px solid #e2e8f0">
       <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#0f172a;letter-spacing:-.5px;margin-bottom:6px">
-        Phân loại Ngành
+        Phân loại Ngành <span style="font-size:13px;font-weight:600;color:#94a3b8;letter-spacing:0;font-family:inherit">ICB</span>
       </div>
       <div id="subTitle" style="font-size:15px;color:#64748b">Đang tải dữ liệu...</div>
     </div>
@@ -157,32 +157,24 @@
     function getIcon(name) {
       const n = name.toLowerCase();
       if (n.includes("ngân hàng")) return '<path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M12 10v11M16 10v11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("tài chính") || n.includes("chứng khoán")) return '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 7 22 7 22 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      if (n.includes("dịch vụ tài chính") || n.includes("chứng khoán") || n.includes("tài chính")) return '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 7 22 7 22 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
       if (n.includes("bảo hiểm")) return '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("bất động sản")) return '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("xây dựng")) return '<path d="M2 20h20M4 20V10l8-6 8 6v10M10 20v-5h4v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("vật liệu")) return '<path d="M2 20h20M4 20V10l8-6 8 6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("điện năng") || n.includes("điện tử")) return '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      if (n.includes("điện") && (n.includes("nước") || n.includes("xăng"))) return '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
       if (n.includes("dầu khí") || n.includes("năng lượng")) return '<ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="2"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("thực phẩm") || n.includes("đồ uống")) return '<path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("thủy sản")) return '<path d="M6.5 17.5l-1-7.5 5.5 2.5 1-5 4.5 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 12c-4.4 4.4-9.6 6-16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("nông nghiệp") || n.includes("phân bón")) return '<path d="M12 22V12M12 12C12 7 8 3 3 3s3 9 9 9zM12 12c0-5 4-9 9-9s-3 9-9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("hàng cá nhân") || n.includes("gia dụng")) return '<path d="M20 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2M1 9h22v11H1z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("công nghệ")) return '<rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("dược phẩm") || n.includes("y tế")) return '<path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-      if (n.includes("thép") || n.includes("kim loại")) return '<path d="M2 20h20M6 20V9l6-5 6 5v11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("khai khoáng") || n.includes("than")) return '<path d="M2 22l10-10M16 8l-4 4M12 12l4 4M22 2L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("y tế")) return '<path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      if (n.includes("tài nguyên") || n.includes("khai khoáng") || n.includes("than")) return '<path d="M2 22l10-10M16 8l-4 4M12 12l4 4M22 2L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("hóa chất")) return '<path d="M9 3H7L3 17a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3L17 3h-2M9 3h6M9 3v5l3 3 3-3V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-      if (n.includes("dệt may")) return '<path d="M6 3l6 6 6-6M3 9h18M3 15h18M6 21l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("nhựa") || n.includes("bao bì")) return '<rect x="3" y="8" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M1 8l2-5h18l2 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-      if (n.includes("vận tải") || n.includes("logistics")) return '<rect x="1" y="3" width="15" height="13" rx="1" stroke="currentColor" stroke-width="2"/><path d="M16 8h4l3 5v4h-7V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/>';
-      if (n.includes("cơ khí") || n.includes("sản xuất")) return '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("hàng & dịch vụ") || n.includes("công nghiệp")) return '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("ô tô")) return '<path d="M5 17H3a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h11l5 5v7a2 2 0 0 1-2 2h-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="17" r="2" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="17" r="2" stroke="currentColor" stroke-width="2"/>';
-      if (n.includes("bán lẻ") || n.includes("thương mại")) return '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("bán lẻ")) return '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("truyền thông")) return '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.9 2.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       if (n.includes("du lịch") || n.includes("giải trí")) return '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("giáo dục")) return '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-      if (n.includes("nội thất") || n.includes("gia dụng")) return '<path d="M20 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2M1 9h22v11H1z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("quảng cáo") || n.includes("truyền thông")) return '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.9 2.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-      if (n.includes("dịch vụ") || n.includes("tiện ích")) return '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+      if (n.includes("viễn thông")) return '<path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
       return '<rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/>';
     }
 
@@ -190,36 +182,42 @@
 
     function renderCards() {
       const q = document.getElementById("searchInput").value.toLowerCase().trim();
-      const filtered = q ? allSectors.filter(s => s.name.toLowerCase().includes(q)) : allSectors;
+      const filtered = q
+        ? allSectors.filter(s => s.name.toLowerCase().includes(q) || (s.nameEn||"").toLowerCase().includes(q))
+        : allSectors;
       document.getElementById("grid").innerHTML = filtered.map((s, i) => {
-        const ac = ACCENTS[i % ACCENTS.length];
-        const icon = getIcon(s.name);
+        const ac    = ACCENTS[i % ACCENTS.length];
+        const icon  = getIcon(s.name);
         const hose  = s.stocks.filter(x => x.san === "HOSE").length;
         const hastc = s.stocks.filter(x => x.san === "HASTC").length;
-        const pHose = Math.round(hose / s.count * 100);
+        const upcom = s.stocks.filter(x => x.san === "" || (x.san !== "HOSE" && x.san !== "HASTC")).length;
+        const pHose = s.count > 0 ? Math.round(hose / s.count * 100) : 0;
         return `
           <div class="sector-card" onclick="location.href='/sector-detail.html?sector=${encodeURIComponent(s.name)}'"
             style="background:#fff;border:1.5px solid ${ac.border};border-radius:16px;padding:22px 22px 18px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px">
+            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
               <div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${ac.bg}">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" color="${ac.icon}">${icon}</svg>
               </div>
               <div style="flex:1;min-width:0;padding-top:2px">
                 <div style="font-weight:700;font-size:15px;line-height:1.3;color:#0f172a">${s.name}</div>
+                <div style="font-size:12px;color:#94a3b8;margin-top:1px">${s.nameEn || ""}</div>
                 <div style="font-size:13px;color:#64748b;margin-top:3px;font-weight:500">${s.count} cổ phiếu</div>
               </div>
+              <div style="font-size:10px;font-weight:700;color:${ac.icon};background:${ac.bg};padding:2px 7px;border-radius:6px;flex-shrink:0;margin-top:2px">${s.icbCode||""}</div>
             </div>
-            <!-- Progress bar HOSE vs HNX -->
-            <div style="height:5px;border-radius:99px;background:#f1f5f9;margin-bottom:10px;overflow:hidden">
-              <div style="height:100%;width:${pHose}%;background:${ac.bar};border-radius:99px;transition:width .5s"></div>
+            <!-- Progress bar HOSE ratio -->
+            <div style="height:4px;border-radius:99px;background:#f1f5f9;margin-bottom:10px;overflow:hidden">
+              <div style="height:100%;width:${pHose}%;background:${ac.bar};border-radius:99px"></div>
             </div>
-            <div style="display:flex;gap:14px">
-              <span style="font-size:13px;color:#64748b;font-weight:500">
+            <div style="display:flex;gap:12px">
+              <span style="font-size:12px;color:#64748b;font-weight:500">
                 HOSE <span style="color:${ac.icon};font-weight:700">${hose}</span>
               </span>
-              <span style="font-size:13px;color:#64748b;font-weight:500">
+              <span style="font-size:12px;color:#64748b;font-weight:500">
                 HNX <span style="color:#475569;font-weight:700">${hastc}</span>
               </span>
+              ${upcom > 0 ? `<span style="font-size:12px;color:#64748b;font-weight:500">UPCOM <span style="color:#94a3b8;font-weight:700">${upcom}</span></span>` : ""}
             </div>
           </div>`;
       }).join("");

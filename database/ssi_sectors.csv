@@ -1,0 +1,1960 @@
+STT,Symbol,ICB Code,Ngành (VI),Ngành (EN),Tên công ty,Sàn,Hủy niêm yết
+1,PVC,0500,"Dầu khí","Oil & Gas","Cổ phiếu Tổng Công ty Hóa chất và Dịch vụ Dầu khí - CTCP (PVChem)",HASTC,
+2,PVE,0500,"Dầu khí","Oil & Gas","Tổng Công ty Tư vấn Thiết kế Dầu khí - CTCP",UPCOM,
+3,PVB,0500,"Dầu khí","Oil & Gas","Cổ phiếu CTCP Bọc ống dầu khí Việt Nam",HASTC,
+4,POS,0500,"Dầu khí","Oil & Gas","CTCP dich vu lap dat, van hanh va bao duong cong trinh dau khi bien PTSC",UPCOM,
+5,TOS,0500,"Dầu khí","Oil & Gas","CTCP Dich vu bien Tan Cang",UPCOM,
+6,PVS,0500,"Dầu khí","Oil & Gas","Cổ phiếu Tổng CTCP Dịch Vụ Kỹ Thuật Dầu Khí Việt Nam",HASTC,
+7,BSR,0500,"Dầu khí","Oil & Gas","Công ty Cổ phần Lọc hóa dầu Bình Sơn",HOSE,
+8,PVD,0500,"Dầu khí","Oil & Gas","Tổng Công ty Cổ phần Khoan và Dịch vụ Khoan Dầu khí",HOSE,
+9,PEQ,0500,"Dầu khí","Oil & Gas","CTCP Thiet bi Xang dau Petrolimex",UPCOM,
+10,PLX,0500,"Dầu khí","Oil & Gas","Tập đoàn Xăng dầu Việt Nam",HOSE,
+11,OIL,0500,"Dầu khí","Oil & Gas","Tổng Công ty Dầu Việt Nam - Công ty cổ phần",UPCOM,
+12,PTV,0500,"Dầu khí","Oil & Gas","Công ty cổ phần Thương mại Dầu khí",UPCOM,
+13,SPC,1300,"Hóa chất","Chemicals","SPC - CTCP Bảo vệ Thực vật Sài Gòn",HASTC,
+14,VTZ,1300,"Hóa chất","Chemicals","CTCP San xuat va Thuong mai Nhua Viet Thanh",HASTC,
+15,PCE,1300,"Hóa chất","Chemicals","CTCP Phan bon va Hoa chat Dau khi Mien Trung",HASTC,
+16,NHH,1300,"Hóa chất","Chemicals","Công ty Cổ phần Nhựa Hà Nội",HOSE,
+17,DPM,1300,"Hóa chất","Chemicals","Tổng Công ty Phân bón và Hóa chất Dầu khí - Công ty Cổ phần",HOSE,
+18,BT1,1300,"Hóa chất","Chemicals","Công ty CP Bảo vệ Thực vật 1 Trung ương",UPCOM,
+19,PAT,1300,"Hóa chất","Chemicals","CTCP Photpho Apatit Việt Nam",UPCOM,
+20,RBC,1300,"Hóa chất","Chemicals","CTCP Công nghiệp và Xuất nhập khẩu Cao Su",UPCOM,
+21,DRI,1300,"Hóa chất","Chemicals","CTCP Dau tu Cao su Dak Lak",UPCOM,
+22,DOC,1300,"Hóa chất","Chemicals","CTCP Vat tu nong nghiep Dong Nai",UPCOM,
+23,LNC,1300,"Hóa chất","Chemicals","CTCP Le Ninh",UPCOM,
+24,PMB,1300,"Hóa chất","Chemicals","CTCP Phan bon va Hoa chat Dau khi Mien Bac",HASTC,
+25,DGC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Tập đoàn Hóa chất Đức Giang",HOSE,
+26,HMD,1300,"Hóa chất","Chemicals","CTCP Hóa chất Minh Đức",UPCOM,
+27,AVG,1300,"Hóa chất","Chemicals","Công ty cổ phần Phân bón Quốc tế Âu Việt",UPCOM,
+28,BRR,1300,"Hóa chất","Chemicals","CTCP Cao su Ba Ria",UPCOM,
+29,RDP,1300,"Hóa chất","Chemicals","Co phieu cong ty co phan Rang Dong Holding",UPCOM,
+30,RTB,1300,"Hóa chất","Chemicals","CTCP Cao Su Tan Bien",UPCOM,
+31,NSG,1300,"Hóa chất","Chemicals","CTCP Nhua Sai Gon",UPCOM,
+32,DAG,1300,"Hóa chất","Chemicals","CTCP Tập đoàn Nhựa Đông Á",UPCOM,
+33,SEP,1300,"Hóa chất","Chemicals","CTCP TCT Thuong mai Quang tri",UPCOM,
+34,ECO,1300,"Hóa chất","Chemicals","Công ty cổ phần Nhựa sinh thái Việt Nam",UPCOM,
+35,GER,1300,"Hóa chất","Chemicals","Cổ phiếu CTCP Thể Thao Ngôi sao Geru",UPCOM,
+36,NFC,1300,"Hóa chất","Chemicals","NFC-CTCP Phân lân Ninh Bình",HASTC,
+37,BFC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Phân bón Bình Điền",HOSE,
+38,SFG,1300,"Hóa chất","Chemicals","Công ty Cổ phần Phân bón Miền Nam",HOSE,
+39,TSC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Vật tư Kỹ thuật Nông nghiệp Cần Thơ",HOSE,
+40,HAI,1300,"Hóa chất","Chemicals","",,Y
+41,VKP,1300,"Hóa chất","Chemicals","CTCP Nhựa Tân Hóa",UPCOM,
+42,VNY,1300,"Hóa chất","Chemicals","CTCP Thuốc thú y TƯ I",UPCOM,
+43,VTQ,1300,"Hóa chất","Chemicals","Công ty cổ phần Việt Trung Quảng Bình",UPCOM,
+44,HVT,1300,"Hóa chất","Chemicals","Cổ phiếu Công ty Cổ phần Hóa chất Việt Trì",HASTC,
+45,LAS,1300,"Hóa chất","Chemicals","Cổ phiếu Công ty Cổ phần Supe Phốt phát và Hóa chất Lâm Thao",HASTC,
+46,PSE,1300,"Hóa chất","Chemicals","CTCP Phân bón và Hóa chất Dầu khí Đông Nam Bộ",HASTC,
+47,VPS,1300,"Hóa chất","Chemicals","Công ty Cổ phần Thuốc sát trùng Việt Nam",HOSE,
+48,BRC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Bến Thành",HOSE,
+49,DPR,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Đồng Phú",HOSE,
+50,TNC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Thống Nhất",HOSE,
+51,TPC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Nhựa Tân Đại Hưng",HOSE,
+52,CICO,1300,"Hóa chất","Chemicals","",,Y
+53,HSI,1300,"Hóa chất","Chemicals","CTCP Vật tư Tổng hợp và Phân bón Hóa sinh",UPCOM,
+54,BQP,1300,"Hóa chất","Chemicals","Cổ phiếu Công ty cổ phần Nhựa Chất lượng cao Bình Thuận",UPCOM,
+55,HPH,1300,"Hóa chất","Chemicals","CTCP Hoa Chat Hung Phat Ha Bac",UPCOM,
+56,DDV,1300,"Hóa chất","Chemicals","CTCP DAP - VINACHEM",UPCOM,
+57,PSW,1300,"Hóa chất","Chemicals","PSW - CTCP Phan Bon va Hoa Chat Dau khi Tay Nam Bo",HASTC,
+58,GVR,1300,"Hóa chất","Chemicals","Tập đoàn Công nghiệp Cao su Việt Nam - Công ty Cổ phần",HOSE,
+59,AAA,1300,"Hóa chất","Chemicals","Công ty Cổ phần Nhựa An Phát Xanh",HOSE,
+60,HRC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Hòa Bình",HOSE,
+61,DTT,1300,"Hóa chất","Chemicals","Công ty Cổ phần Kỹ nghệ Đô Thành",HOSE,
+62,PHR,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Phước Hòa",HOSE,
+63,PCN,1300,"Hóa chất","Chemicals","",,Y
+64,PHOTPHOVN,1300,"Hóa chất","Chemicals","",,Y
+65,QBS,1300,"Hóa chất","Chemicals","CTCP Xuat nhap khau Quang Binh",UPCOM,
+66,PVO,1300,"Hóa chất","Chemicals","CTCP Dau Nhon PV OIL",UPCOM,
+67,SBR,1300,"Hóa chất","Chemicals","CTCP Cao Su Song Be",UPCOM,
+68,VNP,1300,"Hóa chất","Chemicals","CTCP Nhựa Việt Nam",UPCOM,
+69,PCH,1300,"Hóa chất","Chemicals","CTCP Nhựa Picomat",HASTC,
+70,ABS,1300,"Hóa chất","Chemicals","Công ty Cổ phần Dịch vụ Nông nghiệp Bình Thuận",HOSE,
+71,DCM,1300,"Hóa chất","Chemicals","Công ty Cổ phần Phân bón Dầu khí Cà Mau",HOSE,
+72,HCD,1300,"Hóa chất","Chemicals","Công ty Cổ phần Đầu tư Sản xuất và Thương mại HCD",HOSE,
+73,CSV,1300,"Hóa chất","Chemicals","Công ty Cổ phần Hóa chất cơ bản miền Nam",HOSE,
+74,PLC,1300,"Hóa chất","Chemicals","Cổ phiếu Tổng Công ty Hóa dầu Petrolimex - CTCP",HASTC,
+75,CPC,1300,"Hóa chất","Chemicals","Cổ phiếu CTCP Thuốc sát trùng Cần Thơ",HASTC,
+76,PGN,1300,"Hóa chất","Chemicals","CTCP Phu Gia Nhua",HASTC,
+77,HII,1300,"Hóa chất","Chemicals","Công ty Cổ phần An Tiến Industries",HOSE,
+78,TRC,1300,"Hóa chất","Chemicals","Công ty Cổ phần Cao su Tây Ninh",HOSE,
+79,APP,1300,"Hóa chất","Chemicals","APP - CTCP Phát triển Phụ gia và Sản phẩm Dầu mỏ",UPCOM,
+80,IRC,1300,"Hóa chất","Chemicals","Công ty cổ phần Cao su Công nghiệp",UPCOM,
+81,VET,1300,"Hóa chất","Chemicals","CTCP Thuoc thu y Trung uong Navetco",UPCOM,
+82,DRG,1300,"Hóa chất","Chemicals","CTCP Cao su Đắk Lắk",UPCOM,
+83,PLP,1300,"Hóa chất","Chemicals","Công ty Cổ phần Sản xuất và Công nghệ Nhựa Pha Lê",HOSE,
+84,VFG,1300,"Hóa chất","Chemicals","Công ty Cổ phần Khử trùng Việt Nam",HOSE,
+85,VAF,1300,"Hóa chất","Chemicals","Công ty Cổ phần Phân lân Nung chảy Văn Điển",HOSE,
+86,NNG,1300,"Hóa chất","Chemicals","",,Y
+87,DPD,1300,"Hóa chất","Chemicals","",,Y
+88,HNP,1300,"Hóa chất","Chemicals","CTCP Hanel Xop nhua",UPCOM,
+89,DHB,1300,"Hóa chất","Chemicals","CTCP Phan dam va Hoa chat Ha Bac",UPCOM,
+90,VXP,1300,"Hóa chất","Chemicals","CTCP Thuoc Thu y Trung uong VETVACO",UPCOM,
+91,TD6,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Than Đèo Nai - Cọc Sáu - TKV",HASTC,
+92,SHN,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Đầu tư Tổng hợp Hà Nội",HASTC,
+93,SSM,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Chế tạo kết cấu thép VNECO.SSM",HASTC,
+94,KMT,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Kim Khí Miền Trung",HASTC,
+95,CST,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Than Cao Sơn - TKV",HASTC,
+96,GTA,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Chế biến Gỗ Thuận An",HOSE,
+97,PTB,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Phú Tài",HOSE,
+98,YBM,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Khoáng sản Công nghiệp Yên Bái",HOSE,
+99,KSA,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+100,TDN,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Than Đèo Nai - Vinacomin",HASTC,Y
+101,HMG,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Kim khi Ha noi - VNSTEEL",UPCOM,
+102,MDF,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần gỗ MDF VRG Quảng Trị",UPCOM,
+103,MZG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Miza",UPCOM,
+104,TQN,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Thong Quang ninh",UPCOM,
+105,TTS,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Cán thép Thái Trung",UPCOM,
+106,VIM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Khoang san Viglacera",UPCOM,
+107,TDS,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Thép Thủ Đức- VNSTEEL",UPCOM,
+108,TNB,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Thép Nhà Bè- VNSTEEL",UPCOM,
+109,BMJ,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Khoáng sản miền đông AHP",UPCOM,
+110,TVN,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP - Tong cong ty Thep Viet Nam",UPCOM,
+111,VGL,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Ma kem cong nghiep Vingal-Vnsteel",UPCOM,
+112,MEL,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Thép Mê Lin",HASTC,
+113,MIC,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Kỹ nghệ Khoáng sản Quảng Nam",HASTC,
+114,NBC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Núi Béo - Vinacomin",HASTC,
+115,VPG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Đầu tư Thương mại Xuất nhập khẩu Việt Phát",HOSE,
+116,SMC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Đầu tư Thương mại SMC",HOSE,
+117,TTF,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn Kỹ nghệ Gỗ Trường Thành",HOSE,
+118,DNS,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+119,HUMEXCO,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+120,MGC,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Dia chat Mo_TKV",UPCOM,
+121,MTA,1700,"Tài nguyên Cơ bản","Basic Resources","Tong cong ty Khoang san va Thuong mai Ha tinh - CTCP",UPCOM,
+122,KHD,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP khai thac, che bien khoang san Hai Duong",UPCOM,
+123,POM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP thep Pomina",UPCOM,
+124,PAS,1700,"Tài nguyên Cơ bản","Basic Resources","PAS - CTCP Quoc Te Phuong Anh",UPCOM,
+125,KTL,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Kim khi Thang Long",UPCOM,
+126,VDT,1700,"Tài nguyên Cơ bản","Basic Resources","VDT - Công ty Cổ phần Lưới thép Bình Tây",UPCOM,
+127,VLS,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Sản xuất Thép Việt Long",UPCOM,
+128,KNA,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+129,LTQ,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+130,VIF,1700,"Tài nguyên Cơ bản","Basic Resources","TCT Lam nghiep Viet Nam - CTCP",HASTC,
+131,HGM,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Cơ khí và Khoáng sản Hà Giang",HASTC,
+132,HLC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Hà Lầm - Vinacomin",HASTC,
+133,KKC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Tập đoàn Thành Thái",HASTC,
+134,TTH,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Thuong mai va Dich vu Tien Thanh",HASTC,
+135,HSG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn Hoa Sen",HOSE,
+136,TNI,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn Thành Nam",HOSE,
+137,TLH,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn Thép Tiến Lên",HOSE,
+138,MC3,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+139,KTB,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+140,SCA,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+141,DNY,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+142,GTM,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+143,CBI,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Gang thep Cao Bang",UPCOM,
+144,TIS,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Gang Thép Thái Nguyên",UPCOM,
+145,DFC,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Xich lip Dong Anh",UPCOM,
+146,KVC,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Sản xuất Xuất nhập khẩu Inox Kim Vĩ",UPCOM,
+147,TCP,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+148,TMB,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Kinh doanh than Mien Bac - Vinacomin",HASTC,
+149,BKC,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Khoáng sản Bắc Kạn",HASTC,
+150,ITQ,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Tập đoàn Thiên Quang",HASTC,
+151,NSH,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Tập đoàn Nhôm Sông Hồng Shalumi",HASTC,
+152,MDC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Mông Dương Vinacomin",HASTC,
+153,SAV,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Hợp tác Kinh tế và Xuất nhập khẩu Savimex",HOSE,
+154,MUAXUANAC,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+155,SANTO,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+156,FCBC,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+157,KLM,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+158,SQC,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+159,TC6,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Cọc Sáu - Vinacomin",HASTC,Y
+160,TCS,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+161,GLC,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Vàng Lào Cai",UPCOM,
+162,BCA,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP B.C.H",UPCOM,
+163,VBG,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Dia chat Viet Bac - TKV",UPCOM,
+164,TNS,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Thep Tam la Thong nhat",UPCOM,
+165,GVT,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Giay Viet Tri",UPCOM,
+166,HMC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Kim khí Thành phố Hồ Chí Minh - Vnsteel",HOSE,
+167,HAP,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn HAPACO",HOSE,
+168,NKG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Thép Nam Kim",HOSE,
+169,DTL,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Đại Thiên Lộc",HOSE,
+170,RRC,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+171,KSMT,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+172,KHB,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+173,MHL,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Minh Hữu Liên",UPCOM,
+174,HSV,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Tập đoàn HSV Việt Nam",UPCOM,
+175,ATG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần ATG Planet",UPCOM,
+176,BVG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Group Bắc Việt",UPCOM,
+177,TMG,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Kim loai mau Thai Nguyen - Vimico",UPCOM,
+178,TMW,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Tổng hợp Gỗ tân Mai",UPCOM,
+179,TNA,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Thuong mai Xuat nhap khau Thien Nam",UPCOM,
+180,LMC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Long Beach LMC",UPCOM,
+181,KSS,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Khoáng sản Na Rì Hamico",HOSE,Y
+182,CLI,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+183,TVD,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Vàng Danh - Vinacomin",HASTC,
+184,KSV,1700,"Tài nguyên Cơ bản","Basic Resources","Tong Cong ty Khoang san TKV-CTCP",HASTC,
+185,THT,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Than Hà Tu - Vinacomin",HASTC,
+186,TKU,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Công nghiệp Tung Kuang",HASTC,
+187,ACG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Gỗ An Cường",HOSE,
+188,DHC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Đông Hải Bến Tre",HOSE,
+189,DHM,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Thương mại & Khai thác Khoáng sản Dương Hiếu",HOSE,
+190,HPG,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Tập đoàn Hòa Phát",HOSE,
+191,SHI,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Quốc tế Sơn Hà",HOSE,
+192,VID,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Đầu tư Phát triển Thương mại Viễn Đông",HOSE,
+193,VCA,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Thép VICASA - VNSTEEL",HOSE,
+194,MMC,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+195,AAH,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Hop nhat",UPCOM,
+196,HPM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Xay dung Thuong Mai va Khoang San Hoang Phuc",UPCOM,
+197,NHV,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Sức khỏe Hồi sinh Việt Nam",UPCOM,
+198,PIS,1700,"Tài nguyên Cơ bản","Basic Resources","Tổng Công ty Pisico Bình Định - Công ty cổ phần",UPCOM,
+199,BCB,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP 397",UPCOM,
+200,VDB,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Van tai va Che bien Than Dong Bac",UPCOM,
+201,GDA,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Ton Dong A",UPCOM,
+202,VGS,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP ống thép Việt Đức VG PIPE",HASTC,
+203,AMC,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Khoáng sản Á Châu",HASTC,
+204,CAP,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu CTCP Lâm nông sản thực phẩm Yên Bái",HASTC,
+205,D17,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+206,PTK,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+207,MIM,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+208,TND,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+209,HLA,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Hữu Liên Á Châu",UPCOM,
+210,MSR,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Masan High - Tech Materials",UPCOM,
+211,KCB,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty cổ phần Khoáng sản và luyện kim Cao Bằng",UPCOM,
+212,CLM,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Xuất nhập khẩu Than - Vinacomin",HASTC,
+213,MVB,1700,"Tài nguyên Cơ bản","Basic Resources","TCT Cong nghiep mo Viet Bac TKV",HASTC,
+214,BMC,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Khoáng sản Bình Định",HOSE,
+215,HHP,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần HHP Global",HOSE,
+216,SHA,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Sơn Hà Sài Gòn",HOSE,
+217,DPS,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+218,BAM,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+219,TKG,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+220,VIS,1700,"Tài nguyên Cơ bản","Basic Resources","Công ty Cổ phần Thép Việt Ý",HOSE,Y
+221,ACM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Tap doan Khoang san A Cuong",UPCOM,
+222,LCM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Khai thác và Chế biến khoáng sản Lào cai",UPCOM,
+223,SJF,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Dau tu Sao Thai Duong",UPCOM,
+224,SPI,1700,"Tài nguyên Cơ bản","Basic Resources","Cổ phiếu Công ty cổ phần Spiral Galaxy",UPCOM,
+225,FRC,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Lâm đặc sản xuất khẩu Quảng Nam",UPCOM,
+226,FRM,1700,"Tài nguyên Cơ bản","Basic Resources","CTCP Lam nghiep Sai gon",UPCOM,
+227,HTS,1700,"Tài nguyên Cơ bản","Basic Resources","",,Y
+228,DIH,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư Phát triển Xây dựng Hội An",HASTC,
+229,TV3,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Tư Vấn Xây dựng Điện 3",HASTC,
+230,SDU,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư xây dựng và phát triển đô thị Sông Đà",HASTC,
+231,CLH,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xi mang La Hien VVMI",HASTC,
+232,V12,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng số 12",HASTC,
+233,VCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần Vinaconex 25",HASTC,
+234,GMX,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Gạch ngói Gốm Xây dựng Mỹ Xuân",HASTC,
+235,ICG,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng Sông Hồng",HASTC,
+236,INC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Tư vấn đầu tư IDICO",HASTC,
+237,MCO,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây dựng BDC Việt Nam",HASTC,
+238,PDB,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn Đầu tư Din Capital",HASTC,
+239,GMH,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Minh Hưng Quảng Trị",HOSE,
+240,DXV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Vicem Vật liệu Xây dựng Đà Nẵng",HOSE,
+241,NNC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đá Núi Nhỏ",HOSE,
+242,C47,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng 47",HOSE,
+243,CDC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Chương Dương",HOSE,
+244,NAV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Nam Việt",HOSE,
+245,PHC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng Phục Hưng Holdings",HOSE,
+246,CTD,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng COTECCONS",HOSE,
+247,XDC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+248,TBX,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xi măng Thái Bình",HASTC,Y
+249,DXD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+250,CEE,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng Hạ tầng CII",HOSE,Y
+251,CCIC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+252,SDE,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+253,B82,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần 482",HOSE,Y
+254,KSK,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+255,GH3,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Công trình Giao thông Hà Nội",UPCOM,
+256,MES,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCT Co dien cong trinh",UPCOM,
+257,LCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xi măng Hồng Phong",UPCOM,
+258,PVH,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay lap Dau khi Thanh Hoa",UPCOM,
+259,NAC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tu van Xay dung tong hop",UPCOM,
+260,CH5,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung so 5 Ha Noi",UPCOM,
+261,CID,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng & Phát triển Cơ sở hạ tầng",UPCOM,
+262,SD3,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần sông đà 3",UPCOM,
+263,SIG,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu va Thuong mai Song Da",UPCOM,
+264,CT3,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và Xây dựng Công trình 3",UPCOM,
+265,CT6,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Công trình 6",UPCOM,
+266,DCT,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tam lop Vat lieu Xay dung Dong Nai",UPCOM,
+267,PSB,2300,"Xây dựng và Vật liệu","Construction & Materials","cổ phiếu CTCP Đầu tư Dầu khí Sao Mai - Bến Đình",UPCOM,
+268,TL4,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng công ty Xây dựng Thủy lợi 4 - CTCP",UPCOM,
+269,PVY,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Chế tạo Giàn khoan Dầu khí",UPCOM,
+270,RCC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cong ty Cong trinh duong sat",UPCOM,
+271,SDD,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và Xây lắp Sông Đà",UPCOM,
+272,BCR,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP BCG Land",UPCOM,
+273,TVH,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tu van Xay dung Cong trinh Hang hai",UPCOM,
+274,SNZ,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Cổ phần Phát triển Khu công nghiệp",UPCOM,
+275,DGT,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Công trình giao thông Đồng Nai",UPCOM,
+276,L12,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Licogi 12",UPCOM,
+277,VLB,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung va San xuat vat lieu xay dung Bien Hoa",UPCOM,
+278,VVN,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng CTCP Xây dựng công nghiệp VN",UPCOM,
+279,VW3,2300,"Xây dựng và Vật liệu","Construction & Materials","CP CTCP Viwaseen3",UPCOM,
+280,UDC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung va Phat trien Do thi Tinh Ba Ria - Vung Tau",UPCOM,
+281,VMK,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Vimarko",UPCOM,
+282,X77,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Thanh An 77",UPCOM,
+283,DVW,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dich vu va Xay dung Cap nuoc Dong nai",UPCOM,
+284,GTS,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Cong trinh Giao thong SAi Gon",UPCOM,
+285,HAM,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Vat tu Hau Giang",UPCOM,
+286,HAN,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng công ty Xây dựng Hà Nội",UPCOM,
+287,FIC,2300,"Xây dựng và Vật liệu","Construction & Materials","TCT Vật liệu xây dựng số 1 - CTCP",UPCOM,
+288,REN,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+289,FVN,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+290,VE4,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần Xây dựng điện VNECO4",HASTC,
+291,VE1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây dựng điện VNECO1",HASTC,
+292,SD5,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 5",HASTC,
+293,FID,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu va Phat trien Doanh nghiep Viet Nam",HASTC,
+294,HCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Bê tông Hòa Cầm - ITEMEX",HASTC,
+295,VTV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Năng lượng và Môi trường VICEM",HASTC,
+296,LCD,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Lắp máy - Thí nghiệm Cơ Điện",HASTC,
+297,TTC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Gạch men Thanh Thanh",HASTC,
+298,NTP,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Nhựa thiếu niên -Tiền Phong",HASTC,
+299,GEL,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Hạ tầng GELEX",HOSE,
+300,BCE,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng và Giao thông Bình Dương",HOSE,
+301,C32,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần CIC39",HOSE,
+302,PTC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư iCapital",HOSE,
+303,RLC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+304,STV,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+305,TEL,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+306,XDT,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+307,CEC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+308,DX2,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+309,S96,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+310,BCO,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+311,SDB,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+312,MCI,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+313,BTD,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Bê tông ly tâm Thủ Đức",UPCOM,
+314,KSQ,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP CNC Capital Việt Nam",UPCOM,
+315,LAI,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu xay dung Long An IDICO",UPCOM,
+316,LIC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong Cong ty Licogi",UPCOM,
+317,BTN,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư Bitco Bình Định",UPCOM,
+318,CDO,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tu van thiet ke va Phat trien do thi",UPCOM,
+319,SD4,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 4",UPCOM,
+320,SHG,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty cổ phần Sông Hồng",UPCOM,
+321,CYC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Gach men Chang Yih",UPCOM,
+322,PLA,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu Dich vu ha tang Xang dau",UPCOM,
+323,PSG,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và Xây lắp Dầu khí Sài Gòn",UPCOM,
+324,TVG,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Tư vấn Đầu tư và Xây dựng Giao thông vận tải",UPCOM,
+325,TDF,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Trung Đô",UPCOM,
+326,DID,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP DIC - Đồng Tiến",UPCOM,
+327,L45,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Lilama 45.1",UPCOM,
+328,E12,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung dien Vneco12",UPCOM,
+329,EIC,2300,"Xây dựng và Vật liệu","Construction & Materials","EIC- CTCP EVN Quoc te",UPCOM,
+330,VCX,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xi Măng Yên Bình",UPCOM,
+331,XMC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây dựng Xuân Mai",UPCOM,
+332,H11,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Xây dựng HUD101",UPCOM,
+333,HT9,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+334,VC1,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng số 1",HASTC,
+335,VC2,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây dựng VINA2",HASTC,
+336,QTC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Công trình GTVT Quảng Nam",HASTC,
+337,SDN,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sơn Đồng Nai",HASTC,
+338,SJE,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 11",HASTC,
+339,BAX,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Thong Nhat",HASTC,
+340,TMX,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần VICEM Thương mại Xi măng",HASTC,
+341,TXM,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Vicem Thạch cao Xi măng",HASTC,
+342,SCI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần SIC E&C",HASTC,
+343,VHL,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Cty cổ phần Viglacera Hạ Long",HASTC,
+344,VIT,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Viglacera Tiên Sơn",HASTC,
+345,MCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Gạch ngói cao cấp",HASTC,
+346,CIG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần COMA18",HOSE,
+347,EVG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn Everland",HOSE,
+348,BMP,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Nhựa Bình Minh",HOSE,
+349,LCG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Lizen",HOSE,
+350,TNT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn TNT",HOSE,
+351,THG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây dựng Tiền Giang",HOSE,
+352,VNE,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Cổ phần Xây dựng Điện Việt Nam",HOSE,
+353,SDX,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Phòng cháy chữa cháy và Đầu tư Xây dựng Sông Đà",HOSE,Y
+354,CEG,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+355,I10,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+356,C12,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+357,CDV,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+358,XDBD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+359,BM9,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+360,DSS,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+361,HBC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tap doan Xay dung Hoa Binh",UPCOM,
+362,NED,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu va Phat trien Dien Tay Bac",UPCOM,
+363,NXT,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP San xuat va Cung ung vat lieu xay dung Kon Tum",UPCOM,
+364,RCD,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xây dựng - Địa ốc Cao su",UPCOM,
+365,CNN,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tu van cong nghe, thiet bi va kiem dinh xay dung Coninco",UPCOM,
+366,SIV,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP SIVICO",UPCOM,
+367,CTA,2300,"Xây dựng và Vật liệu","Construction & Materials","CTA - CTCP Vinavico",UPCOM,
+368,TKC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng và Kinh doanh Địa ốc Tân Kỷ",UPCOM,
+369,TRT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần RedstarCera",UPCOM,
+370,PX1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xi măng Sông Lam 2",UPCOM,
+371,DTC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Viglacera  Đông Triều",UPCOM,
+372,TTB,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần TTBGROUP",UPCOM,
+373,VHH,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư Kinh doanh nhà Thành Đạt",UPCOM,
+374,VIH,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Viglacera Ha noi",UPCOM,
+375,VTA,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Vitaly",UPCOM,
+376,HFB,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Cong trinh Cau pha TPHCM",UPCOM,
+377,HWI,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+378,S55,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 505",HASTC,
+379,VC6,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây dựng và Đầu tư Visicons",HASTC,
+380,VE3,2300,"Xây dựng và Vật liệu","Construction & Materials","VE3 - CTCP Xây dựng Điện VNECO 3",HASTC,
+381,S99,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần SCI",HASTC,
+382,GKM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần GKM Holdings",HASTC,
+383,BCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xi măng Bỉm Sơn",HASTC,
+384,HDA,2300,"Xây dựng và Vật liệu","Construction & Materials","HDA - CTCP Hãng sơn Đông Á",HASTC,
+385,HMR,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đá Hoàng Mai",HASTC,
+386,L14,2300,"Xây dựng và Vật liệu","Construction & Materials","L14 - Công ty Cổ phần LICOGI 14",HASTC,
+387,TTL,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cong ty Thang Long",HASTC,
+388,PXK,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+389,ACC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây dựng Bình Dương ACC",HOSE,
+390,CII,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Hạ tầng Kỹ thuật TP.HCM",HOSE,
+391,HT1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xi măng VICEM Hà Tiên",HOSE,
+392,HU1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây dựng HUD1",HOSE,
+393,LBM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Khoáng sản và Vật liệu Xây dựng Lâm Đồng",HOSE,
+394,CVT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần CMC",HOSE,
+395,SC5,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng Số 5",HOSE,
+396,TCR,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Công nghiệp Gốm sứ TAICERA",HOSE,
+397,VGC,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Viglacera - CTCP",HOSE,
+398,BTC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+399,DLA,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+400,CC4,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+401,TBT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng Công trình Giao thông Bến Tre",HOSE,Y
+402,XD4,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+403,TEC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+404,PCX18,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+405,SD1,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+406,KCE,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+407,SDJ,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+408,ATB,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+409,JSC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+410,V15,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+411,LDU,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+412,CANTHOTC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+413,HC1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây dựng số 1 Hà Nội",UPCOM,
+414,LQN,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Licogi Quảng Ngãi",UPCOM,
+415,ICI,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và Xây dựng Công nghiệp",UPCOM,
+416,KPF,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần Đầu tư tài sản KOJI",UPCOM,
+417,CC1,2300,"Xây dựng và Vật liệu","Construction & Materials","TCT Xay dung so 1",UPCOM,
+418,QCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư Xây dựng và Phát triển Hạ tầng Viễn Thông",UPCOM,
+419,S72,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Song Da 7.02",UPCOM,
+420,SCJ,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xi mang Sai Son",UPCOM,
+421,SD2,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Song Da 2",UPCOM,
+422,CTX,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Tổng Công ty cổ phần Đầu tư xây dựng và Thương mại Việt Nam",UPCOM,
+423,TVA,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Su Viglacera Thanh Tri",UPCOM,
+424,SCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Thương mại Đầu tư SHB",UPCOM,
+425,TED,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cty Tu van thiet ke Giao thong van tai",UPCOM,
+426,UDJ,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Phát triển Đô thị",UPCOM,
+427,HLY,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần gốm xây dựng Yên Hưng",UPCOM,
+428,MT9,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+429,BTS,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xi măng Vicem Bút Sơn",HASTC,
+430,C69,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung 1369",HASTC,
+431,VC9,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng số 9",HASTC,
+432,SVN,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn Vexilla Việt Nam",HASTC,
+433,L40,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần đầu tư và xây dựng 40",HASTC,
+434,PEN,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xây lắp III Petrolimex",HASTC,
+435,PTD,2300,"Xây dựng và Vật liệu","Construction & Materials","PTD - CTCP Thiết kế Xây dựng Thương mại Phúc Thịnh",HASTC,
+436,CRC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Create Capital Việt Nam",HOSE,
+437,FCN,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần FECON",HOSE,
+438,HUB,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây lắp Thừa Thiên Huế",HOSE,
+439,KSB,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Khoáng sản và Xây dựng Bình Dương",HOSE,
+440,MDG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Miền Đông",HOSE,
+441,NHA,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Đầu tư Phát triển Nhà và Đô thị Nam Hà Nội",HOSE,
+442,CTR,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Cổ phần Công trình Viettel",HOSE,
+443,TLD,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Xây dựng và Phát triển Đô thị Thăng Long",HOSE,
+444,NMK,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+445,C71,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+446,GAB,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+447,ESO,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+448,DTJ,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+449,SJC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+450,C145,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+451,CPWC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+452,S27,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+453,BHV,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+454,CTN,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+455,BHT,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+456,C36,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+457,GND,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Gach ngoi Dong nai",UPCOM,
+458,HMS,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung Bao tang Ho Chi Minh",UPCOM,
+459,ILA,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần ILA",UPCOM,
+460,LUT,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư Xây dựng Lương Tài",UPCOM,
+461,BMK,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Kỹ thuật nhiệt Mèo Đen",UPCOM,
+462,BOT,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP BOT Cau Thai Ha",UPCOM,
+463,C92,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây dựng và Đầu tư 492",UPCOM,
+464,PFL,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Dầu khí Đông Đô",UPCOM,
+465,PHH,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Hồng Hà Việt Nam",UPCOM,
+466,CCV,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tu van Xay dung Cong nghiep va Do thi Vietnam",UPCOM,
+467,MVC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Vat lieu va Xay dung Binh Duong",UPCOM,
+468,CHC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Cẩm Hà",UPCOM,
+469,PXI,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung Cong nghiep va Dan dung dau khi",UPCOM,
+470,CMI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần CMISTONE Việt Nam",UPCOM,
+471,SD7,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Song Đa 7",UPCOM,
+472,PCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn Xây lắp 1- Petrolimex",UPCOM,
+473,PID,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Trang Tri Noi That Dau Khi",UPCOM,
+474,DCF,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung va Thiet ke so 1",UPCOM,
+475,PVV,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Vinaconex 39",UPCOM,
+476,PVX,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu TCTCP Xây lắp Dầu khí Việt Nam",UPCOM,
+477,QNT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tư vấn và Đầu tư phát triển Quảng Nam",UPCOM,
+478,SDP,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP SDP",UPCOM,
+479,BDT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây lắp và Vật liệu Xây dựng Đồng Tháp",UPCOM,
+480,VE9,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây dựng VNECO 9",UPCOM,
+481,TGG,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP The Golden Group",UPCOM,
+482,TLT,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần ViglaceraThăng long",UPCOM,
+483,DLR,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Địa ốc Đà Lạt",UPCOM,
+484,YBC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty CP Xi măng và khoáng sản yên Bái",UPCOM,
+485,G36,2300,"Xây dựng và Vật liệu","Construction & Materials","Tong Cong ty 36 - CTCP",UPCOM,
+486,HEJ,2300,"Xây dựng và Vật liệu","Construction & Materials","Tong CT Tu van Xay dung Thuy loi Viet Nam",UPCOM,
+487,G30,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+488,HNC,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+489,VC7,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn BGI",HASTC,
+490,SCG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn Xây dựng SCG",HASTC,
+491,SD9,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 9",HASTC,
+492,VMC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần VIMECO",HASTC,
+493,HOM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xi măng Vicem Hoàng Mai",HASTC,
+494,LHC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và xây dựng thủy lợi Lâm Đồng",HASTC,
+495,MST,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư MST",HASTC,
+496,NDX,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP xây lắp phát triển nhà Đà Nẵng",HASTC,
+497,HID,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Halcom Việt Nam",HOSE,
+498,DHA,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Hóa An",HOSE,
+499,DLG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn Đức Long Gia Lai",HOSE,
+500,FCM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Khoáng sản FECON",HOSE,
+501,CCC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng CDC",HOSE,
+502,PC1,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn PC1",HOSE,
+503,CTI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Phát triển Cường Thuận IDICO",HOSE,
+504,RYG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Sản xuất và Đầu tư Hoàng Gia",HOSE,
+505,VSI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây dựng Cấp thoát nước",HOSE,
+506,LCS,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+507,GTH,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+508,BRM,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+509,ICN,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Đầu tư Xây dựng Dầu khí IDICO",UPCOM,
+510,LG9,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Co gioi va Xay lap so 9",UPCOM,
+511,PCM,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP vat lieu xay dung Buu dien",UPCOM,
+512,C4G,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tập đoàn CIENCO4",UPCOM,
+513,HU3,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây dựng HUD3",UPCOM,
+514,HU4,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu va Xay dung HUD4",UPCOM,
+515,PNT,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Ky thuat Xay dung Phu Nhuan",UPCOM,
+516,PTO,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dich vu - Xay dung Cong trinh Buu dien",UPCOM,
+517,PVA,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tổng Công ty Xây lắp Dầu khí Nghệ An",UPCOM,
+518,CDG,2300,"Xây dựng và Vật liệu","Construction & Materials","CDG- CTCP Cau Duong",UPCOM,
+519,CGV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Vinaceglass",UPCOM,
+520,PXM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây lắp Dầu khí Miền Trung",UPCOM,
+521,QNC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xi măng và Xây dựng Quảng Ninh",UPCOM,
+522,DAC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần 382 Đông Anh",UPCOM,
+523,SJG,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cong ty Song Da",UPCOM,
+524,TCK,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cong ty co khi xay dung",UPCOM,
+525,DFF,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tập đoàn Đua Fat",UPCOM,
+526,DSG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Kính Đáp Cầu",UPCOM,
+527,TS3,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Trường Sơn 532",UPCOM,
+528,UMC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Cong trinh do thi Nam Dinh",UPCOM,
+529,VE8,2300,"Xây dựng và Vật liệu","Construction & Materials","CỔ PHIẾU CÔNG TY CỔ PHẦN XÂY DỰNG ĐIỆN VNECO 8",UPCOM,
+530,VXB,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Vật liệu Xây dựng Bến Tre",UPCOM,
+531,XLV,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP xay lap va dich vu Song Da",UPCOM,
+532,DVG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đại Việt Group DVG",UPCOM,
+533,CCD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+534,VW1,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+535,V45,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+536,CX8,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư và Xây lắp Constrexim số 8",HASTC,
+537,DC2,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Đầu tư phát triển- Xây dựng (DIC) Số 2",HASTC,
+538,CMS,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn CMH Việt Nam",HASTC,
+539,L18,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây dựng số 18",HASTC,
+540,NHC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ  Phiếu CTCP Gạch ngói Nhị Hiệp",HASTC,
+541,DC4,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Xây dựng DIC Holdings",HOSE,
+542,HAS,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần HACISCO",HOSE,
+543,HHV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Hạ tầng Giao thông Đèo Cả",HOSE,
+544,HVH,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Công nghệ HVC",HOSE,
+545,LGC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Cầu Đường CII",HOSE,
+546,LM8,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Lilama 18",HOSE,
+547,TCD,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn Xây dựng Tracodi",HOSE,
+548,TSA,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư và Xây lắp Trường Sơn",HOSE,
+549,VCG,2300,"Xây dựng và Vật liệu","Construction & Materials","Tổng Công ty Cổ phần Xuất nhập khẩu và Xây dựng Việt Nam",HOSE,
+550,DBV,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+551,BGT,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+552,ING,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+553,SDH,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+554,BMN,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+555,ASD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+556,DAL,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+557,ICS,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+558,HLE,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+559,KHL,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Khoáng sản và Vật liệu Xây dựng Hưng Long",HOSE,Y
+560,MEC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Cơ khí Lắp máy Sông Đà",UPCOM,
+561,ACE,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Bê tông Ly tâm An Giang",UPCOM,
+562,ACS,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay lap Thuong mai 2",UPCOM,
+563,BHC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Bê tông Biên Hòa",UPCOM,
+564,MCG,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP nang luong va bat dong san MCG",UPCOM,
+565,HVX,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Xi măng Vicem Hải Vân",UPCOM,
+566,CI5,2300,"Xây dựng và Vật liệu","Construction & Materials","CI5 - Công ty cổ phần Đầu tư Xây dựng Số 5",UPCOM,
+567,CIP,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay lap va San xuat Cong nghiep",UPCOM,
+568,PXS,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Ket cau Kim loai va lap may dau khi",UPCOM,
+569,CDR,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xây dựng Cao su Đồng Nai",UPCOM,
+570,CMD,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Vat lieu Xay dung va Trang tri Noi that TP Hochiminh",UPCOM,
+571,SCL,2300,"Xây dựng và Vật liệu","Construction & Materials","SCL - CTCP Sông Đà Cao Cường",UPCOM,
+572,SD6,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 6",UPCOM,
+573,SD8,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ Phần Sông Đà 8",UPCOM,
+574,PLE,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tư vấn Xây dựng Petrolimex",UPCOM,
+575,PTE,2300,"Xây dựng và Vật liệu","Construction & Materials","PTE - CTCP Xi mang Phu Tho",UPCOM,
+576,SBM,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu Phat trien Bac Minh",UPCOM,
+577,SDT,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty Cổ phần Sông Đà 10",UPCOM,
+578,DND,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu xay dung va Vat lieu Dong nai",UPCOM,
+579,TA6,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư và Xây lắp Thành An 665",UPCOM,
+580,KTT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn Đầu tư KTT",UPCOM,
+581,L43,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu  Công ty cổ phần Lilama 45.3",UPCOM,
+582,VTS,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Gạch ngói Từ Sơn",UPCOM,
+583,LM3,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP LILAMA 3",UPCOM,
+584,XMD,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xuan Mai - Dao Tu",UPCOM,
+585,THO,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+586,ANI,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+587,SGV,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+588,TA9,2300,"Xây dựng và Vật liệu","Construction & Materials","TA9 - CTCP Xay lap Thanh an 96",HASTC,
+589,VCS,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP VICOSTONE",HASTC,
+590,DNP,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần DNP Holding",HASTC,
+591,LIG,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP LICOGI13",HASTC,
+592,MBG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn MBG",HASTC,
+593,CSC,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn COTANA",HASTC,
+594,KDM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn GCL",HASTC,
+595,ADP,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Sơn Á Đông",HOSE,
+596,DPG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Tập đoàn Đạt Phương",HOSE,
+597,HTI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty Cổ phần Đầu tư Phát triển Hạ tầng IDICO",HOSE,
+598,ACC224,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+599,TA3,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+600,C3195,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+601,BUD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+602,VMI,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+603,TDI,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+604,QHKTHG,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+605,QLD,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+606,MCT,2300,"Xây dựng và Vật liệu","Construction & Materials","",,Y
+607,BT6,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCT BETON 6",UPCOM,
+608,HPP,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sơn Hải Phòng",UPCOM,
+609,HC3,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung so 3 Hai Phong",UPCOM,
+610,HCI,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư - Xây dựng Hà Nội",UPCOM,
+611,HSP,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Sơn Tổng hợp Hà Nội",UPCOM,
+612,ICC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay dung Cong nghiep",UPCOM,
+613,CCM,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Khoáng sản và Xi măng Cần Thơ",UPCOM,
+614,ALV,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn MCST",UPCOM,
+615,PXT,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây lắp đường ống bể chứa Dầu khí",UPCOM,
+616,S12,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần Sông Đà 12",UPCOM,
+617,S74,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 7.04",UPCOM,
+618,CQT,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xi măng Quán Triều VVMI",UPCOM,
+619,DC1,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Đầu tư và Phát triển Xây dựng số 1",UPCOM,
+620,TTZ,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Dau tu Xay dung va Cong nghe Tien Trung",UPCOM,
+621,DDB,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Thương mại và Xây dựng Đông Dương",UPCOM,
+622,SDY,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xi măng Sông Đà Yaly",UPCOM,
+623,SJM,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Sông Đà 19",UPCOM,
+624,USC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Khao sat va Xay dung - USCO",UPCOM,
+625,VC5,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng số 5",UPCOM,
+626,VCE,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Xay lap Moi truong - TKV",UPCOM,
+627,VIW,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Tong cty Dau tu Nuoc & Moi truong Viet Nam",UPCOM,
+628,DSH,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Đầu tư Hạ tầng Đông Sơn",UPCOM,
+629,TNM,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP XNK và Xây dựng công trình",UPCOM,
+630,DCR,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Gach men Cosevco",UPCOM,
+631,DIC,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Đầu tư và Thương mại DIC",UPCOM,
+632,DKG,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Tập đoàn Damik",UPCOM,
+633,VPC,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu Công ty cổ phần  Đầu tư và Phát triển Năng lượng Việt Nam",UPCOM,
+634,E29,2300,"Xây dựng và Vật liệu","Construction & Materials","CTCP Đầu tư xây dựng và kỹ thuật 29",UPCOM,
+635,VE2,2300,"Xây dựng và Vật liệu","Construction & Materials","Cổ phiếu CTCP Xây dựng điện VNECO 2",UPCOM,
+636,ROS,2300,"Xây dựng và Vật liệu","Construction & Materials","Công ty cổ phần Xây dựng FLC Faros",HOSE,Y
+637,DL1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tập đoàn Alpha Seven",HASTC,
+638,VNC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tập đoàn Vinacontrol",HASTC,
+639,CIA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu San bay Quoc te Cam Ranh",HASTC,
+640,VTH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","VTH - CTCP Day cap dien Viet Thai",HASTC,
+641,WCS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","WCS - Công ty cổ phần Bến Xe Miền Tây",HASTC,
+642,PHN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Pin Hà Nội",HASTC,
+643,PTS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Vận tải và Dịch vụ Petrolimex Hải Phòng",HASTC,
+644,GSP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Sản phẩm Khí Quốc tế",HOSE,
+645,NCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Dịch vụ Hàng hóa Nội Bài",HOSE,
+646,PAC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Pin Ắc quy miền Nam",HOSE,
+647,DVP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Đầu tư và Phát triển Cảng Đình Vũ",HOSE,
+648,TCL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Đại lý Giao nhận Vận tải Xếp dỡ Tân Cảng",HOSE,
+649,SRF,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần SEAREFICO",HOSE,
+650,VTP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Tổng Công ty Cổ phần Bưu chính Viettel",HOSE,
+651,CKH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+652,EMC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Cơ điện Thủ Đức",HOSE,Y
+653,EMMC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+654,YRC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+655,VEEC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+656,AGE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+657,TTV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+658,CVP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+659,SPA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+660,HGREGIS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+661,HDO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Hưng Đạo Container",HOSE,Y
+662,HPO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Công nghiệp Hapulico",UPCOM,
+663,MTH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","MTH - CTCP Môi trường Đô thị Hà Đông",UPCOM,
+664,ACV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Tong cong ty Cang hang khong Viet Nam",UPCOM,
+665,BBH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bì Hoàng Thạch",UPCOM,
+666,MTV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu Moi truong va Cong trinh do thi Vung Tau",UPCOM,
+667,NAU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Môi trường và Công trình đô thị Nghệ An",UPCOM,
+668,SAC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Xep do va Dich vu Cang Sai Gon",UPCOM,
+669,CMP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Chan May",UPCOM,
+670,SAL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP truc vot cuu ho Viet Nam",UPCOM,
+671,SHC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công Ty Cổ Phần Hàng Hải Sài Gòn",UPCOM,
+672,PSP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","cổ phiếu CTCP Cảng dịch vụ Dầu khí Đình Vũ",UPCOM,
+673,TR1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Van tai 1 Traco",UPCOM,
+674,USD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cong Trinh Do thi Soc Trang",UPCOM,
+675,VIN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Giao nhận Kho vận Ngoại thương Việt Nam",UPCOM,
+676,TRV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vận tải Đường sắt",UPCOM,
+677,DPC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty Cổ phần Nhựa Đà Nẵng",UPCOM,
+678,L63,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Lilama 69-3",UPCOM,
+679,VHG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Đầu tư và Phát triển Việt Trung Nam",UPCOM,
+680,DVT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Đào tạo và Dịch vụ giao thông vận tải Bình Định",UPCOM,
+681,TKD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+682,GIC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần VSC Green Logistics",HASTC,
+683,NAP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Nghe Tinh",HASTC,
+684,PCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vận tải biển Global Pacific",HASTC,
+685,ABR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Đầu tư Nhãn hiệu Việt",HOSE,
+686,PVT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Tổng Công ty Cổ phần Vận tải Dầu khí",HOSE,
+687,TDP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Thuận Đức",HOSE,
+688,VTB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Viettronics Tân Bình",HOSE,
+689,CER,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+690,PEC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+691,RHN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+692,TTP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+693,HHR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+694,QBR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+695,MCD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+696,MTX,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+697,TVU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+698,PTT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Vận tải Dầu khí Đông Dương",UPCOM,
+699,NHP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","NHP - CTCP San xuat Xuat nhap khau NHP",UPCOM,
+700,ALC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Âu Lạc",UPCOM,
+701,AMS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co khi Xay dung AMECC",UPCOM,
+702,CKD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Cơ khí Đông Anh Licogi",UPCOM,
+703,NOS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vận tải Biển và Thương mại Phương Đông",UPCOM,
+704,TBD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Tổng Công ty Thiết bị Điện Đông Anh - CTCP",UPCOM,
+705,TRS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP van tai va dich vu hang hai",UPCOM,
+706,QSP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tan Cang Quy Nhon",UPCOM,
+707,UTT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP môi trường đô thị Thanh Trì",UPCOM,
+708,VEA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tong cty May dong luc va May nong nghiep Viet Nam",UPCOM,
+709,SZE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Sonadezi",UPCOM,
+710,TCW,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Kho vận Tân Cảng",UPCOM,
+711,L62,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Lilama 69-2",UPCOM,
+712,HEP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Môi trường và Công trình Đô thị Huế",UPCOM,
+713,PPS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","PPS - Công ty Cổ phần Dịch vụ Kỹ thuật Điện lực Dầu khí Việt Nam",HASTC,
+714,PSC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Vận tải và Dịch vụ Petrolimex Sài Gòn",HASTC,
+715,TPP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tân Phú Việt Nam",HASTC,
+716,DS3,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần DS3",HASTC,
+717,PBP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bì Dầu khí Việt Nam",HASTC,
+718,MDD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+719,HTV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Logistics Vicem",HOSE,
+720,ILB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần ICD Tân Cảng - Long Bình",HOSE,
+721,L10,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Lilama 10",HOSE,
+722,PDV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải và Tiếp vận Phương Đông Việt",HOSE,
+723,SGN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Phục vụ Mặt đất Sài Gòn",HOSE,
+724,STG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Kho vận Miền Nam",HOSE,
+725,TMS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Transimex",HOSE,
+726,TV2,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tư vấn Xây dựng Điện 2",HOSE,
+727,CNH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+728,ABA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+729,CDH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+730,QLT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+731,HCS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+732,TTU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+733,MQN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Môi trường Đô thị Quảng Ngãi",UPCOM,
+734,HSA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP HESTIA",UPCOM,
+735,MTB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong va Cong trinh Do thi tinh Thai Binh",UPCOM,
+736,KIP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần K.I.P Việt Nam",UPCOM,
+737,HLO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cong nghe Ha Lo",UPCOM,
+738,BTH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Chế tạo Biến thế  và  Vật liệu điện Hà nội",UPCOM,
+739,ILS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dau tu Thuong mai va Dich vu Quoc te",UPCOM,
+740,CCP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Cua Cam Hai Phong",UPCOM,
+741,CKA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cơ khí An Giang",UPCOM,
+742,CMK,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co khi Mao Khe - Vinacomin",UPCOM,
+743,CPI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dau tu Cang Cai Lan",UPCOM,
+744,PSN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dịch vụ Kỹ thuật Tổng hợp PTSC Thanh Hóa",UPCOM,
+745,TB8,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP San xuat va Kinh doanh Vat tu Thiet bi VVMI",UPCOM,
+746,THU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong va Cong trinh Do thi Thanh Hoa`",UPCOM,
+747,DDM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ Phiếu CTCP Hàng Hải Đông Đô",UPCOM,
+748,QNU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","QNU- CTCP Moi truong do thi Quang Nam",UPCOM,
+749,VFR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty Cổ phần Vận tải và Thuê tàu",UPCOM,
+750,UCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Do thi Can Tho",UPCOM,
+751,UDL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Đô thị và Môi trường Đắk Lắk",UPCOM,
+752,SBC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải và Giao nhận bia Sài Gòn",HOSE,Y
+753,QHD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu công ty cổ phần Que hàn điện Việt Đức",HASTC,
+754,SDA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần SIMCO Sông Đà",HASTC,
+755,ARM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","ARM - CTCP Xuất nhập khẩu Hàng không",HASTC,
+756,VNT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Giao nhận vận tải Ngoại thương",HASTC,
+757,CMC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP đầu tư CMC",HASTC,
+758,BPC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vicem Bao bì Bỉm Sơn",HASTC,
+759,CDN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Da Nang",HASTC,
+760,TJC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Dịch vụ Vận tải và Thương mại",HASTC,
+761,VOS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Biển Việt Nam",HOSE,
+762,HAH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải và Xếp dỡ Hải An",HOSE,
+763,SFI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Đại lý Vận tải SAFI",HOSE,
+764,VTO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Xăng dầu VITACO",HOSE,
+765,VNL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Logistics Vinalink",HOSE,
+766,SVL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+767,DTPY,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+768,NBRAIL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+769,HTH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+770,MHP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+771,SON,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+772,L44,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+773,SCY,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+774,THI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Thiết Bị Điện",HOSE,Y
+775,BLU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+776,MDT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+777,HKP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+778,HGCERWASS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+779,HNB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Ben xe Ha Noi",UPCOM,
+780,MIE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tong cty May va Thiet bi Cong nghiep",UPCOM,
+781,MTL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP dich vu moi truong do thi Tu liem",UPCOM,
+782,MBN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong va Cong trinh Do thi Bac Ninh",UPCOM,
+783,NUE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Do thi Nha Trang",UPCOM,
+784,MDA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Do thi Dong Anh",UPCOM,
+785,MPY,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Do thi Phu Yen",UPCOM,
+786,BTG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Bao bì Tiền Giang",UPCOM,
+787,PHP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","PHP - Cang Hai Phong",UPCOM,
+788,MVN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tong cty Hang hai Viet Nam",UPCOM,
+789,PAP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dầu khí Đầu tư Khai thác Cảng Phước An",UPCOM,
+790,SCO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Công nghiệp Thủy Sản",UPCOM,
+791,SGP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Sai Gon",UPCOM,
+792,TAB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cong ty co phan Freco Viet Nam",UPCOM,
+793,PVM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP May - Thiet bi Dau khi",UPCOM,
+794,TIE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP TIE",UPCOM,
+795,SDK,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","SDK - CTCP Cơ khí Luyện Kim",UPCOM,
+796,SDV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","SDV - Công ty Cổ phần Dịch vụ Sonadezi",UPCOM,
+797,SWC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Tổng CTCP Đường Sông Miền nam",UPCOM,
+798,TNP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Thi Nai",UPCOM,
+799,BMD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong va Dich vu do thi Binh Thuan",UPCOM,
+800,VLG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần VIMC Logistics",UPCOM,
+801,DHP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần điện cơ Hải Phòng",HASTC,
+802,CAG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cảng An Giang",HASTC,
+803,TV4,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP TƯ vấn Xây dựng Điện 4",HASTC,
+804,DXP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Cảng Đoạn Xá",HASTC,
+805,MAC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn Macstar",HASTC,
+806,PPE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tư vấn Đầu Tư PP Enterprise",HASTC,
+807,SBG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn Cơ khí Công nghệ cao Siba",HOSE,
+808,VSC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Container Việt Nam",HOSE,
+809,REC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+810,SVI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Bao bì Biên Hòa",HOSE,Y
+811,CE1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+812,CAV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Dây Cáp Điện Việt Nam",HOSE,Y
+813,KTU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+814,SSU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+815,HTK,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+816,HEM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+817,ALP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Đầu tư Alphanam",HOSE,Y
+818,TAP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+819,CMURBAN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+820,DT4,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+821,HYUREPCO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+822,VPK,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+823,HBD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bì PP Bình Dương",UPCOM,
+824,HTE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dau tu kinh doanh Dien luc TP.HCM",UPCOM,
+825,MQB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong va Phat trien do thi Quang Binh",UPCOM,
+826,CFM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dau tu CFM",UPCOM,
+827,SSG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Vận tải Biển Hải Âu",UPCOM,
+828,PBT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Bao bì và Thương mại Dầu khí Bình Sơn",UPCOM,
+829,PQN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu Dau khi Quang Ngai PTSC",UPCOM,
+830,DNE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Do thi Da Nang",UPCOM,
+831,TGP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Trường Phú",UPCOM,
+832,VTK,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tư vấn và Dịch vụ Viettel",UPCOM,
+833,VTX,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vận tải đa phương thức VIETRANSTIMEX",UPCOM,
+834,DZM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Cơ điện Dzĩ An",UPCOM,
+835,VGR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Xanh VIP",UPCOM,
+836,LM7,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","LM7 - Công ty cổ phần Lilama 7",UPCOM,
+837,LO5,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP lilama 5",UPCOM,
+838,EMG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Thiet bi phu tung co dien",UPCOM,
+839,VMT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP GIAO NHAN VAN TAI MIEN TRUNG",UPCOM,
+840,VSG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP CONTAINER Phía Nam",UPCOM,
+841,VST,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Vận tải và Thuê tàu biển Việt Nam",UPCOM,
+842,WTC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần vận tải thủy Vinacomin",UPCOM,
+843,EMS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tong cty chuyen phat nhanh Buu Dien",UPCOM,
+844,FBC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co khi Pho Yen",UPCOM,
+845,HEC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tu van Xay dung Thuy loi II",UPCOM,
+846,GTX,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+847,VBC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Nhựa - Bao bì Vinh",HASTC,
+848,SDG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Sadico Cần Thơ",HASTC,
+849,VNF,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vinafreight",HASTC,
+850,CTT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần chế tạo máy - Vinacomin",HASTC,
+851,SFN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Dệt lưới Sài Gòn",HASTC,
+852,VMS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Phat trien Hang hai",HASTC,
+853,HCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu  CTCP Thương mại - Dịch vụ - Vận tải Xi Măng Hải Phòng.",HASTC,
+854,HMH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","HMH - CTCP Hải Minh",HASTC,
+855,INN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Bao bì và In Nông nghiệp",HASTC,
+856,CCR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cang Cam Ranh",HASTC,
+857,PMS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu công ty cổ phần Cơ khí Xăng Dầu",HASTC,
+858,GEE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Điện lực Gelex",HOSE,
+859,GMD,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần GEMADEPT",HOSE,
+860,MHC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần MHC",HOSE,
+861,PJT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Xăng dầu Đường thủy Petrolimex",HOSE,
+862,TBH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+863,BBLC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+864,VSTC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+865,VT8,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+866,HTU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+867,THAR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+868,DTB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+869,HGENVI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+870,HGSTATION,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+871,HHN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Van tai va Dich vu Hang hoa HaNoi",UPCOM,
+872,LLM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tong cong ty Lap may Viet Nam",UPCOM,
+873,HPB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty cổ phần Bao Bì PP",UPCOM,
+874,BRS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu Do thi Ba Ria",UPCOM,
+875,CCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP CANG CAN THO",UPCOM,
+876,IST,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP ICD Tan cang Song than",UPCOM,
+877,TUG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Lai dat va Van tai Cang Hai phong",UPCOM,
+878,L35,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Cơ khí Lắp máy Lilama",UPCOM,
+879,VLP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cong trinh Cong cong Vinh Long",UPCOM,
+880,VQC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Giám định- Vinacomin",UPCOM,
+881,EGL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Môi trường đô thị Gia Lâm",UPCOM,
+882,DOP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vận tải Xăng dầu Đồng Tháp",UPCOM,
+883,FT1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Phu tung may so 1",UPCOM,
+884,DUS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dịch vụ Đô thị Đà Lạt",UPCOM,
+885,ESL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+886,BBS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vicem Bao bì Bút Sơn",HASTC,
+887,VSA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dai ly Hang hai Viet Nam",HASTC,
+888,TOT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Transimex Logistics",HASTC,
+889,CTB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Che tao Bom Hai Duong",HASTC,
+890,NAG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Tập đoàn Nagakawa Việt Nam",HASTC,
+891,CLL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Cảng Cát Lái",HOSE,
+892,APH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn An Phát Holdings",HOSE,
+893,PDN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Cảng Đồng Nai",HOSE,
+894,PVP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Dầu khí Thái Bình Dương",HOSE,
+895,VIP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Vận tải Xăng dầu VIPCO",HOSE,
+896,TYA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Dây và Cáp điện Taya Việt Nam",HOSE,
+897,HTR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+898,PKRAIL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+899,DAP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+900,DSV,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+901,VSP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+902,BAL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bi Bia - Ruou - Nuoc giai khat",UPCOM,
+903,MLC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Do thi tinh Lao cai",UPCOM,
+904,MND,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Moi truong Nam Dinh",UPCOM,
+905,ILC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Hop tac lao dong voi nuoc ngoai",UPCOM,
+906,PNP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tân Cảng - Phú Hữu",UPCOM,
+907,CQN,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cảng Quảng Ninh",UPCOM,
+908,IME,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Cơ khí và Xây lắp Công nghiệp",UPCOM,
+909,ISG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP van tai bien va hop tac lao dong quoc te",UPCOM,
+910,TV1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tư vấn Xây dựng Điện 1",UPCOM,
+911,DDH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dam bao giao thong duong thuy Hai Phong",UPCOM,
+912,RAT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Van tai va thuong mai Duong sat",UPCOM,
+913,TVM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tư vấn đầu tư mỏ và công nghiệp - Vinacomin",UPCOM,
+914,VBH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Điện tử Bình Hoà",UPCOM,
+915,DNL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty Cổ phần Logistics Cảng Đà Nẵng",UPCOM,
+916,SVG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Hoi Ky nghe Que han",UPCOM,
+917,ITS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dau tu, Thuong mai va Dich vu - Vinacomin",UPCOM,
+918,L61,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty Cổ phần Lilama 69-1",UPCOM,
+919,VPA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Van tai Hoa dau VP",UPCOM,
+920,TSG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Thông tin tín hiệu Đường sắt Sài Gòn",UPCOM,
+921,UEM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co dien Uong Bi - Vinacomin",UPCOM,
+922,VCT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","VCT - CTCP Tư vấn Xây dựng Vinaconex",UPCOM,
+923,FSO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co khi dong tau thuy san Viet Nam",UPCOM,
+924,VSE,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu Duong cao toc Viet Nam",UPCOM,
+925,HLS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Sứ kỹ thuật Hoàng Liên Sơn",UPCOM,
+926,SDC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu Công ty Cổ phần Tư vấn Sông Đà",HASTC,
+927,PRC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Logistics Portserco",HASTC,
+928,VGP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Cảng Rau Quả",HASTC,
+929,BXH,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Vicem Bao bì Hải Phòng",HASTC,
+930,AME,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty cổ phần Alphanam E&C",HASTC,
+931,VSM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Container Mien Trung",HASTC,
+932,CJC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Cơ điện Miền Trung",HASTC,
+933,VCM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần BV Life",HASTC,
+934,STP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Công nghiệp Thương mại Sông Đà",HASTC,
+935,IPA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tap doan dau tu I.P.A",HASTC,
+936,CAR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Tap doan Giao duc Tri Viet",HASTC,
+937,TSB,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Ắc qui Tia Sáng",HASTC,
+938,PMP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bi Dam Phu My",HASTC,
+939,GEX,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn GELEX",HOSE,
+940,ASG,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn ASG",HOSE,
+941,MCP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần In và Bao bì Mỹ Châu",HOSE,
+942,NO1,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Tập đoàn 911",HOSE,
+943,QNP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Công ty Cổ phần Cảng Quy Nhơn",HOSE,
+944,SULECO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+945,STU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+946,CKM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+947,NTR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+948,MVY,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+949,THRAIL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+950,NEM,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+951,BTR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+952,HLR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+953,RTS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+954,SPP,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+955,DNR,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+956,IMI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+957,LPT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Thuong mai va San xuat Lap Phuong Thanh",UPCOM,
+958,MTS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Vat tu - TKV",UPCOM,
+959,BTU,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Cong trinh Do thi Ben Tre",UPCOM,
+960,NAS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dich vu hang khong san bay Noi Bai",UPCOM,
+961,APL,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Co khi va Thiet bi ap luc VVMI",UPCOM,
+962,SGS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","SGS - Công ty Cổ phần Vận tải Biển Sài Gòn",UPCOM,
+963,PLO,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Kho van Petec",UPCOM,
+964,TKA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Bao bi Tan Khanh An",UPCOM,
+965,VFC,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ Phiếu CTCP VINAFCO",UPCOM,
+966,STS,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","Cổ phiếu CTCP Dịch vụ Vận tải Sài Gòn",UPCOM,
+967,LMI,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Đầu tư Xây dựng Lắp máy IDICO",UPCOM,
+968,EME,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Dien Co",UPCOM,
+969,VNA,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Van tai bien Vinaship",UPCOM,
+970,VXT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","CTCP Kho van va Dich vu Thuong mai",UPCOM,
+971,VBT,2700,"Hàng & Dịch vụ Công nghiệp","Industrial Goods & Services","",,Y
+972,HAX,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Dịch vụ Ô tô Hàng Xanh",HOSE,
+973,HHS,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Đầu tư Dịch vụ Hoàng Huy",HOSE,
+974,CSM,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Công nghiệp Cao su Miền Nam",HOSE,
+975,VVS,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty cổ phần Đầu tư phát triển máy Việt Nam",HOSE,
+976,HTL,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Kỹ thuật và Ô tô Trường Long",HOSE,
+977,CTF,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần City Auto",HOSE,
+978,DRC,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Cao su Đà Nẵng",HOSE,
+979,TMT,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Ô tô TMT",HOSE,
+980,SVC,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Dịch vụ Tổng hợp Sài Gòn",HOSE,
+981,GGG,3300,"Ô tô và phụ tùng","Automobiles & Parts","Cổ phiếu Công ty cổ phần Ô tô Giải Phóng",UPCOM,
+982,DAS,3300,"Ô tô và phụ tùng","Automobiles & Parts","CTCP Máy - Thiết bị Dầu khí Đà Nẵng",UPCOM,
+983,FTI,3300,"Ô tô và phụ tùng","Automobiles & Parts","CTCP Cong nghiep - Thuong mai Huu Nghi",UPCOM,
+984,VMA,3300,"Ô tô và phụ tùng","Automobiles & Parts","CTCP Cong nghiep Oto - Vinacomin",UPCOM,
+985,VKC,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty cổ phần VKC Holdings",UPCOM,
+986,GMA,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần G-Automobile",HASTC,
+987,HUT,3300,"Ô tô và phụ tùng","Automobiles & Parts","Cổ phiếu CTCP Tasco",HASTC,
+988,SRC,3300,"Ô tô và phụ tùng","Automobiles & Parts","Công ty Cổ phần Cao su Sao Vàng",HOSE,
+989,PTM,3300,"Ô tô và phụ tùng","Automobiles & Parts","Cổ phiếu Công ty cổ phần Sản xuất, Thương mại và Dịch vụ Ô tô PTM",UPCOM,
+990,CTP,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Hòa Bình Takara",HASTC,
+991,KTS,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Đường Kon Tum",HASTC,
+992,HAG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Hoàng Anh Gia Lai",HOSE,
+993,MCH,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Hàng tiêu dùng Masan",HOSE,
+994,KSH,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+995,KHASPEXCO,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+996,BSH,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Sai Gon - Ha noi",UPCOM,
+997,BSP,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty CP Bia Sài Gòn - Phú Thọ",UPCOM,
+998,HHB,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu Công ty cổ phần Bia Hà Nội - Hồng Hà",UPCOM,
+999,ATA,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP NTACO",UPCOM,
+1000,BHH,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu Công ty cổ phần Thương mại Bia Hà Nội - Hưng Yên 89",UPCOM,
+1001,MPC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn Thuỷ sản Minh Phú",UPCOM,
+1002,C22,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP 22",UPCOM,
+1003,CAT,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuy san Ca Mau",UPCOM,
+1004,CFV,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Cà phê Thắng Lợi",UPCOM,
+1005,APF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nong san Thuc pham Quang Ngai",UPCOM,
+1006,PRO,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Procimex Việt Nam",UPCOM,
+1007,SB1,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Sai Gon - Nghe Tinh",UPCOM,
+1008,BIG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Đầu tư Big Group Holdings",UPCOM,
+1009,SKN,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP nuoc giai khat Sanna Khanh Hoa",UPCOM,
+1010,BLT,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Lương thực Bình Định",UPCOM,
+1011,VNH,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Đầu tư Việt Việt Nhật",UPCOM,
+1012,SST,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1013,HKT,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Đầu tư QP Xanh",HASTC,
+1014,BNA,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Tập đoàn Đầu tư Bảo Ngọc",HASTC,
+1015,ACL,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Xuất Nhập Khẩu Thủy sản Cửu Long An Giang",HOSE,
+1016,HSL,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Đầu tư Phát triển Thực phẩm Hồng Hà",HOSE,
+1017,LAF,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Chế biến Hàng xuất khẩu Long An",HOSE,
+1018,DAT,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Đầu tư Du lịch và Phát triển Thủy sản",HOSE,
+1019,SAB,3500,"Thực phẩm và đồ uống","Food & Beverage","Tổng Công ty Cổ phần Bia – Rượu – Nước giải khát Sài Gòn",HOSE,
+1020,SBT,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Thành Thành Công - Biên Hòa",HOSE,
+1021,BAS,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Basa",HOSE,Y
+1022,VKD,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1023,CBC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1024,SGO,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Dầu thực vật Sài Gòn",HOSE,Y
+1025,HGSEED,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1026,FDG,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1027,ICF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Đầu tư Thương mại Thủy sản",UPCOM,
+1028,NCG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Tập đoàn Nova Consumer",UPCOM,
+1029,NSS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nông Súc Sản Đồng Nai",UPCOM,
+1030,BHP,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Bia Hà Nội - Hải Phòng",UPCOM,
+1031,CLX,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Xuất nhập khẩu và Đầu tư Chợ Lớn",UPCOM,
+1032,STD,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia - Nước giải khát Sài Gòn - Tây Đô",UPCOM,
+1033,PSL,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Chăn nuôi Phú Sơn",UPCOM,
+1034,SBB,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Tap doan Bia Sai Gon Binh Tay",UPCOM,
+1035,SKV,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP nuoc giai khat Yen sao Khanh Hoa",UPCOM,
+1036,SJ1,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Nông nghiệp Hùng Hậu",HASTC,
+1037,SLS,3500,"Thực phẩm và đồ uống","Food & Beverage","SLS - Công ty cổ phần Mía đường Sơn La",HASTC,
+1038,HAT,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Thương mại Bia Hà Nội",HASTC,
+1039,OCH,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần One Capital Hospitality",HASTC,
+1040,ANT,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Rau quả thực phẩm An Giang",HOSE,
+1041,CMX,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Camimex Group",HOSE,
+1042,FMC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Thực phẩm Sao Ta",HOSE,
+1043,MSN,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn MaSan",HOSE,
+1044,VHC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Vĩnh Hoàn",HOSE,
+1045,VCF,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần VINACAFÉ Biên Hòa",HOSE,
+1046,ATP,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1047,STN,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1048,VHI,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1049,LYF,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1050,KAT,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1051,HVG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Hùng Vương",HOSE,Y
+1052,HDS,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1053,GQN,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1054,GTN,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần GTNfoods",HOSE,Y
+1055,BSD,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia, Ruou Sai Gon - Dong Xuan",UPCOM,
+1056,HNF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuc pham Huu Nghi",UPCOM,
+1057,NCS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Suất ăn Hàng không Nội Bài",UPCOM,
+1058,NDF,3500,"Thực phẩm và đồ uống","Food & Beverage","NDF - CTCP Che bien thuc pham nong san xuat khau Nam Dinh",UPCOM,
+1059,AVF,3500,"Thực phẩm và đồ uống","Food & Beverage","AVF - CTCP Viet An",UPCOM,
+1060,SPH,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Xuất nhập khẩu thủy sản Hà Nội",UPCOM,
+1061,SNC,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Xuất nhập khẩu Thuỷ sản Năm Căn",UPCOM,
+1062,VLC,3500,"Thực phẩm và đồ uống","Food & Beverage","Tong Cong ty Chan nuoi Viet Nam - CTCP",UPCOM,
+1063,WSB,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu Công ty cổ phần Bia Sài Gòn - Miền Tây",UPCOM,
+1064,FCS,3500,"Thực phẩm và đồ uống","Food & Beverage","FCS- CTCP Luong thuc thanh pho HCM",UPCOM,
+1065,SAF,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Lương thực Thực phẩm Safoco",HASTC,
+1066,MCF,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phếu CTCP Xây lắp Cơ khí & Lương thực Thực phẩm",HASTC,
+1067,ASM,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn Sao Mai",HOSE,
+1068,BHN,3500,"Thực phẩm và đồ uống","Food & Beverage","Tổng Công ty Cổ phần Bia – Rượu – Nước giải khát Hà Nội",HOSE,
+1069,HPA,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Phát triển Nông nghiệp Hòa Phát",HOSE,
+1070,IDI,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Đầu tư và Phát triển Đa Quốc Gia I.D.I",HOSE,
+1071,NAF,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Nafoods Group",HOSE,
+1072,SMB,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Bia Sài Gòn - Miền Trung",HOSE,
+1073,SSC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Giống Cây trồng Miền Nam",HOSE,
+1074,EPC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1075,TVO,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1076,TS4,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Thủy sản số 4",HOSE,Y
+1077,AGC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Cà phê An Giang",HASTC,Y
+1078,NNQ,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1079,AUM,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1080,HLBC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1081,BTB,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Ha Noi - Thai Binh",UPCOM,
+1082,HKB,3500,"Thực phẩm và đồ uống","Food & Beverage","HKB - CTCP Nong Nghiep va Thuc Pham Ha noi- Kinh bac",UPCOM,
+1083,APT,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Kinh doanh Thủy hải sản Sài Gòn",UPCOM,
+1084,LTG,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Tập đoàn Lộc Trời",UPCOM,
+1085,HNM,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Sữa Hà Nội",UPCOM,
+1086,BQB,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Ha Noi - Quang Binh",UPCOM,
+1087,CPA,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Ca phe Phuoc An",UPCOM,
+1088,TAN,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Ca Phe Thuan An",UPCOM,
+1089,PCF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Ca phe Petec",UPCOM,
+1090,TCJ,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP To Chau",UPCOM,
+1091,SBL,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Sai Gon - Bac Lieu",UPCOM,
+1092,SEA,3500,"Thực phẩm và đồ uống","Food & Beverage","Tong Cong ty Thuy san Viet Nam - CTCP",UPCOM,
+1093,BLF,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Thuỷ sản Bạc Liêu",UPCOM,
+1094,TT6,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Tập đoàn Tiến Thịnh",UPCOM,
+1095,VSF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Tong cong ty Luong thuc Mien Nam",UPCOM,
+1096,GCF,3500,"Thực phẩm và đồ uống","Food & Beverage","Cong ty co phan Thuc pham G.C",UPCOM,
+1097,AAN,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1098,SGC,3500,"Thực phẩm và đồ uống","Food & Beverage","cổ phiếu CTCP Xuất nhập khẩu Sa Giang",HASTC,
+1099,HAD,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Bia Hà Nội - Hải Dương",HASTC,
+1100,CAN,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Đồ hộp Hạ Long",HASTC,
+1101,KDC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn Kido",HOSE,
+1102,S33,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1103,SCV,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1104,INFOOD,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1105,DONA,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1106,BSL,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Sai Gon - Song Lam",UPCOM,
+1107,IFS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuc pham Quoc te",UPCOM,
+1108,BHG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Chè Biển Hồ",UPCOM,
+1109,CAD,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP chế biến và XNK thuỷ sản Cadovimex",UPCOM,
+1110,CBS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Mia duong Cao Bang",UPCOM,
+1111,SPV,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuy Dac San",UPCOM,
+1112,QNS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP DUONG QUANG NGAI",UPCOM,
+1113,VHF,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Xây dựng và Chế biến lương thực Vĩnh Hà",UPCOM,
+1114,HHC,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Bánh kẹo Hải Hà",HASTC,
+1115,KHS,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Kiên Hùng",HASTC,
+1116,VNM,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Sữa Việt Nam",HOSE,
+1117,BAF,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Nông nghiệp BAF Việt Nam",HOSE,
+1118,LSS,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Mía đường Lam Sơn",HOSE,
+1119,MCM,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Giống bò sữa Mộc Châu",HOSE,
+1120,NSC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn Giống cây trồng Việt Nam",HOSE,
+1121,BRV,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1122,VTL,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1123,BBC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Bibica",HOSE,Y
+1124,TAC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Dầu Thực vật Tường An",HOSE,Y
+1125,NGC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Chế biến Thủy sản xuất khẩu Ngô Quyền",UPCOM,
+1126,BHK,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Ha Noi - Kim Bai",UPCOM,
+1127,AIG,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nguyen lieu A Chau AIG",UPCOM,
+1128,CMF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuc pham Cholimex",UPCOM,
+1129,THP,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuy san Va Thuong mai Thuan Phuoc",UPCOM,
+1130,SKH,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Nước giải khát Sanest Khánh Hòa",UPCOM,
+1131,VSN,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Viet Nam Ky nghe Suc san",UPCOM,
+1132,VUG,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1133,HCO,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1134,TFC,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Trang",HASTC,
+1135,BCF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuc Pham Bich Chi",HASTC,
+1136,ABT,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Xuất nhập khẩu Thủy sản Bến Tre",HOSE,
+1137,ANV,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Nam Việt",HOSE,
+1138,PAN,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn PAN",HOSE,
+1139,DBC,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn DABACO Việt Nam",HOSE,
+1140,TCO,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần TCO Holdings",HOSE,
+1141,HLG,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Tập đoàn Hoàng Long",HOSE,Y
+1142,CFC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1143,VEG,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1144,BKH,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1145,DNIEAP,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1146,BSQ,3500,"Thực phẩm và đồ uống","Food & Beverage","BSQ- CTCP Bia Sai Gon-Quang Ngai",UPCOM,
+1147,HNG,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nong nghiep Quoc te Hoang Anh Gia Lai",UPCOM,
+1148,IDP,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Sữa Quốc Tế LOF",UPCOM,
+1149,JOS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Che bien Thuy san Xuat khau Minh Hai",UPCOM,
+1150,AGF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Xuat nhap khau Thuy san An Giang",UPCOM,
+1151,AGM,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu Công ty cổ phần Xuất nhập khẩu An Giang",UPCOM,
+1152,MLS,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Chan nuoi - Mitraco",UPCOM,
+1153,CCA,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP xuất nhập khẩu Thủy sản Cần thơ",UPCOM,
+1154,QHW,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP nuoc khoang Quang Ninh",UPCOM,
+1155,CMM,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Camimex",UPCOM,
+1156,CMN,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Lương thực thực phẩm Colusa- Miliket",UPCOM,
+1157,BBM,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bia Ha noi - Nam dinh",UPCOM,
+1158,CNA,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Tổng công ty Chè Nghệ An",UPCOM,
+1159,SCD,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nuoc giai khat Chuong Duong",UPCOM,
+1160,SSN,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty CP xuất nhập khẩu Thủy sản Sài gòn",UPCOM,
+1161,TAR,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Nông nghiệp CNC Trung An",UPCOM,
+1162,DMN,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Domenal",UPCOM,
+1163,UXC,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Chế biến thủy sản Út Xi",UPCOM,
+1164,SPD,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP XNK Thuỷ sản Miền Trung",UPCOM,
+1165,HAF,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thuc pham Ha Noi",UPCOM,
+1166,FGL,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Cà phê Gia Lai",UPCOM,
+1167,CAF,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1168,VDL,3500,"Thực phẩm và đồ uống","Food & Beverage","Cổ phiếu CTCP Thực phẩm Lâm Đồng",HASTC,
+1169,THB,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty cổ phần Bia Hà Nội - Thanh Hóa",HASTC,
+1170,AAM,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Thủy sản Mekong",HOSE,
+1171,VOC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1172,VLF,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1173,GTC,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1174,KDF,3500,"Thực phẩm và đồ uống","Food & Beverage","",,Y
+1175,HAV,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Ruou Hapro",UPCOM,
+1176,HBH,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Habeco - Hải Phòng",UPCOM,
+1177,HLB,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Bia & Nước giải khát Hạ Long",UPCOM,
+1178,KTC,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Thương mại Kiên Giang",UPCOM,
+1179,HNR,3500,"Thực phẩm và đồ uống","Food & Beverage","Công ty Cổ phần Rượu và nước giải khát Hà Nội",UPCOM,
+1180,BMV,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Bot my Vinafood 1",UPCOM,
+1181,MML,3500,"Thực phẩm và đồ uống","Food & Beverage","CTCP Masan MeatLife",UPCOM,
+1182,TNG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Đầu tư và Thương mại TNG",HASTC,
+1183,VDM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1184,OPTIC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1185,FBA,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Tập đoàn Quốc tế FBA",HOSE,Y
+1186,NDT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tổng Công ty Cổ phần Dệt may Nam Định",UPCOM,
+1187,MPT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Tập đoàn MPT",UPCOM,
+1188,HUG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Tong cty may Hung Yen",UPCOM,
+1189,SSF,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Giáo dục G Sài Gòn",UPCOM,
+1190,SPB,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Soi Phu Bai",UPCOM,
+1191,VDN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Vinatex Đà Nẵng",UPCOM,
+1192,G20,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Đầu tư Dệt may Vĩnh Phúc",UPCOM,
+1193,TET,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Vải sợi may mặc Miền Bắc",HASTC,
+1194,HTG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tổng Công ty Cổ phần Dệt may Hòa Thọ",HOSE,
+1195,KMR,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần MIRAE",HOSE,
+1196,PNJ,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Vàng bạc Đá quý Phú Nhuận",HOSE,
+1197,STK,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Sợi Thế Kỷ",HOSE,
+1198,TVT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tổng Công ty Việt Thắng - CTCP",HOSE,
+1199,HNE,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1200,GCD,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1201,AG1,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP 28.1",UPCOM,
+1202,HNI,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP May Huu Nghi",UPCOM,
+1203,DCS,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cong ty co phan Tap doan Dai Chau",UPCOM,
+1204,THM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Tứ Hải Hà Nam",UPCOM,
+1205,TNV,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Thống Nhất Hà Nội",UPCOM,
+1206,X26,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP 26",UPCOM,
+1207,NST,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Ngân Sơn",HASTC,
+1208,ADS,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Damsan",HOSE,
+1209,MASECO,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1210,DKHN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1211,DTN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1212,HAFASCO,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1213,VNW,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1214,HSM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tổng Công ty Cổ phần Dệt May Hà Nội",UPCOM,
+1215,BBT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Bông Bạch Tuyết",UPCOM,
+1216,VGG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP May Viet Tien",UPCOM,
+1217,BMG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP May Bình Minh",UPCOM,
+1218,X20,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP X20",HASTC,
+1219,SHE,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Phat trien nang luong Son Ha",HASTC,
+1220,KSD,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Đầu tư DNA",HASTC,
+1221,AAT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Tập đoàn Tiên Sơn Thanh Hóa",HOSE,
+1222,BKG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Đầu tư BKG Việt Nam",HOSE,
+1223,EVE,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Everpia",HOSE,
+1224,LIX,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Bột giặt LIX",HOSE,
+1225,MEG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1226,GDTEX,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1227,LGM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1228,MGG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP tong cong ty Duc Giang",UPCOM,
+1229,BEL,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Dien tu Bien Hoa",UPCOM,
+1230,MNB,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tổng Công ty May Nhà Bè - Công ty cổ phần",UPCOM,
+1231,BVN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","BVN - Công ty cổ phần Bông Việt Nam",UPCOM,
+1232,DM7,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Dệt May 7",UPCOM,
+1233,TTG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP May Thanh Trì",UPCOM,
+1234,HLT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Dệt may Hoàng Thị Loan",UPCOM,
+1235,GLT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Kỹ thuật Điện Toàn Cầu",HASTC,
+1236,VTJ,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Thương mại và Đầu tư Vinataba",HASTC,
+1237,GIL,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Sản xuất Kinh doanh Xuất nhập khẩu Bình Thạnh",HOSE,
+1238,MSH,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần May Sông Hồng",HOSE,
+1239,NHT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Sản xuất và Thương mại Nam Hoa",HOSE,
+1240,RAL,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Bóng đèn Phích nước Rạng Đông",HOSE,
+1241,DQC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Tập đoàn Điện Quang",HOSE,
+1242,HPU,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1243,AQN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1244,VDG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Vạn Đạt Group",UPCOM,
+1245,FTM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Dau tu va phat trien Duc Quan",UPCOM,
+1246,XHC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty CP Xuân Hòa Việt Nam",UPCOM,
+1247,CET,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần HTC Holding",HASTC,
+1248,LBE,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Thương mại và Dịch vụ LVA",HASTC,
+1249,TCM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Dệt may - Đầu tư - Thương mại Thành Công",HOSE,
+1250,TLL,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1251,NPS,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1252,ATD,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1253,BDSFC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1254,M10,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Tong cong ty May 10",UPCOM,
+1255,NTT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Det - May Nha Trang",UPCOM,
+1256,PTG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP May xuất khẩu Phan Thiết",UPCOM,
+1257,BDG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP May mac Binh Duong",UPCOM,
+1258,DCG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Tổng công ty May Đáp Cầu",UPCOM,
+1259,HDM,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Dệt - May Huế",UPCOM,
+1260,NET,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu Công ty Cổ phần Bột giặt NET",HASTC,
+1261,CLC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Cát Lợi",HOSE,
+1262,TLG,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Tập đoàn Thiên Long",HOSE,
+1263,MDN,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1264,MVT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1265,KANGAROO,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1266,HCB,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1267,ASA,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty cổ phần Tập đoàn ASA",HOSE,Y
+1268,TKSHOES,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1269,GMC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Garmex SaiGon",UPCOM,
+1270,A32,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP 32",UPCOM,
+1271,GTD,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Giay Thuong Dinh",UPCOM,
+1272,TDT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Dau tu va phat trien TDT",HASTC,
+1273,GDT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Chế biến Gỗ Đức Thành",HOSE,
+1274,SVD,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Công ty Cổ phần Đầu tư & Thương mại Vũ Đăng",HOSE,
+1275,AGB,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1276,TLI,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","",,Y
+1277,HJC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Hòa Việt",UPCOM,
+1278,PPH,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Tong CTCP Phong Phu",UPCOM,
+1279,NJC,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP May Nam Định",UPCOM,
+1280,SGI,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Đầu tư phát triển Sài Gòn 3 Group",UPCOM,
+1281,VGT,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP - Tap doan Det may Viet Nam",UPCOM,
+1282,XPH,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","CTCP Xà phòng Hà Nội",UPCOM,
+1283,VTI,3700,"Hàng cá nhân & Gia dụng","Personal & Household Goods","Cổ phiếu CTCP Sản xuất - Xuất nhập khẩu dệt may",UPCOM,
+1284,PMC,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược phẩm dược liệu Pharmedic",HASTC,
+1285,DHG,4500,"Y tế","Health Care","Công ty Cổ phần Dược Hậu Giang",HOSE,
+1286,IMP,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm Imexpharm",HOSE,
+1287,JVC,4500,"Y tế","Health Care","Công ty Cổ phần Đầu tư và Phát triển Y tế Việt Nhật",HOSE,
+1288,MRF,4500,"Y tế","Health Care","CTCP Merufa",UPCOM,
+1289,CDP,4500,"Y tế","Health Care","CTCP Duoc pham Trung uong Codupha",UPCOM,
+1290,AMP,4500,"Y tế","Health Care","CTCP Armephaco",UPCOM,
+1291,APC,4500,"Y tế","Health Care","CTCP chieu xa An Phu",UPCOM,
+1292,DBM,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược - Vật tư Y tế Đăk Lăk",UPCOM,
+1293,DDN,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược - Thiết bị Y tế Đà Nẵng",UPCOM,
+1294,BIO,4500,"Y tế","Health Care","CTCP Vac Xin va Sinh pham Nha Trang",UPCOM,
+1295,TTD,4500,"Y tế","Health Care","CTCP Benh vien Tim Tam Duc",UPCOM,
+1296,DPH,4500,"Y tế","Health Care","CTCP Duoc pham Hai Phong",UPCOM,
+1297,DVM,4500,"Y tế","Health Care","CTCP Dược Liệu Việt Nam",HASTC,
+1298,DTG,4500,"Y tế","Health Care","DTG- CTCP Duoc pham tipharco",HASTC,
+1299,MKV,4500,"Y tế","Health Care","Cổ phiếu CTCP dược thú y Cai Lậy",HASTC,
+1300,FIT,4500,"Y tế","Health Care","Công ty Cổ phần Tập đoàn F.I.T",HOSE,
+1301,TNH,4500,"Y tế","Health Care","Công ty Cổ phần Tập đoàn Bệnh viện TNH",HOSE,
+1302,VMD,4500,"Y tế","Health Care","Công ty Cổ phần Y Dược phẩm Vimedimex",HOSE,
+1303,DKP,4500,"Y tế","Health Care","",,Y
+1304,DHN,4500,"Y tế","Health Care","CTCP Duoc pham Ha Noi",UPCOM,
+1305,UPH,4500,"Y tế","Health Care","CTCP Duoc pham TW25",UPCOM,
+1306,VHE,4500,"Y tế","Health Care","CTCP Duoc lieu va Thuc pham Viet nam",HASTC,
+1307,SRA,4500,"Y tế","Health Care","Cổ phiếu CTCP SARA Việt Nam",HASTC,
+1308,LDP,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược Lâm Đồng - Ladophar",HASTC,
+1309,DBD,4500,"Y tế","Health Care","Công ty Cổ phần Dược - Trang thiết bị Y tế Bình Định",HOSE,
+1310,DBT,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm Bến Tre",HOSE,
+1311,DCL,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm Cửu Long",HOSE,
+1312,DMC,4500,"Y tế","Health Care","Công ty Cổ phần Xuất nhập khẩu Y tế DOMESCO",HOSE,
+1313,TRA,4500,"Y tế","Health Care","Công ty Cổ phần Traphaco",HOSE,
+1314,GPC,4500,"Y tế","Health Care","CTCP Tap doan Green+",UPCOM,
+1315,NTF,4500,"Y tế","Health Care","CTCP Duoc - Vat tu Y te Nghe An",UPCOM,
+1316,HDP,4500,"Y tế","Health Care","CTCP Duoc Ha Tinh",UPCOM,
+1317,MED,4500,"Y tế","Health Care","CTCP Dược Trung Ương Mediplantex",HASTC,
+1318,NDC,4500,"Y tế","Health Care","Cổ phiếu Công ty cổ phần Nam Dược",UPCOM,
+1319,CNC,4500,"Y tế","Health Care","CTCP Công nghệ cao Traphaco",UPCOM,
+1320,DTH,4500,"Y tế","Health Care","CTCP Duoc Vat tu Y te Thanh Hoa",UPCOM,
+1321,DP2,4500,"Y tế","Health Care","Công ty cổ phần Dược phẩm Trung ương 2",UPCOM,
+1322,CBV,4500,"Y tế","Health Care","",,Y
+1323,DHT,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược phẩm Hà Tây",HASTC,
+1324,DP3,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm Trung ương 3",HASTC,
+1325,BCH,4500,"Y tế","Health Care","",,Y
+1326,TRH,4500,"Y tế","Health Care","",,Y
+1327,MTP,4500,"Y tế","Health Care","Công ty cổ phần Dược Medipharco",UPCOM,
+1328,MKP,4500,"Y tế","Health Care","CTCP Hóa - Dược phẩm Mekophar",UPCOM,
+1329,TW3,4500,"Y tế","Health Care","CTCP Duoc TU 3",UPCOM,
+1330,DMH,4500,"Y tế","Health Care","",,Y
+1331,AMV,4500,"Y tế","Health Care","Cổ phiếu CTCP SXKD Dược và trang thiết bị Việt Mỹ",HASTC,
+1332,SPM,4500,"Y tế","Health Care","Công ty Cổ phần S.P.M",HOSE,
+1333,TVP,4500,"Y tế","Health Care","",,Y
+1334,MEF,4500,"Y tế","Health Care","Cổ phiếu Công ty cổ phần MEINFA",UPCOM,
+1335,AGP,4500,"Y tế","Health Care","CTCP Duoc Agimexpham",UPCOM,
+1336,NDP,4500,"Y tế","Health Care","Công ty cổ phần Dược phẩm 2-9",UPCOM,
+1337,DTP,4500,"Y tế","Health Care","CTCP Dược phẩm CPC1 Hà Nội",UPCOM,
+1338,NHD,4500,"Y tế","Health Care","",,Y
+1339,PPP,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược phẩm Phong Phú",HASTC,
+1340,OPC,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm OPC",HOSE,
+1341,HDV,4500,"Y tế","Health Care","",,Y
+1342,CVN,4500,"Y tế","Health Care","Cổ phiếu Công ty cổ phần Vinam",UPCOM,
+1343,DAN,4500,"Y tế","Health Care","CTCP Duoc Danapha",UPCOM,
+1344,DNM,4500,"Y tế","Health Care","DNM - Tổng Công ty Cổ phần Y tế Danameco",UPCOM,
+1345,DHD,4500,"Y tế","Health Care","CTCP Duoc Vat tu Y te Hai Duong",UPCOM,
+1346,DP1,4500,"Y tế","Health Care","CTCP Dược phẩm Trung ương CPC1",UPCOM,
+1347,DPP,4500,"Y tế","Health Care","Cổ phiếu CTCP Dược Đồng Nai",UPCOM,
+1348,DVN,4500,"Y tế","Health Care","Tong CTCP  Duoc Viet Nam",UPCOM,
+1349,VDP,4500,"Y tế","Health Care","Công ty Cổ phần Dược phẩm Trung Ương Vidipha",HOSE,
+1350,PMPLABS,4500,"Y tế","Health Care","",,Y
+1351,PBC,4500,"Y tế","Health Care","CTCP Dược phẩm Trung ương I - Pharbaco",UPCOM,
+1352,BCP,4500,"Y tế","Health Care","Công ty cổ phần Dược Enlie",UPCOM,
+1353,YTC,4500,"Y tế","Health Care","CTCP Xuat nhap khau Y te Thanh pho Ho Chi Minh",UPCOM,
+1354,THS,5300,"Bán lẻ","Retail","CTCP Thanh Hoa - Sông Đà",HASTC,
+1355,PSD,5300,"Bán lẻ","Retail","Cổ phiếu Công ty cổ phần Dịch vụ Phân phối Tổng hợp Dầu khí",HASTC,
+1356,AFX,5300,"Bán lẻ","Retail","CTCP Xuất nhập khẩu Nông sản Thực phẩm An Giang",HOSE,
+1357,GEM,5300,"Bán lẻ","Retail","",,Y
+1358,LBC,5300,"Bán lẻ","Retail","",,Y
+1359,HTM,5300,"Bán lẻ","Retail","CTCP Tong cong ty Thuong mai Ha noi",UPCOM,
+1360,CPH,5300,"Bán lẻ","Retail","CTCP Phuc Vu Mai tang Hai Phong",UPCOM,
+1361,TOP,5300,"Bán lẻ","Retail","CTCP Phan phoi Top one",UPCOM,
+1362,PET,5300,"Bán lẻ","Retail","Tổng Công ty Cổ phần Dịch vụ Tổng hợp Dầu khí",HOSE,
+1363,KGM,5300,"Bán lẻ","Retail","CTCP Xuat nhap khau Kien Giang",UPCOM,
+1364,SAS,5300,"Bán lẻ","Retail","Công ty cổ phần Dịch vụ Hàng không Sân bay Tân Sơn Nhất",UPCOM,
+1365,ICL,5300,"Bán lẻ","Retail","",,Y
+1366,AST,5300,"Bán lẻ","Retail","Công ty Cổ phần Dịch vụ Hàng không Taseco",HOSE,
+1367,CMV,5300,"Bán lẻ","Retail","Công ty Cổ phần Thương nghiệp Cà Mau",HOSE,
+1368,COM,5300,"Bán lẻ","Retail","Công ty Cổ phần Vật tư - Xăng dầu",HOSE,
+1369,MWG,5300,"Bán lẻ","Retail","Công ty Cổ phần Đầu tư Thế Giới Di Động",HOSE,
+1370,SBV,5300,"Bán lẻ","Retail","Công ty Cổ phần Siam Brothers Việt Nam",HOSE,
+1371,SAD,5300,"Bán lẻ","Retail","",,Y
+1372,HTT,5300,"Bán lẻ","Retail","CTCP Thuong mai Ha Tay",UPCOM,
+1373,DKC,5300,"Bán lẻ","Retail","CTCP Cho Lang Son",UPCOM,
+1374,PIT,5300,"Bán lẻ","Retail","Công ty Cổ phần Xuất nhập khẩu Petrolimex",HOSE,
+1375,FRT,5300,"Bán lẻ","Retail","Công ty Cổ phần Bán lẻ Kỹ thuật số FPT",HOSE,
+1376,CEN,5300,"Bán lẻ","Retail","CTCP CENCON Việt Nam",UPCOM,
+1377,TH1,5300,"Bán lẻ","Retail","Cổ phiếu CTCP XNK Tổng hợp I VN",UPCOM,
+1378,FHN,5300,"Bán lẻ","Retail","CTCP Xuat nhap khau Luong thuc - Thuc pham Hanoi",UPCOM,
+1379,DGW,5300,"Bán lẻ","Retail","Công ty Cổ phần Thế Giới Số",HOSE,
+1380,SVT,5300,"Bán lẻ","Retail","Công ty Cổ phần Công nghệ Sài Gòn Viễn Đông",HOSE,
+1381,AGX,5300,"Bán lẻ","Retail","CTCP Thực phẩm Nông sản Xuất khẩu Sài Gòn",UPCOM,
+1382,BTT,5300,"Bán lẻ","Retail","Công ty Cổ phần Thương mại – Dịch vụ Bến Thành",HOSE,
+1383,CGL,5300,"Bán lẻ","Retail","",,Y
+1384,HFX,5300,"Bán lẻ","Retail","Cổ phiếu CTCP Sản xuất - Xuất nhập khẩu Thanh Hà",UPCOM,
+1385,IED,5300,"Bán lẻ","Retail","",,Y
+1386,TLS,5300,"Bán lẻ","Retail","",,Y
+1387,T12,5300,"Bán lẻ","Retail","",,Y
+1388,UNM,5300,"Bán lẻ","Retail","",,Y
+1389,VT1,5300,"Bán lẻ","Retail","",,Y
+1390,HEV,5500,"Truyền thông","Media","Công Ty cổ phần sách đại học - dạy nghề",HASTC,
+1391,ADG,5500,"Truyền thông","Media","Công ty Cổ phần Clever Group",HOSE,
+1392,BDB,5500,"Truyền thông","Media","Công ty Cổ phần Sách và Thiết bị Bình Định",HASTC,Y
+1393,HAB,5500,"Truyền thông","Media","",,Y
+1394,FOC,5500,"Truyền thông","Media","CTCP Dịch vụ Trực tuyến FPT",UPCOM,
+1395,HHI,5500,"Truyền thông","Media","",,Y
+1396,SMN,5500,"Truyền thông","Media","SMN - CTCP Sach va Thiet bi Giao duc Mien nam",HASTC,
+1397,STC,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách và Thiết bị Trường học tại Tp, HCM",HASTC,
+1398,PNC,5500,"Truyền thông","Media","Công ty Cổ phần Văn hóa Phương Nam",HOSE,
+1399,SUM,5500,"Truyền thông","Media","",,Y
+1400,MTN,5500,"Truyền thông","Media","",,Y
+1401,DNB,5500,"Truyền thông","Media","",,Y
+1402,HBE,5500,"Truyền thông","Media","Công ty Cổ phần Sách - Thiết bị trường học Hà Tĩnh",HASTC,Y
+1403,VPR,5500,"Truyền thông","Media","Công ty cổ phần Vinaprint",UPCOM,
+1404,FHS,5500,"Truyền thông","Media","CTCP Phat hanh sach thanh pho Ho Chi Minh",UPCOM,
+1405,QST,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách và thiết bị trường học Quảng Ninh",HASTC,
+1406,ALT,5500,"Truyền thông","Media","Cổ phiếu CTCP Văn hóa Tân Bình",HASTC,
+1407,ECI,5500,"Truyền thông","Media","Công ty Cổ phần Tập đoàn ECI",HASTC,
+1408,IKH,5500,"Truyền thông","Media","",,Y
+1409,INTK,5500,"Truyền thông","Media","",,Y
+1410,EPH,5500,"Truyền thông","Media","",,Y
+1411,HST,5500,"Truyền thông","Media","Công ty cổ phần Phát hành Sách và Thiết bị Trường học Hưng Yên",HASTC,Y
+1412,HTP,5500,"Truyền thông","Media","Cổ phiếu CTCP In Sách giáo khoa Hoà Phát",UPCOM,
+1413,ADC,5500,"Truyền thông","Media","Cổ phiếu Công ty Cổ phần Mĩ thuật và Truyền thông",HASTC,
+1414,DAD,5500,"Truyền thông","Media","Cổ phiếu CTCP Đầu tư và Phát triển Giáo dục Đà Nẵng",HASTC,
+1415,IN4,5500,"Truyền thông","Media","Cổ phiếu CTCP In số 4",UPCOM,
+1416,VNX,5500,"Truyền thông","Media","Công ty cổ phần Quảng cáo và Hội chợ Thương Mại Vinexad",UPCOM,
+1417,EBS,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách giáo dục tại Tp Hà Nội",HASTC,
+1418,CAB,5500,"Truyền thông","Media","",,Y
+1419,KHX,5500,"Truyền thông","Media","Cổ phiếu Công ty cổ phần Phát hành sách Khánh Hòa",UPCOM,
+1420,NBE,5500,"Truyền thông","Media","CTCP Sach va Thiet bi Giao duc Mien Bac",UPCOM,
+1421,ODE,5500,"Truyền thông","Media","Công ty cổ phần Tập đoàn Truyền thông và Giải trí ODE",UPCOM,
+1422,DST,5500,"Truyền thông","Media","CTCP Dau Tu Sao Thang Long",HASTC,
+1423,SGD,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách giáo dục tại Tp.HCM",HASTC,
+1424,BED,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách và Thiết bị trường học đà Nẵng",HASTC,
+1425,INC7,5500,"Truyền thông","Media","",,Y
+1426,IBN,5500,"Truyền thông","Media","",,Y
+1427,IHK,5500,"Truyền thông","Media","Cổ phiếu CTCP In Hàng không",UPCOM,
+1428,STH,5500,"Truyền thông","Media","CTCP Phát hành sách Thái Nguyên",UPCOM,
+1429,VNB,5500,"Truyền thông","Media","CTCP Sach Viet Nam",UPCOM,
+1430,DAE,5500,"Truyền thông","Media","Cổ phiếu CTCP Sách giáo dục tại Tp Đà Nẵng",HASTC,
+1431,EID,5500,"Truyền thông","Media","Cổ phiếu CTCP Đầu tư và Phát triển Giáo dục Hà Nội",HASTC,
+1432,SED,5500,"Truyền thông","Media","Cổ phiếu CTCP Đầu tư và Phát triển Giáo dục Phương Nam",HASTC,
+1433,YEG,5500,"Truyền thông","Media","Công ty Cổ phần Tập đoàn Yeah1",HOSE,
+1434,SAP,5500,"Truyền thông","Media","",,Y
+1435,BST,5500,"Truyền thông","Media","Công ty Cổ phần Sách - Thiết bị Bình Thuận",HASTC,Y
+1436,TPH,5500,"Truyền thông","Media","Công ty Cổ phần In Sách giáo khoa tại T.P Hà Nội",HASTC,Y
+1437,RGC,5500,"Truyền thông","Media","",,Y
+1438,KBE,5500,"Truyền thông","Media","",,Y
+1439,IBD,5500,"Truyền thông","Media","CTCP In tong hop Thai Binh Duong",UPCOM,
+1440,VNZ,5500,"Truyền thông","Media","CONG TY CP VNG",UPCOM,
+1441,VPL,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty cổ phần Vinpearl",HOSE,
+1442,SKG,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Tàu cao tốc Superdong – Kiên Giang",HOSE,
+1443,VNG,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Du lịch Thành Thành Công",HOSE,
+1444,FDT,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty cổ phần Fiditour",HASTC,Y
+1445,MLN,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1446,HHG,5700,"Du lịch và Giải trí","Travel & Leisure","HHG - Công ty cổ phần Hoàng Hà",UPCOM,
+1447,NWT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Van tai Newway",UPCOM,
+1448,BTV,5700,"Du lịch và Giải trí","Travel & Leisure","BTV- ctcp dich vu Du lich Ben Thanh",UPCOM,
+1449,TPS,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Ben bai Van tai Sai Gon",UPCOM,
+1450,BCV,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lịch và Thương mại Bằng Giang Cao Bằng - Vimico",UPCOM,
+1451,DTI,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Dau tu Duc Trung",UPCOM,
+1452,VTD,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty cổ phần Vietourist Holdings",UPCOM,
+1453,DAH,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Tập đoàn Khách sạn Đông Á",HOSE,
+1454,VJC,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Hàng không VietJet",HOSE,
+1455,NTG,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1456,MTC,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1457,ORIENTALSEA,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1458,VIR,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Du lịch Quốc tế Vũng Tàu",UPCOM,
+1459,TSD,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich Truong son COECCO",UPCOM,
+1460,DLD,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Du Lịch Đắk Lắk",UPCOM,
+1461,GTT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Thuan Thao",UPCOM,
+1462,SHX,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1463,ONW,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Dich vu Mot The gioi",UPCOM,
+1464,DLT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich va Thuong mai - Vinacomin",UPCOM,
+1465,DNT,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Du lịch Đồng Nai",UPCOM,
+1466,HES,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Dich vu giai tri Ha Noi",UPCOM,
+1467,ATS,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Tập đoàn đầu tư ATS",HASTC,
+1468,THUYTA,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1469,ROXYVN,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1470,DBH,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1471,CXH,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1472,HNT,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1473,SRT,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1474,BSG,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Xe khach Sai Gon",UPCOM,
+1475,PDC,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Du lịch Dầu khí Phương Đông",UPCOM,
+1476,EIN,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Dau tu - Thuong mai - Dich vu Dien luc",UPCOM,
+1477,VTG,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich tinh Ba ria - Vung tau",UPCOM,
+1478,DXL,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Du lịch và Xuất Nhập khẩu Lạng Sơn",UPCOM,
+1479,DHQ,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1480,SCS,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Dịch vụ Hàng hóa Sài Gòn",HOSE,
+1481,KLC,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1482,POST,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1483,DAR,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1484,HRT,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1485,HGT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich Huong Giang",UPCOM,
+1486,HOT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich - Dich vu Hoi An",UPCOM,
+1487,BLN,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Van tai va Dich vu Lien Ninh",UPCOM,
+1488,DSP,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Dịch vụ Du lịch Phú Thọ",UPCOM,
+1489,TSJ,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich dich vu Ha noi",UPCOM,
+1490,VNS,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Ánh Dương Việt Nam",HOSE,
+1491,KLF,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1492,PNG,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Thuong Mai Phu Nhuan",UPCOM,
+1493,DSD,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP DHC Suoi Doi",UPCOM,
+1494,CTC,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Tập đoàn Hoàng Kim Tây Nguyên",HASTC,Y
+1495,TCT,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Cáp treo Núi Bà Tây Ninh",HOSE,
+1496,DLH,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1497,SPSC,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1498,RIC,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Quoc te Hoang gia",UPCOM,
+1499,VTM,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Van tai va Dua don tho mo - Vinacomin",UPCOM,
+1500,VTR,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Du lịch Vietravel",UPCOM,
+1501,MT7,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1502,TTT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Du lich-Thuong mai Tay Ninh",HASTC,
+1503,SGH,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Khách sạn Sài Gòn",HASTC,
+1504,MAS,5700,"Du lịch và Giải trí","Travel & Leisure","Cổ phiếu CTCP Dịch vụ Hàng không Sân bay Đà Nẵng",HASTC,
+1505,PGT,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty cổ phần PGT HOLDINGS",HASTC,
+1506,HVN,5700,"Du lịch và Giải trí","Travel & Leisure","Tổng Công ty Hàng không Việt Nam - CTCP",HOSE,
+1507,DSN,5700,"Du lịch và Giải trí","Travel & Leisure","Công ty Cổ phần Công viên nước Đầm Sen",HOSE,
+1508,DCD,5700,"Du lịch và Giải trí","Travel & Leisure","",,Y
+1509,STT,5700,"Du lịch và Giải trí","Travel & Leisure","CTCP Van chuyen Sai Gon Tourist",UPCOM,
+1510,PIA,6500,"Viễn thông","Telecommunications","CTCP Tin hoc Vien thong Petrolimex",HASTC,
+1511,PTP,6500,"Viễn thông","Telecommunications","Công ty cổ phần PTP",UPCOM,
+1512,ABC,6500,"Viễn thông","Telecommunications","CP CTCP Truyen thong VMG",UPCOM,
+1513,PAI,6500,"Viễn thông","Telecommunications","CTCP Cong nghe thong tin, Vien thong va Tu dong hoa dau khi",UPCOM,
+1514,VGI,6500,"Viễn thông","Telecommunications","CTCP Dau tu quoc te Viettel",UPCOM,
+1515,MFS,6500,"Viễn thông","Telecommunications","CTCP Dich vu ky thuat MobiFone",UPCOM,
+1516,TTN,6500,"Viễn thông","Telecommunications","Công ty cổ phần Công nghệ và Truyền thông Việt Nam",UPCOM,
+1517,FOX,6500,"Viễn thông","Telecommunications","CTCP vien thong FPT",UPCOM,
+1518,PGS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Kinh doanh Khí miền Nam",HASTC,
+1519,HNA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Hủa Na",HOSE,
+1520,DRL,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện - Điện lực 3",HOSE,
+1521,PDT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1522,TVW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1523,CGC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1524,HPW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Hai Phong",UPCOM,
+1525,KHW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Cấp thoát nước Khánh Hòa",UPCOM,
+1526,BGW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","BGW - CTCP Nước sạch Bắc Giang",UPCOM,
+1527,PEG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Tong cty Thuong mai ky thuat va Dau tu",UPCOM,
+1528,POB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Xang dau dau khi Thai Binh",UPCOM,
+1529,POV,7500,"Điện, nước & xăng dầu khí đốt","Utilities","POV - Cổ phiếu CTCP Xăng dầu Dầu khí Vũng Áng",UPCOM,
+1530,CHS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Chieu sang cong cong TPHCM",UPCOM,
+1531,PSH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu Công ty cổ phần Thương mại Đầu tư Dầu khí Nam Sông Hậu",UPCOM,
+1532,TAW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Trung An",UPCOM,
+1533,THW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Tan Hoa",UPCOM,
+1534,TQW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cấp thoát nước Tuyên Quang",UPCOM,
+1535,SBH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Sông Ba Hạ",UPCOM,
+1536,BDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Binh Dinh",UPCOM,
+1537,XMP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Xuân Minh",UPCOM,
+1538,PIC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Dau tu Dien luc 3",HASTC,
+1539,PTX,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Van tai va Dich vu Petrolimex Nghe Tinh",HASTC,
+1540,BTW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Cấp nước Bến Thành",HASTC,
+1541,VPD,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Phát triển Điện lực Việt Nam",HOSE,
+1542,CLW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Cấp nước Chợ Lớn",HOSE,
+1543,PGV,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Tổng Công ty Phát điện 3 - Công ty Cổ phần",HOSE,
+1544,PPC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Nhiệt điện Phả Lại",HOSE,
+1545,TBC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Thác Bà",HOSE,
+1546,REE,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Cơ Điện Lạnh",HOSE,
+1547,SBA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Sông Ba",HOSE,
+1548,TTE,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư Năng lượng Trường Thịnh",HOSE,
+1549,EAD,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1550,NQT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1551,BLW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1552,NS2,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1553,PBK,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1554,CVH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1555,BGE,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần BCG Energy",UPCOM,
+1556,BWA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Cấp thoát nước và Xây dựng Bảo Lộc",UPCOM,
+1557,NAW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Nghe An",UPCOM,
+1558,TOW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Tra Noc - O Mon",UPCOM,
+1559,DNH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thuy dien Da Nhim - Ham Thuan - Da Mi",UPCOM,
+1560,DNN,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Da Nang",UPCOM,
+1561,DNC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","cổ phiếu CTCP Điện nước lắp máy Hải Phòng",HASTC,
+1562,PPT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Petrotimes",HASTC,
+1563,TMC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Thương mại và Xuất nhập khẩu Thủ Đức",HASTC,
+1564,GEG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Điện Gia Lai",HOSE,
+1565,ASP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Tập đoàn Dầu khí An Pha",HOSE,
+1566,CHP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Miền Trung",HOSE,
+1567,BWE,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần - Tổng Công ty Nước – Môi trường Bình Dương",HOSE,
+1568,CCI,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư Phát triển Công nghiệp Thương mại Củ Chi",HOSE,
+1569,PMG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư và Sản xuất Petro Miền Trung",HOSE,
+1570,POW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP",HOSE,
+1571,VSH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Vĩnh Sơn - Sông Hinh",HOSE,
+1572,DBW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1573,NS3,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1574,KTW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1575,NCP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1576,GLW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Cấp thoát nước Gia Lai",UPCOM,
+1577,HIO,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Helio Energy",UPCOM,
+1578,HPD,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Đăk Đoa",UPCOM,
+1579,PND,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Xang dau Dau khi NamDinh",UPCOM,
+1580,QNW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc va xay dung Quang Ngai",UPCOM,
+1581,VCP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Xây dựng và Năng lượng VCP",UPCOM,
+1582,DWC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Cấp nước Đắc Lắk",UPCOM,
+1583,GSM,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Hương Sơn",UPCOM,
+1584,DTK,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP - Tong cong ty Dien luc TKV",HASTC,
+1585,GHC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Thủy điện Gia Lai",HOSE,
+1586,SMA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thiết bị Phụ tùng Sài Gòn",HOSE,
+1587,TDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Cấp nước Thủ Đức",HOSE,
+1588,LCW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1589,KWA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1590,HGW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1591,HWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Cấp nước Huế",UPCOM,
+1592,AVC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thuy dien A Vuong",UPCOM,
+1593,PCG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu Công ty Cổ phần Đầu tư Phát triển Gas Đô thị",UPCOM,
+1594,NLS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Lang Son",UPCOM,
+1595,NQN,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Nuoc sach Quang ninh",UPCOM,
+1596,PWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Phu Yen",UPCOM,
+1597,DVC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thương mại Dịch vụ Tổng hợp Cảng Hải Phòng",UPCOM,
+1598,HTC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Thương mại Hóc Môn",HASTC,
+1599,NBP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Nhiệt điện Ninh Bình",HASTC,
+1600,GAS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Tổng Công ty Khí Việt Nam - Công ty Cổ phần",HOSE,
+1601,PGD,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Phân phối Khí thấp áp Dầu khí Việt Nam",HOSE,
+1602,SHP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Miền Nam",HOSE,
+1603,DLM,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1604,HND,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Co phieu CTCP Nhiet dien Hai Phong",UPCOM,
+1605,LDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Cấp thoát nước Lâm Đồng",UPCOM,
+1606,NTW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu Công ty cổ phần Cấp nước Nhơn Trạch",UPCOM,
+1607,NNT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Cấp nước Ninh Thuận",UPCOM,
+1608,SII,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP ha tang nuoc Sai Gon",UPCOM,
+1609,QPH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Quế Phong",UPCOM,
+1610,TLP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Tổng công ty Thương mại Xuất nhập khẩu Thanh Lễ - Công ty cổ phần",UPCOM,
+1611,GCB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Petec Binh Dinh",UPCOM,
+1612,HFC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Xăng dầu HFC",UPCOM,
+1613,GE2,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1614,PPY,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Xang Dau Dau khi Phu Yen",HASTC,
+1615,SEB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu Công ty CP Đầu tư và Phát triển Điện Miền Trung",HASTC,
+1616,PVG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty cổ phần Kinh doanh LPG Việt Nam",HASTC,
+1617,GDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Cấp nước Gia Định",HASTC,
+1618,NBW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Cấp nước Nhà Bè",HASTC,
+1619,CNG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần CNG Việt Nam",HOSE,
+1620,PGC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Tổng Công ty Gas Petrolimex - Công ty Cổ phần",HOSE,
+1621,S4A,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Sê San 4A",HOSE,
+1622,TDG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư TDG GLOBAL",HOSE,
+1623,NNB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1624,LWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1625,HTW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1626,VCW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1627,LAW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Long An",UPCOM,
+1628,BNW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP nuoc sach Bac Ninh",UPCOM,
+1629,BSA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thuy dien Buon Don",UPCOM,
+1630,NBT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Ben tre",UPCOM,
+1631,NQB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Quang Binh",UPCOM,
+1632,CTW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap thoat nuoc Can Tho",UPCOM,
+1633,TNW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Nuoc sach Thai Nguyen",UPCOM,
+1634,VAV,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP VIWACO",UPCOM,
+1635,SP2,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thuy dien Su Pan 2",UPCOM,
+1636,STW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Soc Trang",UPCOM,
+1637,THN,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Thanh Hoa",UPCOM,
+1638,VWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Nuoc va Moi truong Viet Nam",UPCOM,
+1639,UPC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Phat trien Cong vien Cay xanh va Do thi Vung Tau",UPCOM,
+1640,VLW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Vinh Long",UPCOM,
+1641,DWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc va Moi truong do thi Dong Thap",UPCOM,
+1642,HDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Kinh doanh nước sạch Hải Dương",UPCOM,
+1643,HJS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Thuỷ điện Nậm Mu",HASTC,
+1644,NTH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Nước Trong",HASTC,
+1645,BTP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Nhiệt điện Bà Rịa",HOSE,
+1646,KHP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Điện lực Khánh Hòa",HOSE,
+1647,NT2,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Điện lực Dầu khí Nhơn Trạch 2",HOSE,
+1648,SJD,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Cần Đơn",HOSE,
+1649,SFC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Nhiên liệu Sài Gòn",HOSE,
+1650,TTA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư Xây dựng và Phát triển Trường Thành",HOSE,
+1651,TDM,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Nước Thủ Dầu Một",HOSE,
+1652,BPT,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1653,BPWACO,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1654,EBA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Điện Bắc Nà",HASTC,Y
+1655,WTB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1656,TANIWACO,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1657,HBWATER,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1658,BWS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Ba Ria - Vung Tau",UPCOM,
+1659,MTG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","MTG - CTCP MT Gas",UPCOM,
+1660,NDW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Nam Dinh",UPCOM,
+1661,BHA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Bắc Hà",UPCOM,
+1662,LKW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu Công ty cổ phần Cấp nước Long Khánh",UPCOM,
+1663,NVP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Nuoc sach Vinh Phuc",UPCOM,
+1664,NSL,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP cap nuoc Son La",UPCOM,
+1665,ISH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Srok Phu Miêng IDICO",UPCOM,
+1666,PJS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","PJS - Công ty Cổ phần Cấp nước Phú Hòa Tân",UPCOM,
+1667,PMW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cấp nước Phú Mỹ",UPCOM,
+1668,DMS,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Hóa Phẩm Dầu khí DMC- Miền Nam",UPCOM,
+1669,QTP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Nhiet dien Quang Ninh",UPCOM,
+1670,DNA,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Điện nước An Giang",UPCOM,
+1671,TDB,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thuy dien Binh Dinh",UPCOM,
+1672,BMF,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Vat lieu Xay dung va Chat dot Dong Nai",UPCOM,
+1673,VPW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cấp thoát nước số 1 Vĩnh Phúc",UPCOM,
+1674,VMG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thương mại và dịch vụ Dầu khí Vũng Tàu",UPCOM,
+1675,DDG,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Đầu tư Công nghiệp XNK Đông Dương",HASTC,
+1676,PJC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Thương mại và Vận tải Petrolimex Hà Nội (Petajico HaNoi)",HASTC,
+1677,TMP,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Thủy điện Thác Mơ",HOSE,
+1678,UIC,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Công ty Cổ phần Đầu tư Phát triển Nhà và Đô thị IDICO",HOSE,
+1679,DTV,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1680,DKW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","",,Y
+1681,ND2,7500,"Điện, nước & xăng dầu khí đốt","Utilities","ND2 - CTCP Đầu tư và Phát triển điện Miền Bắc 2",UPCOM,
+1682,PTH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Cổ phiếu CTCP Vận tải và Dịch vụ Petrolimex Hà Tây",UPCOM,
+1683,CMW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Ca Mau",UPCOM,
+1684,TBW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","Co Phieu CTCP Nuoc Sach Thai Binh",UPCOM,
+1685,SVH,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Thủy điện Sông Vàng",UPCOM,
+1686,DTE,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Đầu tư Năng lượng Đại Trường Thành Holdings",UPCOM,
+1687,DNW,7500,"Điện, nước & xăng dầu khí đốt","Utilities","CTCP Cap nuoc Dong Nai",UPCOM,
+1688,LPB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Lộc Phát Việt Nam",HOSE,
+1689,CTG,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Công Thương Việt Nam",HOSE,
+1690,TCB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Kỹ Thương Việt Nam",HOSE,
+1691,PGB,8300,"Ngân hàng","Banks","Ngân hàng thương mại cổ phần Thịnh Vượng và Phát triển",UPCOM,
+1692,ACB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Á Châu",HOSE,
+1693,SSB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Đông Nam Á",HOSE,
+1694,STB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Sài Gòn Thương Tín",HOSE,
+1695,BVB,8300,"Ngân hàng","Banks","Ngan Hang TMCP Ban Viet",UPCOM,
+1696,VPB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Việt Nam Thịnh Vượng",HOSE,
+1697,HDB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Phát triển Thành phố Hồ Chí Minh",HOSE,
+1698,MSB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Hàng Hải Việt Nam",HOSE,
+1699,NAB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Nam Á",HOSE,
+1700,OCB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Phương Đông",HOSE,
+1701,ABB,8300,"Ngân hàng","Banks","NHTMCP An Binh",UPCOM,
+1702,BAB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Bắc Á",HASTC,
+1703,BID,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Đầu tư và Phát triển Việt Nam",HOSE,
+1704,EIB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Xuất Nhập khẩu Việt Nam",HOSE,
+1705,KLB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Kiên Long",HOSE,
+1706,NVB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại cổ phần Quốc Dân",HASTC,
+1707,VCB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Ngoại Thương Việt Nam",HOSE,
+1708,SHB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Sài Gòn – Hà Nội",HOSE,
+1709,VIB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Quốc tế Việt Nam",HOSE,
+1710,MBB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Quân Đội",HOSE,
+1711,SGB,8300,"Ngân hàng","Banks","NHTM CP Sai Gon Cong Thuong",UPCOM,
+1712,TPB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại Cổ phần Tiên Phong",HOSE,
+1713,VAB,8300,"Ngân hàng","Banks","Ngân hàng Thương mại cổ phần Việt Á",HOSE,
+1714,VBB,8300,"Ngân hàng","Banks","Ngân hàng TMCP Việt Nam Thương Tín",UPCOM,
+1715,PTI,8500,"Bảo hiểm","Insurance","PTI - Tổng CTCP Bảo hiểm Bưu điện",HASTC,
+1716,MIG,8500,"Bảo hiểm","Insurance","Tổng Công ty Cổ phần Bảo hiểm Quân đội",HOSE,
+1717,ABI,8500,"Bảo hiểm","Insurance","Cổ phiếu CTCP Bảo hiểm Ngân hàng Nông nghiệp",UPCOM,
+1718,BIC,8500,"Bảo hiểm","Insurance","Tổng Công ty Bảo hiểm Ngân hàng Đầu tư và Phát triển Việt Nam",HOSE,
+1719,BHI,8500,"Bảo hiểm","Insurance","Tổng Công ty cổ phần Bảo hiểm Sài Gòn - Hà Nội",UPCOM,
+1720,PGI,8500,"Bảo hiểm","Insurance","Tổng Công ty Cổ phần Bảo hiểm Petrolimex",HOSE,
+1721,BHVA,8500,"Bảo hiểm","Insurance","",,Y
+1722,VNR,8500,"Bảo hiểm","Insurance","Cổ phiếu Tổng CTCP Tái Bảo hiểm Quốc gia Việt Nam",HASTC,
+1723,AIC,8500,"Bảo hiểm","Insurance","Công ty cổ phần Tập đoàn Bảo hiểm DBV",UPCOM,
+1724,PRE,8500,"Bảo hiểm","Insurance","Công ty cổ phần Tái bảo hiểm Hà Nội",HASTC,
+1725,PVI,8500,"Bảo hiểm","Insurance","Công ty cổ phần PVI",HASTC,
+1726,BMI,8500,"Bảo hiểm","Insurance","Tổng Công ty Cổ phần Bảo Minh",HOSE,
+1727,BVH,8500,"Bảo hiểm","Insurance","Tập đoàn Bảo Việt",HOSE,
+1728,IFA,8500,"Bảo hiểm","Insurance","",,Y
+1729,BLI,8500,"Bảo hiểm","Insurance","CTCP Bao hiem Bao Long",UPCOM,
+1730,CEO,8600,"Bất động sản","Real Estate","Công ty cổ phần Tập đoàn C.E.O",HASTC,
+1731,TIG,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Tập đoàn Đầu tư Thăng Long",HASTC,
+1732,NRC,8600,"Bất động sản","Real Estate","Công ty cổ phần Tập đoàn Danh Khôi",HASTC,
+1733,HDC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển nhà Bà Rịa – Vũng Tàu",HOSE,
+1734,KOS,8600,"Bất động sản","Real Estate","Công ty Cổ phần KOSY",HOSE,
+1735,SGR,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tổng Công ty Cổ phần Địa ốc Sài Gòn",HOSE,
+1736,SZC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Sonadezi Châu Đức",HOSE,
+1737,TDC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Kinh doanh và Phát triển Bình Dương",HOSE,
+1738,TIX,8600,"Bất động sản","Real Estate","Công ty Cổ phần Sản xuất Kinh doanh XNK Dịch vụ và Đầu tư Tân Bình",HOSE,
+1739,VRE,8600,"Bất động sản","Real Estate","Công ty Cổ phần Vincom Retail",HOSE,
+1740,MEY,8600,"Bất động sản","Real Estate","",,Y
+1741,LSG,8600,"Bất động sản","Real Estate","CTCP Bat dong san Saigon Vina",UPCOM,
+1742,HD6,8600,"Bất động sản","Real Estate","CTCP Đầu tư và Phát triển Nhà số 6 Hà Nội",UPCOM,
+1743,HU6,8600,"Bất động sản","Real Estate","CTCP Đầu tư Phát triển nhà và đô thị HUD6",UPCOM,
+1744,PXA,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Đầu tư và Thương mại Dầu khí Nghệ An",UPCOM,
+1745,TBR,8600,"Bất động sản","Real Estate","CTCP Địa ốc Tân Bình",UPCOM,
+1746,SZG,8600,"Bất động sản","Real Estate","CTCP Sonadezi Giang Dien",UPCOM,
+1747,DCH,8600,"Bất động sản","Real Estate","CTCP Dia chinh Ha noi",UPCOM,
+1748,VRG,8600,"Bất động sản","Real Estate","VRG - CTCP Phat trien do thi va Khu cong nghiep Cao Su Viet Nam",UPCOM,
+1749,BCM,8600,"Bất động sản","Real Estate","Tổng Công ty Đầu tư và Phát triển Công nghiệp - CTCP",HOSE,
+1750,CRE,8600,"Bất động sản","Real Estate","Công ty Cổ phần Bất động sản Thế Kỷ",HOSE,
+1751,KDH,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư và Kinh doanh Nhà Khang Điền",HOSE,
+1752,CCL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư và Phát triển Đô thị Dầu khí Cửu Long",HOSE,
+1753,PTL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Victory Group",HOSE,
+1754,TEG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Năng lượng và Bất động sản Trường Thành",HOSE,
+1755,VRC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Bất động sản và Đầu tư VRC",HOSE,
+1756,PXC,8600,"Bất động sản","Real Estate","",,Y
+1757,VNN,8600,"Bất động sản","Real Estate","",,Y
+1758,HD2,8600,"Bất động sản","Real Estate","CTCP Dau tu Phat trien nha HUD2",UPCOM,
+1759,VES,8600,"Bất động sản","Real Estate","CTCP Đầu tư và Xây dựng điện Mê ca Vneco",UPCOM,
+1760,VCR,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Đầu tư và Phát triển Du Lịch Vinaconex",UPCOM,
+1761,VHD,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư Phát triển nhà và Đô thị VINAHUD",UPCOM,
+1762,FCC,8600,"Bất động sản","Real Estate","CTCP Lien hop Thuc Pham",UPCOM,
+1763,PV2,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư PV2",HASTC,
+1764,NDN,8600,"Bất động sản","Real Estate","Cổ phiếu công ty Cổ phần Đầu tư Phát triển Nhà Đà Nẵng",HASTC,
+1765,HTN,8600,"Bất động sản","Real Estate","Công ty Cổ phần Hưng Thịnh Incons",HOSE,
+1766,IJC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Hạ tầng Kỹ thuật",HOSE,
+1767,KHG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Khải Hoàn Land",HOSE,
+1768,ITC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư - Kinh doanh Nhà",HOSE,
+1769,CRV,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Bất động sản CRV",HOSE,
+1770,NTC,8600,"Bất động sản","Real Estate","Công ty cổ phần Khu Công nghiệp Nam Tân Uyên",HOSE,
+1771,SJS,8600,"Bất động sản","Real Estate","Công ty Cổ phần SJ Group",HOSE,
+1772,SZL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Sonadezi Long Thành",HOSE,
+1773,TCH,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Dịch vụ Tài chính Hoàng Huy",HOSE,
+1774,TN1,8600,"Bất động sản","Real Estate","Công ty Cổ phần ROX Key Holdings",HOSE,
+1775,VHM,8600,"Bất động sản","Real Estate","Công ty Cổ phần Vinhomes",HOSE,
+1776,BSC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Dịch vụ Bến Thành",HASTC,Y
+1777,SDI,8600,"Bất động sản","Real Estate","",,Y
+1778,C21,8600,"Bất động sản","Real Estate","CTCP The ki 21",UPCOM,
+1779,CK8,8600,"Bất động sản","Real Estate","CTCP Co khi 120",UPCOM,
+1780,TID,8600,"Bất động sản","Real Estate","CTCP Tong cty Tin Nghia",UPCOM,
+1781,TV6,8600,"Bất động sản","Real Estate","Công ty cổ phần Tập đoàn EMA LAND",UPCOM,
+1782,EFI,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Đầu tư Tài chính Giáo dục",UPCOM,
+1783,KSF,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Sunshine",HASTC,
+1784,CKG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Tư vấn Đầu tư Xây dựng Kiên Giang",HOSE,
+1785,HPX,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Hải Phát",HOSE,
+1786,LDG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư LDG",HOSE,
+1787,LGL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư và Phát triển Đô thị Long Giang",HOSE,
+1788,TAL,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư Bất động sản Taseco",HOSE,
+1789,DTA,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đệ Tam",HOSE,
+1790,SCR,8600,"Bất động sản","Real Estate","Công ty Cổ phần Địa ốc Sài Gòn Thương Tín",HOSE,
+1791,DXG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Đất Xanh",HOSE,
+1792,VIC,8600,"Bất động sản","Real Estate","Tập đoàn Vingroup - Công ty Cổ phần",HOSE,
+1793,TDH,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Nhà Thủ Đức",HOSE,
+1794,TIP,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Khu Công nghiệp Tín Nghĩa",HOSE,
+1795,TAG,8600,"Bất động sản","Real Estate","",,Y
+1796,AMD,8600,"Bất động sản","Real Estate","",,Y
+1797,V11,8600,"Bất động sản","Real Estate","",,Y
+1798,PRT,8600,"Bất động sản","Real Estate","CTCP Tong cty San xuat - Xuat nhap khau Binh Duong",UPCOM,
+1799,PVR,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư PVR Hà Nội",UPCOM,
+1800,SLD,8600,"Bất động sản","Real Estate","Cổ phiếu Công ty cổ phần Địa ốc Sacom",UPCOM,
+1801,LMH,8600,"Bất động sản","Real Estate","Công ty cổ phần Quốc tế Holding",UPCOM,
+1802,RCL,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Địa ốc Chợ Lớn",HASTC,
+1803,D11,8600,"Bất động sản","Real Estate","Cổ phiếu Công ty Cổ phần Địa ốc 11",HASTC,
+1804,VPI,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Văn Phú - Invest",HOSE,
+1805,FIR,8600,"Bất động sản","Real Estate","Công ty Cổ phần Địa ốc First Real",HOSE,
+1806,HQC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tư vấn – Thương mại – Dịch vụ Địa ốc Hoàng Quân",HOSE,
+1807,NVT,8600,"Bất động sản","Real Estate","Công ty Cổ phần Bất động sản Du lịch Ninh Vân Bay",HOSE,
+1808,DRH,8600,"Bất động sản","Real Estate","Công ty Cổ phần DRH Holdings",HOSE,
+1809,ABFG,8600,"Bất động sản","Real Estate","",,Y
+1810,KAC,8600,"Bất động sản","Real Estate","",,Y
+1811,VJTC,8600,"Bất động sản","Real Estate","",,Y
+1812,MH3,8600,"Bất động sản","Real Estate","CTCP Khu CN Cao su Binh Long",UPCOM,
+1813,PXL,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư Khu Công nghiệp Dầu khí Long Sơn",UPCOM,
+1814,ITA,8600,"Bất động sản","Real Estate","CTCP Dau tu va Cong nghiep Tan Tao",UPCOM,
+1815,SSH,8600,"Bất động sản","Real Estate","CTCP Phát triển Sunshine Homes",UPCOM,
+1816,PIV,8600,"Bất động sản","Real Estate","Công ty cổ phần PIV",UPCOM,
+1817,DTD,8600,"Bất động sản","Real Estate","CTCP Đầu tư Phát triển Thành Đạt",HASTC,
+1818,IDC,8600,"Bất động sản","Real Estate","Tổng Công ty IDICO - CTCP",HASTC,
+1819,VPH,8600,"Bất động sản","Real Estate","Công ty Cổ phần Vạn Phát Hưng",HOSE,
+1820,HDG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Hà Đô",HOSE,
+1821,NBB,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Năm Bảy Bảy",HOSE,
+1822,NTL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Đô thị Từ Liêm",HOSE,
+1823,PDR,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Bất động sản Phát Đạt",HOSE,
+1824,D2D,8600,"Bất động sản","Real Estate","Công ty Cổ phần Phát triển Đô thị Công nghiệp số 2",HOSE,
+1825,BII,8600,"Bất động sản","Real Estate","",,Y
+1826,PTN,8600,"Bất động sản","Real Estate","",,Y
+1827,HD3,8600,"Bất động sản","Real Estate","",,Y
+1828,HD8,8600,"Bất động sản","Real Estate","CTCP Đầu tư Phát triển Nhà và Đô thị HUD8",UPCOM,
+1829,HPI,8600,"Bất động sản","Real Estate","CTCP Khu Cong nghiep Hiep Phuoc",UPCOM,
+1830,CCS,8600,"Bất động sản","Real Estate","CTCP Chíp Sáng",UPCOM,
+1831,VEF,8600,"Bất động sản","Real Estate","CTCP Trung tâm Hội chợ Triển lãm Việt Nam",UPCOM,
+1832,STL,8600,"Bất động sản","Real Estate","CTCP Sông Đà Thăng Long",UPCOM,
+1833,VGV,8600,"Bất động sản","Real Estate","Tong Cong ty Tu van Xay dung Viet nam",UPCOM,
+1834,XDH,8600,"Bất động sản","Real Estate","CTCP Đầu tư Xây dựng Dân dụng Hà Nội",UPCOM,
+1835,FHH,8600,"Bất động sản","Real Estate","",,Y
+1836,VC3,8600,"Bất động sản","Real Estate","Công ty cổ phần Tập đoàn Nam Mê Kông",HASTC,
+1837,API,8600,"Bất động sản","Real Estate","Cổ phiếu CTCP Đầu tư  Châu á - Thái Bình Dương",HASTC,
+1838,SZB,8600,"Bất động sản","Real Estate","CTCP Sonadezi Long Binh",HASTC,
+1839,HLD,8600,"Bất động sản","Real Estate","Công ty cổ phần đầu tư và Phát triển Bất Động sản HUDLAND",HASTC,
+1840,IDJ,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư IDJ Việt Nam",HASTC,
+1841,IDV,8600,"Bất động sản","Real Estate","IDV - Công ty Cổ phần Phát triển hạ tầng Vĩnh Phúc",HASTC,
+1842,THD,8600,"Bất động sản","Real Estate","CTCP Thaiholdings",HASTC,
+1843,AGG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư và Phát triển Bất động sản An Gia",HOSE,
+1844,FDC,8600,"Bất động sản","Real Estate","Công ty Cổ phần Ngoại thương và Phát triển Đầu tư Thành phố Hồ Chí Minh",HOSE,
+1845,HAR,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Thương mại Bất động sản An Dương Thảo Điền",HOSE,
+1846,LHG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Long Hậu",HOSE,
+1847,NVL,8600,"Bất động sản","Real Estate","Công ty Cổ phần Tập đoàn Đầu tư Địa ốc No Va",HOSE,
+1848,QCG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Quốc Cường Gia Lai",HOSE,
+1849,SIP,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Sài Gòn VRG",HOSE,
+1850,KHA,8600,"Bất động sản","Real Estate","",,Y
+1851,HIZ,8600,"Bất động sản","Real Estate","",,Y
+1852,MGR,8600,"Bất động sản","Real Estate","CTCP Tap doan MGroup",UPCOM,
+1853,HRB,8600,"Bất động sản","Real Estate","CTCP Harec Dau tu va thuong mai",UPCOM,
+1854,LEC,8600,"Bất động sản","Real Estate","Cong ty co phan Bat dong san dien luc Mien Trung",UPCOM,
+1855,NTB,8600,"Bất động sản","Real Estate","CTCP Đầu tư Xây dựng & Khai thác Công trình Giao thông 584",UPCOM,
+1856,PPI,8600,"Bất động sản","Real Estate","CTCP Dau tu va Phat trien Du an Ha tang Thai Binh Duong",UPCOM,
+1857,RGG,8600,"Bất động sản","Real Estate","Cổ phiếu Công ty cổ phần Regal Group",UPCOM,
+1858,CNT,8600,"Bất động sản","Real Estate","Công ty cổ phần Tập đoàn CNT",UPCOM,
+1859,PVL,8600,"Bất động sản","Real Estate","Công ty cổ phần Đầu tư Nhà đất Việt",UPCOM,
+1860,PWA,8600,"Bất động sản","Real Estate","CTCP Bat dong san Dau khi",UPCOM,
+1861,VNI,8600,"Bất động sản","Real Estate","VNI - CTCP Dau Tu Bat Dong San Viet Nam",UPCOM,
+1862,DO3,8600,"Bất động sản","Real Estate","",,Y
+1863,AAV,8600,"Bất động sản","Real Estate","Công ty cổ phần AAV Group",HASTC,
+1864,V21,8600,"Bất động sản","Real Estate","Công ty cổ phần Vinaconex 21",HASTC,
+1865,DIG,8600,"Bất động sản","Real Estate","Tổng Công ty Cổ phần Đầu tư Phát triển Xây dựng",HOSE,
+1866,DXS,8600,"Bất động sản","Real Estate","Công ty Cổ phần Dịch vụ Bất động sản Đất Xanh",HOSE,
+1867,KBC,8600,"Bất động sản","Real Estate","Tổng Công ty Phát triển Đô Thị Kinh Bắc – Công ty Cổ phần",HOSE,
+1868,NLG,8600,"Bất động sản","Real Estate","Công ty Cổ phần Đầu tư Nam Long",HOSE,
+1869,SSE,8600,"Bất động sản","Real Estate","",,Y
+1870,CLG,8600,"Bất động sản","Real Estate","",,Y
+1871,APR,8600,"Bất động sản","Real Estate","",,Y
+1872,FLC,8600,"Bất động sản","Real Estate","",,Y
+1873,MA1,8600,"Bất động sản","Real Estate","CTCP Thiet bi",UPCOM,
+1874,MBT,8600,"Bất động sản","Real Estate","CTCP Bat dong san cho thue Minh Bao Tin",UPCOM,
+1875,BVL,8600,"Bất động sản","Real Estate","CTCP BV Land",UPCOM,
+1876,SID,8600,"Bất động sản","Real Estate","CTCP Dau tu va Phat trien Sai Gon Co.op",UPCOM,
+1877,TVC,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Tập đoàn Quản lý tài sản Trí Việt",HASTC,
+1878,EVS,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần chứng khoán Everest",HASTC,
+1879,VIG,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Chứng khoán Đầu tư Tài chính Việt Nam",HASTC,
+1880,HBS,8700,"Dịch vụ tài chính","Financial Services","HBS - CTCP Chứng khoán Hòa bình",HASTC,
+1881,PSI,8700,"Dịch vụ tài chính","Financial Services","PSI - Cổ phiếu Công ty Cổ phần Chứng khoán Dầu Khí",HASTC,
+1882,BCG,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Tập đoàn Bamboo Capital",HOSE,
+1883,SSI,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán SSI",HOSE,
+1884,CSI,8700,"Dịch vụ tài chính","Financial Services","CTCP Chứng khoán Kiến thiết Việt Nam",UPCOM,
+1885,F88,8700,"Dịch vụ tài chính","Financial Services","Cổ phiếu Công ty cổ phần Đầu tư F88",UPCOM,
+1886,IVS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Guotai Junan (Việt Nam)",HASTC,
+1887,VDS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Rồng Việt",HOSE,
+1888,VPX,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Chứng khoán VPBANK",HOSE,
+1889,TVB,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán T-Cap",HOSE,
+1890,VUA,8700,"Dịch vụ tài chính","Financial Services","CTCP Chung khoan Stanley Brothers",UPCOM,
+1891,BVS,8700,"Dịch vụ tài chính","Financial Services","Chứng khoán CTCP chứng khoán Bảo Việt",HASTC,
+1892,FTS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán FPT",HOSE,
+1893,HCM,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Thành phố Hồ Chí Minh",HOSE,
+1894,APG,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán APG",HOSE,
+1895,BSI,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán BIDV",HOSE,
+1896,ORS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Tiên Phong",HOSE,
+1897,CTS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán VIETINBANK",HOSE,
+1898,TCI,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Thành Công",HOSE,
+1899,VND,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán VNDIRECT",HOSE,
+1900,PHS,8700,"Dịch vụ tài chính","Financial Services","PHS - CTCP Chứng khoán Phú Hưng",UPCOM,
+1901,EVF,8700,"Dịch vụ tài chính","Financial Services","CÔNG TY TÀI CHÍNH TỔNG HỢP CỔ PHẦN ĐIỆN LỰC",HOSE,
+1902,OGC,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Tập đoàn Đại Dương",HOSE,
+1903,TCX,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Chứng khoán Kỹ Thương",HOSE,
+1904,TVS,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Thiên Việt",HOSE,
+1905,HFT,8700,"Dịch vụ tài chính","Financial Services","",,Y
+1906,BMS,8700,"Dịch vụ tài chính","Financial Services","CTCP Chung khoan Bao Minh",UPCOM,
+1907,HAC,8700,"Dịch vụ tài chính","Financial Services","CTCPCK Hai Phong",UPCOM,
+1908,WSS,8700,"Dịch vụ tài chính","Financial Services","Cổ phiếu CTCP Chứng khoán Phố Wall",HASTC,
+1909,VCK,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán VPS",HOSE,
+1910,VIX,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán VIX",HOSE,
+1911,VCI,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Vietcap",HOSE,
+1912,IBC,8700,"Dịch vụ tài chính","Financial Services","",,Y
+1913,MBS,8700,"Dịch vụ tài chính","Financial Services","CTCP Chung khoan MB",HASTC,
+1914,AGR,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán Agribank",HOSE,
+1915,ABW,8700,"Dịch vụ tài chính","Financial Services","CTCP Chung khoan An Binh",UPCOM,
+1916,ART,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Chứng khoán BOS",UPCOM,
+1917,AAS,8700,"Dịch vụ tài chính","Financial Services","CTCP Chứng khoán SmartInvest",UPCOM,
+1918,DCV,8700,"Dịch vụ tài chính","Financial Services","Cổ phiếu CTCP Quản lý quỹ Đầu tư Dragon Capital Việt Nam",UPCOM,
+1919,SBS,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Chứng khoán SBS",UPCOM,
+1920,VFS,8700,"Dịch vụ tài chính","Financial Services","CTCP Chung khoan Nhat Viet",HASTC,
+1921,APS,8700,"Dịch vụ tài chính","Financial Services","Cổ phiếu CTCP Chứng khoán Châu á - Thái Bình Dương",HASTC,
+1922,TIN,8700,"Dịch vụ tài chính","Financial Services","CTCP Tai chinh Co phan Tin Viet",UPCOM,
+1923,SHS,8700,"Dịch vụ tài chính","Financial Services","Cổ phiếu CTCP Chứng khoán Sài Gòn - Hà Nội",HASTC,
+1924,DSC,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán DSC",HOSE,
+1925,DSE,8700,"Dịch vụ tài chính","Financial Services","Công ty Cổ phần Chứng khoán DNSE",HOSE,
+1926,HVA,8700,"Dịch vụ tài chính","Financial Services","Công ty cổ phần Đầu tư HVA",UPCOM,
+1927,UPS,8700,"Dịch vụ tài chính","Financial Services","",,Y
+1928,ONE,9500,"Công nghệ Thông tin","Technology","Công ty cổ phần Công nghệ ONE",HASTC,
+1929,CMG,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Tập đoàn Công nghệ CMC",HOSE,
+1930,VAT,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần VT Vạn Xuân",HOSE,Y
+1931,LTC,9500,"Công nghệ Thông tin","Technology","Cổ phiếu CTCP Điện nhẹ Viễn Thông",UPCOM,
+1932,ITD,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Công nghệ Tiên Phong",HOSE,
+1933,HIG,9500,"Công nghệ Thông tin","Technology","",,Y
+1934,SRB,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Tập đoàn Sara",UPCOM,
+1935,PMT,9500,"Công nghệ Thông tin","Technology","Công ty cổ phần Viễn thông Telvina Việt Nam",UPCOM,
+1936,VIE,9500,"Công nghệ Thông tin","Technology","Cổ phiếu CTCP Công nghệ Viễn thông VI TE CO",UPCOM,
+1937,VLA,9500,"Công nghệ Thông tin","Technology","VLA - CTCP Đầu tư và Phát triển Công nghệ Văn Lang",HASTC,
+1938,ELC,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Công nghệ - Viễn thông ELCOM",HOSE,
+1939,FPT,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần FPT",HOSE,
+1940,SGT,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Công nghệ Viễn thông Sài Gòn",HOSE,
+1941,SAM,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần SAM Holdings",HOSE,
+1942,HPT,9500,"Công nghệ Thông tin","Technology","Cổ phiếu CTCP Dịch vụ Công nghệ Tin học HPT",UPCOM,
+1943,PMJ,9500,"Công nghệ Thông tin","Technology","CTCP Vat tu Buu dien",UPCOM,
+1944,SBD,9500,"Công nghệ Thông tin","Technology","CTCP Cong nghe Sao Bac Dau",UPCOM,
+1945,TST,9500,"Công nghệ Thông tin","Technology","Cổ phiếu CTCP Dịch vụ Kỹ thuật Viễn thông",UPCOM,
+1946,SMT,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Sametel",HASTC,
+1947,CMT,9500,"Công nghệ Thông tin","Technology","CTCP Công nghệ Mạng và Truyền thông",UPCOM,
+1948,CKV,9500,"Công nghệ Thông tin","Technology","Công ty cổ phần Cokyvina",HASTC,
+1949,VEC,9500,"Công nghệ Thông tin","Technology","Tong CTCP Dien tu va Tin hoc Viet Nam",UPCOM,
+1950,VTC,9500,"Công nghệ Thông tin","Technology","cổ phần Công ty cổ phần Viễn thông VTC",HASTC,
+1951,ST8,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Tập đoàn ST8",HOSE,
+1952,CNX,9500,"Công nghệ Thông tin","Technology","",,Y
+1953,TPE,9500,"Công nghệ Thông tin","Technology","",,Y
+1954,UNI,9500,"Công nghệ Thông tin","Technology","Công ty cổ phần Đầu tư và Phát triển Sao Mai Việt",HASTC,
+1955,ATC,9500,"Công nghệ Thông tin","Technology","",,Y
+1956,KST,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần KASATI",HASTC,
+1957,POT,9500,"Công nghệ Thông tin","Technology","Cổ phiếu CTCP Thiết bị Bưu điện",HASTC,
+1958,ICT,9500,"Công nghệ Thông tin","Technology","Công ty Cổ phần Viễn thông - Tin học Bưu điện",HOSE,
+1959,VTE,9500,"Công nghệ Thông tin","Technology","Công ty cổ phần Vinacap Kim Long",UPCOM,

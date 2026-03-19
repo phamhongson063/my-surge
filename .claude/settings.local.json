@@ -31,7 +31,29 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/sector.html)",
       "Bash(curl -s -o /dev/null -w \" %{http_code}\" \"http://localhost:3000/sector-detail.html?sector=Ng%C3%A2n+h%C3%A0ng\")",
       "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/sector-detail.html)",
-      "Bash(kill 67667)"
+      "Bash(kill 67667)",
+      "Bash(grep -r \"iboard\\\\|ssi\\\\.com\" /Users/son.ph/my-surge --include=*.mjs --include=*.js --include=*.html)",
+      "Bash(grep -r \"sector\\\\|nganh\\\\|industry\" /Users/son.ph/my-surge/public --include=*.html --include=*.js)",
+      "Bash(grep -r sector /Users/son.ph/my-surge --include=*.mjs --include=*.js)",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock/exchange/hose\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"Accept: application/json\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/build/static/js/BWiSvl8f.js\")",
+      "Bash(curl -s \"https://iboard-api.ssi.com.vn/statistics/company/sectors-data\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"Accept: application/json\")",
+      "Bash(node batch/fetch_ssi_sectors.mjs)",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock?symbol=ACB\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock?symbol=_\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/charts/history?symbol=VNM&resolution=D&from=1711929600&to=1742688000\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock?symbol=VNM\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=VNM&days=30\")",
+      "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=PVE&days=365\")",
+      "Bash(curl -s http://localhost:3000/api/ssi-token)",
+      "Bash(curl -s \"https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=ACB&from=1320278400&to=1774224000\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=ACB&days=365\")",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(curl -s http://localhost:3001/health)",
+      "Bash(curl -s \"http://localhost:3000/analyze-detail?symbol=PVD\")",
+      "Bash(curl -s \"http://localhost:3000/symbols\")",
+      "Bash(node --input-type=module:*)"
     ]
   }
 }
