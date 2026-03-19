@@ -59,12 +59,44 @@
       font-weight: 600; cursor: pointer; border: 1.5px solid;
       transition: all .15s;
     }
+
+    /* ── Mobile ── */
+    @media (max-width: 767px) {
+      #sidebar { display: none; }
+      #sidebar.open { display: flex !important; position: fixed; inset: 0; z-index: 50; width: 260px !important; }
+      #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; }
+      #overlay.open { display: block; }
+      #mobileBar { display: flex !important; }
+      .page-header { padding: 16px 16px 12px !important; }
+      .controls-bar { padding: 10px 12px !important; gap: 8px !important; }
+      .table-wrap { padding: 0 10px 32px !important; }
+      .filter-btn { padding: 6px 10px !important; font-size: 12px !important; }
+      .stock-row { grid-template-columns: 72px 1fr 72px !important; }
+      .col-nganh { display: none; }
+      .hdr-nganh  { display: none; }
+    }
+    #mobileBar { display: none; }
   </style>
 </head>
 <body class="h-full font-sans flex" style="background:#f1f5f9">
 
+  <!-- Overlay mobile -->
+  <div id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- ═══ MOBILE TOP BAR ═══ -->
+  <div id="mobileBar" style="position:fixed;top:0;left:0;right:0;height:52px;background:#fff;border-bottom:1px solid #e2e8f0;z-index:30;align-items:center;padding:0 14px;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+    <button onclick="openSidebar()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="/sector.html" style="display:flex;align-items:center;gap:4px;font-size:13px;color:#64748b;text-decoration:none;font-weight:500;flex-shrink:0">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Ngành
+    </a>
+    <div id="mobileTitleBar" style="flex:1;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+  </div>
+
   <!-- ═══ SIDEBAR ═══ -->
-  <aside class="shrink-0 flex flex-col sticky top-0 h-screen" style="width:248px;background:#fff;border-right:1px solid #e2e8f0;box-shadow:2px 0 8px rgba(0,0,0,.04)">
+  <aside id="sidebar" class="shrink-0 flex flex-col sticky top-0 h-screen" style="width:248px;background:#fff;border-right:1px solid #e2e8f0;box-shadow:2px 0 8px rgba(0,0,0,.04)">
     <div style="padding:22px 20px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:12px">
       <div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 4px 12px rgba(99,102,241,.3)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -101,10 +133,10 @@
   </aside>
 
   <!-- ═══ MAIN ═══ -->
-  <main class="flex-1 flex flex-col" style="min-height:0;overflow:hidden">
+  <main id="mainContent" class="flex-1 flex flex-col" style="min-height:0;overflow:hidden">
 
     <!-- Header -->
-    <div style="padding:28px 36px 22px;background:#fff;border-bottom:1px solid #e2e8f0;flex-shrink:0">
+    <div class="page-header" style="padding:28px 36px 22px;background:#fff;border-bottom:1px solid #e2e8f0;flex-shrink:0">
       <a href="/sector.html" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#64748b;text-decoration:none;margin-bottom:14px;font-weight:500;transition:color .15s"
          onmouseenter="this.style.color='#3b82f6'" onmouseleave="this.style.color='#64748b'">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -121,7 +153,7 @@
     </div>
 
     <!-- Controls -->
-    <div style="padding:16px 36px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;background:#fff;border-bottom:1px solid #e2e8f0">
+    <div class="controls-bar" style="padding:16px 36px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;background:#fff;border-bottom:1px solid #e2e8f0">
       <!-- Search -->
       <div style="position:relative;flex:1;min-width:200px;max-width:340px">
         <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -145,14 +177,14 @@
     </div>
 
     <!-- Table -->
-    <div style="flex:1;overflow-y:auto;padding:0 28px 40px">
+    <div class="table-wrap" style="flex:1;overflow-y:auto;padding:0 28px 40px">
       <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;margin-top:16px">
         <!-- Sticky header bên trong card -->
         <div style="display:grid;grid-template-columns:90px 1fr 100px 1fr;padding:10px 16px;position:sticky;top:0;background:#f8fafc;border-bottom:1.5px solid #e2e8f0;z-index:2">
           <div style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase">Mã CK</div>
           <div style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase">Tên công ty</div>
           <div style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase">Sàn GD</div>
-          <div style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase">Ngành gốc</div>
+          <div class="hdr-nganh" style="font-size:11px;font-weight:700;color:#94a3b8;letter-spacing:.8px;text-transform:uppercase">Ngành gốc</div>
         </div>
         <div id="tableBody"></div>
       </div>
@@ -160,6 +192,21 @@
   </main>
 
   <script>
+    function openSidebar() {
+      document.getElementById("sidebar").classList.add("open");
+      document.getElementById("overlay").classList.add("open");
+    }
+    function closeSidebar() {
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("overlay").classList.remove("open");
+    }
+    function applyMobilePadding() {
+      document.getElementById("mainContent").style.paddingTop =
+        window.innerWidth < 768 ? "52px" : "0";
+    }
+    applyMobilePadding();
+    window.addEventListener("resize", applyMobilePadding);
+
     const params = new URLSearchParams(location.search);
     const sectorName = params.get("sector") || "";
 
@@ -205,7 +252,7 @@
             <div>
               <span class="san-badge ${s.san === 'HOSE' ? 'san-hose' : 'san-hastc'}">${s.san === 'HASTC' ? 'HNX' : s.san}</span>
             </div>
-            <div style="font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.nganh || '—'}</div>
+            <div class="col-nganh" style="font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.nganh || '—'}</div>
           </a>`).join("");
 
       document.getElementById("pageSub").textContent =
@@ -214,6 +261,7 @@
 
     async function init() {
       document.getElementById("pageTitle").textContent = sectorName || "Ngành";
+      document.getElementById("mobileTitleBar").textContent = sectorName || "Ngành";
       try {
         const all = await fetch("/api/sectors").then(r => r.json());
         const sector = all.find(s => s.name === sectorName);
