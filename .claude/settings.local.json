@@ -17,7 +17,21 @@
       "Bash(ipconfig getifaddr:*)",
       "Bash(curl -s \"http://localhost:3000/msh-stream?symbol=VNM\" --max-time 6 -N)",
       "Bash(lsof -ti:3000)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(python3 fetch_stocks.py)",
+      "Bash(pip3 install:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//opt/homebrew/Cellar/node/21.7.1/bin/**)",
+      "Bash(/opt/homebrew/bin/node fetch_stocks.mjs)",
+      "Bash(/opt/homebrew/bin/node batch/fetch_stocks.mjs)",
+      "Bash(/opt/homebrew/bin/node batch/enrich_nganh.mjs)",
+      "Bash(/opt/homebrew/bin/node -e \"const r=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\);console.log\\(r\\)\")",
+      "Bash(/opt/homebrew/bin/node -e \":*)",
+      "Bash(curl -s http://localhost:3000/api/sectors)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/sector.html)",
+      "Bash(curl -s -o /dev/null -w \" %{http_code}\" \"http://localhost:3000/sector-detail.html?sector=Ng%C3%A2n+h%C3%A0ng\")",
+      "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/sector-detail.html)",
+      "Bash(kill 67667)"
     ]
   }
 }

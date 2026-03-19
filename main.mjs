@@ -629,17 +629,107 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return sendJSON(res, 500, { error: e.message }); }
   }
 
+  // ─── API: Sectors — đọc database/stocks.csv và nhóm ngành ─────────────────
+  if (pathname === "/api/sectors") {
+    const BASE_DIR = path.dirname(url.fileURLToPath(import.meta.url));
+    const csvPath = path.join(BASE_DIR, "database", "stocks.csv");
+    if (!fs.existsSync(csvPath)) return sendJSON(res, 404, { error: "stocks.csv not found" });
+
+    // Bảng nhóm ngành: key = tên hiển thị, value = mảng các giá trị gốc thuộc nhóm đó
+    const SECTOR_MAP = {
+      "Ngân hàng":               ["Ngân hàng thương mại"],
+      "Tài chính":               ["Tài chính","Công ty Tài chính","Công ty đầu tư tài chính"],
+      "Chứng khoán & Quỹ":       ["Công ty Chứng khoán","Chứng khoán và Đầu tư","Chứng chỉ Quỹ","Quản lý quỹ"],
+      "Bảo hiểm":                ["Bảo hiểm","Bảo hiểm hỗn hợp","Bảo hiểm phi nhân thọ"],
+      "Bất động sản":            ["Bất động sản","Bất động sản du lịch","Bất động sản và Xây dựng","Phát triển bất động sản","Môi giới và quản lý bất động sản","Môi giới và quản lý bất động sản; Lương thực; Dược phẩm; Môi giới và quản lý bất động sản","Khu công nghiệp"],
+      "Xây dựng":                ["Xây dựng","Xây dựng chuyên biệt","Xây dựng hạ tầng giao thông","Phát triển Hạ tầng giao thông"],
+      "Vật liệu xây dựng":       ["Vật liệu xây dựng","VLXD tổng hợp","Xi măng","Bê tông thương phẩm","Gạch"],
+      "Điện năng":               ["Điện năng","Nhiệt điện","Thủy điện","Sản xuất điện năng","Phát triển điện năng","Truyền tải và phân phối điện năng"],
+      "Dầu khí & Năng lượng":    ["Dầu khí","Hóa dầu","Dịch vụ khai thác Dầu khí","Tổ hợp lọc hóa dầu","Vận tải và kho bãi dầu khí","Kinh doanh gas và nhiên liệu","Kinh doanh sản phẩm khí đốt","Kinh doanh xăng dầu"],
+      "Thực phẩm & Đồ uống":     ["Thực phẩm","Chế biến thực phẩm","Bánh kẹo","Lương thực","Sản phẩm sữa","Bia rượu","Nước giải khát","Mía đường","Cà phê","Thuốc lá"],
+      "Thủy sản":                ["Thủy sản","Chế biến thủy sản","Chế biến cá tra","Chế biến tôm"],
+      "Nông nghiệp & Phân bón":  ["Nông nghiệp","Kinh doanh nông sản","Sản phẩm nông nghiệp tổng hợp","Vật tư nông nghiệp tổng hợp","Hóa chất nông nghiệp","Phân bón","Thức ăn chăn nuôi","Cao su tự nhiên","Lâm nghiệp"],
+      "Công nghệ thông tin":     ["Phần mềm","Phần mềm và dịch vụ","Dịch vụ công nghệ thông tin","Gia công phần mềm; Ðiện tự động; Giao thông Thông minh","Thiết bị và công nghệ phần cứng","Hạ tầng viễn thông"],
+      "Điện tử & Thiết bị":      ["Thiết bị điện tử","Điện tử gia dụng","Thiết bị điện","Dây và cáp"],
+      "Dược phẩm & Y tế":        ["Dược phẩm","Kinh doanh dược phẩm","Thiết bị y tế","Bệnh viện"],
+      "Thép & Kim loại":         ["Sản xuất Thép","Chế tạo kết cấu thép","Kim loại và khai khoáng","Kinh doanh thép và vật tư"],
+      "Khai khoáng & Than":      ["Than","Khai khoáng và luyện kim"],
+      "Hóa chất":                ["Hóa chất","Hóa chất chuyên biệt"],
+      "Dệt may":                 ["Dệt may"],
+      "Nhựa & Bao bì":           ["Nhựa","Bao bì","Bao bì nhựa"],
+      "Vận tải & Logistics":     ["Vận tải đường bộ","Giao nhận - tiếp vận","Logistics","Giao thông vận tải","Hàng hải","Hàng không","Dịch vụ sân bay","Vận hành cảng biển","Bưu chính - chuyển phát nhanh","Taxi và vận tải hành khách","Bến xe"],
+      "Cơ khí & Sản xuất":       ["Cơ khí","Cơ khí Lắp máy","Gia công Cơ khí","Chế tạo máy","Sản xuất","Tổ hợp công nghiệp"],
+      "Ô tô & Phụ tùng":         ["Ô tô và Phụ tùng","Phụ tùng ô tô","Kinh doanh ô tô","Săm lốp"],
+      "Bán lẻ & Thương mại":     ["Thương mại","Thương mại tổng hợp","Kinh doanh hàng điện tử","Kinh doanh Vàng bạc đá quý"],
+      "Du lịch & Giải trí":      ["Du lịch","Khách sạn","Phim ảnh và Giải trí"],
+      "Giáo dục & Sách":         ["Giáo dục và dịch vụ chuyên nghiệp","Sách và thiết bị giáo dục","Sách và In ấn"],
+      "Nội thất & Gia dụng":     ["Nội thất","Sản xuất Đồ gia dụng","Sản phẩm gia dụng","Giấy","Văn phòng phẩm"],
+      "Quảng cáo & Truyền thông":["Quảng cáo"],
+      "Dịch vụ & Tiện ích":      ["Dịch vụ","Dịch vụ công nghiệp","Dịch vụ tổng hợp","Tư vấn","Cấp thoát nước"],
+      "Đa ngành":                ["Tập đoàn đa ngành","Hàng công nghiệp","Hàng tiêu dùng","Nguyên vật liệu","Nguyên vật liệu tổng hợp","Công nghiệp"],
+    };
+
+    // Tạo reverse map: rawNganh → groupName
+    const reverseMap = {};
+    for (const [group, raws] of Object.entries(SECTOR_MAP)) {
+      for (const raw of raws) reverseMap[raw] = group;
+    }
+
+    const lines = fs.readFileSync(csvPath, "utf8").replace(/^\uFEFF/, "").split("\n");
+    const headers = lines[0].split(",");
+    const iSymbol = headers.indexOf("Symbol");
+    const iTitle  = headers.indexOf("Title");
+    const iSan    = headers.indexOf("Sàn giao dịch");
+    const iNganh  = headers.indexOf("Ngành");
+
+    const groups = {}; // groupName → [{ symbol, title, san, nganh }]
+
+    for (const line of lines.slice(1)) {
+      if (!line.trim()) continue;
+      // parse csv-aware
+      const cols = [];
+      let cur = "", inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === "," && !inQ) { cols.push(cur); cur = ""; continue; }
+        cur += ch;
+      }
+      cols.push(cur);
+
+      const symbol = cols[iSymbol]?.trim() ?? "";
+      const title  = cols[iTitle]?.trim() ?? "";
+      const san    = cols[iSan]?.trim() ?? "";
+      const nganh  = cols[iNganh]?.trim() ?? "";
+      if (!symbol) continue;
+
+      // Bỏ qua trái phiếu / chứng chỉ: ký hiệu có chữ số ở cuối (vd: BID122028, BAB122030)
+      if (/^[A-Z]{2,4}\d{4,}/.test(symbol)) continue;
+
+      const group = reverseMap[nganh] ?? (nganh ? "Khác" : "Chưa phân loại");
+      if (!groups[group]) groups[group] = [];
+      groups[group].push({ symbol, title, san, nganh });
+    }
+
+    const result = Object.entries(groups)
+      .map(([name, stocks]) => ({ name, count: stocks.length, stocks }))
+      .sort((a, b) => b.count - a.count);
+
+    return sendJSON(res, 200, result);
+  }
+
   const staticFiles = {
-    "/css/style.css":      { file: "public/css/style.css",      mime: "text/css; charset=utf-8" },
-    "/js/app.js":          { file: "public/js/app.js",          mime: "application/javascript; charset=utf-8" },
-    "/surge.html":         { file: "public/surge.html",         mime: "text/html; charset=utf-8" },
-    "/detail.html":        { file: "public/detail.html",        mime: "text/html; charset=utf-8" },
-    "/watchlist.html":     { file: "public/watchlist.html",     mime: "text/html; charset=utf-8" },
-    "/watcher.html":       { file: "public/watcher.html",       mime: "text/html; charset=utf-8" },
-    "/portfolio.html":     { file: "public/portfolio.html",     mime: "text/html; charset=utf-8" },
-    "/css/portfolio.css":  { file: "public/css/portfolio.css",  mime: "text/css; charset=utf-8" },
-    "/js/portfolio.js":    { file: "public/js/portfolio.js",    mime: "application/javascript; charset=utf-8" },
-    "/stocks.csv":         { file: "public/stocks.csv",         mime: "text/csv; charset=utf-8" },
+    "/css/style.css":          { file: "public/css/style.css",          mime: "text/css; charset=utf-8" },
+    "/js/app.js":              { file: "public/js/app.js",              mime: "application/javascript; charset=utf-8" },
+    "/surge.html":             { file: "public/surge.html",             mime: "text/html; charset=utf-8" },
+    "/detail.html":            { file: "public/detail.html",            mime: "text/html; charset=utf-8" },
+    "/watchlist.html":         { file: "public/watchlist.html",         mime: "text/html; charset=utf-8" },
+    "/watcher.html":           { file: "public/watcher.html",           mime: "text/html; charset=utf-8" },
+    "/portfolio.html":         { file: "public/portfolio.html",         mime: "text/html; charset=utf-8" },
+    "/css/portfolio.css":      { file: "public/css/portfolio.css",      mime: "text/css; charset=utf-8" },
+    "/js/portfolio.js":        { file: "public/js/portfolio.js",        mime: "application/javascript; charset=utf-8" },
+    "/stocks.csv":             { file: "public/stocks.csv",             mime: "text/csv; charset=utf-8" },
+    "/sector.html":            { file: "public/sector.html",            mime: "text/html; charset=utf-8" },
+    "/sector-detail.html":     { file: "public/sector-detail.html",     mime: "text/html; charset=utf-8" },
   };
   if (staticFiles[pathname]) {
     const { file, mime } = staticFiles[pathname];
