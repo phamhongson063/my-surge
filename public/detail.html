@@ -43,6 +43,12 @@
     .sh{background:linear-gradient(90deg,#edf0f4 25%,#f8f9fb 50%,#edf0f4 75%);background-size:200% 100%;animation:shm 1.5s infinite;border-radius:6px}
     @keyframes shm{0%{background-position:200% 0}100%{background-position:-200% 0}}
     @keyframes sp{to{transform:rotate(360deg)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    @keyframes rt-flash-up{0%{background:rgba(47,158,68,.22);border-radius:6px}100%{background:transparent}}
+    @keyframes rt-flash-dn{0%{background:rgba(224,49,49,.22);border-radius:6px}100%{background:transparent}}
+    .rt-flash-up{animation:rt-flash-up .7s ease forwards}
+    .rt-flash-dn{animation:rt-flash-dn .7s ease forwards}
+    .rt-val{display:inline-block;border-radius:6px;transition:color .2s}
 
     /* Collapse */
     .card-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:20px 32px;border-radius:16px;transition:background .15s}
@@ -146,33 +152,67 @@
   <div id="resultContent" style="display:none">
 
     <!-- ═══ HERO: Thông tin cổ phiếu ═══ -->
-    <div class="card an" style="margin-bottom:20px;border-top:4px solid var(--navy)">
+    <div class="card an" id="heroCard" style="margin-bottom:20px;overflow:hidden">
       <div style="display:flex">
-        <!-- Left -->
-        <div style="flex:1;padding:32px 36px">
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
-            <span id="symbolBadge" style="font-family:'Syne',sans-serif;font-weight:800;font-size:36px;color:var(--navy);line-height:1">—</span>
-            <div id="recBadge" class="badge"></div>
-          </div>
-          <div id="companyInfo" style="min-height:20px;margin-bottom:16px"></div>
-          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-            <span id="priceDisplay" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:40px;color:var(--gray900)">—</span>
-            <span id="changeDisplay" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px">—</span>
+        <!-- Left: main info -->
+        <div style="flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:0">
+
+          <!-- Row 1: symbol + badges + watchlist -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+            <span id="symbolBadge" style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;color:var(--navy);line-height:1">—</span>
+            <div id="recBadge" class="badge" style="font-size:12px;padding:3px 10px"></div>
+            <div id="realtimeBadge" style="display:none;align-items:center;gap:6px"></div>
             <button id="watchlistBtn" onclick="toggleWatchlist()"
-              style="margin-left:8px;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0"
+              style="margin-left:auto;width:34px;height:34px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0"
               title="Thêm/xóa khỏi Watchlist">
-              <svg id="watchlistIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <svg id="watchlistIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </button>
           </div>
-          <div style="display:flex;gap:28px;margin-top:14px;font-size:15px">
-            <div><span style="color:var(--gray400)">Mở</span> <span id="openVal" style="font-family:'IBM Plex Mono',monospace;font-weight:700;margin-left:6px">—</span></div>
-            <div><span style="color:var(--gray400)">Cao</span> <span id="highVal" style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--up);margin-left:6px">—</span></div>
-            <div><span style="color:var(--gray400)">Thấp</span> <span id="lowVal" style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--dn);margin-left:6px">—</span></div>
+
+          <!-- Company info -->
+          <div id="companyInfo" style="font-size:13px;color:var(--gray500);margin-bottom:14px;min-height:16px"></div>
+
+          <!-- Price + change -->
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+            <span style="min-width:160px;display:inline-block">
+              <span id="priceDisplay" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:46px;color:var(--gray900);letter-spacing:-1px;line-height:1;padding:2px 4px;border-radius:6px">—</span>
+            </span>
+            <span style="min-width:17ch;display:inline-block">
+              <span id="changeDisplay" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:17px;padding:3px 8px;border-radius:8px;background:var(--gray100)">—</span>
+            </span>
           </div>
-          <div id="dateRange" style="font-size:13px;color:var(--gray400);margin-top:12px;font-family:'IBM Plex Mono',monospace"></div>
+          <!-- Volume -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
+            <span style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.5px">KLGD</span>
+            <span id="volumeVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:20px;color:var(--ind)">—</span>
+          </div>
+
+          <!-- OHLC stats grid -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--gray200);border-radius:12px;overflow:hidden;margin-bottom:14px">
+            <div style="padding:9px 14px;border-right:1px solid var(--gray200)">
+              <div style="font-size:10px;font-weight:700;color:var(--am);letter-spacing:.5px;margin-bottom:4px">TC</div>
+              <span id="refVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--am)">—</span>
+            </div>
+            <div style="padding:9px 14px;border-right:1px solid var(--gray200)">
+              <div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.5px;margin-bottom:4px">MỞ</div>
+              <span id="openVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px">—</span>
+            </div>
+            <div style="padding:9px 14px;border-right:1px solid var(--gray200)">
+              <div style="font-size:10px;font-weight:700;color:var(--up);letter-spacing:.5px;margin-bottom:4px">CAO</div>
+              <span id="highVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--up)">—</span>
+            </div>
+            <div style="padding:9px 14px">
+              <div style="font-size:10px;font-weight:700;color:var(--dn);letter-spacing:.5px;margin-bottom:4px">THẤP</div>
+              <span id="lowVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--dn)">—</span>
+            </div>
+          </div>
+
+          <!-- Date range -->
+          <div id="dateRange" style="font-size:12px;color:var(--gray400);font-family:'IBM Plex Mono',monospace"></div>
         </div>
+
         <!-- Right: mini chart -->
-        <div style="width:400px;padding:24px;border-left:1px solid var(--gray200);background:var(--gray50);display:flex;align-items:center;border-radius:0 16px 16px 0">
+        <div style="width:380px;padding:20px 24px;border-left:1px solid var(--gray200);background:var(--gray50);display:flex;align-items:center;border-radius:0 16px 16px 0">
           <canvas id="miniChart" style="width:100%;height:130px"></canvas>
         </div>
       </div>
@@ -209,32 +249,6 @@
           <div style="height:110px;position:relative;background:var(--gray50);border-radius:12px;padding:10px 14px;border:1px solid var(--gray100)">
             <div style="font-size:12px;font-weight:700;color:var(--gray500);margin-bottom:4px">MACD</div>
             <canvas id="macdChart"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ ROW: Xu hướng + Chỉ số (2 cột, không còn mẫu hình nến) ═══ -->
-    <div style="display:grid;grid-template-columns:35fr 65fr;gap:20px;margin-bottom:20px;align-items:start">
-      <!-- Xu hướng -->
-      <div class="card an a1">
-        <div class="card-header" onclick="toggleCard(this)">
-          <div class="sec-title">📊 Xu hướng đa khung</div>
-          <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray500)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-        </div>
-        <div class="card-body">
-          <div id="trendContent"></div>
-          <div id="alignmentBadge" style="margin-top:16px;padding:14px 18px;border-radius:12px;font-size:14px;font-weight:600;line-height:1.6"></div>
-        </div>
-      </div>
-      <!-- Chỉ số + Khối lượng -->
-      <div class="card an a2">
-        <div class="card-header" onclick="toggleCard(this)">
-          <div class="sec-title">📈 Chỉ số & Khối lượng</div>
-          <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray500)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
-        </div>
-        <div class="card-body">
-          <div id="indicatorsContent"></div>
-          <div id="volumeContent" style="margin-top:14px"></div>
         </div>
       </div>
     </div>
@@ -353,12 +367,38 @@
         <div id="rsContent"></div>
       </div>
     </div>
+
+    <!-- ═══ ROW: Xu hướng + Chỉ số (2 cột) ═══ -->
+    <div style="display:grid;grid-template-columns:35fr 65fr;gap:20px;margin-bottom:20px;align-items:start">
+      <!-- Xu hướng -->
+      <div class="card an a1">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="sec-title">📊 Xu hướng đa khung</div>
+          <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray500)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div id="trendContent"></div>
+          <div id="alignmentBadge" style="margin-top:16px;padding:14px 18px;border-radius:12px;font-size:14px;font-weight:600;line-height:1.6"></div>
+        </div>
+      </div>
+      <!-- Chỉ số + Khối lượng -->
+      <div class="card an a2">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="sec-title">📈 Chỉ số & Khối lượng</div>
+          <div class="toggle-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gray500)" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div id="indicatorsContent"></div>
+          <div id="volumeContent" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
 <script>
 const SERVER=`http://${location.hostname}:3000`;
-let analysisData=null,mainChartInstance=null,rsiChartInstance=null,macdChartInstance=null,miniChartInstance=null,chartRange=66,chartType='line';
+let analysisData=null,mainChartInstance=null,rsiChartInstance=null,macdChartInstance=null,miniChartInstance=null,chartRange=66,chartType='line',realtimePriceData=null,mshEventSource=null;
 
 // ── Collapse / Expand ──
 function toggleCard(headerEl){
@@ -411,7 +451,7 @@ function expandAll(){
     });
   });
 }
-const fp=v=>{if(v==null)return"—";return parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2})};
+const fp=v=>{if(v==null)return"—";return parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:2,maximumFractionDigits:2})};
 const fv=n=>n?Number(n).toLocaleString("en-US"):"—";
 function parseChange(r){if(!r)return{val:null,pct:null,dir:0};const m=String(r).match(/^([+-]?[\d,\.]+)\(([+-]?[\d,\.]+)\s*%\)/);if(!m)return{val:null,pct:null,dir:0};const v=parseFloat(m[1].replace(",",".")),p=parseFloat(m[2].replace(",","."));return{val:v,pct:p,dir:v>0?1:v<0?-1:0}}
 const bc=d=>d==="UPTREND"?"b-up":d==="DOWNTREND"?"b-dn":"b-sd";
@@ -561,13 +601,15 @@ async function updateData(){
 
 async function loadAnalysis(sym,forceRefresh=false){
   sym=(sym||"").toUpperCase().trim();if(!sym)return;
+  closeMshStream(); // đóng stream mã cũ trước khi load mã mới
   document.getElementById("symbolInput").value=sym;
   document.getElementById("emptyState").style.display="none";document.getElementById("errorState").style.display="none";
   document.getElementById("resultContent").style.display="none";document.getElementById("loadingState").style.display="block";
   const u=new URL(location);u.searchParams.set("s",sym);history.replaceState(null,"",u);document.title=sym+" — Phân tích";
   destroyCharts();
   document.getElementById("symbolBadge").textContent=sym;
-  ["priceDisplay","changeDisplay","openVal","highVal","lowVal"].forEach(i=>document.getElementById(i).textContent="—");
+  ["priceDisplay","changeDisplay","refVal","openVal","highVal","lowVal","volumeVal"].forEach(i=>{const e=document.getElementById(i);if(e)e.textContent="—"});
+  _prevRt={};
   document.getElementById("dateRange").textContent="";document.getElementById("recBadge").textContent="";
   ["trendContent","alignmentBadge","indicatorsContent","volumeContent","predictionsContent","srContent","patternsContent","rsContent","patternsTabContent","canslimContent","sepaContent","momentumContent","investProfileContent"].forEach(i=>{const e=document.getElementById(i);if(e)e.innerHTML=""});
   document.querySelectorAll(".an").forEach(e=>{e.style.animation="none";e.offsetHeight;e.style.animation=""});
@@ -630,15 +672,20 @@ async function loadAnalysis(sym,forceRefresh=false){
     const cb=document.getElementById("cacheBadge");
     if(cb){if(analysisData._fromCache){cb.style.display="inline-flex";cb.title=`Cache ${analysisData._cacheAgeMin??0} phút trước`}else{cb.style.display="none"}}
     renderAll(analysisData);updateWatchlistBtn();
+    loadRealtimePrice(sym);
   }catch(e){document.getElementById("loadingState").style.display="none";document.getElementById("errorState").style.display="block";document.getElementById("errorMsg").textContent=e.message}
 }
 
 function renderAll(d){
   document.getElementById("symbolBadge").textContent=d.symbol;
-  document.getElementById("priceDisplay").textContent=fp(d.latestPrice);
+  const priceEl=document.getElementById("priceDisplay");
+  priceEl.textContent=fp(d.latestPrice);priceEl.style.color='var(--gray900)';
   document.getElementById("openVal").textContent=fp(d.latestOpen);
   document.getElementById("highVal").textContent=fp(d.latestHigh);
   document.getElementById("lowVal").textContent=fp(d.latestLow);
+  // Volume từ phiên cuối (chart data)
+  const lastVol=d.chart?.volumes?.[d.chart.volumes.length-1];
+  if(lastVol!=null){const ve=document.getElementById("volumeVal");if(ve)ve.textContent=fvol(lastVol);}
   document.getElementById("dateRange").textContent=`Phiên cuối: ${d.latestDate} · ${d.dateRange.from} → ${d.dateRange.to} (${d.totalSessions} phiên)`;
   const ch=parseChange(d.latestChange),ce=document.getElementById("changeDisplay"),s=ch.dir>0?"+":"";
   ce.style.color=ch.dir>0?"var(--up)":ch.dir<0?"var(--dn)":"var(--am)";
@@ -1713,6 +1760,31 @@ function renderRS(rs){
 }
 
 function destroyCharts(){[mainChartInstance,rsiChartInstance,macdChartInstance,miniChartInstance].forEach(c=>c?.destroy());mainChartInstance=rsiChartInstance=macdChartInstance=miniChartInstance=null}
+
+let _prevRt={};
+function flashEl(el,up){
+  if(!el)return;
+  el.classList.remove('rt-flash-up','rt-flash-dn');
+  void el.offsetWidth;
+  el.classList.add(up?'rt-flash-up':'rt-flash-dn');
+}
+function fvol(v){if(v==null)return'—';return Math.round(v).toLocaleString('vi-VN');}
+function updateChartsWithRealtime(rt){
+  if(!mainChartInstance||!rt?.price)return;
+  // Xóa dataset live cũ nếu có
+  mainChartInstance.data.datasets=mainChartInstance.data.datasets.filter(d=>!d._isRealtime);
+  const n=mainChartInstance.data.labels.length;
+  const isUp=rt.change==null||rt.change>=0;
+  const color=isUp?'rgba(47,158,68,0.9)':'rgba(224,49,49,0.9)';
+  mainChartInstance.data.datasets.push({
+    type:'line',_isRealtime:true,
+    label:`Live ${fp(rt.price)}`,
+    data:Array(n).fill(rt.price),
+    borderColor:color,borderWidth:1.5,borderDash:[5,4],
+    pointRadius:0,pointHitRadius:0,fill:false,tension:0,yAxisID:'yP',order:0,
+  });
+  mainChartInstance.update('none');
+}
 function setChartRange(n){
   chartRange=n;document.querySelectorAll(".cb").forEach(b=>{b.style.background="var(--wht)";b.style.color="var(--gray500)";b.style.borderColor="var(--gray200)"});
   const a=document.getElementById("cr"+n);if(a){a.style.background="var(--navy)";a.style.color="#fff";a.style.borderColor="var(--navy)"}
@@ -1832,6 +1904,8 @@ function renderCharts(d){
   ]},options:{...base,scales:{x:{display:false},y:{min:0,max:100,ticks:{stepSize:35,font:{size:10,family:"'IBM Plex Mono'"},color:"#9ca3af"},grid:{color:"rgba(0,0,0,.04)"}}}}});
   macdChartInstance=new Chart(document.getElementById("macdChart"),{type:"bar",data:{labels,datasets:[{data:mD,backgroundColor:mD.map(v=>v>0?"rgba(47,158,68,.4)":"rgba(224,49,49,.4)")}]},
     options:{...base,scales:{x:{display:false},y:{ticks:{maxTicksLimit:3,font:{size:10,family:"'IBM Plex Mono'"},color:"#9ca3af"},grid:{color:"rgba(0,0,0,.04)"}}}}});
+  // Áp dụng lại đường giá live nếu đang có realtime data
+  if(realtimePriceData)updateChartsWithRealtime(realtimePriceData);
 }
 // ── Candlestick plugin (vẽ nến bằng Canvas API, không cần thư viện ngoài) ──
 Chart.register({
@@ -1874,6 +1948,185 @@ Chart.register({
   }
 });
 
+// ─── Vietnam trading hours & MSH realtime price ──────────────────────────────
+function getVNDate(){
+  const now=new Date();
+  return new Date(now.getTime()+7*3600*1000);
+}
+function isVNTradingHours(){
+  const vn=getVNDate();
+  const total=vn.getUTCHours()*60+vn.getUTCMinutes();
+  return total>=9*60&&total<15*60;
+}
+function isAfterVNClose(){
+  const vn=getVNDate();
+  return vn.getUTCHours()*60+vn.getUTCMinutes()>=15*60;
+}
+function vnDateStr(){return getVNDate().toISOString().slice(0,10);}
+
+function getMshCache(sym){
+  try{const r=localStorage.getItem(`msh_rt_${sym}_${vnDateStr()}`);return r?JSON.parse(r):null;}catch{return null;}
+}
+function setMshCache(sym,data){
+  try{localStorage.setItem(`msh_rt_${sym}_${vnDateStr()}`,JSON.stringify({data,cachedAt:new Date().toISOString()}));}catch{}
+}
+
+function parseMshItem(json,sym){
+  const n=v=>{const x=parseFloat(v);return isNaN(x)?null:x;};
+  // Format chính: { succeeded, data: { value: { price, refPrice, highPrice, lowPrice, volume, ... } } }
+  const v=json?.data?.value||json?.data?.Values?.[0];
+  if(v){
+    const price=n(v.price||v.Price);
+    const ref=n(v.refPrice||v.refprice);
+    const change=price!=null&&ref!=null?parseFloat((price-ref).toFixed(2)):null;
+    const changePct=price!=null&&ref&&ref!==0?parseFloat(((price-ref)/ref*100).toFixed(2)):null;
+    return{price,change,changePct,ref,
+      open:n(v.openPrice||v.open||v.Open),
+      high:n(v.highPrice||v.high||v.High),
+      low:n(v.lowPrice||v.low||v.Low),
+      volume:n(v.volume||v.Volume),
+    };
+  }
+  // Fallback: array formats
+  let items=json?.Items||json?.data?.Items||json;
+  if(!Array.isArray(items))items=[items];
+  if(!items.length)return null;
+  const item=items.find(i=>(i.Symbol||i.symbol||i.s||'').toUpperCase()===sym)||items[0];
+  if(!item)return null;
+  const price=n(item.Price||item.price||item.p);
+  const ref=n(item.Reference||item.reference||item.refPrice||item.r);
+  const change=price!=null&&ref!=null?parseFloat((price-ref).toFixed(2)):n(item.Change||item.change||item.ch);
+  const changePct=price!=null&&ref&&ref!==0?parseFloat(((price-ref)/ref*100).toFixed(2)):n(item.PercentChange||item.percentChange||item.pc);
+  return{price,change,changePct,ref,
+    open:n(item.Open||item.open||item.o),
+    high:n(item.High||item.high||item.h),
+    low:n(item.Low||item.low||item.l),
+    volume:n(item.Volume||item.volume||item.v||item.vol),
+  };
+}
+
+function closeMshStream(){
+  if(mshEventSource){mshEventSource.close();mshEventSource=null;}
+}
+
+function loadRealtimePrice(sym){
+  closeMshStream();
+  if(isVNTradingHours()){
+    // Giờ giao dịch: dùng SSE — server poll MSH 1 lần mỗi 10s, push về browser
+    mshEventSource=new EventSource(`${SERVER}/msh-stream?symbol=${sym}`);
+    mshEventSource.onmessage=e=>{
+      try{
+        // Server gửi data đã parse: {price, change, changePct, ref, open, high, low, volume}
+        const data=JSON.parse(e.data);
+        if(data?.price){setMshCache(sym,data);renderRealtimePrice(data,sym,false,null);}
+      }catch{}
+    };
+    mshEventSource.onerror=()=>{
+      // Kết nối lỗi → fallback cache
+      const cached=getMshCache(sym);
+      if(cached?.data)renderRealtimePrice(cached.data,sym,true,cached.cachedAt);
+    };
+  }else if(isAfterVNClose()){
+    // Sau 15:00: chỉ dùng cache localStorage
+    const cached=getMshCache(sym);
+    if(cached?.data)renderRealtimePrice(cached.data,sym,true,cached.cachedAt);
+  }
+}
+
+function renderRealtimePrice(data,sym,fromCache,cachedAt){
+  realtimePriceData=data;
+  updateChartsWithRealtime(data);
+
+  // Helper: cập nhật giá trị + flash nếu thay đổi
+  function setRtVal(id,newText,isUp){
+    const el=document.getElementById(id);if(!el)return;
+    if(el.textContent!==newText&&el.textContent!=='—'){flashEl(el,isUp);}
+    el.textContent=newText;
+  }
+
+  const isUp=data.change==null||data.change>=0;
+
+  if(data.price!=null){
+    const el=document.getElementById('priceDisplay');
+    if(el){
+      const newTxt=fp(data.price);
+      const changed=el.textContent!==newTxt&&el.textContent!=='—';
+      el.textContent=newTxt;
+      el.style.color=isUp?'var(--up)':'var(--dn)';
+      if(changed)flashEl(el,isUp);
+    }
+  }
+  if(data.change!=null&&data.changePct!=null){
+    const el=document.getElementById('changeDisplay');
+    if(el){
+      const s=data.change>0?'+':'';
+      el.textContent=`${s}${fp(data.change)} (${s}${data.changePct.toFixed(2)}%)`;
+      el.style.color=data.change>0?'var(--up)':data.change<0?'var(--dn)':'var(--am)';
+      el.style.background=data.change>0?'var(--up-bg)':data.change<0?'var(--dn-bg)':'var(--am-bg)';
+    }
+  }
+  if(data.ref!=null)  setRtVal('refVal', fp(data.ref),  isUp);
+  if(data.open!=null) setRtVal('openVal',fp(data.open), isUp);
+  if(data.high!=null) setRtVal('highVal',fp(data.high), true);
+  if(data.low!=null)  setRtVal('lowVal', fp(data.low),  false);
+  if(data.volume!=null){
+    const newVol=fvol(data.volume);
+    const prevVol=_prevRt.volume;
+    setRtVal('volumeVal',newVol, data.volume>=(prevVol??0));
+  }
+  _prevRt={price:data.price,volume:data.volume};
+
+  // Cập nhật analysisData.latestPrice để portfolio card & advisory dùng giá mới
+  if(analysisData&&data.price!=null){
+    analysisData.latestPrice=data.price;
+    const s=data.change!=null?data.change>0?'+':'':'';
+    const fakeChange=data.change!=null?`${s}${fp(data.change)}(${s}${data.changePct?.toFixed(2)}%)`:'';
+    if(data.change!=null)analysisData.latestChange=fakeChange;
+    updateFloatingPrice({...analysisData,latestPrice:data.price,latestChange:fakeChange||analysisData.latestChange});
+    renderPortfolio();
+  }
+
+  // Badge
+  const badge=document.getElementById('realtimeBadge');
+  if(!badge)return;
+  const isLive=!fromCache&&isVNTradingHours();
+  let timeLabel='';
+  if(fromCache&&cachedAt){
+    const vnCached=new Date(new Date(cachedAt).getTime()+7*3600*1000);
+    timeLabel=`${String(vnCached.getUTCHours()).padStart(2,'0')}:${String(vnCached.getUTCMinutes()).padStart(2,'0')}`;
+  }else{
+    const vn=getVNDate();
+    timeLabel=`${String(vn.getUTCHours()).padStart(2,'0')}:${String(vn.getUTCMinutes()).padStart(2,'0')}`;
+  }
+  const dotColor=isLive?'var(--up)':'var(--am)';
+  const bgColor=isLive?'var(--up-bg)':'var(--am-bg)';
+  const bdColor=isLive?'var(--up-bd)':'var(--am-bd)';
+  badge.style.display='flex';
+  badge.innerHTML=`<div style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;
+    background:${bgColor};border:1px solid ${bdColor};color:${dotColor}">${isLive
+      ?'<span style="width:6px;height:6px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 1.2s infinite"></span> LIVE '+timeLabel
+      :'📦 Cache '+timeLabel}</div>`
+    +`<button id="mshRefreshBtn" onclick="refreshRealtimePrice()" title="Lấy giá mới nhất từ MSH"
+      style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--gray200);background:var(--wht);color:var(--gray500);cursor:pointer;padding:0;transition:all .15s;flex-shrink:0"
+      onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray500)'">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>`;
+}
+
+function refreshRealtimePrice(){
+  // Reconnect SSE → server sẽ fetch MSH ngay lập tức
+  const sym=document.getElementById('symbolBadge')?.textContent?.trim();
+  if(!sym)return;
+  const btn=document.getElementById('mshRefreshBtn');
+  if(btn){btn.style.opacity='.4';btn.style.pointerEvents='none';btn.querySelector('svg').style.animation='sp .6s linear infinite';}
+  loadRealtimePrice(sym);
+  setTimeout(()=>{
+    const b=document.getElementById('mshRefreshBtn');
+    if(b){b.style.opacity='1';b.style.pointerEvents='';b.querySelector('svg').style.animation='';}
+  },1200);
+}
+
+window.addEventListener("beforeunload",()=>closeMshStream());
 window.addEventListener("load",()=>{
   loadSymbols();
   loadWatchlistState();

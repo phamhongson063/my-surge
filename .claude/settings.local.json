@@ -10,7 +10,10 @@
       "Bash(grep -l \"portfolio\\\\|position\\\\|order\" /Users/son.ph/my-surge/*.html)",
       "Bash(source ~/.zshrc)",
       "Bash(wc -l /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.mjs /Users/son.ph/my-surge/*.css)",
-      "Bash(curl -s \"http://localhost:54090/price?symbol=PGC\")"
+      "Bash(curl -s \"http://localhost:54090/price?symbol=PGC\")",
+      "Bash(grep -n \"style\\\\.css\\\\|app\\\\.js\\\\|portfolio\\\\.css\\\\|portfolio\\\\.js\" /Users/son.ph/my-surge/*.html)",
+      "Bash(grep -n stocks.csv /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.js /Users/son.ph/my-surge/app.js)",
+      "WebFetch(domain:msh-iframe.cafef.vn)"
     ]
   }
 }

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/portfolio.css"/>
+</head>
+<body>
+<div class="win-wallpaper"></div>
+<div class="win-mountain"></div>
+
+<div class="win-desktop">
+<div class="win-frame">
+
+<!-- Windows Titlebar -->
+<div class="win-titlebar">
+  <div class="win-controls">
+    <button class="win-btn close" onclick="window.location.href='/'"></button>
+    <button class="win-btn min"></button>
+    <button class="win-btn max"></button>
+  </div>
+  <div class="win-divider"></div>
+  <div class="win-app-icon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+  </div>
+  <div class="win-title-text">Portfolio — My Stock</div>
+  <div class="win-hdr-actions">
+    <button class="btn btn-primary" onclick="toggleAddForm()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Thêm lệnh
+    </button>
+    <button class="btn btn-ghost" onclick="toggleHistoryPanel()" id="historyBtn" title="Lịch sử giao dịch">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Lịch sử
+    </button>
+    <button class="btn btn-ghost" onclick="refreshAll()" id="refreshBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển theme">
+      <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</div>
+
+<main>
+  <div id="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span style="font-size:13px">Đang tải danh mục...</span>
+  </div>
+
+  <div id="empty" class="empty-state" style="display:none">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="1.2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    <p>Chưa có vị thế nào trong danh mục</p>
+    <button class="btn btn-primary" onclick="toggleAddForm()">Thêm lệnh đầu tiên</button>
+  </div>
+
+  <div id="content" style="display:none">
+    <div id="addForm" class="add-form">
+      <div class="form-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm lệnh mới
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Mã CK</label>
+          <input type="text" id="fSym" placeholder="VD: PGC" style="width:90px;text-transform:uppercase"/>
+        </div>
+        <div class="fg">
+          <label>Khối lượng</label>
+          <input type="number" id="fQty" placeholder="500" min="100" step="100" style="width:100px"/>
+        </div>
+        <div class="fg">
+          <label>Giá mua (nghìn đ)</label>
+          <input type="number" id="fPrice" placeholder="85.0" step="0.05" style="width:110px"/>
+        </div>
+        <div class="fg">
+          <label>Ngày mua</label>
+          <input type="date" id="fDate" style="width:145px"/>
+        </div>
+        <button class="btn btn-primary" onclick="submitAdd()" id="addBtn">Thêm</button>
+        <button class="btn btn-ghost" onclick="toggleAddForm()">Hủy</button>
+      </div>
+    </div>
+    <div id="heroSection"></div>
+    <!-- Sell Modal -->
+    <div id="sellModal" class="sell-modal-overlay" onclick="if(event.target===this)toggleSellForm()">
+      <div class="sell-modal">
+        <div class="sell-modal-header">
+          <div>
+            <div class="sell-modal-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="12" x2="3" y2="12"/></svg>
+              Bán <span id="smSymName"></span>
+            </div>
+            <div class="sell-modal-sym-label" id="smSymLabel"></div>
+          </div>
+          <button class="sell-modal-close" onclick="toggleSellForm()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="sell-modal-price-bar" id="smPriceBar"></div>
+        <input type="hidden" id="sSym"/>
+        <div class="sell-modal-fields">
+          <div class="s-fg">
+            <label>KL bán (CP)</label>
+            <input type="number" id="sQty" placeholder="100" min="100" step="100" oninput="clearSellError()"/>
+          </div>
+          <div class="s-fg">
+            <label>Giá bán (nghìn đ)</label>
+            <input type="number" id="sPrice" placeholder="16.5" step="0.05"/>
+          </div>
+          <div class="s-fg">
+            <label>Ngày bán</label>
+            <input type="date" id="sDate"/>
+          </div>
+        </div>
+        <div class="sell-preview-bar" id="sellPreview"></div>
+        <div class="sell-modal-actions">
+          <button class="btn btn-ghost" onclick="toggleSellForm()">Huỷ</button>
+          <button class="sell-confirm-btn" onclick="submitSell()" id="sellBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Xác nhận bán
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="tableSection"></div>
+  </div>
+
+  <!-- History Panel (hidden by default) -->
+  <div id="historyPanel" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t3)">Lịch sử giao dịch đã bán</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="historyFilter" onchange="renderHistory()" style="padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--t1);font-size:12px;font-weight:600;outline:none">
+          <option value="">Tất cả mã</option>
+        </select>
+        <button class="btn btn-ghost" onclick="toggleHistoryPanel()" style="padding:5px 12px">Đóng</button>
+      </div>
+    </div>
+    <div id="historyContent"></div>
+  </div>
+</main>
+
+</div><!-- win-frame -->
+</div><!-- win-desktop -->
+
+<!-- Taskbar -->
+<div class="win-taskbar">
+  <a class="win-tb-back" href="/">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Desktop
+  </a>
+  <div class="win-tb-center">
+    <div class="win-tb-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    </div>
+    <span class="win-tb-name">Portfolio</span>
+  </div>
+  <div class="win-tb-right" id="tbTime"></div>
+</div>
+
+<script src="/js/portfolio.js"></script>
+</body>
+</html>
