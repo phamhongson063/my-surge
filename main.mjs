@@ -629,6 +629,44 @@ const server = http.createServer(async (req, res) => {
     } catch(e) { return sendJSON(res, 500, { error: e.message }); }
   }
 
+  // ─── API: Proxy iboard-query.ssi.com.vn ─────────────────────────────────────
+  if (pathname === "/api/board") {
+    const group    = parsed.query.group;    // VN30, HNX30, ...
+    const exchange = parsed.query.exchange; // hose, hnx, upcom
+    const indexId  = parsed.query.index;   // VNINDEX, VN30, HNXIndex, HNX30
+
+    let targetUrl;
+    if (indexId) {
+      targetUrl = `https://iboard-query.ssi.com.vn/exchange-index/${encodeURIComponent(indexId)}?hasHistory=false`;
+    } else if (group) {
+      targetUrl = `https://iboard-query.ssi.com.vn/stock/group/${encodeURIComponent(group)}`;
+    } else if (exchange) {
+      targetUrl = `https://iboard-query.ssi.com.vn/stock/exchange/${encodeURIComponent(exchange)}`;
+    } else {
+      return sendJSON(res, 400, { error: "Cần group, exchange hoặc index" });
+    }
+
+    return new Promise((resolve) => {
+      https.get(targetUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          "Origin": "https://iboard.ssi.com.vn",
+          "Referer": "https://iboard.ssi.com.vn/",
+          "Accept": "application/json",
+        }
+      }, (rsp) => {
+        const chunks = [];
+        rsp.on("data", c => chunks.push(c));
+        rsp.on("end", () => {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(Buffer.concat(chunks));
+          resolve();
+        });
+        rsp.on("error", (e) => { sendJSON(res, 502, { error: e.message }); resolve(); });
+      }).on("error", (e) => { sendJSON(res, 502, { error: e.message }); resolve(); });
+    });
+  }
+
   // ─── API: Sectors — đọc database/stocks.csv và nhóm ngành ─────────────────
   if (pathname === "/api/sectors") {
     const BASE_DIR = path.dirname(url.fileURLToPath(import.meta.url));
@@ -730,6 +768,7 @@ const server = http.createServer(async (req, res) => {
     "/stocks.csv":             { file: "public/stocks.csv",             mime: "text/csv; charset=utf-8" },
     "/sector.html":            { file: "public/sector.html",            mime: "text/html; charset=utf-8" },
     "/sector-detail.html":     { file: "public/sector-detail.html",     mime: "text/html; charset=utf-8" },
+    "/price-board.html":       { file: "public/price-board.html",       mime: "text/html; charset=utf-8" },
   };
   if (staticFiles[pathname]) {
     const { file, mime } = staticFiles[pathname];

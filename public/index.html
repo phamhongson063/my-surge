@@ -179,6 +179,8 @@ body {
 .icon-watchlist { background: linear-gradient(145deg, #7c3aed, #5b21b6); }
 .icon-portfolio { background: linear-gradient(145deg, #d97706, #b45309); }
 .icon-watcher   { background: linear-gradient(145deg, #16a34a, #15803d); }
+.icon-sector    { background: linear-gradient(145deg, #0ea5e9, #0369a1); }
+.icon-board     { background: linear-gradient(145deg, #f59e0b, #d97706); }
 
 .icon-label {
   font-size: 11.5px;
@@ -505,6 +507,27 @@ body {
       <span class="icon-label">Watcher</span>
     </div>
 
+    <div class="desktop-icon" data-href="/sector.html" data-app="sector">
+      <div class="icon-img icon-sector">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M3 14h7v7H3z"/>
+          <path d="M14 17.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z"/>
+        </svg>
+      </div>
+      <span class="icon-label">Ngành</span>
+    </div>
+
+    <div class="desktop-icon" data-href="/price-board.html" data-app="board">
+      <div class="icon-img icon-board">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="18" rx="2"/>
+          <path d="M8 7h8M8 11h8M8 15h5"/>
+          <path d="M16 15l2 2 3-3"/>
+        </svg>
+      </div>
+      <span class="icon-label">Bảng Giá</span>
+    </div>
+
   </div>
 </div>
 
@@ -575,6 +598,16 @@ body {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       </div>
     </a>
+    <a class="tb-app" href="/sector.html" title="Ngành">
+      <div class="tb-icon icon-sector" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M3 14h7v7H3z"/><circle cx="17.5" cy="17.5" r="3"/></svg>
+      </div>
+    </a>
+    <a class="tb-app" href="/price-board.html" title="Bảng Giá">
+      <div class="tb-icon icon-board" style="width:24px;height:24px;border-radius:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      </div>
+    </a>
   </div>
 
   <div class="taskbar-right">
@@ -638,6 +671,22 @@ const apps = {
     color: 'linear-gradient(145deg,#16a34a,#15803d)',
     href: '/watcher.html',
     icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
+  },
+  sector: {
+    name: 'Ngành',
+    desc: 'Xem danh sách các ngành và cổ phiếu thuộc từng ngành trong thị trường chứng khoán.',
+    tags: ['HOSE', 'HNX', 'Nhóm ngành'],
+    color: 'linear-gradient(145deg,#0ea5e9,#0369a1)',
+    href: '/sector.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M3 14h7v7H3z"/><path d="M14 17.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z"/></svg>`
+  },
+  board: {
+    name: 'Bảng Giá',
+    desc: 'Bảng giá realtime VN30, HOSE, HNX, UPCOM — cập nhật live mỗi 4 giây từ SSI iBoard.',
+    tags: ['Live', 'VN30', 'HOSE · HNX'],
+    color: 'linear-gradient(145deg,#f59e0b,#d97706)',
+    href: '/price-board.html',
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/><path d="M16 15l2 2 3-3"/></svg>`
   }
 };
 
@@ -668,6 +717,8 @@ const defaultPositions = {
   watchlist: {col:0, row:3},
   portfolio: {col:0, row:4},
   watcher:   {col:0, row:5},
+  sector:    {col:1, row:0},
+  board:     {col:1, row:1},
 };
 
 function getGridOrigin(){

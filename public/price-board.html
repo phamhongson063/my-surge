@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bảng Giá Chứng Khoán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --border: #2a3347;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --green: #22c55e;
+  --red: #ef4444;
+  --ceil: #c084fc;    /* tím trần */
+  --floor: #22d3ee;   /* xanh sàn */
+  --ref: #fbbf24;     /* vàng tham chiếu */
+  --header-h: 56px;
+  --tabbar-h: 44px;
+  --index-h: 72px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+/* ── TOP HEADER ── */
+#header {
+  height: var(--header-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+#header h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.header-spacer { flex: 1; }
+#searchBox {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: var(--text);
+  font-size: 13px;
+  width: 160px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#searchBox:focus { border-color: #3b82f6; }
+#searchBox::placeholder { color: var(--text3); }
+
+#refreshBtn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 13px;
+  display: flex; align-items: center; gap: 6px;
+  transition: background 0.15s;
+}
+#refreshBtn:hover { background: #263044; }
+#refreshBtn.live { color: var(--green); border-color: #16a34a44; }
+#refreshDot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text3);
+  transition: background 0.3s;
+}
+#refreshBtn.live #refreshDot { background: var(--green); animation: blink 1.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+#lastUpdate { color: var(--text3); font-size: 12px; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── INDEX CARDS ── */
+#indexBar {
+  height: var(--index-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.idx-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  min-width: 148px;
+  cursor: default;
+  transition: border-color 0.15s;
+}
+.idx-card:hover { border-color: #3b5380; }
+.idx-name { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; }
+.idx-val  { font-size: 17px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin: 2px 0; }
+.idx-chg  { font-size: 11px; font-family: 'IBM Plex Mono', monospace; }
+.idx-stats { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.up   { color: var(--green); }
+.dn   { color: var(--red); }
+.ref-c { color: var(--ref); }
+
+/* ── TABS ── */
+#tabBar {
+  height: var(--tabbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  padding: 0 16px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text3);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text2); }
+.tab-btn.active { color: #60a5fa; border-color: #60a5fa; }
+.tab-count {
+  font-size: 10px;
+  background: var(--bg3);
+  border-radius: 10px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  color: var(--text3);
+}
+
+/* ── TABLE AREA ── */
+#tableWrap {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+#stockTable {
+  border-collapse: collapse;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  min-width: 100%;
+}
+
+#stockTable thead th {
+  position: sticky;
+  background: #1a2133;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 5px 6px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: none;
+  box-shadow: inset 0 -1px 0 var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+  z-index: 10;
+}
+/* row 1 = group headers, row 2 = sub-headers */
+#stockTable thead tr:first-child th { top: 0; height: 28px; }
+#stockTable thead tr:nth-child(2) th { top: 28px; }
+
+#stockTable thead th:hover { color: var(--text2); }
+#stockTable thead th.left { text-align: left; }
+#stockTable thead th.sort-asc::after  { content: ' ▲'; color: #60a5fa; }
+#stockTable thead th.sort-desc::after { content: ' ▼'; color: #60a5fa; }
+
+/* Bid/ask column colors in body only */
+.bid-price { color: var(--green); }
+.ask-price { color: var(--red); }
+.bid-vol, .ask-vol { color: var(--text2); font-size: 11.5px; }
+
+/* Cell borders */
+#stockTable th,
+#stockTable td {
+  border-right: 1px solid var(--border);
+}
+#stockTable th:last-child,
+#stockTable td:last-child {
+  border-right: none;
+}
+
+#stockTable tbody tr {
+  border-bottom: 1px solid #1c2336;
+  transition: background 0.08s;
+}
+#stockTable tbody tr:hover { background: #1e2a3a; }
+
+#stockTable td {
+  padding: 5px 8px;
+  text-align: right;
+  white-space: nowrap;
+}
+#stockTable td.left { text-align: left; }
+
+/* Symbol column */
+.sym-cell {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-align: left;
+}
+
+/* Price cell styling */
+.p-ceil { color: var(--ceil); }
+.p-floor { color: var(--floor); }
+.p-up { color: var(--green); }
+.p-dn { color: var(--red); }
+.p-ref { color: var(--ref); }
+
+/* Row flash animation */
+@keyframes flashGreen { 0%{background:#16a34a33} 100%{background:transparent} }
+@keyframes flashRed   { 0%{background:#dc262633} 100%{background:transparent} }
+.flash-g { animation: flashGreen 0.6s ease-out; }
+.flash-r { animation: flashRed   0.6s ease-out; }
+
+/* ── STAT BAR ── */
+#statBar {
+  height: 32px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 20px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text3);
+}
+.stat-item { display: flex; gap: 5px; }
+.stat-item span { font-weight: 600; }
+.stat-up { color: var(--green); }
+.stat-dn { color: var(--red); }
+.stat-nc { color: var(--ref); }
+
+/* ── LOADING ── */
+#loadingOverlay {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px;
+  z-index: 20;
+}
+#loadingOverlay.hidden { display: none; }
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: #60a5fa;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 13px; }
+
+/* ── MOBILE ── */
+@media (max-width: 767px) {
+  body { font-size: 12px; }
+  #header h1 { font-size: 14px; }
+  #searchBox { width: 120px; }
+  #lastUpdate { display: none; }
+  .col-open, .col-high, .col-low,
+  .col-klnnm, .col-klnnb, .hdr-open, .hdr-high, .hdr-low, .hdr-klnnm, .hdr-klnnb,
+  .hdr-room,
+  .col-bid1, .col-bid1vol, .col-bid2, .col-bid2vol, .col-bid3, .col-bid3vol,
+  .col-ask1, .col-ask1vol, .col-ask2, .col-ask2vol, .col-ask3, .col-ask3vol,
+  .grp-bid, .grp-ask, .grp-dtnn { display: none !important; }
+  .grp-match { display: none !important; }
+  .idx-card { min-width: 120px; }
+  .idx-val { font-size: 14px; }
+}
+
+/* Nav link */
+.nav-link {
+  color: var(--text3);
+  font-size: 12px;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.nav-link:hover { color: var(--text2); background: var(--bg3); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <h1>📊 Bảng Giá</h1>
+  <a href="/sector.html" class="nav-link">Ngành</a>
+  <a href="/" class="nav-link">Phân tích</a>
+  <div class="header-spacer"></div>
+  <span id="lastUpdate">--:--:--</span>
+  <button id="refreshBtn" class="live" onclick="toggleLive()">
+    <div id="refreshDot"></div>
+    <span id="refreshLabel">Live</span>
+  </button>
+  <input id="searchBox" type="text" placeholder="Tìm mã CK..." oninput="renderTable()" autocomplete="off">
+</div>
+
+<!-- INDEX CARDS -->
+<div id="indexBar">
+  <div class="idx-card" id="idx-VNINDEX">
+    <div class="idx-name">VNINDEX</div>
+    <div class="idx-val" id="v-VNINDEX">--</div>
+    <div class="idx-chg" id="c-VNINDEX">--</div>
+    <div class="idx-stats" id="s-VNINDEX">-- T↑ -- T↓</div>
+  </div>
+  <div class="idx-card" id="idx-VN30">
+    <div class="idx-name">VN30</div>
+    <div class="idx-val" id="v-VN30">--</div>
+    <div class="idx-chg" id="c-VN30">--</div>
+    <div class="idx-stats" id="s-VN30">-- T↑ -- T↓</div>
+  </div>
+  <div class="idx-card" id="idx-HNXIndex">
+    <div class="idx-name">HNXIndex</div>
+    <div class="idx-val" id="v-HNXIndex">--</div>
+    <div class="idx-chg" id="c-HNXIndex">--</div>
+    <div class="idx-stats" id="s-HNXIndex">-- T↑ -- T↓</div>
+  </div>
+  <div class="idx-card" id="idx-HNX30">
+    <div class="idx-name">HNX30</div>
+    <div class="idx-val" id="v-HNX30">--</div>
+    <div class="idx-chg" id="c-HNX30">--</div>
+    <div class="idx-stats" id="s-HNX30">-- T↑ -- T↓</div>
+  </div>
+  <div class="idx-card" id="idx-UpcomIndex">
+    <div class="idx-name">UPCOM</div>
+    <div class="idx-val" id="v-UpcomIndex">--</div>
+    <div class="idx-chg" id="c-UpcomIndex">--</div>
+    <div class="idx-stats" id="s-UpcomIndex">-- T↑ -- T↓</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div id="tabBar">
+  <button class="tab-btn active" data-tab="VN30" onclick="switchTab(this)">VN30 <span class="tab-count" id="cnt-VN30">30</span></button>
+  <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
+  <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
+  <button class="tab-btn" data-tab="upcom" onclick="switchTab(this)">UPCOM <span class="tab-count" id="cnt-upcom">...</span></button>
+</div>
+
+<!-- TABLE AREA -->
+<div id="tableWrap">
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Đang tải dữ liệu...</div>
+  </div>
+  <table id="stockTable">
+    <thead>
+      <!-- Row 1: group headers -->
+      <tr>
+        <th class="left" rowspan="2" style="min-width:60px;width:60px" onclick="sortBy('sym')">CK</th>
+        <th class="hdr-ceil"  rowspan="2" style="width:56px" onclick="sortBy('ceil')">Trần</th>
+        <th class="hdr-floor" rowspan="2" style="width:56px" onclick="sortBy('floor')">Sàn</th>
+        <th rowspan="2" style="width:56px" onclick="sortBy('ref')">TC</th>
+        <th class="grp-bid" colspan="6" style="text-align:center">Bên mua</th>
+        <th class="grp-match" colspan="4" style="text-align:center">Khớp lệnh</th>
+        <th class="grp-ask" colspan="6" style="text-align:center">Bên bán</th>
+        <th rowspan="2" style="width:80px" onclick="sortBy('vol')">Tổng KL</th>
+        <th class="hdr-high" rowspan="2" style="width:56px" onclick="sortBy('high')">Cao</th>
+        <th class="hdr-low"  rowspan="2" style="width:56px" onclick="sortBy('low')">Thấp</th>
+        <th class="hdr-open" rowspan="2" style="width:56px" onclick="sortBy('open')">Mở</th>
+        <th class="grp-dtnn" colspan="2" style="text-align:center">ĐTNN</th>
+        <th class="hdr-room" rowspan="2" style="width:72px" onclick="sortBy('room')">Room</th>
+      </tr>
+      <!-- Row 2: sub-column headers -->
+      <tr>
+        <!-- Bên mua: Giá 3 → KL 3 → Giá 2 → KL 2 → Giá 1 → KL 1 -->
+        <th class="grp-bid hdr-bid3"    style="width:56px" onclick="sortBy('bid3')">Giá 3</th>
+        <th class="grp-bid hdr-bid3vol" style="width:62px" onclick="sortBy('bid3vol')">KL 3</th>
+        <th class="grp-bid hdr-bid2"    style="width:56px" onclick="sortBy('bid2')">Giá 2</th>
+        <th class="grp-bid hdr-bid2vol" style="width:62px" onclick="sortBy('bid2vol')">KL 2</th>
+        <th class="grp-bid hdr-bid1"    style="width:56px" onclick="sortBy('bid1')">Giá 1</th>
+        <th class="grp-bid hdr-bid1vol" style="width:62px" onclick="sortBy('bid1vol')">KL 1</th>
+        <!-- Khớp lệnh -->
+        <th class="grp-match" style="width:60px" onclick="sortBy('match')">Giá</th>
+        <th class="grp-match" style="width:68px" onclick="sortBy('matchvol')">KL</th>
+        <th class="grp-match" style="width:60px" onclick="sortBy('change')">+/-</th>
+        <th class="grp-match" style="width:66px" onclick="sortBy('changePct')">+/- (%)</th>
+        <!-- Bên bán: Giá 1 → KL 1 → Giá 2 → KL 2 → Giá 3 → KL 3 -->
+        <th class="grp-ask hdr-ask1"    style="width:56px" onclick="sortBy('ask1')">Giá 1</th>
+        <th class="grp-ask hdr-ask1vol" style="width:62px" onclick="sortBy('ask1vol')">KL 1</th>
+        <th class="grp-ask hdr-ask2"    style="width:56px" onclick="sortBy('ask2')">Giá 2</th>
+        <th class="grp-ask hdr-ask2vol" style="width:62px" onclick="sortBy('ask2vol')">KL 2</th>
+        <th class="grp-ask hdr-ask3"    style="width:56px" onclick="sortBy('ask3')">Giá 3</th>
+        <th class="grp-ask hdr-ask3vol" style="width:62px" onclick="sortBy('ask3vol')">KL 3</th>
+        <!-- ĐTNN sub -->
+        <th class="grp-dtnn hdr-dtnn-m hdr-klnnm" style="width:74px" onclick="sortBy('nnBuy')">NN mua</th>
+        <th class="grp-dtnn hdr-klnnb"             style="width:74px" onclick="sortBy('nnSell')">NN bán</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<!-- STAT BAR -->
+<div id="statBar">
+  <div class="stat-item">Tăng: <span class="stat-up" id="st-up">0</span></div>
+  <div class="stat-item">Giảm: <span class="stat-dn" id="st-dn">0</span></div>
+  <div class="stat-item">TK:   <span class="stat-nc" id="st-nc">0</span></div>
+  <div class="stat-item">Trần: <span style="color:var(--ceil)" id="st-ceil">0</span></div>
+  <div class="stat-item">Sàn:  <span style="color:var(--floor)" id="st-floor">0</span></div>
+  <div style="flex:1"></div>
+  <div class="stat-item">GT: <span id="st-val">--</span> tỷ</div>
+</div>
+
+<script>
+// ──── State ────────────────────────────────────────────────────────────────────
+let allData    = {};   // tab → array of stock objects
+let currentTab = 'VN30';
+let sortKey    = 'match';
+let sortDir    = -1;   // -1 = desc, 1 = asc
+let liveTimer  = null;
+let isLive     = true;
+const REFRESH_MS = 4000;
+
+const TABS = {
+  'VN30':  { type: 'group',    id: 'VN30'  },
+  'hose':  { type: 'exchange', id: 'hose'  },
+  'hnx':   { type: 'exchange', id: 'hnx'   },
+  'upcom': { type: 'exchange', id: 'upcom' },
+};
+const INDEX_IDS = ['VNINDEX','VN30','HNXIndex','HNX30','UpcomIndex'];
+
+// ──── Format helpers ───────────────────────────────────────────────────────────
+const fmtP = v => v == null || v === 0 ? '--' : (v / 1000).toFixed(2);
+const fmtPct = v => v == null ? '--' : (v > 0 ? '+' : '') + v.toFixed(2) + '%';
+const fmtChg = v => v == null || v === 0 ? '--' : (v > 0 ? '+' : '') + (v / 1000).toFixed(2);
+const fmtVol = v => v == null || v === 0 ? '--' : (v / 100).toLocaleString('vi-VN');
+const fmtNN  = v => v == null || v === 0 ? '--' : Math.round(v / 100).toLocaleString('vi-VN');
+
+function priceClass(s) {
+  const mp = s.matchedPrice;
+  if (!mp) return '';
+  if (mp >= s.ceiling)  return 'p-ceil';
+  if (mp <= s.floor)    return 'p-dn';
+  if (mp < s.refPrice)  return 'p-dn';
+  if (mp > s.refPrice)  return 'p-up';
+  if (mp === s.refPrice) return 'p-ref';
+  return '';
+}
+
+function changeClass(s) {
+  const c = s.priceChange;
+  if (!c || c === 0) return 'p-ref';
+  return c > 0 ? 'p-up' : 'p-dn';
+}
+
+// ──── Fetch data ───────────────────────────────────────────────────────────────
+async function fetchTab(tab) {
+  const cfg = TABS[tab];
+  const param = cfg.type === 'group' ? `group=${cfg.id}` : `exchange=${cfg.id}`;
+  const r = await fetch(`/api/board?${param}`);
+  const j = await r.json();
+  return Array.isArray(j.data) ? j.data : [];
+}
+
+async function fetchIndex(indexId) {
+  const r = await fetch(`/api/board?index=${indexId}`);
+  const j = await r.json();
+  return j.data;
+}
+
+// ──── Update index cards ───────────────────────────────────────────────────────
+function updateIndexCard(id, d) {
+  if (!d || !d.indexValue) return;
+  const val = d.indexValue;
+  const chg = d.change ?? (val - d.prevIndexValue);
+  const pct = d.changePercent ?? (d.prevIndexValue ? chg / d.prevIndexValue * 100 : 0);
+  const cls = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'ref-c';
+
+  document.getElementById('v-' + id).textContent = val?.toFixed(2) ?? '--';
+  document.getElementById('v-' + id).className = 'idx-val ' + cls;
+  document.getElementById('c-' + id).textContent =
+    (chg > 0 ? '+' : '') + (chg?.toFixed(2) ?? '--') +
+    ' (' + (pct > 0 ? '+' : '') + (pct?.toFixed(2) ?? '--') + '%)';
+  document.getElementById('c-' + id).className = 'idx-chg ' + cls;
+  const adv = d.advances ?? '--', dec = d.declines ?? '--';
+  document.getElementById('s-' + id).textContent = `${adv} T↑  ${dec} T↓`;
+}
+
+async function refreshIndexes() {
+  const results = await Promise.allSettled(INDEX_IDS.map(id => fetchIndex(id)));
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled') updateIndexCard(INDEX_IDS[i], r.value);
+  });
+}
+
+// ──── Render table ─────────────────────────────────────────────────────────────
+function stockRow(s) {
+  const pc = priceClass(s);
+  const cc = changeClass(s);
+  const sym = s.stockSymbol ?? s.code ?? '';
+  const mp   = fmtP(s.matchedPrice);
+  const ref  = fmtP(s.refPrice);
+  const ceil = fmtP(s.ceiling);
+  const floor = fmtP(s.floor);
+  const chg  = fmtChg(s.priceChange);
+  const pct  = fmtPct(s.priceChangePercent);
+  const mvol = fmtNN(s.matchedVolume);
+  const vol  = fmtVol(s.nmTotalTradedQty);
+  const open = fmtP(s.openPrice);
+  const high = fmtP(s.highest);
+  const low  = fmtP(s.lowest);
+  const nnM  = fmtNN(s.buyForeignQtty);
+  const nnB  = fmtNN(s.sellForeignQtty);
+
+  // Bid (mua): best1 = sát giá nhất (hiển thị bên phải bên mua)
+  const b1 = fmtP(s.best1Bid);   const b1v = fmtNN(s.best1BidVol);
+  const b2 = fmtP(s.best2Bid);   const b2v = fmtNN(s.best2BidVol);
+  const b3 = fmtP(s.best3Bid);   const b3v = fmtNN(s.best3BidVol);
+  // Ask (bán): best1 = sát giá nhất (hiển thị bên trái bên bán)
+  const a1 = fmtP(s.best1Offer); const a1v = fmtNN(s.best1OfferVol);
+  const a2 = fmtP(s.best2Offer); const a2v = fmtNN(s.best2OfferVol);
+  const a3 = fmtP(s.best3Offer); const a3v = fmtNN(s.best3OfferVol);
+
+  const b1cls = s.best1Bid === s.ceiling ? 'p-ceil' : 'bid-price';
+  const b2cls = s.best2Bid === s.ceiling ? 'p-ceil' : 'bid-price';
+  const b3cls = s.best3Bid === s.ceiling ? 'p-ceil' : 'bid-price';
+  const a1cls = s.best1Offer === s.floor ? 'p-floor' : 'ask-price';
+  const a2cls = s.best2Offer === s.floor ? 'p-floor' : 'ask-price';
+  const a3cls = s.best3Offer === s.floor ? 'p-floor' : 'ask-price';
+
+  const room = fmtNN(s.remainForeignQtty);
+
+  return `<tr id="row-${sym}" data-sym="${sym}">
+    <td class="left sym-cell ${pc}">${sym}</td>
+    <td class="p-ceil col-ceil">${ceil}</td>
+    <td class="p-floor col-floor">${floor}</td>
+    <td class="p-ref">${ref}</td>
+    <td class="col-bid3 ${b3cls}">${b3}</td>
+    <td class="col-bid3vol bid-vol">${b3v}</td>
+    <td class="col-bid2 ${b2cls}">${b2}</td>
+    <td class="col-bid2vol bid-vol">${b2v}</td>
+    <td class="col-bid1 ${b1cls}">${b1}</td>
+    <td class="col-bid1vol bid-vol">${b1v}</td>
+    <td class="${pc} fw">${mp}</td>
+    <td>${mvol}</td>
+    <td class="${cc}">${chg}</td>
+    <td class="${cc}">${pct}</td>
+    <td class="col-ask1 ${a1cls}">${a1}</td>
+    <td class="col-ask1vol ask-vol">${a1v}</td>
+    <td class="col-ask2 ${a2cls}">${a2}</td>
+    <td class="col-ask2vol ask-vol">${a2v}</td>
+    <td class="col-ask3 ${a3cls}">${a3}</td>
+    <td class="col-ask3vol ask-vol">${a3v}</td>
+    <td>${vol}</td>
+    <td class="col-high ${s.highest === s.ceiling ? 'p-ceil' : ''}">${high}</td>
+    <td class="col-low  ${s.lowest  === s.floor   ? 'p-floor' : ''}">${low}</td>
+    <td class="col-open">${open}</td>
+    <td class="col-klnnm ${nnM !== '--' && s.buyForeignQtty > s.sellForeignQtty ? 'p-up' : ''}">${nnM}</td>
+    <td class="col-klnnb ${nnB !== '--' && s.sellForeignQtty > s.buyForeignQtty ? 'p-dn' : ''}">${nnB}</td>
+    <td class="hdr-room">${room}</td>
+  </tr>`;
+}
+
+function getSortValue(s, key) {
+  switch(key) {
+    case 'sym':      return s.stockSymbol ?? s.code ?? '';
+    case 'match':    return s.matchedPrice ?? 0;
+    case 'matchvol': return s.matchedVolume ?? 0;
+    case 'change':   return s.priceChange ?? 0;
+    case 'changePct':return s.priceChangePercent ?? 0;
+    case 'vol':      return s.nmTotalTradedQty ?? 0;
+    case 'ref':      return s.refPrice ?? 0;
+    case 'ceil':     return s.ceiling ?? 0;
+    case 'floor':    return s.floor ?? 0;
+    case 'open':     return s.openPrice ?? 0;
+    case 'high':     return s.highest ?? 0;
+    case 'low':      return s.lowest ?? 0;
+    case 'nnBuy':    return s.buyForeignQtty ?? 0;
+    case 'nnSell':   return s.sellForeignQtty ?? 0;
+    case 'bid1':     return s.best1Bid ?? 0;
+    case 'bid1vol':  return s.best1BidVol ?? 0;
+    case 'bid2':     return s.best2Bid ?? 0;
+    case 'bid2vol':  return s.best2BidVol ?? 0;
+    case 'bid3':     return s.best3Bid ?? 0;
+    case 'bid3vol':  return s.best3BidVol ?? 0;
+    case 'ask1':     return s.best1Offer ?? 0;
+    case 'ask1vol':  return s.best1OfferVol ?? 0;
+    case 'ask2':     return s.best2Offer ?? 0;
+    case 'ask2vol':  return s.best2OfferVol ?? 0;
+    case 'ask3':     return s.best3Offer ?? 0;
+    case 'ask3vol':  return s.best3OfferVol ?? 0;
+    case 'room':     return s.remainForeignQtty ?? 0;
+    default:         return 0;
+  }
+}
+
+function renderTable() {
+  const data = allData[currentTab] ?? [];
+  const search = document.getElementById('searchBox').value.trim().toUpperCase();
+
+  let filtered = search
+    ? data.filter(s => (s.stockSymbol ?? s.code ?? '').includes(search) ||
+        (s.companyNameVi ?? '').toUpperCase().includes(search))
+    : data;
+
+  const sorted = [...filtered].sort((a, b) => {
+    const av = getSortValue(a, sortKey);
+    const bv = getSortValue(b, sortKey);
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (bv - av);
+  });
+
+  document.getElementById('tbody').innerHTML = sorted.map(stockRow).join('');
+  updateSortHeader();
+  updateStats(data);
+}
+
+function updateSortHeader() {
+  document.querySelectorAll('#stockTable thead th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+  });
+  // find th by onclick
+  const ths = document.querySelectorAll('#stockTable thead th');
+  ths.forEach(th => {
+    const attr = th.getAttribute('onclick') ?? '';
+    if (attr.includes(`'${sortKey}'`)) {
+      th.classList.add(sortDir === -1 ? 'sort-desc' : 'sort-asc');
+    }
+  });
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+  renderTable();
+}
+
+function updateStats(data) {
+  let up=0, dn=0, nc=0, ceil=0, floor=0, totalVal=0;
+  for (const s of data) {
+    const mp = s.matchedPrice ?? 0;
+    const ref = s.refPrice ?? 0;
+    if (mp === 0 || ref === 0) continue;
+    if (mp >= s.ceiling) ceil++;
+    else if (mp <= s.floor) floor++;
+    if (mp > ref) up++;
+    else if (mp < ref) dn++;
+    else nc++;
+    totalVal += (s.nmTotalTradedValue ?? 0);
+  }
+  document.getElementById('st-up').textContent = up;
+  document.getElementById('st-dn').textContent = dn;
+  document.getElementById('st-nc').textContent = nc;
+  document.getElementById('st-ceil').textContent = ceil;
+  document.getElementById('st-floor').textContent = floor;
+  const tBil = (totalVal / 1e9).toFixed(0);
+  document.getElementById('st-val').textContent = Number(tBil).toLocaleString('vi-VN');
+}
+
+// ──── Tab switching ────────────────────────────────────────────────────────────
+async function switchTab(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = btn.dataset.tab;
+
+  if (!allData[currentTab]) {
+    showLoading(true);
+    try {
+      allData[currentTab] = await fetchTab(currentTab);
+      document.getElementById(`cnt-${currentTab}`).textContent = allData[currentTab].length;
+    } finally {
+      showLoading(false);
+    }
+  }
+  renderTable();
+}
+
+// ──── Live refresh ─────────────────────────────────────────────────────────────
+function toggleLive() {
+  isLive = !isLive;
+  const btn = document.getElementById('refreshBtn');
+  const lbl = document.getElementById('refreshLabel');
+  if (isLive) {
+    btn.classList.add('live');
+    lbl.textContent = 'Live';
+    startLive();
+  } else {
+    btn.classList.remove('live');
+    lbl.textContent = 'Tạm dừng';
+    stopLive();
+  }
+}
+
+function startLive() {
+  stopLive();
+  liveTimer = setInterval(async () => {
+    try {
+      // refresh current tab + indexes concurrently
+      const [newData] = await Promise.all([
+        fetchTab(currentTab),
+        refreshIndexes(),
+      ]);
+      flashChanges(allData[currentTab] ?? [], newData);
+      allData[currentTab] = newData;
+      document.getElementById(`cnt-${currentTab}`).textContent = newData.length;
+      renderTable();
+      updateTimestamp();
+    } catch(e) { console.warn('Refresh error:', e); }
+  }, REFRESH_MS);
+}
+
+function stopLive() {
+  if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
+}
+
+function flashChanges(oldData, newData) {
+  const oldMap = {};
+  for (const s of oldData) oldMap[s.stockSymbol ?? s.code] = s.matchedPrice;
+  for (const s of newData) {
+    const sym = s.stockSymbol ?? s.code;
+    const oldP = oldMap[sym];
+    const newP = s.matchedPrice;
+    if (oldP != null && newP != null && oldP !== newP) {
+      const row = document.getElementById(`row-${sym}`);
+      if (row) {
+        row.classList.remove('flash-g','flash-r');
+        void row.offsetWidth; // reflow
+        row.classList.add(newP > oldP ? 'flash-g' : 'flash-r');
+      }
+    }
+  }
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    now.toTimeString().slice(0,8);
+}
+
+function showLoading(v) {
+  document.getElementById('loadingOverlay').classList.toggle('hidden', !v);
+}
+
+// ──── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  showLoading(true);
+  try {
+    const [data] = await Promise.all([
+      fetchTab('VN30'),
+      refreshIndexes(),
+    ]);
+    allData['VN30'] = data;
+    document.getElementById('cnt-VN30').textContent = data.length;
+    // prefetch counts for other tabs (non-blocking)
+    prefetchCounts();
+  } finally {
+    showLoading(false);
+  }
+  renderTable();
+  updateTimestamp();
+  if (isLive) startLive();
+}
+
+async function prefetchCounts() {
+  const tabs = ['hose','hnx','upcom'];
+  for (const t of tabs) {
+    try {
+      const d = await fetchTab(t);
+      allData[t] = d;
+      document.getElementById(`cnt-${t}`).textContent = d.length;
+    } catch(e) {}
+  }
+}
+
+init();
+</script>
+</body>
+</html>
