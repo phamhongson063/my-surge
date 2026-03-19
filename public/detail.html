@@ -162,11 +162,18 @@
             <span id="symbolBadge" style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;color:var(--navy);line-height:1">—</span>
             <div id="recBadge" class="badge" style="font-size:12px;padding:3px 10px"></div>
             <div id="realtimeBadge" style="display:none;align-items:center;gap:6px"></div>
-            <button id="watchlistBtn" onclick="toggleWatchlist()"
-              style="margin-left:auto;width:34px;height:34px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0"
-              title="Thêm/xóa khỏi Watchlist">
-              <svg id="watchlistIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </button>
+            <div style="margin-left:auto;display:flex;gap:6px;flex-shrink:0">
+              <button id="pipBtn" onclick="openPip()"
+                style="width:34px;height:34px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s"
+                title="Mini ticker (Picture-in-Picture)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><rect x="12" y="12" width="8" height="7" rx="1" fill="var(--gray400)" stroke="none"/></svg>
+              </button>
+              <button id="watchlistBtn" onclick="toggleWatchlist()"
+                style="width:34px;height:34px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s"
+                title="Thêm/xóa khỏi Watchlist">
+                <svg id="watchlistIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gray400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+            </div>
           </div>
 
           <!-- Company info -->
@@ -701,6 +708,7 @@ function renderAll(d){
   renderPortfolio();
   migratePortfolioIfNeeded();
   updateFloatingPrice(d);
+  setPipData(d.symbol,d.latestPrice,ch.val,ch.pct,ch.dir>=0);
 }
 
 // ── Investment Profile ──
@@ -1769,6 +1777,68 @@ function flashEl(el,up){
   el.classList.add(up?'rt-flash-up':'rt-flash-dn');
 }
 function fvol(v){if(v==null)return'—';return Math.round(v).toLocaleString('vi-VN');}
+
+// Picture-in-Picture ticker
+let _pipWin=null;
+let _pipState={sym:'—',price:null,change:null,changePct:null,isUp:true};
+
+function _pipUpColor(isUp,change){
+  return change==null||change===0?'#f08c00':isUp?'#2f9e44':'#e03131';
+}
+function _pipBgColor(isUp,change){
+  return change==null||change===0?'#fff9db':isUp?'#ebfbee':'#fff5f5';
+}
+function _pipHtml(s){
+  const col=_pipUpColor(s.isUp,s.change);
+  const bg=_pipBgColor(s.isUp,s.change);
+  const sign=s.change>0?'+':'';
+  const chTxt=s.change!=null&&s.changePct!=null?`${sign}${fp(s.change)} (${sign}${s.changePct.toFixed(2)}%)`:'—';
+  return `<style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%}
+    body{background:${bg};display:flex;align-items:center;padding:0 14px;gap:10px;overflow:hidden}
+    .sym{font-family:system-ui,sans-serif;font-weight:800;font-size:11px;color:#1a1f5e;flex-shrink:0}
+    .price{font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;letter-spacing:-1px;color:${col};flex-shrink:0;white-space:nowrap}
+    .change{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:${col};white-space:nowrap;flex-shrink:0}
+  </style>
+  <div class="sym">${s.sym}</div>
+  <div class="price">${s.price!=null?fp(s.price):'—'}</div>
+  <div class="change">${chTxt}</div>`;
+}
+
+function _pipUpdate(){
+  if(!_pipWin||_pipWin.closed)return;
+  _pipWin.document.body.innerHTML=_pipHtml(_pipState);
+}
+
+async function openPip(){
+  if(_pipWin&&!_pipWin.closed){_pipWin.close();_pipWin=null;return;}
+  try{
+    if('documentPictureInPicture' in window){
+      const pip=await window.documentPictureInPicture.requestWindow({width:130,height:77});
+      _pipWin=pip;
+      pip.document.body.innerHTML=_pipHtml(_pipState);
+      const link=document.createElement('link');
+      link.rel='stylesheet';link.href='https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@600;700;800&display=swap';
+      pip.document.head.appendChild(link);
+      pip.addEventListener('pagehide',()=>{_pipWin=null;});
+    } else {
+      // Fallback: popup window
+      const w=window.open('','_pipStock','width=220,height=110,alwaysOnTop=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no');
+      if(!w)return;
+      _pipWin=w;
+      w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${_pipState.sym}</title></head><body>${_pipHtml(_pipState)}</body></html>`);
+      w.document.close();
+      w.addEventListener('beforeunload',()=>{_pipWin=null;});
+    }
+  }catch(e){console.error('PiP error',e);}
+}
+
+function setPipData(sym,price,change,changePct,isUp){
+  _pipState={sym,price,change,changePct,isUp};
+  _pipUpdate();
+}
+
 function updateChartsWithRealtime(rt){
   if(!mainChartInstance||!rt?.price)return;
   // Xóa dataset live cũ nếu có
@@ -2076,6 +2146,9 @@ function renderRealtimePrice(data,sym,fromCache,cachedAt){
   }
   _prevRt={price:data.price,volume:data.volume};
 
+  // Update PiP window
+  setPipData(sym,data.price,data.change,data.changePct,isUp);
+
   // Cập nhật analysisData.latestPrice để portfolio card & advisory dùng giá mới
   if(analysisData&&data.price!=null){
     analysisData.latestPrice=data.price;
@@ -2141,5 +2214,6 @@ window.addEventListener("load",()=>{
   }
 });
 </script>
+
 </body>
 </html>
