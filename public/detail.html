@@ -60,6 +60,77 @@
     .toggle-icon svg{transition:transform .25s}
     .toggle-icon.collapsed svg{transform:rotate(-90deg)}
     .card-header:hover .toggle-icon{background:var(--navy-l);border-color:var(--navy)}
+
+    /* ── Mobile responsive ── */
+    @media (max-width: 768px) {
+      /* Nav */
+      header > div { padding: 10px 14px !important; gap: 8px !important; }
+      #navTitle { display: none !important; }
+      #headerPricePill { display: none !important; }
+      #collapseControls { display: none !important; }
+      #cacheBadge { padding: 4px 8px !important; font-size: 11px !important; }
+      .nav-label { display: none !important; }
+      #navPortfolio { display: none !important; }
+      #symbolInput { width: 72px !important; font-size: 14px !important; }
+      #analyzeBtn { height: 36px !important; padding: 0 12px !important; }
+      #updateDataBtn { width: 32px !important; height: 36px !important; }
+      #searchBox { padding: 6px 10px !important; }
+
+      /* Main */
+      main { padding: 12px 10px 60px !important; }
+
+      /* Card padding */
+      .card-header { padding: 14px 16px !important; }
+      .card-body { padding: 0 14px 18px !important; }
+      .card-pad { padding: 16px !important; }
+
+      /* Hero card: stack vertically */
+      #heroCard > div { flex-direction: column !important; }
+      #miniChartSide { display: none !important; }
+      #heroCard > div > div:first-child { padding: 16px !important; }
+
+      /* Price: smaller font */
+      #priceDisplay { font-size: 30px !important; }
+
+      /* OHLC: 2 columns */
+      #ohlcGrid { grid-template-columns: repeat(2, 1fr) !important; }
+
+      /* Chart header: stack title above controls */
+      #chartTitleRow { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+      #chartControls { gap: 4px !important; width: 100% !important; }
+      .cb { padding: 0 10px !important; font-size: 12px !important; height: 30px !important; }
+
+      /* RSI/MACD: stack */
+      #rsiMacdGrid { grid-template-columns: 1fr !important; }
+
+      /* Candle + S/R: stack */
+      #candleSrGrid { grid-template-columns: 1fr !important; }
+
+      /* Bullish/Bearish: stack */
+      .bull-bear-grid { grid-template-columns: 1fr !important; }
+
+      /* CANSLIM/SEPA/Momentum: stack */
+      #scoringGrid { grid-template-columns: 1fr !important; }
+
+      /* Trend + Indicators: stack */
+      #trendIndicGrid { grid-template-columns: 1fr !important; }
+
+      /* Prediction table: single column + scrollable rows */
+      #predictionsContent > div { grid-template-columns: 1fr !important; }
+      #predictionsContent > div > div:first-child {
+        padding-right: 0 !important;
+        border-right: none !important;
+        overflow-x: auto !important;
+        padding-bottom: 12px !important;
+      }
+      #predictionsContent > div > div:last-child {
+        padding-left: 0 !important;
+        overflow-x: auto !important;
+        margin-top: 16px !important;
+        padding-top: 16px !important;
+        border-top: 2px solid var(--gray100) !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -74,7 +145,7 @@
       <div style="display:flex;align-items:center;gap:10px">
         <div style="width:36px;height:36px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
-        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--navy)">Phân tích Chi tiết</span>
+        <span id="navTitle" style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--navy)">Phân tích Chi tiết</span>
       </div>
       <!-- ── Price pill (hiện khi scroll qua hero) ── -->
       <div id="headerPricePill" style="display:flex;align-items:center;gap:10px;padding:6px 14px;border-radius:10px;background:var(--gray50);border:1.5px solid var(--gray200);opacity:0;transform:translateX(-6px);transition:opacity .2s,transform .2s;pointer-events:none">
@@ -85,11 +156,11 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <a href="/portfolio.html"
+      <a id="navPortfolio" href="/portfolio.html"
         style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;border:1.5px solid var(--gray200);background:var(--wht);font-size:13px;font-weight:700;color:var(--gray700);text-decoration:none;transition:all .15s"
         onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray700)'">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-        Portfolio
+        <span class="nav-label">Portfolio</span>
       </a>
       <button id="updateDataBtn" onclick="updateData()" style="display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--am-bd);background:var(--am-bg);color:var(--am);cursor:pointer;transition:all .15s"
         onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'" title="Cập nhật dữ liệu từ CafeF">
@@ -118,10 +189,10 @@
           onblur="setTimeout(hideAutocomplete,150);document.getElementById('searchBox').style.borderColor='var(--gray200)'"/>
         <div id="acDropdown" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--wht);border:1.5px solid var(--gray200);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:200;max-height:220px;overflow-y:auto"></div>
       </div>
-      <button onclick="loadAnalysis(document.getElementById('symbolInput').value)"
+      <button id="analyzeBtn" onclick="loadAnalysis(document.getElementById('symbolInput').value)"
         style="height:42px;padding:0 24px;border-radius:12px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
         onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Phân tích</button>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="nav-label">Phân tích</span></button>
       <!-- Cache badge + force refresh button -->
       <div id="cacheBadge" style="display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--am-bg);border:1px solid var(--am-bd);font-size:12px;font-weight:700;color:var(--am)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
@@ -195,7 +266,7 @@
           </div>
 
           <!-- OHLC stats grid -->
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--gray200);border-radius:12px;overflow:hidden;margin-bottom:14px">
+          <div id="ohlcGrid" style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--gray200);border-radius:12px;overflow:hidden;margin-bottom:14px">
             <div style="padding:9px 14px;border-right:1px solid var(--gray200)">
               <div style="font-size:10px;font-weight:700;color:var(--am);letter-spacing:.5px;margin-bottom:4px">TC</div>
               <span id="refVal" class="rt-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--am)">—</span>
@@ -219,7 +290,7 @@
         </div>
 
         <!-- Right: mini chart -->
-        <div style="width:380px;padding:20px 24px;border-left:1px solid var(--gray200);background:var(--gray50);display:flex;align-items:center;border-radius:0 16px 16px 0">
+        <div id="miniChartSide" style="width:380px;padding:20px 24px;border-left:1px solid var(--gray200);background:var(--gray50);display:flex;align-items:center;border-radius:0 16px 16px 0">
           <canvas id="miniChart" style="width:100%;height:130px"></canvas>
         </div>
       </div>
@@ -228,9 +299,9 @@
     <!-- ═══ CHART: full width (Row 2) ═══ -->
     <div class="card an a1" style="margin-bottom:20px">
       <div class="card-header" onclick="toggleCard(this)">
-        <div style="display:flex;align-items:center;gap:12px;flex:1">
+        <div id="chartTitleRow" style="display:flex;align-items:center;gap:12px;flex:1">
           <div class="sec-title" style="flex:1">📉 Biểu đồ giá & chỉ báo</div>
-          <div style="display:flex;gap:6px;align-items:center" onclick="event.stopPropagation()">
+          <div id="chartControls" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap" onclick="event.stopPropagation()">
             <!-- Chart type toggle -->
             <div style="display:flex;border:1.5px solid var(--gray200);border-radius:8px;overflow:hidden;margin-right:4px">
               <button id="ctLine" onclick="setChartType('line')"
@@ -249,7 +320,7 @@
       </div>
       <div class="card-body">
         <div style="height:400px;position:relative"><canvas id="mainChart"></canvas></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+        <div id="rsiMacdGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
           <div style="height:110px;position:relative;background:var(--gray50);border-radius:12px;padding:10px 14px;border:1px solid var(--gray100)">
             <div style="font-size:12px;font-weight:700;color:var(--gray500);margin-bottom:4px">RSI (14)</div>
             <canvas id="rsiChart"></canvas></div>
@@ -283,7 +354,7 @@
     </div>
 
     <!-- ═══ ROW: Mẫu hình nến + Hỗ trợ & Kháng cự (2 cột, sát nhau) ═══ -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;align-items:start">
+    <div id="candleSrGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;align-items:start">
       <!-- Mẫu hình nến -->
       <div class="card an a3">
         <div class="card-header" onclick="toggleCard(this)">
@@ -335,12 +406,12 @@
         <!-- Verdict for selected tab -->
         <div id="patternTabVerdict" style="margin-bottom:20px"></div>
         <!-- Content: 2 columns Bullish | Bearish -->
-        <div id="patternsTabContent" style="display:grid;grid-template-columns:1fr 1fr;gap:20px"></div>
+        <div id="patternsTabContent" style="display:grid;grid-template-columns:1fr 1fr;gap:20px" class="bull-bear-grid"></div>
       </div>
     </div>
 
     <!-- ═══ ROW: CANSLIM / SEPA / Momentum Scoring (3 cột) ═══ -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;align-items:start">
+    <div id="scoringGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;align-items:start">
       <div class="card an a3" id="card-canslim">
         <div class="card-header" onclick="toggleCard(this)">
           <div class="sec-title">📋 CANSLIM</div>
@@ -376,7 +447,7 @@
     </div>
 
     <!-- ═══ ROW: Xu hướng + Chỉ số (2 cột) ═══ -->
-    <div style="display:grid;grid-template-columns:35fr 65fr;gap:20px;margin-bottom:20px;align-items:start">
+    <div id="trendIndicGrid" style="display:grid;grid-template-columns:35fr 65fr;gap:20px;margin-bottom:20px;align-items:start">
       <!-- Xu hướng -->
       <div class="card an a1">
         <div class="card-header" onclick="toggleCard(this)">
@@ -2079,8 +2150,23 @@ function closeMshStream(){
   if(mshEventSource){mshEventSource.close();mshEventSource=null;}
 }
 
+function showRealtimeBadgeLoading(){
+  const badge=document.getElementById('realtimeBadge');
+  if(!badge)return;
+  badge.style.display='flex';
+  badge.innerHTML=`<div style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--gray100);border:1px solid var(--gray200);color:var(--gray500)">
+    <span style="width:6px;height:6px;border-radius:50%;background:var(--gray400);display:inline-block;animation:blink 1.2s infinite"></span> Đang kết nối…
+  </div>
+  <button id="mshRefreshBtn" onclick="refreshRealtimePrice()" title="Lấy giá mới nhất"
+    style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--gray200);background:var(--wht);color:var(--gray500);cursor:pointer;padding:0;transition:all .15s;flex-shrink:0"
+    onmouseenter="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'" onmouseleave="this.style.borderColor='var(--gray200)';this.style.color='var(--gray500)'">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+  </button>`;
+}
+
 function loadRealtimePrice(sym){
   closeMshStream();
+  showRealtimeBadgeLoading();
   if(isVNTradingHours()){
     // Giờ giao dịch: dùng SSE — server poll MSH 1 lần mỗi 10s, push về browser
     mshEventSource=new EventSource(`${SERVER}/msh-stream?symbol=${sym}`);
@@ -2100,6 +2186,14 @@ function loadRealtimePrice(sym){
     // Sau 15:00: chỉ dùng cache localStorage
     const cached=getMshCache(sym);
     if(cached?.data)renderRealtimePrice(cached.data,sym,true,cached.cachedAt);
+    else{
+      // Không có cache, vẫn giữ badge với nút refresh
+      const badge=document.getElementById('realtimeBadge');
+      if(badge){
+        badge.style.display='flex';
+        badge.innerHTML=badge.innerHTML.replace('Đang kết nối…','Sau giờ giao dịch');
+      }
+    }
   }
 }
 

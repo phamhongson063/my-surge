@@ -12,6 +12,7 @@
  */
 
 import http from "http";
+import os from "os";
 import https from "https";
 import fs from "fs";
 import path from "path";
@@ -21,15 +22,16 @@ import { analyzeAll, analyzeDetail, scanWatchlist, parseBody, loadWatchlist, sav
 const PORT = process.env.PORT || 3000;
 const TMP_DIR = "tmp";
 
-// ─── SSE realtime: SignalR WebSocket tới realtime.cafef.vn ───────────────────
-const sseClients   = new Map(); // sym → Set<res>
+// ─── SSE realtime: SignalR trước, fallback poll MSH nếu 10s không có data ─────
+const sseClients    = new Map(); // sym → Set<res>
 const ssePriceCache = new Map(); // sym → { data, ts }
-const wsConnections = new Map(); // sym → { ws, pingTimer, joined }
+const symState      = new Map(); // sym → { ws, pingTimer, fallbackTimer, pollTimer, mode:'signalr'|'poll' }
 
 const SIGNALR_HUB = "wss://realtime.cafef.vn/hub/priceshub";
-const SIGNALR_RS  = "\x1e"; // SignalR record separator
+const SIGNALR_RS  = "\x1e";
+const FALLBACK_MS = 10_000; // chờ 10s, nếu SignalR không gửi data thì poll
 
-function parseCafeFPrice(v) {
+function parseMshPrice(v) {
   if (!v) return null;
   const n = x => x != null ? parseFloat(x) : null;
   const price = n(v.price ?? v.Price);
@@ -48,12 +50,63 @@ function sseBroadcast(sym, data) {
   ssePriceCache.set(sym, { data, ts: Date.now() });
 }
 
+async function fetchMshPriceData(sym) {
+  const mshUrl = `https://msh-appdata.cafef.vn/rest-api/api/v1/Watchlists/${sym}/price`;
+  return new Promise((resolve, reject) => {
+    https.get(mshUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+        "Origin": "https://cafef.vn",
+        "Referer": "https://cafef.vn/",
+      }
+    }, (rsp) => {
+      const chunks = [];
+      rsp.on("data", c => chunks.push(c));
+      rsp.on("end", () => {
+        try { resolve(JSON.parse(Buffer.concat(chunks).toString("utf8"))); }
+        catch { reject(new Error("Invalid JSON from MSH")); }
+      });
+      rsp.on("error", reject);
+    }).on("error", reject);
+  });
+}
+
+async function doPollOnce(sym) {
+  try {
+    const json = await fetchMshPriceData(sym);
+    const v = json?.data?.value;
+    if (!v) return;
+    const data = parseMshPrice(v);
+    if (data?.price) { sseBroadcast(sym, data); console.log(`[Poll] ✅ ${sym}: ${data.price}`); }
+  } catch (err) {
+    console.error(`[Poll] Error ${sym}:`, err.message);
+  }
+}
+
+function startPollFallback(sym) {
+  const st = symState.get(sym);
+  if (!st || st.pollDone) return;
+  st.pollDone = true;
+  st.mode = 'poll';
+  console.log(`[Poll] ▶ Fallback ${sym} — poll 1 lần (SignalR không có data)`);
+  doPollOnce(sym);
+}
+
 function startSignalRForSym(sym) {
-  if (wsConnections.has(sym)) return;
+  if (symState.has(sym)) return;
   console.log(`[SignalR] ▶ Connect ${sym}`);
-  const ws   = new WebSocket(SIGNALR_HUB);
-  const conn = { ws, pingTimer: null, joined: false };
-  wsConnections.set(sym, conn);
+  const st = { ws: null, pingTimer: null, fallbackTimer: null, pollDone: false, mode: 'signalr' };
+  symState.set(sym, st);
+
+  // Nếu 10s không nhận được data từ SignalR → fallback sang poll
+  st.fallbackTimer = setTimeout(() => {
+    st.fallbackTimer = null;
+    if (st.mode === 'signalr') startPollFallback(sym);
+  }, FALLBACK_MS);
+
+  const ws = new WebSocket(SIGNALR_HUB);
+  st.ws = ws;
 
   ws.addEventListener("open", () => {
     ws.send(JSON.stringify({ protocol: "json", version: 1 }) + SIGNALR_RS);
@@ -65,28 +118,36 @@ function startSignalRForSym(sym) {
     for (const part of parts) {
       try {
         const msg = JSON.parse(part);
-        if (!conn.joined) {
-          conn.joined = true;
+        if (!st.pingTimer) {
+          // Handshake xong → join channel
           ws.send(JSON.stringify({ type: 1, target: "JoinChannel", arguments: [sym], invocationId: "0" }) + SIGNALR_RS);
-          conn.pingTimer = setInterval(() => {
+          st.pingTimer = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 6 }) + SIGNALR_RS);
           }, 15_000);
           console.log(`[SignalR] ✅ Joined ${sym}`);
-          continue;
         }
         if (msg.type === 1 && msg.target === "RealtimePrice") {
-          const data = parseCafeFPrice(msg.arguments?.[0]);
-          if (data?.price) sseBroadcast(sym, data);
+          const data = parseMshPrice(msg.arguments?.[0]);
+          if (data?.price) {
+            if (st.fallbackTimer) { clearTimeout(st.fallbackTimer); st.fallbackTimer = null; }
+            st.mode = 'signalr';
+            sseBroadcast(sym, data);
+          }
         }
       } catch {}
     }
   });
 
   ws.addEventListener("close", () => {
-    clearInterval(conn.pingTimer);
-    wsConnections.delete(sym);
+    clearInterval(st.pingTimer); st.pingTimer = null;
+    clearTimeout(st.fallbackTimer); st.fallbackTimer = null;
     console.log(`[SignalR] ❌ Closed ${sym}`);
-    if (sseClients.get(sym)?.size > 0) setTimeout(() => startSignalRForSym(sym), 5_000);
+    if (sseClients.get(sym)?.size > 0) {
+      setTimeout(() => {
+        symState.delete(sym);
+        startSignalRForSym(sym);
+      }, 5_000);
+    }
   });
 
   ws.addEventListener("error", (err) => {
@@ -95,11 +156,12 @@ function startSignalRForSym(sym) {
 }
 
 function stopSignalRForSym(sym) {
-  const conn = wsConnections.get(sym);
-  if (!conn) return;
-  clearInterval(conn.pingTimer);
-  conn.ws.close();
-  wsConnections.delete(sym);
+  const st = symState.get(sym);
+  if (!st) return;
+  clearInterval(st.pingTimer);
+  clearTimeout(st.fallbackTimer);
+  try { st.ws?.close(); } catch {}
+  symState.delete(sym);
   console.log(`[SignalR] ⏹ Stop ${sym}`);
 }
 
@@ -310,30 +372,8 @@ const server = http.createServer(async (req, res) => {
   if (pathname === "/msh-price" && req.method === "GET") {
     const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
     if (!sym) return sendJSON(res, 400, { error: "Thiếu symbol" });
-    const mshUrl = `https://msh-appdata.cafef.vn/rest-api/api/v1/Watchlists/${sym}/price`;
     try {
-      const data = await new Promise((resolve, reject) => {
-        https.get(mshUrl, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "Accept": "application/json",
-            "Origin": "https://cafef.vn",
-            "Referer": "https://cafef.vn/",
-          }
-        }, (rsp) => {
-          if (rsp.statusCode >= 300 && rsp.statusCode < 400 && rsp.headers.location) {
-            rsp.resume();
-            return reject(new Error(`Redirect: ${rsp.headers.location}`));
-          }
-          const chunks = [];
-          rsp.on("data", c => chunks.push(c));
-          rsp.on("end", () => {
-            try { resolve(JSON.parse(Buffer.concat(chunks).toString("utf8"))); }
-            catch (e) { reject(new Error("Invalid JSON from MSH")); }
-          });
-          rsp.on("error", reject);
-        }).on("error", reject);
-      });
+      const data = await fetchMshPriceData(sym);
       return sendJSON(res, 200, data);
     } catch (err) {
       return sendJSON(res, 502, { error: err.message });
@@ -621,10 +661,13 @@ const server = http.createServer(async (req, res) => {
   res.end("Not found");
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
+  const lanIp = Object.values(os.networkInterfaces()).flat()
+    .find(i => i.family === "IPv4" && !i.internal)?.address ?? "?";
   console.log("╔══════════════════════════════════════════════╗");
   console.log(`║  CafeF Stock Downloader Server               ║`);
-  console.log(`║  http://localhost:${PORT}                       ║`);
+  console.log(`║  Local:   http://localhost:${PORT}               ║`);
+  console.log(`║  Network: http://${lanIp}:${PORT}          ║`);
   console.log("╚══════════════════════════════════════════════╝");
   console.log("\nEndpoints:");
   console.log(`  GET /              → Giao diện HTML (front.html)`);

@@ -13,7 +13,11 @@
       "Bash(curl -s \"http://localhost:54090/price?symbol=PGC\")",
       "Bash(grep -n \"style\\\\.css\\\\|app\\\\.js\\\\|portfolio\\\\.css\\\\|portfolio\\\\.js\" /Users/son.ph/my-surge/*.html)",
       "Bash(grep -n stocks.csv /Users/son.ph/my-surge/*.html /Users/son.ph/my-surge/*.js /Users/son.ph/my-surge/app.js)",
-      "WebFetch(domain:msh-iframe.cafef.vn)"
+      "WebFetch(domain:msh-iframe.cafef.vn)",
+      "Bash(ipconfig getifaddr:*)",
+      "Bash(curl -s \"http://localhost:3000/msh-stream?symbol=VNM\" --max-time 6 -N)",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs kill:*)"
     ]
   }
 }
