@@ -17,6 +17,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import url from "url";
+import crypto from "crypto";
 import {
   analyzeAll,
   analyzeDetail,
@@ -250,6 +251,87 @@ function stopSignalRForSym(sym) {
   } catch {}
   symState.delete(sym);
   console.log(`[SignalR] ⏹ Stop ${sym}`);
+}
+
+// ─── Market snapshot: fetch toàn thị trường từ SSI iboard-query (3 request) ──
+let _snapshotCache = null;
+let _snapshotCacheTime = 0;
+const SNAPSHOT_TTL_MS = 60_000; // cache 1 phút để tránh gọi lại khi 2 endpoint chạy song song
+
+async function fetchMarketSnapshot() {
+  if (_snapshotCache && Date.now() - _snapshotCacheTime < SNAPSHOT_TTL_MS) {
+    return _snapshotCache;
+  }
+  const snapshot = {}; // { SYM: { changePct, volume, price, refPrice } }
+  const exchanges = ["hose", "hnx", "upcom"];
+
+  await Promise.all(
+    exchanges.map(
+      (ex) =>
+        new Promise((resolve) => {
+          const targetUrl = `https://iboard-query.ssi.com.vn/stock/exchange/${encodeURIComponent(ex)}`;
+          https
+            .get(
+              targetUrl,
+              {
+                headers: {
+                  "User-Agent":
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                  Origin: "https://iboard.ssi.com.vn",
+                  Referer: "https://iboard.ssi.com.vn/",
+                  Accept: "application/json",
+                },
+              },
+              (rsp) => {
+                const chunks = [];
+                rsp.on("data", (c) => chunks.push(c));
+                rsp.on("end", () => {
+                  try {
+                    const json = JSON.parse(
+                      Buffer.concat(chunks).toString("utf8")
+                    );
+                    const list = Array.isArray(json)
+                      ? json
+                      : Array.isArray(json.data)
+                      ? json.data
+                      : [];
+                    list.forEach((s) => {
+                      const sym = (
+                        s.stockSymbol ||
+                        s.code ||
+                        ""
+                      )
+                        .trim()
+                        .toUpperCase();
+                      if (!sym) return;
+                      snapshot[sym] = {
+                        price: s.matchedPrice,
+                        refPrice: s.refPrice,
+                        // priceChangePercent từ SSI là số thực (vd: 1.85 = +1.85%)
+                        changePct: parseFloat(
+                          (s.priceChangePercent ?? 0).toFixed(2)
+                        ),
+                        // nmTotalTradedQty / 100 = khối lượng (cổ phiếu, đơn vị nghìn)
+                        volume: Math.round((s.nmTotalTradedQty ?? 0) / 100),
+                      };
+                    });
+                  } catch { /* ignore */ }
+                  resolve();
+                });
+                rsp.on("error", resolve);
+              }
+            )
+            .on("error", resolve);
+        })
+    )
+  );
+
+  _snapshotCache = snapshot;
+  _snapshotCacheTime = Date.now();
+  console.log(
+    `[Snapshot] ✅ ${Object.keys(snapshot).length} mã từ 3 sàn`
+  );
+  return snapshot;
 }
 
 // ─── Helpers (giống download_stock.mjs) ─────────────────────────────────────
@@ -507,6 +589,284 @@ async function handleDownload(req, res, query) {
     console.error(`   ❌ Lỗi: ${err.message}`);
     sendJSON(res, 502, { error: err.message });
   }
+}
+
+// ─── WebSocket Board Server ───────────────────────────────────────────────────
+
+const WS_MAGIC = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+const BOARD_INDEX_IDS = ["VNINDEX", "VN30", "HNXIndex", "HNX30", "UpcomIndex"];
+const BOARD_TAB_URLS = {
+  VN30:  "https://iboard-query.ssi.com.vn/stock/group/VN30",
+  hose:  "https://iboard-query.ssi.com.vn/stock/exchange/hose",
+  hnx:   "https://iboard-query.ssi.com.vn/stock/exchange/hnx",
+  upcom: "https://iboard-query.ssi.com.vn/stock/exchange/upcom",
+};
+const SSI_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+  Origin: "https://iboard.ssi.com.vn",
+  Referer: "https://iboard.ssi.com.vn/",
+  Accept: "application/json",
+};
+
+const boardWsClients = new Set(); // Set<{socket, subs: Set<string>}>
+const boardTabCache   = new Map(); // tab → data[]
+const boardTabPrevMap = new Map(); // tab → Map<sym, stock>  — for diff
+let boardPoller = null;
+const BOARD_POLL_MS = 1000;
+
+// Các field cần theo dõi để phát hiện thay đổi
+const BOARD_DIFF_FIELDS = [
+  "matchedPrice", "matchedVolume", "priceChange", "priceChangePercent",
+  "best1Bid", "best1BidVol", "best2Bid", "best2BidVol", "best3Bid", "best3BidVol",
+  "best1Offer", "best1OfferVol", "best2Offer", "best2OfferVol", "best3Offer", "best3OfferVol",
+  "nmTotalTradedQty", "buyForeignQtty", "sellForeignQtty",
+];
+
+function computeDiff(tab, newData) {
+  const key = s => s.stockSymbol ?? s.code ?? "";
+  const newMap = new Map(newData.map(s => [key(s), s]));
+  const prev = boardTabPrevMap.get(tab);
+  boardTabPrevMap.set(tab, newMap);
+  if (!prev) return null; // first time — no diff yet
+
+  const updates = [];
+  for (const [k, s] of newMap) {
+    const old = prev.get(k);
+    if (!old) { updates.push(s); continue; }
+    for (const f of BOARD_DIFF_FIELDS) {
+      if (old[f] !== s[f]) { updates.push(s); break; }
+    }
+  }
+  return updates; // [] = nothing changed
+}
+
+function wsHandshake(req, socket) {
+  const key = req.headers["sec-websocket-key"];
+  if (!key) { socket.destroy(); return false; }
+  const accept = crypto.createHash("sha1").update(key + WS_MAGIC).digest("base64");
+  socket.write(
+    "HTTP/1.1 101 Switching Protocols\r\n" +
+    "Upgrade: websocket\r\n" +
+    "Connection: Upgrade\r\n" +
+    `Sec-WebSocket-Accept: ${accept}\r\n\r\n`
+  );
+  return true;
+}
+
+function wsSend(socket, obj) {
+  if (socket.destroyed) return;
+  try {
+    const buf = Buffer.from(JSON.stringify(obj), "utf8");
+    const len = buf.length;
+    let frame;
+    if (len < 126) {
+      frame = Buffer.allocUnsafe(2 + len);
+      frame[0] = 0x81; frame[1] = len;
+      buf.copy(frame, 2);
+    } else if (len < 65536) {
+      frame = Buffer.allocUnsafe(4 + len);
+      frame[0] = 0x81; frame[1] = 126;
+      frame.writeUInt16BE(len, 2);
+      buf.copy(frame, 4);
+    } else {
+      frame = Buffer.allocUnsafe(10 + len);
+      frame[0] = 0x81; frame[1] = 127;
+      frame.writeBigUInt64BE(BigInt(len), 2);
+      buf.copy(frame, 10);
+    }
+    socket.write(frame);
+  } catch {}
+}
+
+function wsParseFrames(buf) {
+  const messages = [];
+  let offset = 0;
+  while (offset + 2 <= buf.length) {
+    const opcode = buf[offset] & 0x0f;
+    const masked = (buf[offset + 1] & 0x80) !== 0;
+    let payloadLen = buf[offset + 1] & 0x7f;
+    let hdrLen = 2;
+    if (payloadLen === 126) {
+      if (offset + 4 > buf.length) break;
+      payloadLen = buf.readUInt16BE(offset + 2); hdrLen = 4;
+    } else if (payloadLen === 127) {
+      if (offset + 10 > buf.length) break;
+      payloadLen = Number(buf.readBigUInt64BE(offset + 2)); hdrLen = 10;
+    }
+    const maskLen = masked ? 4 : 0;
+    const totalLen = hdrLen + maskLen + payloadLen;
+    if (offset + totalLen > buf.length) break;
+    if (opcode === 0x8) { messages.push({ type: "close" }); break; }
+    if (opcode === 0x1 || opcode === 0x2) {
+      const maskOffset = offset + hdrLen;
+      const dataOffset = maskOffset + maskLen;
+      const payload = Buffer.allocUnsafe(payloadLen);
+      if (masked) {
+        for (let i = 0; i < payloadLen; i++)
+          payload[i] = buf[dataOffset + i] ^ buf[maskOffset + (i % 4)];
+      } else {
+        buf.copy(payload, 0, dataOffset, dataOffset + payloadLen);
+      }
+      try { messages.push({ type: "message", data: JSON.parse(payload.toString("utf8")) }); } catch {}
+    }
+    offset += totalLen;
+  }
+  return { messages, remaining: buf.slice(offset) };
+}
+
+function fetchSsiBoardTab(tabKey) {
+  const targetUrl = BOARD_TAB_URLS[tabKey];
+  if (!targetUrl) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    https.get(targetUrl, { headers: SSI_HEADERS }, (rsp) => {
+      const chunks = [];
+      rsp.on("data", c => chunks.push(c));
+      rsp.on("end", () => {
+        try {
+          const j = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+          resolve(Array.isArray(j.data) ? j.data : Array.isArray(j) ? j : null);
+        } catch { resolve(null); }
+      });
+      rsp.on("error", () => resolve(null));
+    }).on("error", () => resolve(null));
+  });
+}
+
+function fetchSsiBoardIndex(indexId) {
+  const targetUrl = `https://iboard-query.ssi.com.vn/exchange-index/${encodeURIComponent(indexId)}?hasHistory=false`;
+  return new Promise((resolve) => {
+    https.get(targetUrl, { headers: SSI_HEADERS }, (rsp) => {
+      const chunks = [];
+      rsp.on("data", c => chunks.push(c));
+      rsp.on("end", () => {
+        try { resolve(JSON.parse(Buffer.concat(chunks).toString("utf8"))?.data ?? null); }
+        catch { resolve(null); }
+      });
+      rsp.on("error", () => resolve(null));
+    }).on("error", () => resolve(null));
+  });
+}
+
+function getActiveTabsAndSubs() {
+  const tabs = new Set();
+  let wantIndexes = false;
+  for (const client of boardWsClients) {
+    for (const s of client.subs) {
+      if (s === "indexes") wantIndexes = true;
+      else tabs.add(s);
+    }
+  }
+  return { tabs, wantIndexes };
+}
+
+function broadcastToSubs(tab, msg) {
+  for (const client of boardWsClients) {
+    if (client.subs.has(tab)) wsSend(client.socket, msg);
+  }
+}
+
+function startBoardPoller() {
+  if (boardPoller) return;
+  boardPoller = setInterval(async () => {
+    if (boardWsClients.size === 0) return;
+    const { tabs, wantIndexes } = getActiveTabsAndSubs();
+    const promises = [];
+
+    for (const tab of tabs) {
+      promises.push(fetchSsiBoardTab(tab).then(data => {
+        if (!data) return;
+        boardTabCache.set(tab, data);
+        const diff = computeDiff(tab, data);
+        if (diff === null) {
+          // First fetch for this tab — broadcast full board
+          broadcastToSubs(tab, { type: "board", tab, data });
+        } else if (diff.length > 0) {
+          // Only push changed stocks
+          broadcastToSubs(tab, { type: "update", tab, updates: diff });
+        }
+        // diff.length === 0 → nothing changed, send nothing
+      }));
+    }
+
+    if (wantIndexes) {
+      promises.push(
+        Promise.all(BOARD_INDEX_IDS.map(id => fetchSsiBoardIndex(id).then(d => [id, d])))
+          .then(results => {
+            const indexData = {};
+            for (const [id, d] of results) if (d) indexData[id] = d;
+            if (Object.keys(indexData).length) {
+              for (const client of boardWsClients) {
+                if (client.subs.has("indexes")) wsSend(client.socket, { type: "indexes", data: indexData });
+              }
+            }
+          })
+      );
+    }
+
+    await Promise.allSettled(promises);
+  }, BOARD_POLL_MS);
+}
+
+function stopBoardPoller() {
+  if (boardPoller) { clearInterval(boardPoller); boardPoller = null; }
+}
+
+function handleBoardWsUpgrade(req, socket) {
+  if (!wsHandshake(req, socket)) return;
+  const client = { socket, subs: new Set() };
+  boardWsClients.add(client);
+  console.log(`[WS Board] ➕ connected (total: ${boardWsClients.size})`);
+  if (boardWsClients.size === 1) startBoardPoller();
+
+  let recvBuf = Buffer.alloc(0);
+
+  async function handleSubscribe(sub) {
+    client.subs.add(sub);
+    if (sub === "indexes") {
+      const results = await Promise.all(BOARD_INDEX_IDS.map(id => fetchSsiBoardIndex(id).then(d => [id, d])));
+      const indexData = {};
+      for (const [id, d] of results) if (d) indexData[id] = d;
+      if (Object.keys(indexData).length) wsSend(socket, { type: "indexes", data: indexData });
+    } else {
+      // Gửi cache ngay nếu có
+      if (boardTabCache.has(sub)) {
+        wsSend(socket, { type: "board", tab: sub, data: boardTabCache.get(sub) });
+      }
+      // Fetch fresh và seed prevMap để poller tiếp theo có baseline diff
+      fetchSsiBoardTab(sub).then(data => {
+        if (!data) return;
+        boardTabCache.set(sub, data);
+        if (!boardTabPrevMap.has(sub)) {
+          // Seed prevMap — poller tiếp theo sẽ diff từ đây
+          const key = s => s.stockSymbol ?? s.code ?? "";
+          boardTabPrevMap.set(sub, new Map(data.map(s => [key(s), s])));
+        }
+        wsSend(socket, { type: "board", tab: sub, data });
+      });
+    }
+  }
+
+  socket.on("data", (chunk) => {
+    recvBuf = Buffer.concat([recvBuf, chunk]);
+    const { messages, remaining } = wsParseFrames(recvBuf);
+    recvBuf = remaining;
+    for (const msg of messages) {
+      if (msg.type === "close") { socket.destroy(); return; }
+      if (msg.type === "message" && msg.data) {
+        const { sub, unsub } = msg.data;
+        if (sub) handleSubscribe(sub);
+        if (unsub) client.subs.delete(unsub);
+      }
+    }
+  });
+
+  function cleanup() {
+    boardWsClients.delete(client);
+    console.log(`[WS Board] ➖ disconnected (total: ${boardWsClients.size})`);
+    if (boardWsClients.size === 0) stopBoardPoller();
+  }
+  socket.on("close", cleanup);
+  socket.on("error", cleanup);
 }
 
 // ─── HTTP Server ─────────────────────────────────────────────────────────────
@@ -946,6 +1306,25 @@ const server = http.createServer(async (req, res) => {
     if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym))
       return sendJSON(res, 400, { error: "Mã không hợp lệ" });
 
+    // ── Kiểm tra cache còn mới không (stale_hours=24 → bỏ qua fetch nếu < 24h) ─
+    const staleHours = parseFloat(parsed.query.stale_hours) || 0;
+    if (staleHours > 0) {
+      const fPath = path.join(BASE_DIR_ROOT, "database", "history", `${sym}.json`);
+      if (fs.existsSync(fPath)) {
+        try {
+          const cached = JSON.parse(fs.readFileSync(fPath, "utf8"));
+          const ageHours = (Date.now() - new Date(cached.updated).getTime()) / 3_600_000;
+          if (ageHours < staleHours) {
+            return sendJSON(res, 200, {
+              ok: true, symbol: sym,
+              count: cached.records?.length || 0,
+              source: "cache", cached: true, ageHours: parseFloat(ageHours.toFixed(1)),
+            });
+          }
+        } catch { /* cache corrupt, refetch */ }
+      }
+    }
+
     // ── SSI statistics API (không cần token) ─────────────────────────────────
     const now = Math.floor(Date.now() / 1000);
     const from = now - days * 86400;
@@ -1133,6 +1512,297 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, 200, result);
   }
 
+  // ─── API: All-sectors comparison ─────────────────────────────────────────────
+  if (pathname === "/api/all-sectors-analysis" && req.method === "GET") {
+    const BASE_DIR = path.dirname(url.fileURLToPath(import.meta.url));
+    const ssiPath = path.join(BASE_DIR, "database", "ssi_sectors.csv");
+    if (!fs.existsSync(ssiPath))
+      return sendJSON(res, 404, { error: "ssi_sectors.csv not found" });
+
+    function parseCSVLine2(line) {
+      const cols = [];
+      let cur = "", inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === "," && !inQ) { cols.push(cur); cur = ""; continue; }
+        cur += ch;
+      }
+      cols.push(cur);
+      return cols;
+    }
+
+    const ssiLines = fs.readFileSync(ssiPath, "utf8").split("\n");
+    const sectorsMap = new Map();
+    for (const line of ssiLines.slice(1)) {
+      if (!line.trim()) continue;
+      const c = parseCSVLine2(line);
+      const symbol = c[1]?.trim() ?? "";
+      const icbCode = c[2]?.trim() ?? "";
+      const nameVi = c[3]?.trim() ?? "";
+      const delisted = c[7]?.trim() ?? "";
+      if (!symbol || !icbCode || delisted === "Y") continue;
+      if (!sectorsMap.has(icbCode))
+        sectorsMap.set(icbCode, { name: nameVi, icbCode, symbols: [] });
+      sectorsMap.get(icbCode).symbols.push(symbol);
+    }
+
+    const histDir = path.join(BASE_DIR, "database", "history");
+    // 3 request cho toàn thị trường thay vì N request riêng lẻ
+    const snapshot = await fetchMarketSnapshot();
+    const results = [];
+
+    for (const [icbCode, sector] of sectorsMap) {
+      let up = 0, down = 0, flat = 0;
+      let totalChange = 0, counted = 0;
+      let aboveMA50 = 0, withMA50 = 0;
+      let aboveMA200 = 0, withMA200 = 0;
+
+      for (const sym of sector.symbols) {
+        const snap = snapshot[sym] ?? null;
+        const fPath = path.join(histDir, `${sym}.json`);
+        const hasHistory = fs.existsSync(fPath);
+        if (!snap && !hasHistory) continue;
+
+        try {
+          let ch = null;
+          if (snap) {
+            ch = snap.changePct;
+          } else if (hasHistory) {
+            const data = JSON.parse(fs.readFileSync(fPath, "utf8"));
+            const recs = (data.records || []).filter((r) => r.close > 0);
+            if (recs.length >= 2) {
+              const last = recs[recs.length - 1];
+              const prev = recs[recs.length - 2];
+              ch = prev.close > 0 ? (last.close - prev.close) / prev.close * 100 : 0;
+            }
+          }
+          if (ch === null) continue;
+          if (ch > 0) up++; else if (ch < 0) down++; else flat++;
+          totalChange += ch;
+          counted++;
+
+          // MA chỉ tính từ history
+          if (hasHistory) {
+            const data = JSON.parse(fs.readFileSync(fPath, "utf8"));
+            const recs = (data.records || []).filter((r) => r.close > 0);
+            const closes = recs.map((r) => r.close);
+            const last = closes[closes.length - 1];
+            if (closes.length >= 50) {
+              const ma50 = closes.slice(-50).reduce((a, b) => a + b, 0) / 50;
+              withMA50++; if (last > ma50) aboveMA50++;
+            }
+            if (closes.length >= 200) {
+              const ma200 = closes.slice(-200).reduce((a, b) => a + b, 0) / 200;
+              withMA200++; if (last > ma200) aboveMA200++;
+            }
+          }
+        } catch { /* skip */ }
+      }
+
+      if (counted === 0) continue;
+      const avgChange1D = parseFloat((totalChange / counted).toFixed(2));
+      const score = Math.round(
+        (up / counted) * 40 +
+        (withMA50 > 0 ? (aboveMA50 / withMA50) * 30 : 0) +
+        (withMA200 > 0 ? (aboveMA200 / withMA200) * 30 : 0)
+      );
+      results.push({
+        name: sector.name,
+        icbCode,
+        total: sector.symbols.length,
+        withHistory: counted,
+        score,
+        avgChange1D,
+        breadth: { up, down, flat },
+      });
+    }
+
+    results.sort((a, b) => b.score - a.score);
+    return sendJSON(res, 200, results);
+  }
+
+  // ─── API: Sector analysis — compute metrics from cached history ──────────────
+  if (pathname === "/api/sector-analysis" && req.method === "GET") {
+    const symsParam = parsed.query.symbols || "";
+    const symbols = symsParam
+      .split(",")
+      .map((s) => s.trim().toUpperCase())
+      .filter((s) => /^[A-Z0-9]{1,10}$/.test(s));
+    if (!symbols.length)
+      return sendJSON(res, 400, { error: "Thiếu symbols" });
+
+    const histDir = path.join(BASE_DIR_ROOT, "database", "history");
+    // Fetch snapshot & scan history đồng thời
+    const snapshot = await fetchMarketSnapshot();
+    const stocks = [];
+
+    for (const sym of symbols) {
+      const snap = snapshot[sym] ?? null;
+      const fPath = path.join(histDir, `${sym}.json`);
+      const hasHistory = fs.existsSync(fPath);
+
+      // Cần ít nhất snapshot hoặc history
+      if (!snap && !hasHistory) continue;
+
+      try {
+        let change1D = snap ? snap.changePct : null;
+        let todayVolume = snap ? snap.volume : null;
+        let change1W = null, change1M = null, change3M = null;
+        let volRatio = null, aboveMA50 = null, aboveMA200 = null;
+        let close = snap ? snap.price : null;
+        let lastDate = null;
+
+        if (hasHistory) {
+          const data = JSON.parse(fs.readFileSync(fPath, "utf8"));
+          const recs = (data.records || []).filter((r) => r.close > 0);
+          if (recs.length >= 2) {
+            const n = recs.length;
+            const last = recs[n - 1];
+            lastDate = last.date;
+            // Ưu tiên snapshot cho change1D (data mới nhất)
+            if (change1D === null) {
+              const prev = recs[n - 2];
+              change1D = prev.close > 0
+                ? parseFloat((((last.close - prev.close) / prev.close) * 100).toFixed(2))
+                : null;
+            }
+            if (close === null) close = last.close;
+
+            const pct = (base, cur) =>
+              base > 0 ? parseFloat((((cur - base) / base) * 100).toFixed(2)) : null;
+            change1W = pct(recs[Math.max(0, n - 6)].close, last.close);
+            change1M = pct(recs[Math.max(0, n - 22)].close, last.close);
+            change3M = pct(recs[Math.max(0, n - 66)].close, last.close);
+
+            const histVols = recs.slice(-21, -1).map((r) => r.volume || 0);
+            const volMA20 = histVols.length
+              ? histVols.reduce((s, v) => s + v, 0) / histVols.length
+              : 0;
+            // Dùng volume hôm nay từ snapshot nếu có (mới hơn), fallback về history
+            const vol = todayVolume ?? last.volume;
+            volRatio = volMA20 > 0 ? parseFloat((vol / volMA20).toFixed(2)) : null;
+
+            const closes = recs.map((r) => r.close);
+            const sma = (period) =>
+              closes.length >= period
+                ? closes.slice(-period).reduce((a, b) => a + b, 0) / period
+                : null;
+            const ma50 = sma(50);
+            const ma200 = sma(200);
+            aboveMA50 = ma50 !== null ? last.close > ma50 : null;
+            aboveMA200 = ma200 !== null ? last.close > ma200 : null;
+          }
+        }
+
+        if (change1D === null) continue; // không có data gì hết
+        stocks.push({
+          symbol: sym,
+          close,
+          volume: todayVolume,
+          lastDate,
+          fromSnapshot: !!snap,
+          change1D,
+          change1W,
+          change1M,
+          change3M,
+          volRatio,
+          aboveMA50,
+          aboveMA200,
+        });
+      } catch { /* skip */ }
+    }
+
+    const n = stocks.length;
+    if (n === 0) {
+      return sendJSON(res, 200, {
+        total: symbols.length,
+        withHistory: 0,
+        noData: symbols.length,
+        score: 0,
+        breadth: { up: 0, down: 0, flat: 0 },
+        avgChange1D: 0,
+        technical: { aboveMA50: 0, totalMA50: 0, aboveMA200: 0, totalMA200: 0 },
+        topUp: [], topDown: [], topVolume: [],
+        momentum: { top1W: [], top1M: [], top3M: [] },
+      });
+    }
+
+    const up = stocks.filter((s) => s.change1D > 0).length;
+    const down = stocks.filter((s) => s.change1D < 0).length;
+    const flat = stocks.filter((s) => s.change1D === 0).length;
+    const avgChange1D = parseFloat(
+      (stocks.reduce((s, r) => s + (r.change1D || 0), 0) / n).toFixed(2)
+    );
+    const withMA50 = stocks.filter((s) => s.aboveMA50 !== null);
+    const withMA200 = stocks.filter((s) => s.aboveMA200 !== null);
+    const aboveMA50 = withMA50.filter((s) => s.aboveMA50).length;
+    const aboveMA200 = withMA200.filter((s) => s.aboveMA200).length;
+
+    const top5 = (arr, key, asc = false) =>
+      [...arr]
+        .filter((s) => s[key] !== null)
+        .sort((a, b) => (asc ? a[key] - b[key] : b[key] - a[key]))
+        .slice(0, 5)
+        .map((s) => ({ symbol: s.symbol, value: s[key], close: s.close }));
+
+    const score = Math.round(
+      (up / n) * 40 +
+      (withMA50.length ? (aboveMA50 / withMA50.length) * 30 : 0) +
+      (withMA200.length ? (aboveMA200 / withMA200.length) * 30 : 0)
+    );
+
+    return sendJSON(res, 200, {
+      total: symbols.length,
+      withHistory: n,
+      noData: symbols.length - n,
+      score,
+      breadth: { up, down, flat },
+      avgChange1D,
+      technical: {
+        aboveMA50,
+        totalMA50: withMA50.length,
+        aboveMA200,
+        totalMA200: withMA200.length,
+      },
+      topUp: top5(stocks, "change1D"),
+      topDown: top5(stocks, "change1D", true),
+      topVolume: top5(stocks.filter((s) => s.volRatio !== null), "volRatio"),
+      momentum: {
+        top1W: top5(stocks, "change1W"),
+        top1M: top5(stocks, "change1M"),
+        top3M: top5(stocks, "change3M"),
+      },
+    });
+  }
+
+  // ─── API: Index intraday chart (SSI hasHistory=true) ─────────────────────────
+  if (pathname === "/api/index-intraday") {
+    const symbol = (parsed.query.symbol ?? "").trim();
+    if (!symbol) return sendJSON(res, 400, { error: "Thiếu symbol" });
+    const ssiUrl = `https://iboard-query.ssi.com.vn/exchange-index/${encodeURIComponent(symbol)}?hasHistory=true`;
+    return new Promise((resolve) => {
+      https.get(ssiUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          Origin: "https://iboard.ssi.com.vn",
+          Referer: "https://iboard.ssi.com.vn/",
+          Accept: "application/json",
+        },
+      }, (rsp) => {
+        const chunks = [];
+        rsp.on("data", c => chunks.push(c));
+        rsp.on("end", () => {
+          try {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(Buffer.concat(chunks));
+          } catch { sendJSON(res, 502, { error: "error" }); }
+          resolve();
+        });
+        rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(); });
+      }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(); });
+    });
+  }
+
   const staticFiles = {
     "/css/style.css": {
       file: "public/css/style.css",
@@ -1194,7 +1864,7 @@ const server = http.createServer(async (req, res) => {
       file
     );
     if (fs.existsSync(filePath)) {
-      res.writeHead(200, { "Content-Type": mime });
+      res.writeHead(200, { "Content-Type": mime, "Cache-Control": "no-cache" });
       res.end(fs.readFileSync(filePath));
     } else {
       res.writeHead(404);
@@ -1205,6 +1875,16 @@ const server = http.createServer(async (req, res) => {
 
   res.writeHead(404);
   res.end("Not found");
+});
+
+// ─── WebSocket upgrade handler ────────────────────────────────────────────────
+server.on("upgrade", (req, socket) => {
+  const { pathname } = url.parse(req.url);
+  if (pathname === "/ws/board") {
+    handleBoardWsUpgrade(req, socket);
+  } else {
+    socket.destroy();
+  }
 });
 
 server.listen(PORT, "0.0.0.0", () => {

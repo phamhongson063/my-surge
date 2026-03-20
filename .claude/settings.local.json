@@ -53,7 +53,16 @@
       "Bash(curl -s http://localhost:3001/health)",
       "Bash(curl -s \"http://localhost:3000/analyze-detail?symbol=PVD\")",
       "Bash(curl -s \"http://localhost:3000/symbols\")",
-      "Bash(node --input-type=module:*)"
+      "Bash(node --input-type=module:*)",
+      "Bash(wc -l /Users/son.ph/my-surge/database/history/*.json)",
+      "Bash(grep -r wss:// /Users/son.ph/my-surge --include=*.js --include=*.mjs --include=*.html)",
+      "Bash(curl -s http://localhost:3000/price-board.html)",
+      "Bash(node --check main.mjs)",
+      "Bash(curl -s -i --http1.1 -H \"Connection: Upgrade\" -H \"Upgrade: websocket\" -H \"Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\" -H \"Sec-WebSocket-Version: 13\" http://localhost:3000/ws/board)",
+      "Bash(node --check /Users/son.ph/my-surge/main.mjs)",
+      "Bash(curl -s http://localhost:3000/portfolio)",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/exchange-index/VNINDEX?hasHistory=true\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"User-Agent: Mozilla/5.0\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\)[''''data'''']; h=d[''''history'''']; print\\(f''''Total points: {len\\(h\\)}''''\\); print\\(''''First 3:'''', h[:3]\\); print\\(''''Last 3:'''', h[-3:]\\); print\\(''''prevIndexValue:'''', d.get\\(''''prevIndexValue''''\\)\\)\")"
     ]
   }
 }

@@ -603,6 +603,41 @@
           <option value="title">Tên A → Z</option>
           <option value="san">Theo sàn</option>
         </select>
+        <!-- Analyze sector button -->
+        <button
+          onclick="openAnalysis()"
+          style="
+            padding: 9px 16px;
+            border-radius: 10px;
+            border: 1.5px solid #c7d2fe;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all 0.15s;
+            white-space: nowrap;
+          "
+          onmouseenter="this.style.background='#e0e7ff'"
+          onmouseleave="this.style.background='#eef2ff'"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+          >
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+            <path d="M22 12A10 10 0 0 0 12 2v10z" />
+          </svg>
+          Phân tích ngành
+        </button>
         <!-- Fetch history button -->
         <button
           id="btnFetchHistory"
@@ -718,6 +753,113 @@
         </div>
       </div>
     </main>
+
+    <!-- ═══ ANALYSIS MODAL ═══ -->
+    <div
+      id="analysisOverlay"
+      onclick="closeAnalysis()"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        z-index: 100;
+        backdrop-filter: blur(4px);
+      "
+    ></div>
+    <div
+      id="analysisModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 96vw;
+        max-width: 1400px;
+        height: 92vh;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        z-index: 101;
+        flex-direction: column;
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          padding: 18px 24px;
+          border-bottom: 1px solid #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-shrink: 0;
+          background: #fff;
+        "
+      >
+        <div>
+          <div
+            style="
+              font-family: 'Syne', sans-serif;
+              font-weight: 800;
+              font-size: 17px;
+              color: #0f172a;
+            "
+          >
+            Phân tích ngành:
+            <span id="analysisTitle" style="color: #4f46e5"></span>
+          </div>
+          <div
+            id="analysisSubtitle"
+            style="font-size: 12px; color: #64748b; margin-top: 3px"
+          >
+            Đang tải...
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center">
+          <button
+            onclick="runAnalysis()"
+            style="
+              padding: 6px 14px;
+              border-radius: 8px;
+              border: 1.5px solid #e2e8f0;
+              background: #f8fafc;
+              color: #475569;
+              font-size: 12px;
+              font-weight: 600;
+              cursor: pointer;
+            "
+            onmouseenter="this.style.background='#f1f5f9'"
+            onmouseleave="this.style.background='#f8fafc'"
+          >
+            ↺ Làm mới
+          </button>
+          <button
+            onclick="closeAnalysis()"
+            style="
+              width: 32px;
+              height: 32px;
+              border-radius: 8px;
+              border: 1.5px solid #e2e8f0;
+              background: #f8fafc;
+              color: #64748b;
+              font-size: 18px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 1;
+            "
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <div
+        id="analysisContent"
+        style="overflow-y: auto; overflow-x: hidden; padding: 20px 28px; flex: 1"
+      ></div>
+    </div>
 
     <script>
       function openSidebar() {
@@ -936,6 +1078,517 @@
           btn.style.borderColor = "#bbf7d0";
           btn.style.color = "#15803d";
         }, 5000);
+      }
+
+      // ─── Sector Analysis Modal ────────────────────────────────────────────────
+      function openAnalysis() {
+        if (!allStocks.length) return;
+        document.getElementById("analysisOverlay").style.display = "block";
+        document.getElementById("analysisModal").style.display = "flex";
+        document.getElementById("analysisTitle").textContent = sectorName;
+        runAnalysis();
+      }
+
+      function closeAnalysis() {
+        document.getElementById("analysisOverlay").style.display = "none";
+        document.getElementById("analysisModal").style.display = "none";
+        _analysisRunning = false;
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeAnalysis();
+      });
+
+      let _analysisRunning = false;
+
+      async function runAnalysis() {
+        if (_analysisRunning) return;
+        _analysisRunning = true;
+        const content = document.getElementById("analysisContent");
+        const subtitle = document.getElementById("analysisSubtitle");
+
+        content.innerHTML =
+          '<div style="text-align:center;padding:60px 0;color:#64748b">' +
+          '<div style="font-size:24px;margin-bottom:12px">📡</div>' +
+          '<div style="font-size:14px;font-weight:600;color:#334155">Đang lấy dữ liệu thị trường...</div>' +
+          '<div style="font-size:12px;color:#94a3b8;margin-top:6px">Kết nối SSI iboard · toàn thị trường</div>' +
+          '</div>';
+        subtitle.textContent = "Đang tải...";
+
+        const symbols = allStocks.map((s) => s.symbol).join(",");
+        const stockMap = {};
+        allStocks.forEach((s) => (stockMap[s.symbol] = s));
+        try {
+          const [data, allSectors] = await Promise.all([
+            fetch("/api/sector-analysis?symbols=" + encodeURIComponent(symbols)).then((r) => r.json()),
+            fetch("/api/all-sectors-analysis").then((r) => r.json()).catch(() => null),
+          ]);
+          renderAnalysis(data, stockMap, allSectors);
+          const snapCount = data.stocks ? data.stocks.filter(s => s.fromSnapshot).length : 0;
+          subtitle.textContent =
+            "Phân tích " + data.withHistory + "/" + data.total + " mã" +
+            (snapCount > 0 ? " · " + snapCount + " mã từ snapshot" : "") +
+            (data.noData > 0 ? " · " + data.noData + " mã không có data" : "");
+        } catch (e) {
+          content.innerHTML =
+            '<div style="text-align:center;padding:40px;color:#dc2626;font-size:14px">Lỗi: ' + e.message + "</div>";
+          subtitle.textContent = "Lỗi";
+        }
+        _analysisRunning = false;
+      }
+
+      function _fmtPct(v) {
+        if (v === null || v === undefined) return "—";
+        return (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
+      }
+
+      function _stockRow(s, stockMap) {
+        const info = stockMap[s.symbol] || {};
+        const val = s.value;
+        const isPos = val >= 0;
+        const color = isPos ? "#16a34a" : "#dc2626";
+        const bg = isPos ? "#dcfce7" : "#fee2e2";
+        const barPct = Math.min((Math.abs(val) / 5) * 100, 100);
+        return (
+          '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;border-radius:6px;transition:background 0.1s" onclick="location.href=\'/detail.html?s=' + s.symbol + '\'" onmouseenter="this.style.background=\'#f8fafc\'" onmouseleave="this.style.background=\'\'">' +
+          '<div style="width:46px;font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;color:#0f172a;flex-shrink:0">' +
+          s.symbol +
+          "</div>" +
+          '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:12px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+          (info.title || "") +
+          "</div>" +
+          '<div style="height:4px;background:#f1f5f9;border-radius:2px;margin-top:4px">' +
+          '<div style="height:4px;background:' +
+          color +
+          ";border-radius:2px;width:" +
+          barPct +
+          '%"></div>' +
+          "</div></div>" +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;color:' +
+          color +
+          ";background:" +
+          bg +
+          ';padding:2px 8px;border-radius:5px;flex-shrink:0">' +
+          _fmtPct(val) +
+          "</div></div>"
+        );
+      }
+
+      function _volumeCard(s, stockMap) {
+        const info = stockMap[s.symbol] || {};
+        const ratio = s.value;
+        const pct = Math.min((ratio / 5) * 100, 100);
+        const color =
+          ratio >= 3 ? "#7c3aed" : ratio >= 2 ? "#2563eb" : "#0891b2";
+        const bg = ratio >= 3 ? "#ede9fe" : ratio >= 2 ? "#dbeafe" : "#cffafe";
+        return (
+          '<div style="background:' +
+          bg +
+          ';border-radius:10px;padding:12px 14px;cursor:pointer;transition:opacity 0.1s" onclick="location.href=\'/detail.html?s=' + s.symbol + '\'" onmouseenter="this.style.opacity=\'0.8\'" onmouseleave="this.style.opacity=\'1\'">' +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;color:#0f172a">' +
+          s.symbol +
+          "</div>" +
+          '<div style="font-size:11px;color:#64748b;margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+          (info.title || "") +
+          "</div>" +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:22px;color:' +
+          color +
+          '">' +
+          ratio.toFixed(1) +
+          "×</div>" +
+          '<div style="height:4px;background:rgba(255,255,255,0.6);border-radius:2px;margin-top:6px">' +
+          '<div style="height:4px;background:' +
+          color +
+          ";border-radius:2px;width:" +
+          pct +
+          '%"></div></div></div>'
+        );
+      }
+
+      function _momentumTable(stocks, stockMap) {
+        if (!stocks || !stocks.length)
+          return '<div style="color:#94a3b8;font-size:13px;padding:16px 0;text-align:center">Không có dữ liệu</div>';
+        return stocks
+          .map(function (s, i) {
+            const info = stockMap[s.symbol] || {};
+            const val = s.value;
+            const color = val >= 0 ? "#16a34a" : "#dc2626";
+            return (
+              '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;cursor:pointer;border-radius:6px;transition:background 0.1s" onclick="location.href=\'/detail.html?s=' + s.symbol + '\'" onmouseenter="this.style.background=\'#f8fafc\'" onmouseleave="this.style.background=\'\'">' +
+              '<div style="width:18px;font-size:11px;font-weight:700;color:#cbd5e1">' +
+              (i + 1) +
+              "</div>" +
+              '<div style="width:46px;font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;color:#0f172a;flex-shrink:0">' +
+              s.symbol +
+              "</div>" +
+              '<div style="flex:1;font-size:12px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+              (info.title || "") +
+              "</div>" +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:13px;color:' +
+              color +
+              '">' +
+              (val >= 0 ? "+" : "") +
+              val.toFixed(2) +
+              "%</div></div>"
+            );
+          })
+          .join("");
+      }
+
+      function switchMomTab(tab) {
+        ["1W", "1M", "3M"].forEach(function (t) {
+          const btn = document.getElementById("momTab" + t);
+          const cnt = document.getElementById("momContent" + t);
+          if (!btn || !cnt) return;
+          const active = t === tab;
+          btn.style.background = active ? "#4f46e5" : "#fff";
+          btn.style.color = active ? "#fff" : "#475569";
+          btn.style.borderColor = active ? "#4f46e5" : "#e2e8f0";
+          cnt.style.display = active ? "block" : "none";
+        });
+      }
+
+      function renderAnalysis(data, stockMap, allSectors) {
+        const content = document.getElementById("analysisContent");
+        const {
+          breadth,
+          avgChange1D,
+          technical,
+          topUp,
+          topDown,
+          topVolume,
+          momentum,
+          score,
+          withHistory,
+          total,
+          noData,
+        } = data;
+
+        if (withHistory === 0) {
+          content.innerHTML =
+            '<div style="text-align:center;padding:60px;color:#64748b">' +
+            '<div style="font-size:32px;margin-bottom:16px">📭</div>' +
+            '<div style="font-size:15px;font-weight:600">Chưa có lịch sử giá nào</div>' +
+            '<div style="font-size:13px;margin-top:8px;color:#94a3b8">Nhấn "Tải lịch sử giá" để tải về rồi phân tích lại</div>' +
+            "</div>";
+          return;
+        }
+
+        const scoreColor =
+          score >= 65 ? "#16a34a" : score >= 40 ? "#d97706" : "#dc2626";
+        const scoreBg =
+          score >= 65 ? "#dcfce7" : score >= 40 ? "#fef3c7" : "#fee2e2";
+        const scoreLabel =
+          score >= 65 ? "Mạnh" : score >= 40 ? "Trung bình" : "Yếu";
+        const avgColor =
+          avgChange1D > 0
+            ? "#16a34a"
+            : avgChange1D < 0
+            ? "#dc2626"
+            : "#64748b";
+        const avgSign = avgChange1D >= 0 ? "+" : "";
+        const ma50Pct =
+          technical.totalMA50 > 0
+            ? Math.round((technical.aboveMA50 / technical.totalMA50) * 100)
+            : 0;
+        const ma200Pct =
+          technical.totalMA200 > 0
+            ? Math.round((technical.aboveMA200 / technical.totalMA200) * 100)
+            : 0;
+        const ma50Color =
+          ma50Pct >= 60 ? "#16a34a" : ma50Pct >= 40 ? "#d97706" : "#dc2626";
+        const ma200Color =
+          ma200Pct >= 60 ? "#16a34a" : ma200Pct >= 40 ? "#d97706" : "#dc2626";
+
+        let html = "";
+
+        // ── Section 1: Overview cards ─────────────────────────────────────────
+        html +=
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">';
+
+        // Score
+        html +=
+          '<div style="background:' +
+          scoreBg +
+          ";border:1.5px solid " +
+          scoreColor +
+          '40;border-radius:12px;padding:16px;text-align:center">' +
+          '<div style="font-size:10px;font-weight:700;color:' +
+          scoreColor +
+          ';letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px">ĐIỂM NGÀNH</div>' +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:38px;font-weight:700;color:' +
+          scoreColor +
+          '">' +
+          score +
+          "</div>" +
+          '<div style="font-size:12px;font-weight:600;color:' +
+          scoreColor +
+          ';margin-top:4px">' +
+          scoreLabel +
+          "</div></div>";
+
+        // Avg change
+        html +=
+          '<div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px">TB NGÀNH HÔM NAY</div>' +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:32px;font-weight:700;color:' +
+          avgColor +
+          '">' +
+          avgSign +
+          avgChange1D +
+          "%</div>" +
+          '<div style="font-size:12px;color:#64748b;margin-top:4px">' +
+          withHistory +
+          " mã phân tích</div></div>";
+
+        // Breadth
+        html +=
+          '<div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">ĐỘ RỘNG THỊ TRƯỜNG</div>' +
+          '<div style="display:flex;gap:12px;justify-content:center;margin-bottom:10px">' +
+          '<div style="text-align:center"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:22px;font-weight:700;color:#16a34a">' +
+          breadth.up +
+          '</div><div style="font-size:10px;color:#16a34a;font-weight:600;margin-top:2px">↑ TĂNG</div></div>' +
+          '<div style="text-align:center"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:22px;font-weight:700;color:#dc2626">' +
+          breadth.down +
+          '</div><div style="font-size:10px;color:#dc2626;font-weight:600;margin-top:2px">↓ GIẢM</div></div>' +
+          '<div style="text-align:center"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:22px;font-weight:700;color:#94a3b8">' +
+          breadth.flat +
+          '</div><div style="font-size:10px;color:#94a3b8;font-weight:600;margin-top:2px">→ ĐỨNG</div></div>' +
+          "</div>" +
+          '<div style="height:8px;border-radius:4px;overflow:hidden;display:flex">' +
+          '<div style="background:#16a34a;flex:' +
+          (breadth.up || 0.01) +
+          '"></div>' +
+          '<div style="background:#dc2626;flex:' +
+          (breadth.down || 0.01) +
+          '"></div>' +
+          '<div style="background:#e2e8f0;flex:' +
+          (breadth.flat || 0.01) +
+          '"></div>' +
+          "</div></div>";
+
+        // Coverage warning
+        if (noData > 0) {
+          html +=
+            '<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:16px">' +
+            '<div style="font-size:10px;font-weight:700;color:#92400e;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px">PHỦ SÓNG DỮ LIỆU</div>' +
+            '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:30px;font-weight:700;color:#d97706">' +
+            withHistory +
+            "/" +
+            total +
+            "</div>" +
+            '<div style="font-size:12px;color:#92400e;margin-top:4px">' +
+            noData +
+            " mã chưa tải lịch sử</div></div>";
+        }
+        html += "</div>";
+
+        // ── Section 1b: All-sectors comparison ────────────────────────────────
+        if (allSectors && Array.isArray(allSectors) && allSectors.length > 0) {
+          const scoreRank = allSectors.findIndex((s) => s.name === sectorName) + 1;
+          const byChange = [...allSectors].sort((a, b) => b.avgChange1D - a.avgChange1D);
+          const changeRank = byChange.findIndex((s) => s.name === sectorName) + 1;
+          const total = allSectors.length;
+          const maxAbs = Math.max(...allSectors.map((s) => Math.abs(s.avgChange1D)), 0.01);
+
+          const rankColor = (r, t) =>
+            r <= Math.ceil(t * 0.25) ? "#16a34a" : r <= Math.ceil(t * 0.5) ? "#d97706" : "#dc2626";
+          const rankBg = (r, t) =>
+            r <= Math.ceil(t * 0.25) ? "#dcfce7" : r <= Math.ceil(t * 0.5) ? "#fef3c7" : "#fee2e2";
+          const rankBorder = (r, t) =>
+            r <= Math.ceil(t * 0.25) ? "#86efac" : r <= Math.ceil(t * 0.5) ? "#fde68a" : "#fca5a5";
+
+          html +=
+            '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:20px">' +
+            '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px">🏆 SO SÁNH VỚI CÁC NGÀNH KHÁC</div>';
+
+          // Rank badges row
+          html += '<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">';
+
+          if (scoreRank > 0) {
+            const sc = rankColor(scoreRank, total);
+            const sb = rankBg(scoreRank, total);
+            const sbd = rankBorder(scoreRank, total);
+            html +=
+              '<div style="background:' + sb + ';border:1.5px solid ' + sbd + ';border-radius:10px;padding:10px 20px;text-align:center;min-width:110px">' +
+              '<div style="font-size:10px;font-weight:700;color:' + sc + ';letter-spacing:0.5px;text-transform:uppercase">Xếp hạng điểm</div>' +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:30px;font-weight:700;color:' + sc + ';line-height:1.1">#' + scoreRank + '</div>' +
+              '<div style="font-size:11px;color:#64748b;margin-top:2px">trên ' + total + ' ngành</div>' +
+              '</div>';
+          }
+
+          if (changeRank > 0) {
+            const cc = rankColor(changeRank, total);
+            const cb = rankBg(changeRank, total);
+            const cbd = rankBorder(changeRank, total);
+            html +=
+              '<div style="background:' + cb + ';border:1.5px solid ' + cbd + ';border-radius:10px;padding:10px 20px;text-align:center;min-width:110px">' +
+              '<div style="font-size:10px;font-weight:700;color:' + cc + ';letter-spacing:0.5px;text-transform:uppercase">Tăng trưởng hôm nay</div>' +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:30px;font-weight:700;color:' + cc + ';line-height:1.1">#' + changeRank + '</div>' +
+              '<div style="font-size:11px;color:#64748b;margin-top:2px">trên ' + total + ' ngành</div>' +
+              '</div>';
+          }
+
+          html += '</div>';
+
+          // Table header
+          html +=
+            '<div style="display:grid;grid-template-columns:32px 1fr 120px 72px 52px;align-items:center;gap:8px;padding:5px 10px;margin-bottom:4px">' +
+            '<div style="font-size:10px;font-weight:700;color:#cbd5e1;text-align:center">#</div>' +
+            '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase">Ngành</div>' +
+            '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase">Hôm nay</div>' +
+            '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;text-align:right">% thay đổi</div>' +
+            '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.5px;text-transform:uppercase;text-align:center">Điểm</div>' +
+            '</div>';
+
+          // Scrollable sector list
+          html += '<div style="max-height:260px;overflow-y:auto;border:1px solid #f1f5f9;border-radius:8px">';
+          allSectors.forEach(function (sec, i) {
+            const isCurrent = sec.name === sectorName;
+            const rowBg = isCurrent ? "#eef2ff" : i % 2 === 0 ? "#fff" : "#fafafa";
+            const rowBorder = isCurrent ? "1.5px solid #c7d2fe" : "1px solid transparent";
+            const chgColor = sec.avgChange1D > 0 ? "#16a34a" : sec.avgChange1D < 0 ? "#dc2626" : "#94a3b8";
+            const barColor = sec.avgChange1D >= 0 ? "#86efac" : "#fca5a5";
+            const barPct = ((Math.abs(sec.avgChange1D) / maxAbs) * 100).toFixed(1);
+            const sc = sec.score >= 65 ? "#16a34a" : sec.score >= 40 ? "#d97706" : "#dc2626";
+            const sb = sec.score >= 65 ? "#dcfce7" : sec.score >= 40 ? "#fef3c7" : "#fee2e2";
+            html +=
+              '<div style="display:grid;grid-template-columns:32px 1fr 120px 72px 52px;align-items:center;gap:8px;padding:7px 10px;background:' + rowBg + ';border:' + rowBorder + ';border-radius:6px;margin-bottom:1px;cursor:pointer;transition:background 0.1s" onclick="location.href=\'/sector-detail.html?sector=' + encodeURIComponent(sec.name) + '\'" onmouseenter="this.style.background=\'' + (isCurrent ? "#e0e7ff" : "#f1f5f9") + '\'" onmouseleave="this.style.background=\'' + rowBg + '\'">' +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;font-weight:700;color:#94a3b8;text-align:center">' + (i + 1) + '</div>' +
+              '<div style="font-size:13px;font-weight:' + (isCurrent ? "700" : "500") + ';color:' + (isCurrent ? "#4f46e5" : "#334155") + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' +
+              sec.name + (isCurrent ? " ◀" : "") + '</div>' +
+              '<div style="display:flex;align-items:center;gap:4px">' +
+              '<div style="flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden">' +
+              '<div style="height:6px;background:' + barColor + ';border-radius:3px;width:' + barPct + '%"></div></div>' +
+              '<span style="font-size:10px;color:#94a3b8">' + sec.withHistory + '/' + sec.total + '</span></div>' +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;font-weight:700;color:' + chgColor + ';text-align:right">' +
+              (sec.avgChange1D >= 0 ? "+" : "") + sec.avgChange1D + "%</div>" +
+              '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;font-weight:700;color:' + sc + ';background:' + sb + ';padding:2px 6px;border-radius:5px;text-align:center">' + sec.score + '</div>' +
+              '</div>';
+          });
+          html += '</div></div>';
+        }
+
+        // ── Section 2: Top tăng/giảm ─────────────────────────────────────────
+        html +=
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">';
+        html +=
+          '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">↑ TOP TĂNG HÔM NAY</div>';
+        if (topUp && topUp.length)
+          topUp.forEach(function (s) {
+            html += _stockRow(s, stockMap);
+          });
+        else
+          html +=
+            '<div style="color:#94a3b8;font-size:13px;padding:16px 0;text-align:center">Không có dữ liệu</div>';
+        html += "</div>";
+
+        html +=
+          '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">↓ TOP GIẢM HÔM NAY</div>';
+        if (topDown && topDown.length)
+          topDown.forEach(function (s) {
+            html += _stockRow(s, stockMap);
+          });
+        else
+          html +=
+            '<div style="color:#94a3b8;font-size:13px;padding:16px 0;text-align:center">Không có dữ liệu</div>';
+        html += "</div>";
+        html += "</div>";
+
+        // ── Section 3: Volume surge ───────────────────────────────────────────
+        html +=
+          '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:20px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">⚡ KHỐI LƯỢNG ĐỘT BIẾN (SO VỚI MA20)</div>';
+        if (topVolume && topVolume.length) {
+          html +=
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">';
+          topVolume.forEach(function (s) {
+            html += _volumeCard(s, stockMap);
+          });
+          html += "</div>";
+        } else {
+          html +=
+            '<div style="color:#94a3b8;font-size:13px;padding:16px 0;text-align:center">Không có dữ liệu</div>';
+        }
+        html += "</div>";
+
+        // ── Section 4: Technical strength ────────────────────────────────────
+        html +=
+          '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:20px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:16px">📐 SỨC MẠNH KỸ THUẬT</div>';
+        if (technical.totalMA50 > 0) {
+          html +=
+            '<div style="margin-bottom:14px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+            '<div style="font-size:13px;font-weight:600;color:#334155">Trên MA50 <span style="font-size:12px;color:#94a3b8;font-weight:400">(' +
+            technical.aboveMA50 +
+            "/" +
+            technical.totalMA50 +
+            " mã)</span></div>" +
+            '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:14px;color:' +
+            ma50Color +
+            '">' +
+            ma50Pct +
+            "%</div></div>" +
+            '<div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">' +
+            '<div style="height:8px;background:' +
+            ma50Color +
+            ";border-radius:4px;width:" +
+            ma50Pct +
+            '%"></div></div></div>';
+        }
+        if (technical.totalMA200 > 0) {
+          html +=
+            "<div>" +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+            '<div style="font-size:13px;font-weight:600;color:#334155">Trên MA200 <span style="font-size:12px;color:#94a3b8;font-weight:400">(' +
+            technical.aboveMA200 +
+            "/" +
+            technical.totalMA200 +
+            " mã)</span></div>" +
+            '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:14px;color:' +
+            ma200Color +
+            '">' +
+            ma200Pct +
+            "%</div></div>" +
+            '<div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden">' +
+            '<div style="height:8px;background:' +
+            ma200Color +
+            ";border-radius:4px;width:" +
+            ma200Pct +
+            '%"></div></div></div>';
+        }
+        if (technical.totalMA50 === 0 && technical.totalMA200 === 0) {
+          html +=
+            '<div style="color:#94a3b8;font-size:13px;padding:8px 0">Cần ít nhất 50 phiên dữ liệu để tính MA</div>';
+        }
+        html += "</div>";
+
+        // ── Section 5: Momentum tabs ──────────────────────────────────────────
+        html +=
+          '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:16px">' +
+          '<div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px">🚀 MOMENTUM — TOP PERFORMERS</div>' +
+          '<div style="display:flex;gap:6px;margin-bottom:14px">' +
+          '<button id="momTab1W" onclick="switchMomTab(\'1W\')" style="padding:5px 16px;border-radius:7px;border:1.5px solid #e2e8f0;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#475569;transition:all 0.12s">1 Tuần</button>' +
+          '<button id="momTab1M" onclick="switchMomTab(\'1M\')" style="padding:5px 16px;border-radius:7px;border:1.5px solid #e2e8f0;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#475569;transition:all 0.12s">1 Tháng</button>' +
+          '<button id="momTab3M" onclick="switchMomTab(\'3M\')" style="padding:5px 16px;border-radius:7px;border:1.5px solid #e2e8f0;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#475569;transition:all 0.12s">3 Tháng</button>' +
+          "</div>" +
+          '<div id="momContent1W">' +
+          _momentumTable(momentum.top1W, stockMap) +
+          "</div>" +
+          '<div id="momContent1M" style="display:none">' +
+          _momentumTable(momentum.top1M, stockMap) +
+          "</div>" +
+          '<div id="momContent3M" style="display:none">' +
+          _momentumTable(momentum.top3M, stockMap) +
+          "</div></div>";
+
+        content.innerHTML = html;
+        switchMomTab("1W");
       }
     </script>
   </body>

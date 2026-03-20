@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bảng Giá Chứng Khoán</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,7 +24,7 @@
   --ref: #fbbf24;     /* vàng tham chiếu */
   --header-h: 56px;
   --tabbar-h: 44px;
-  --index-h: 72px;
+  --index-h: 168px;
 }
 
 body {
@@ -91,7 +91,7 @@ body {
 #refreshBtn.live #refreshDot { background: var(--green); animation: blink 1.5s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-#lastUpdate { color: var(--text3); font-size: 12px; font-family: 'IBM Plex Mono', monospace; }
+#lastUpdate { color: var(--text3); font-size: 12px; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
 
 /* ── INDEX CARDS ── */
 #indexBar {
@@ -110,15 +110,16 @@ body {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 8px 14px;
-  min-width: 148px;
+  min-width: 210px;
   cursor: default;
   transition: border-color 0.15s;
 }
 .idx-card:hover { border-color: #3b5380; }
 .idx-name { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; }
-.idx-val  { font-size: 17px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin: 2px 0; }
-.idx-chg  { font-size: 11px; font-family: 'IBM Plex Mono', monospace; }
+.idx-val  { font-size: 17px; font-weight: 700; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; margin: 2px 0; }
+.idx-chg  { font-size: 11px; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
 .idx-stats { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.idx-spark { display: block; width: 100%; height: 88px; margin-top: 6px; }
 .up   { color: var(--green); }
 .dn   { color: var(--red); }
 .ref-c { color: var(--ref); }
@@ -160,22 +161,24 @@ body {
 /* ── TABLE AREA ── */
 #tableWrap {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
 
 #stockTable {
   border-collapse: collapse;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12.5px;
-  min-width: 100%;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 11.5px;
+  width: 100%;
+  table-layout: fixed;
 }
 
 #stockTable thead th {
   position: sticky;
   background: #1a2133;
   color: var(--text3);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.4px;
   padding: 5px 6px;
@@ -197,10 +200,8 @@ body {
 #stockTable thead th.sort-asc::after  { content: ' ▲'; color: #60a5fa; }
 #stockTable thead th.sort-desc::after { content: ' ▼'; color: #60a5fa; }
 
-/* Bid/ask column colors in body only */
-.bid-price { color: var(--green); }
-.ask-price { color: var(--red); }
-.bid-vol, .ask-vol { color: var(--text2); font-size: 11.5px; }
+.bid-vol, .ask-vol { color: var(--text2); font-size: 10.5px; }
+td[data-field="priceChange"], td[data-field="priceChangePercent"] { font-family: 'Inter', sans-serif; }
 
 /* Cell borders */
 #stockTable th,
@@ -219,15 +220,16 @@ body {
 #stockTable tbody tr:hover { background: #1e2a3a; }
 
 #stockTable td {
-  padding: 5px 8px;
+  padding: 4px 6px;
   text-align: right;
   white-space: nowrap;
+  overflow: hidden;
 }
 #stockTable td.left { text-align: left; }
 
 /* Symbol column */
 .sym-cell {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.3px;
   text-align: left;
@@ -240,11 +242,11 @@ body {
 .p-dn { color: var(--red); }
 .p-ref { color: var(--ref); }
 
-/* Row flash animation */
-@keyframes flashGreen { 0%{background:#16a34a33} 100%{background:transparent} }
-@keyframes flashRed   { 0%{background:#dc262633} 100%{background:transparent} }
-.flash-g { animation: flashGreen 0.6s ease-out; }
-.flash-r { animation: flashRed   0.6s ease-out; }
+/* Cell flash animation */
+@keyframes flashCellGreen { 0%{background:#16a34a66} 100%{background:transparent} }
+@keyframes flashCellRed   { 0%{background:#dc262666} 100%{background:transparent} }
+.flash-g { animation: flashCellGreen 0.8s ease-out; }
+.flash-r { animation: flashCellRed   0.8s ease-out; }
 
 /* ── STAT BAR ── */
 #statBar {
@@ -301,6 +303,23 @@ body {
   .idx-val { font-size: 14px; }
 }
 
+/* ── PORTFOLIO TAB ── */
+/* Trong tab danh mục: ẩn ĐTNN + Room, thay bằng cột portfolio */
+body.tab-portfolio .grp-dtnn,
+body.tab-portfolio .col-klnnm, body.tab-portfolio .hdr-klnnm,
+body.tab-portfolio .col-klnnb, body.tab-portfolio .hdr-klnnb,
+body.tab-portfolio .hdr-room  { display: none !important; }
+
+/* Cột portfolio — ẩn mặc định, hiện khi tab-portfolio */
+.col-pf, .hdr-pf { display: none; }
+body.tab-portfolio .col-pf,
+body.tab-portfolio .hdr-pf  { display: table-cell; }
+
+/* Màu lãi/lỗ portfolio */
+.pf-gain { color: var(--green); }
+.pf-loss { color: var(--red); }
+.pf-zero { color: var(--ref); }
+
 /* Nav link */
 .nav-link {
   color: var(--text3);
@@ -346,7 +365,7 @@ body {
 .sector-opt-count {
   color: var(--text3);
   font-size: 11px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
   flex-shrink: 0;
 }
 </style>
@@ -374,30 +393,35 @@ body {
     <div class="idx-val" id="v-VNINDEX">--</div>
     <div class="idx-chg" id="c-VNINDEX">--</div>
     <div class="idx-stats" id="s-VNINDEX">-- T↑ -- T↓</div>
+    <canvas class="idx-spark" id="spark-VNINDEX"></canvas>
   </div>
   <div class="idx-card" id="idx-VN30">
     <div class="idx-name">VN30</div>
     <div class="idx-val" id="v-VN30">--</div>
     <div class="idx-chg" id="c-VN30">--</div>
     <div class="idx-stats" id="s-VN30">-- T↑ -- T↓</div>
+    <canvas class="idx-spark" id="spark-VN30"></canvas>
   </div>
   <div class="idx-card" id="idx-HNXIndex">
     <div class="idx-name">HNXIndex</div>
     <div class="idx-val" id="v-HNXIndex">--</div>
     <div class="idx-chg" id="c-HNXIndex">--</div>
     <div class="idx-stats" id="s-HNXIndex">-- T↑ -- T↓</div>
+    <canvas class="idx-spark" id="spark-HNXIndex"></canvas>
   </div>
   <div class="idx-card" id="idx-HNX30">
     <div class="idx-name">HNX30</div>
     <div class="idx-val" id="v-HNX30">--</div>
     <div class="idx-chg" id="c-HNX30">--</div>
     <div class="idx-stats" id="s-HNX30">-- T↑ -- T↓</div>
+    <canvas class="idx-spark" id="spark-HNX30"></canvas>
   </div>
   <div class="idx-card" id="idx-UpcomIndex">
     <div class="idx-name">UPCOM</div>
     <div class="idx-val" id="v-UpcomIndex">--</div>
     <div class="idx-chg" id="c-UpcomIndex">--</div>
     <div class="idx-stats" id="s-UpcomIndex">-- T↑ -- T↓</div>
+    <canvas class="idx-spark" id="spark-UpcomIndex"></canvas>
   </div>
 </div>
 
@@ -407,6 +431,7 @@ body {
   <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
   <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
   <button class="tab-btn" data-tab="upcom" onclick="switchTab(this)">UPCOM <span class="tab-count" id="cnt-upcom">...</span></button>
+  <button class="tab-btn" data-tab="portfolio" onclick="switchTab(this)">💼 Danh mục <span class="tab-count" id="cnt-portfolio">--</span></button>
   <div id="sectorTabWrap">
     <button class="tab-btn" id="sectorTabBtn" onclick="toggleSectorDropdown(event)">CP Ngành<span id="sectorTabLabel"></span> <span style="font-size:9px;opacity:.7">▾</span></button>
     <div id="sectorDropdown" role="listbox"></div>
@@ -423,44 +448,48 @@ body {
     <thead>
       <!-- Row 1: group headers -->
       <tr>
-        <th class="left" rowspan="2" style="min-width:60px;width:60px" onclick="sortBy('sym')">CK</th>
-        <th class="hdr-ceil"  rowspan="2" style="width:56px" onclick="sortBy('ceil')">Trần</th>
-        <th class="hdr-floor" rowspan="2" style="width:56px" onclick="sortBy('floor')">Sàn</th>
-        <th rowspan="2" style="width:56px" onclick="sortBy('ref')">TC</th>
+        <th class="left" rowspan="2" style="min-width:52px;width:52px" onclick="sortBy('sym')">CK</th>
+        <th class="hdr-ceil"  rowspan="2" style="width:48px" onclick="sortBy('ceil')">Trần</th>
+        <th class="hdr-floor" rowspan="2" style="width:48px" onclick="sortBy('floor')">Sàn</th>
+        <th rowspan="2" style="width:48px" onclick="sortBy('ref')">TC</th>
         <th class="grp-bid" colspan="6" style="text-align:center">Bên mua</th>
         <th class="grp-match" colspan="4" style="text-align:center">Khớp lệnh</th>
         <th class="grp-ask" colspan="6" style="text-align:center">Bên bán</th>
-        <th rowspan="2" style="width:80px" onclick="sortBy('vol')">Tổng KL</th>
-        <th class="hdr-high" rowspan="2" style="width:56px" onclick="sortBy('high')">Cao</th>
-        <th class="hdr-low"  rowspan="2" style="width:56px" onclick="sortBy('low')">Thấp</th>
-        <th class="hdr-open" rowspan="2" style="width:56px" onclick="sortBy('open')">Mở</th>
+        <th rowspan="2" style="width:68px" onclick="sortBy('vol')">Tổng KL</th>
+        <th class="hdr-high" rowspan="2" style="width:48px" onclick="sortBy('high')">Cao</th>
+        <th class="hdr-low"  rowspan="2" style="width:48px" onclick="sortBy('low')">Thấp</th>
+        <th class="hdr-open" rowspan="2" style="width:48px" onclick="sortBy('open')">Mở</th>
         <th class="grp-dtnn" colspan="2" style="text-align:center">ĐTNN</th>
-        <th class="hdr-room" rowspan="2" style="width:72px" onclick="sortBy('room')">Room</th>
+        <th class="hdr-pf" colspan="2" style="text-align:center">Danh mục</th>
+        <th class="hdr-room" rowspan="2" style="width:62px" onclick="sortBy('room')">Room</th>
       </tr>
       <!-- Row 2: sub-column headers -->
       <tr>
         <!-- Bên mua: Giá 3 → KL 3 → Giá 2 → KL 2 → Giá 1 → KL 1 -->
-        <th class="grp-bid hdr-bid3"    style="width:56px" onclick="sortBy('bid3')">Giá 3</th>
-        <th class="grp-bid hdr-bid3vol" style="width:62px" onclick="sortBy('bid3vol')">KL 3</th>
-        <th class="grp-bid hdr-bid2"    style="width:56px" onclick="sortBy('bid2')">Giá 2</th>
-        <th class="grp-bid hdr-bid2vol" style="width:62px" onclick="sortBy('bid2vol')">KL 2</th>
-        <th class="grp-bid hdr-bid1"    style="width:56px" onclick="sortBy('bid1')">Giá 1</th>
-        <th class="grp-bid hdr-bid1vol" style="width:62px" onclick="sortBy('bid1vol')">KL 1</th>
+        <th class="grp-bid hdr-bid3"    style="width:48px" onclick="sortBy('bid3')">Giá 3</th>
+        <th class="grp-bid hdr-bid3vol" style="width:52px" onclick="sortBy('bid3vol')">KL 3</th>
+        <th class="grp-bid hdr-bid2"    style="width:48px" onclick="sortBy('bid2')">Giá 2</th>
+        <th class="grp-bid hdr-bid2vol" style="width:52px" onclick="sortBy('bid2vol')">KL 2</th>
+        <th class="grp-bid hdr-bid1"    style="width:48px" onclick="sortBy('bid1')">Giá 1</th>
+        <th class="grp-bid hdr-bid1vol" style="width:52px" onclick="sortBy('bid1vol')">KL 1</th>
         <!-- Khớp lệnh -->
-        <th class="grp-match" style="width:60px" onclick="sortBy('match')">Giá</th>
-        <th class="grp-match" style="width:68px" onclick="sortBy('matchvol')">KL</th>
-        <th class="grp-match" style="width:60px" onclick="sortBy('change')">+/-</th>
-        <th class="grp-match" style="width:66px" onclick="sortBy('changePct')">+/- (%)</th>
+        <th class="grp-match" style="width:52px" onclick="sortBy('match')">Giá</th>
+        <th class="grp-match" style="width:58px" onclick="sortBy('matchvol')">KL</th>
+        <th class="grp-match" style="width:52px" onclick="sortBy('change')">+/-</th>
+        <th class="grp-match" style="width:56px" onclick="sortBy('changePct')">+/- (%)</th>
         <!-- Bên bán: Giá 1 → KL 1 → Giá 2 → KL 2 → Giá 3 → KL 3 -->
-        <th class="grp-ask hdr-ask1"    style="width:56px" onclick="sortBy('ask1')">Giá 1</th>
-        <th class="grp-ask hdr-ask1vol" style="width:62px" onclick="sortBy('ask1vol')">KL 1</th>
-        <th class="grp-ask hdr-ask2"    style="width:56px" onclick="sortBy('ask2')">Giá 2</th>
-        <th class="grp-ask hdr-ask2vol" style="width:62px" onclick="sortBy('ask2vol')">KL 2</th>
-        <th class="grp-ask hdr-ask3"    style="width:56px" onclick="sortBy('ask3')">Giá 3</th>
-        <th class="grp-ask hdr-ask3vol" style="width:62px" onclick="sortBy('ask3vol')">KL 3</th>
+        <th class="grp-ask hdr-ask1"    style="width:48px" onclick="sortBy('ask1')">Giá 1</th>
+        <th class="grp-ask hdr-ask1vol" style="width:52px" onclick="sortBy('ask1vol')">KL 1</th>
+        <th class="grp-ask hdr-ask2"    style="width:48px" onclick="sortBy('ask2')">Giá 2</th>
+        <th class="grp-ask hdr-ask2vol" style="width:52px" onclick="sortBy('ask2vol')">KL 2</th>
+        <th class="grp-ask hdr-ask3"    style="width:48px" onclick="sortBy('ask3')">Giá 3</th>
+        <th class="grp-ask hdr-ask3vol" style="width:52px" onclick="sortBy('ask3vol')">KL 3</th>
         <!-- ĐTNN sub -->
-        <th class="grp-dtnn hdr-dtnn-m hdr-klnnm" style="width:74px" onclick="sortBy('nnBuy')">NN mua</th>
-        <th class="grp-dtnn hdr-klnnb"             style="width:74px" onclick="sortBy('nnSell')">NN bán</th>
+        <th class="grp-dtnn hdr-dtnn-m hdr-klnnm" style="width:62px" onclick="sortBy('nnBuy')">NN mua</th>
+        <th class="grp-dtnn hdr-klnnb"             style="width:62px" onclick="sortBy('nnSell')">NN bán</th>
+        <!-- Portfolio sub (thay ĐTNN khi tab danh mục) -->
+        <th class="hdr-pf" style="width:62px" onclick="sortBy('pf-cost')">Giá vốn</th>
+        <th class="hdr-pf" style="width:68px" onclick="sortBy('pf-pnl')">Lãi / Lỗ %</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -479,14 +508,248 @@ body {
 </div>
 
 <script>
+// ──── Sparkline state ──────────────────────────────────────────────────────────
+const indexHistory = {};  // id → [{t, v}]
+const indexRef     = {};  // id → prevIndexValue (reference close)
+
+function addIndexPoint(id, val) {
+  if (!indexHistory[id]) indexHistory[id] = [];
+  const hist = indexHistory[id];
+  if (hist.length && hist[hist.length - 1].v === val) return;
+  hist.push({ t: Date.now(), v: val });
+  if (hist.length > 600) hist.shift();
+}
+
+function drawSparkline(id) {
+  const canvas = document.getElementById('spark-' + id);
+  if (!canvas) return;
+  const history = indexHistory[id] ?? [];
+  const refVal  = indexRef[id];
+  if (history.length < 2 || !refVal) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = canvas.offsetWidth || 210;
+  const H = canvas.offsetHeight || 88;
+  if (!W || !H) return;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const AXIS_H  = 16;           // height reserved for time labels
+  const chartH  = H - AXIS_H;
+
+  const vals  = history.map(p => p.v);
+  const times = history.map(p => p.t); // ms timestamps
+
+  // Fixed session window: 9:00–15:15 VN (UTC+7)
+  const VN = 7 * 3600 * 1000;
+  const refDate = new Date(times[0]);
+  const vnDate  = new Date(times[0] + VN);
+  const dayStart = Date.UTC(vnDate.getUTCFullYear(), vnDate.getUTCMonth(), vnDate.getUTCDate());
+  const tMin = dayStart - VN + 9 * 3600000;    // 09:00 VN in ms
+  const tMax = dayStart - VN + 15.25 * 3600000; // 15:15 VN in ms
+  const tRange = tMax - tMin;
+
+  const spread = Math.max(...vals, refVal) - Math.min(...vals, refVal);
+  const pad  = Math.max(spread * 0.1, 0.3);
+  const minV = Math.min(...vals, refVal) - pad;
+  const maxV = Math.max(...vals, refVal) + pad;
+  const vRange = maxV - minV || 1;
+
+  const xt = t  => ((t - tMin) / tRange) * W;
+  const yv = v  => ((maxV - v) / vRange) * chartH;
+  const refY = yv(refVal);
+  const lastVal = vals[vals.length - 1];
+  const color = lastVal > refVal ? '#22c55e' : lastVal < refVal ? '#ef4444' : '#fbbf24';
+
+  // ── Dashed reference line (prev close) ──
+  ctx.strokeStyle = 'rgba(251,191,36,0.45)';
+  ctx.lineWidth = 0.75;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(0, refY); ctx.lineTo(W, refY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Gradient fill ──
+  const grad = ctx.createLinearGradient(0, 0, 0, chartH);
+  grad.addColorStop(0, color + '30');
+  grad.addColorStop(1, color + '04');
+  ctx.beginPath();
+  ctx.moveTo(xt(times[0]), yv(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(xt(times[i]), yv(vals[i]));
+  ctx.lineTo(xt(times[times.length - 1]), chartH);
+  ctx.lineTo(xt(times[0]), chartH);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // ── Price line ──
+  ctx.beginPath();
+  ctx.moveTo(xt(times[0]), yv(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(xt(times[i]), yv(vals[i]));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // ── Time axis ──
+  // Session hours in VN: 9,10,11 (morning) + 13,14,15 (afternoon); skip 12 (lunch)
+  const sessionHours = [9, 10, 11, 13, 14, 15];
+  ctx.font = `9px 'SF Mono','Menlo','Consolas',monospace`;
+  ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'center';
+
+  for (const h of sessionHours) {
+    const hTs = dayStart - VN + h * 3600000;
+    const x   = xt(hTs);
+    if (x < 0 || x > W) continue;
+    // tick
+    ctx.strokeStyle = '#2a3347';
+    ctx.lineWidth = 0.75;
+    ctx.beginPath(); ctx.moveTo(x, chartH); ctx.lineTo(x, chartH + 3); ctx.stroke();
+    // label — clamp so text stays inside canvas
+    ctx.fillStyle = '#64748b';
+    const label = `${h}h`;
+    const tw = ctx.measureText(label).width;
+    const lx = Math.max(tw / 2, Math.min(W - tw / 2, x));
+    ctx.fillText(label, lx, H - 2);
+  }
+
+  // Separator line between chart and axis
+  ctx.strokeStyle = '#2a3347';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath(); ctx.moveTo(0, chartH); ctx.lineTo(W, chartH); ctx.stroke();
+}
+
+async function loadIntradayHistory() {
+  const ids = ['VNINDEX', 'VN30', 'HNXIndex', 'HNX30', 'UpcomIndex'];
+  await Promise.allSettled(ids.map(async id => {
+    try {
+      const r = await fetch(`/api/index-intraday?symbol=${id}`);
+      const j = await r.json();
+      const d = j.data;
+      if (j.code === 'SUCCESS' && Array.isArray(d?.history) && d.history.length > 1) {
+        // time là milliseconds từ SSI
+        indexHistory[id] = d.history.map(p => ({ t: p.time, v: p.indexValue }));
+        if (d.prevIndexValue) indexRef[id] = d.prevIndexValue;
+        drawSparkline(id);
+      }
+    } catch {}
+  }));
+}
+
 // ──── State ────────────────────────────────────────────────────────────────────
 let allData    = {};   // tab → array of stock objects
 let currentTab = 'VN30';
 let sortKey    = 'match';
 let sortDir    = -1;   // -1 = desc, 1 = asc
-let liveTimer  = null;
 let isLive     = true;
-const REFRESH_MS = 4000;
+
+// Portfolio state
+let portfolioData    = {};  // { SYM: [{qty, price, date, id}] }
+let portfolioSymbols = new Set();
+
+function getDataForPortfolio() {
+  return [
+    ...(allData['hose']  ?? []),
+    ...(allData['hnx']   ?? []),
+    ...(allData['upcom'] ?? []),
+  ].filter(s => portfolioSymbols.has(s.stockSymbol ?? s.code ?? ''));
+}
+
+async function loadPortfolio() {
+  try {
+    const r = await fetch('/portfolio');
+    portfolioData = await r.json();
+    portfolioSymbols = new Set(Object.keys(portfolioData));
+    document.getElementById('cnt-portfolio').textContent = portfolioSymbols.size;
+  } catch {}
+}
+
+// ──── WebSocket ────────────────────────────────────────────────────────────────
+let ws = null;
+let wsReconnectTimer = null;
+
+function connectWs() {
+  if (ws && ws.readyState < 2) return;
+  if (wsReconnectTimer) { clearTimeout(wsReconnectTimer); wsReconnectTimer = null; }
+
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(`${proto}//${location.host}/ws/board`);
+
+  ws.addEventListener('open', () => {
+    console.log('[WS] Connected');
+    setLiveStatus(true);
+    // Subscribe to current tab + indexes
+    wsSubscribe(currentTab);
+    ws.send(JSON.stringify({ sub: 'indexes' }));
+    // Prefetch other tabs for counts
+    for (const tab of ['VN30', 'hose', 'hnx', 'upcom']) {
+      if (tab !== currentTab) ws.send(JSON.stringify({ sub: tab }));
+    }
+  });
+
+  ws.addEventListener('message', (event) => {
+    try {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'board') {
+        // Full board load (first time or re-subscribe)
+        const { tab, data } = msg;
+        allData[tab] = data;
+        const cnt = document.getElementById(`cnt-${tab}`);
+        if (cnt) cnt.textContent = data.length;
+        if (currentTab === tab) { renderTable(); updateTimestamp(); }
+        else if (currentTab === 'sector' && activeSector && ['hose','hnx','upcom'].includes(tab)) {
+          allData['sector'] = getDataForSector(activeSector);
+          renderTable(); updateTimestamp();
+        }
+      } else if (msg.type === 'update') {
+        // Diff update — chỉ các mã có giá thay đổi
+        const { tab, updates } = msg;
+        applyTabUpdate(tab, updates);
+      } else if (msg.type === 'indexes') {
+        for (const [id, d] of Object.entries(msg.data)) updateIndexCard(id, d);
+        updateTimestamp();
+      }
+    } catch {}
+  });
+
+  ws.addEventListener('close', () => {
+    console.log('[WS] Disconnected');
+    setLiveStatus(false, 'Mất kết nối');
+    if (isLive) wsReconnectTimer = setTimeout(connectWs, 3000);
+  });
+
+  ws.addEventListener('error', () => {});
+}
+
+function disconnectWs() {
+  if (wsReconnectTimer) { clearTimeout(wsReconnectTimer); wsReconnectTimer = null; }
+  if (ws) { ws.close(); ws = null; }
+}
+
+function wsSubscribe(tab) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  if (tab === 'sector' || tab === 'portfolio') {
+    ws.send(JSON.stringify({ sub: 'hose' }));
+    ws.send(JSON.stringify({ sub: 'hnx' }));
+    ws.send(JSON.stringify({ sub: 'upcom' }));
+  } else {
+    ws.send(JSON.stringify({ sub: tab }));
+  }
+}
+
+function setLiveStatus(live, label) {
+  const btn = document.getElementById('refreshBtn');
+  const lbl = document.getElementById('refreshLabel');
+  if (live) {
+    btn.classList.add('live');
+    lbl.textContent = 'Live';
+  } else {
+    btn.classList.remove('live');
+    lbl.textContent = label ?? 'Tạm dừng';
+  }
+}
 
 // Sector state
 let sectorSymbols = {}; // sectorName → Set<symbol>
@@ -501,24 +764,31 @@ const TABS = {
 const INDEX_IDS = ['VNINDEX','VN30','HNXIndex','HNX30','UpcomIndex'];
 
 // ──── Format helpers ───────────────────────────────────────────────────────────
-const fmtP = v => v == null || v === 0 ? '--' : (v / 1000).toFixed(2);
-const fmtPct = v => v == null ? '--' : (v > 0 ? '+' : '') + v.toFixed(2) + '%';
-const fmtChg = v => v == null || v === 0 ? '--' : (v > 0 ? '+' : '') + (v / 1000).toFixed(2);
-const fmtVol = v => v == null || v === 0 ? '--' : (v / 100).toLocaleString('vi-VN');
-const fmtNN  = v => v == null || v === 0 ? '--' : Math.round(v / 100).toLocaleString('vi-VN');
+const fmtP = v => v == null || v === 0 ? '' : (v / 1000).toFixed(2);
+const fmtPct = v => v == null ? '' : (v > 0 ? '+' : '') + parseFloat(v.toFixed(2)) + '%';
+const fmtChg = v => v == null || v === 0 ? '' : (v > 0 ? '+' : '') + parseFloat((v / 1000).toFixed(2));
+const fmtVol = v => v == null || v === 0 ? '' : Math.round(v).toLocaleString('en-US').slice(0, -1);
+const fmtNN  = v => v == null || v === 0 ? '' : Math.round(v).toLocaleString('en-US').slice(0, -1);
+
+// Màu theo mức giá so với TC/Trần/Sàn — dùng cho mọi loại giá
+function levelClass(price, s) {
+  if (!price || price === 0) return '';
+  if (price >= s.ceiling) return 'p-ceil';
+  if (price <= s.floor)   return 'p-floor';
+  if (price > s.refPrice) return 'p-up';
+  if (price < s.refPrice) return 'p-dn';
+  return 'p-ref';
+}
 
 function priceClass(s) {
-  const mp = s.matchedPrice;
-  if (!mp) return '';
-  if (mp >= s.ceiling)  return 'p-ceil';
-  if (mp <= s.floor)    return 'p-dn';
-  if (mp < s.refPrice)  return 'p-dn';
-  if (mp > s.refPrice)  return 'p-up';
-  if (mp === s.refPrice) return 'p-ref';
-  return '';
+  return levelClass(s.matchedPrice, s);
 }
 
 function changeClass(s) {
+  const mp = s.matchedPrice;
+  if (!mp) return '';
+  if (mp >= s.ceiling) return 'p-ceil';
+  if (mp <= s.floor)   return 'p-floor';
   const c = s.priceChange;
   if (!c || c === 0) return 'p-ref';
   return c > 0 ? 'p-up' : 'p-dn';
@@ -555,6 +825,11 @@ function updateIndexCard(id, d) {
   document.getElementById('c-' + id).className = 'idx-chg ' + cls;
   const adv = d.advances ?? '--', dec = d.declines ?? '--';
   document.getElementById('s-' + id).textContent = `${adv} T↑  ${dec} T↓`;
+
+  // Sparkline
+  if (d.prevIndexValue) indexRef[id] = d.prevIndexValue;
+  addIndexPoint(id, val);
+  drawSparkline(id);
 }
 
 async function refreshIndexes() {
@@ -592,42 +867,59 @@ function stockRow(s) {
   const a2 = fmtP(s.best2Offer); const a2v = fmtNN(s.best2OfferVol);
   const a3 = fmtP(s.best3Offer); const a3v = fmtNN(s.best3OfferVol);
 
-  const b1cls = s.best1Bid === s.ceiling ? 'p-ceil' : 'bid-price';
-  const b2cls = s.best2Bid === s.ceiling ? 'p-ceil' : 'bid-price';
-  const b3cls = s.best3Bid === s.ceiling ? 'p-ceil' : 'bid-price';
-  const a1cls = s.best1Offer === s.floor ? 'p-floor' : 'ask-price';
-  const a2cls = s.best2Offer === s.floor ? 'p-floor' : 'ask-price';
-  const a3cls = s.best3Offer === s.floor ? 'p-floor' : 'ask-price';
+  const b1cls = levelClass(s.best1Bid, s);
+  const b2cls = levelClass(s.best2Bid, s);
+  const b3cls = levelClass(s.best3Bid, s);
+  const a1cls = levelClass(s.best1Offer, s);
+  const a2cls = levelClass(s.best2Offer, s);
+  const a3cls = levelClass(s.best3Offer, s);
 
   const room = fmtNN(s.remainForeignQtty);
+
+  // Ô portfolio (hiện khi tab danh mục)
+  let pfCells = '<td class="col-pf"></td><td class="col-pf"></td>';
+  const pfPos = portfolioData[sym];
+  if (pfPos?.length) {
+    const totalQty  = pfPos.reduce((acc, p) => acc + p.qty, 0);
+    const avgCost   = pfPos.reduce((acc, p) => acc + p.qty * p.price, 0) / totalQty;
+    const curPrice  = s.matchedPrice ? s.matchedPrice / 1000 : 0;
+    const pnlVal    = curPrice > 0 ? (curPrice - avgCost) * totalQty : 0; // nghìn đồng
+    const pnlPct    = avgCost > 0 && curPrice > 0 ? (curPrice - avgCost) / avgCost * 100 : 0;
+    const pnlCls  = pnlVal > 0 ? 'pf-gain' : pnlVal < 0 ? 'pf-loss' : 'pf-zero';
+    const pnlSign = pnlVal >= 0 ? '+' : '';
+    const pnlPctStr = curPrice > 0 ? `${pnlSign}${pnlPct.toFixed(1)}%` : '--';
+    pfCells = `<td class="col-pf" style="color:var(--text2)">${avgCost.toFixed(2)}</td>
+    <td class="col-pf ${pnlCls}">${pnlPctStr}</td>`;
+  }
 
   return `<tr id="row-${sym}" data-sym="${sym}">
     <td class="left sym-cell ${pc}">${sym}</td>
     <td class="p-ceil col-ceil">${ceil}</td>
     <td class="p-floor col-floor">${floor}</td>
     <td class="p-ref">${ref}</td>
-    <td class="col-bid3 ${b3cls}">${b3}</td>
-    <td class="col-bid3vol bid-vol">${b3v}</td>
-    <td class="col-bid2 ${b2cls}">${b2}</td>
-    <td class="col-bid2vol bid-vol">${b2v}</td>
-    <td class="col-bid1 ${b1cls}">${b1}</td>
-    <td class="col-bid1vol bid-vol">${b1v}</td>
-    <td class="${pc} fw">${mp}</td>
-    <td>${mvol}</td>
-    <td class="${cc}">${chg}</td>
-    <td class="${cc}">${pct}</td>
-    <td class="col-ask1 ${a1cls}">${a1}</td>
-    <td class="col-ask1vol ask-vol">${a1v}</td>
-    <td class="col-ask2 ${a2cls}">${a2}</td>
-    <td class="col-ask2vol ask-vol">${a2v}</td>
-    <td class="col-ask3 ${a3cls}">${a3}</td>
-    <td class="col-ask3vol ask-vol">${a3v}</td>
-    <td>${vol}</td>
-    <td class="col-high ${s.highest === s.ceiling ? 'p-ceil' : ''}">${high}</td>
-    <td class="col-low  ${s.lowest  === s.floor   ? 'p-floor' : ''}">${low}</td>
-    <td class="col-open">${open}</td>
+    <td class="col-bid3 ${b3cls}" data-field="best3Bid">${b3}</td>
+    <td class="col-bid3vol bid-vol" data-field="best3BidVol">${b3v}</td>
+    <td class="col-bid2 ${b2cls}" data-field="best2Bid">${b2}</td>
+    <td class="col-bid2vol bid-vol" data-field="best2BidVol">${b2v}</td>
+    <td class="col-bid1 ${b1cls}" data-field="best1Bid">${b1}</td>
+    <td class="col-bid1vol bid-vol" data-field="best1BidVol">${b1v}</td>
+    <td class="${pc} fw" data-field="matchedPrice">${mp}</td>
+    <td data-field="matchedVolume">${mvol}</td>
+    <td class="${cc}" data-field="priceChange">${chg}</td>
+    <td class="${cc}" data-field="priceChangePercent">${pct}</td>
+    <td class="col-ask1 ${a1cls}" data-field="best1Offer">${a1}</td>
+    <td class="col-ask1vol ask-vol" data-field="best1OfferVol">${a1v}</td>
+    <td class="col-ask2 ${a2cls}" data-field="best2Offer">${a2}</td>
+    <td class="col-ask2vol ask-vol" data-field="best2OfferVol">${a2v}</td>
+    <td class="col-ask3 ${a3cls}" data-field="best3Offer">${a3}</td>
+    <td class="col-ask3vol ask-vol" data-field="best3OfferVol">${a3v}</td>
+    <td data-field="nmTotalTradedQty">${vol}</td>
+    <td class="col-high ${levelClass(s.highest, s)}">${high}</td>
+    <td class="col-low  ${levelClass(s.lowest,  s)}">${low}</td>
+    <td class="col-open ${levelClass(s.openPrice, s)}">${open}</td>
     <td class="col-klnnm ${nnM !== '--' && s.buyForeignQtty > s.sellForeignQtty ? 'p-up' : ''}">${nnM}</td>
     <td class="col-klnnb ${nnB !== '--' && s.sellForeignQtty > s.buyForeignQtty ? 'p-dn' : ''}">${nnB}</td>
+    ${pfCells}
     <td class="hdr-room">${room}</td>
   </tr>`;
 }
@@ -661,6 +953,23 @@ function getSortValue(s, key) {
     case 'ask3':     return s.best3Offer ?? 0;
     case 'ask3vol':  return s.best3OfferVol ?? 0;
     case 'room':     return s.remainForeignQtty ?? 0;
+    case 'pf-cost': {
+      const pos = portfolioData[s.stockSymbol ?? s.code ?? ''];
+      if (!pos?.length) return 0;
+      const qty = pos.reduce((a, p) => a + p.qty, 0);
+      return pos.reduce((a, p) => a + p.qty * p.price, 0) / qty;
+    }
+    case 'pf-qty': {
+      const pos = portfolioData[s.stockSymbol ?? s.code ?? ''];
+      return pos?.reduce((a, p) => a + p.qty, 0) ?? 0;
+    }
+    case 'pf-pnl': {
+      const pos = portfolioData[s.stockSymbol ?? s.code ?? ''];
+      if (!pos?.length || !s.matchedPrice) return 0;
+      const qty = pos.reduce((a, p) => a + p.qty, 0);
+      const avg = pos.reduce((a, p) => a + p.qty * p.price, 0) / qty;
+      return (s.matchedPrice / 1000 - avg) * qty;
+    }
     default:         return 0;
   }
 }
@@ -678,7 +987,7 @@ function renderTable() {
     const av = getSortValue(a, sortKey);
     const bv = getSortValue(b, sortKey);
     if (typeof av === 'string') return sortDir * av.localeCompare(bv);
-    return sortDir * (bv - av);
+    return sortDir * (av - bv);
   });
 
   document.getElementById('tbody').innerHTML = sorted.map(stockRow).join('');
@@ -733,89 +1042,154 @@ async function switchTab(btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentTab = btn.dataset.tab;
-  // Reset sector
   activeSector = null;
   document.getElementById('sectorTabLabel').textContent = '';
 
-  if (!allData[currentTab]) {
-    showLoading(true);
-    try {
-      allData[currentTab] = await fetchTab(currentTab);
-      document.getElementById(`cnt-${currentTab}`).textContent = allData[currentTab].length;
-    } finally {
+  // Toggle CSS class để show/hide cột portfolio
+  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio');
+
+  if (currentTab === 'portfolio') {
+    // Cần data từ cả 3 sàn
+    const missing = ['hose', 'hnx', 'upcom'].filter(t => !allData[t]);
+    if (missing.length > 0) {
+      showLoading(true);
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        for (const t of missing) ws.send(JSON.stringify({ sub: t }));
+        const waitStart = Date.now();
+        await new Promise(resolve => {
+          const check = setInterval(() => {
+            if (missing.every(t => allData[t]) || Date.now() - waitStart > 4000) {
+              clearInterval(check); resolve();
+            }
+          }, 100);
+        });
+      } else {
+        try {
+          await Promise.all(missing.map(async t => { allData[t] = await fetchTab(t); }));
+        } catch {}
+      }
       showLoading(false);
+    }
+    allData['portfolio'] = getDataForPortfolio();
+    renderTable();
+    return;
+  }
+
+  if (!allData[currentTab]) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      showLoading(true);
+      wsSubscribe(currentTab);
+      const waitStart = Date.now();
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (allData[currentTab] || Date.now() - waitStart > 3000) {
+            clearInterval(check); resolve();
+          }
+        }, 100);
+      });
+      showLoading(false);
+    } else {
+      showLoading(true);
+      try {
+        allData[currentTab] = await fetchTab(currentTab);
+        document.getElementById(`cnt-${currentTab}`).textContent = allData[currentTab].length;
+      } finally {
+        showLoading(false);
+      }
     }
   }
   renderTable();
 }
 
-// ──── Live refresh ─────────────────────────────────────────────────────────────
+// ──── Live toggle ──────────────────────────────────────────────────────────────
 function toggleLive() {
   isLive = !isLive;
-  const btn = document.getElementById('refreshBtn');
-  const lbl = document.getElementById('refreshLabel');
   if (isLive) {
-    btn.classList.add('live');
-    lbl.textContent = 'Live';
-    startLive();
+    connectWs();
   } else {
-    btn.classList.remove('live');
-    lbl.textContent = 'Tạm dừng';
-    stopLive();
+    setLiveStatus(false, 'Tạm dừng');
+    disconnectWs();
   }
 }
 
-function startLive() {
-  stopLive();
-  liveTimer = setInterval(async () => {
-    try {
-      if (currentTab === 'sector' && activeSector) {
-        // Refresh all 3 exchanges in parallel
-        const [hose, hnx, upcom] = await Promise.all([
-          fetchTab('hose'),
-          fetchTab('hnx'),
-          fetchTab('upcom'),
-          refreshIndexes(),
-        ]);
-        allData['hose'] = hose;
-        allData['hnx']  = hnx;
-        allData['upcom'] = upcom;
-        allData['sector'] = getDataForSector(activeSector);
-      } else {
-        const [newData] = await Promise.all([
-          fetchTab(currentTab),
-          refreshIndexes(),
-        ]);
-        flashChanges(allData[currentTab] ?? [], newData);
-        allData[currentTab] = newData;
-        document.getElementById(`cnt-${currentTab}`).textContent = newData.length;
-      }
-      renderTable();
-      updateTimestamp();
-    } catch(e) { console.warn('Refresh error:', e); }
-  }, REFRESH_MS);
-}
+const FLASH_FIELDS = [
+  'matchedPrice', 'matchedVolume', 'priceChange', 'priceChangePercent',
+  'best1Bid', 'best1BidVol', 'best2Bid', 'best2BidVol', 'best3Bid', 'best3BidVol',
+  'best1Offer', 'best1OfferVol', 'best2Offer', 'best2OfferVol', 'best3Offer', 'best3OfferVol',
+  'nmTotalTradedQty',
+];
 
-function stopLive() {
-  if (liveTimer) { clearInterval(liveTimer); liveTimer = null; }
-}
-
-function flashChanges(oldData, newData) {
+function flashCells(oldData, newData) {
   const oldMap = {};
-  for (const s of oldData) oldMap[s.stockSymbol ?? s.code] = s.matchedPrice;
+  for (const s of oldData) oldMap[s.stockSymbol ?? s.code] = s;
   for (const s of newData) {
     const sym = s.stockSymbol ?? s.code;
-    const oldP = oldMap[sym];
-    const newP = s.matchedPrice;
-    if (oldP != null && newP != null && oldP !== newP) {
-      const row = document.getElementById(`row-${sym}`);
-      if (row) {
-        row.classList.remove('flash-g','flash-r');
-        void row.offsetWidth; // reflow
-        row.classList.add(newP > oldP ? 'flash-g' : 'flash-r');
-      }
+    const old = oldMap[sym];
+    if (!old) continue;
+    const row = document.getElementById(`row-${sym}`);
+    if (!row) continue;
+    for (const field of FLASH_FIELDS) {
+      const oldVal = old[field];
+      const newVal = s[field];
+      if (oldVal == null || newVal == null || oldVal === newVal) continue;
+      const cell = row.querySelector(`[data-field="${field}"]`);
+      if (!cell) continue;
+      cell.classList.remove('flash-g', 'flash-r');
+      void cell.offsetWidth;
+      cell.classList.add(newVal > oldVal ? 'flash-g' : 'flash-r');
     }
   }
+}
+
+// ──── Diff update: chỉ cập nhật từng row thay đổi ─────────────────────────────
+function applyTabUpdate(tab, updates) {
+  if (!allData[tab] || !updates?.length) return;
+  const getKey = s => s.stockSymbol ?? s.code ?? '';
+  const dataMap = new Map(allData[tab].map(s => [getKey(s), s]));
+
+  for (const s of updates) {
+    const key = getKey(s);
+    const old = dataMap.get(key);
+    dataMap.set(key, s);
+
+    // Update row nếu đang hiển thị
+    const inSector   = currentTab === 'sector' && activeSector && sectorSymbols[activeSector]?.has(key);
+    const inPortfolio = currentTab === 'portfolio' && portfolioSymbols.has(key);
+    const visible    = currentTab === tab || (inSector && ['hose','hnx','upcom'].includes(tab))
+                       || (inPortfolio && ['hose','hnx','upcom'].includes(tab));
+    if (visible) updateRow(key, s, old);
+  }
+
+  allData[tab] = [...dataMap.values()];
+  if (currentTab === 'sector' && activeSector && ['hose','hnx','upcom'].includes(tab)) {
+    allData['sector'] = getDataForSector(activeSector);
+  }
+  if (currentTab === 'portfolio' && ['hose','hnx','upcom'].includes(tab)) {
+    allData['portfolio'] = getDataForPortfolio();
+  }
+  updateStats(allData[currentTab] ?? []);
+  updateTimestamp();
+}
+
+function updateRow(sym, s, old) {
+  const row = document.getElementById(`row-${sym}`);
+  if (!row) return;
+
+  // Re-render row HTML
+  const tmp = document.createElement('tbody');
+  tmp.innerHTML = stockRow(s);
+  const newRow = tmp.firstElementChild;
+
+  // Flash changed cells trước khi replace
+  if (old) {
+    for (const field of FLASH_FIELDS) {
+      const oldVal = old[field], newVal = s[field];
+      if (oldVal == null || newVal == null || oldVal === newVal) continue;
+      const cell = newRow.querySelector(`[data-field="${field}"]`);
+      if (cell) cell.classList.add(newVal > oldVal ? 'flash-g' : 'flash-r');
+    }
+  }
+  row.replaceWith(newRow);
 }
 
 function updateTimestamp() {
@@ -876,14 +1250,25 @@ async function selectSector(name) {
   const missing = ['hose', 'hnx', 'upcom'].filter(t => !allData[t]);
   if (missing.length > 0) {
     showLoading(true);
-    try {
-      await Promise.all(missing.map(async t => {
-        allData[t] = await fetchTab(t);
-        document.getElementById(`cnt-${t}`).textContent = allData[t].length;
-      }));
-    } finally {
-      showLoading(false);
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      for (const t of missing) ws.send(JSON.stringify({ sub: t }));
+      const waitStart = Date.now();
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (missing.every(t => allData[t]) || Date.now() - waitStart > 4000) {
+            clearInterval(check); resolve();
+          }
+        }, 100);
+      });
+    } else {
+      try {
+        await Promise.all(missing.map(async t => {
+          allData[t] = await fetchTab(t);
+          document.getElementById(`cnt-${t}`).textContent = allData[t].length;
+        }));
+      } catch {}
     }
+    showLoading(false);
   }
   allData['sector'] = getDataForSector(name);
   renderTable();
@@ -897,29 +1282,18 @@ async function init() {
       fetchTab('VN30'),
       fetch('/api/sectors').then(r => r.json()),
       refreshIndexes(),
+      loadPortfolio(),
+      loadIntradayHistory(),
     ]);
     allData['VN30'] = data;
     document.getElementById('cnt-VN30').textContent = data.length;
     buildSectorDropdown(sectors);
-    // prefetch counts for other tabs (non-blocking)
-    prefetchCounts();
   } finally {
     showLoading(false);
   }
   renderTable();
   updateTimestamp();
-  if (isLive) startLive();
-}
-
-async function prefetchCounts() {
-  const tabs = ['hose','hnx','upcom'];
-  for (const t of tabs) {
-    try {
-      const d = await fetchTab(t);
-      allData[t] = d;
-      document.getElementById(`cnt-${t}`).textContent = d.length;
-    } catch(e) {}
-  }
+  if (isLive) connectWs();
 }
 
 init();
