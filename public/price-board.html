@@ -17,11 +17,11 @@
   --text: #e2e8f0;
   --text2: #94a3b8;
   --text3: #64748b;
-  --green: #22c55e;
-  --red: #ef4444;
-  --ceil: #c084fc;    /* tím trần */
-  --floor: #22d3ee;   /* xanh sàn */
-  --ref: #fbbf24;     /* vàng tham chiếu */
+  --green: #00ff00;
+  --red: #ff3737;
+  --ceil: #ff25ff;    /* tím trần */
+  --floor: #1eeeee;   /* xanh sàn */
+  --ref: #ffd900;     /* vàng tham chiếu */
   --header-h: 56px;
   --tabbar-h: 44px;
   --index-h: 168px;
@@ -169,7 +169,7 @@ body {
 #stockTable {
   border-collapse: collapse;
   font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
-  font-size: 11.5px;
+  font-size: 12px;
   width: 100%;
   table-layout: fixed;
 }
@@ -200,8 +200,11 @@ body {
 #stockTable thead th.sort-asc::after  { content: ' ▲'; color: #60a5fa; }
 #stockTable thead th.sort-desc::after { content: ' ▼'; color: #60a5fa; }
 
-.bid-vol, .ask-vol { color: var(--text2); font-size: 10.5px; }
-td[data-field="priceChange"], td[data-field="priceChangePercent"] { font-family: 'Inter', sans-serif; }
+.bid-vol, .ask-vol { font-size: 10.5px; }
+td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
+#chgModeHdr { letter-spacing: 0; }
+.has-arrow { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.flash-arrow { font-size: 8px; line-height: 1; flex-shrink: 0; }
 
 /* Cell borders */
 #stockTable th,
@@ -242,11 +245,13 @@ td[data-field="priceChange"], td[data-field="priceChangePercent"] { font-family:
 .p-dn { color: var(--red); }
 .p-ref { color: var(--ref); }
 
-/* Cell flash animation */
-@keyframes flashCellGreen { 0%{background:#16a34a66} 100%{background:transparent} }
-@keyframes flashCellRed   { 0%{background:#dc262666} 100%{background:transparent} }
-.flash-g { animation: flashCellGreen 0.8s ease-out; }
-.flash-r { animation: flashCellRed   0.8s ease-out; }
+/* Cell flash — sustained highlight, fades out after timer clears */
+#stockTable td { transition: background-color 0.5s ease; }
+.flash-g    { background-color: rgba(46, 176,   0, 0.75) !important; transition: none !important; color: #fff !important; }
+.flash-r    { background-color: rgba(222,   0,   0, 0.75) !important; transition: none !important; color: #fff !important; }
+.flash-ceil { background-color: rgba(255,  37, 255, 0.75) !important; transition: none !important; color: #fff !important; }
+.flash-floor{ background-color: rgba( 30, 238, 238, 0.75) !important; transition: none !important; color: #111 !important; }
+.flash-ref  { background-color: rgba(255, 217,   0, 0.75) !important; transition: none !important; color: #111 !important; }
 
 /* ── STAT BAR ── */
 #statBar {
@@ -292,23 +297,22 @@ td[data-field="priceChange"], td[data-field="priceChangePercent"] { font-family:
   #header h1 { font-size: 14px; }
   #searchBox { width: 120px; }
   #lastUpdate { display: none; }
-  .col-open, .col-high, .col-low,
-  .col-klnnm, .col-klnnb, .hdr-open, .hdr-high, .hdr-low, .hdr-klnnm, .hdr-klnnb,
-  .hdr-room,
+  .col-high, .col-low, .col-dumua, .col-duban,
+  .col-klnnm, .col-klnnb, .hdr-high, .hdr-low, .hdr-klnnm, .hdr-klnnb,
+  .hdr-dumua, .hdr-duban,
   .col-bid1, .col-bid1vol, .col-bid2, .col-bid2vol, .col-bid3, .col-bid3vol,
   .col-ask1, .col-ask1vol, .col-ask2, .col-ask2vol, .col-ask3, .col-ask3vol,
-  .grp-bid, .grp-ask, .grp-dtnn { display: none !important; }
+  .grp-bid, .grp-ask, .grp-dtnn, .grp-price, .grp-du { display: none !important; }
   .grp-match { display: none !important; }
   .idx-card { min-width: 120px; }
   .idx-val { font-size: 14px; }
 }
 
 /* ── PORTFOLIO TAB ── */
-/* Trong tab danh mục: ẩn ĐTNN + Room, thay bằng cột portfolio */
+/* Trong tab danh mục: ẩn ĐTNN, thay bằng cột portfolio */
 body.tab-portfolio .grp-dtnn,
 body.tab-portfolio .col-klnnm, body.tab-portfolio .hdr-klnnm,
-body.tab-portfolio .col-klnnb, body.tab-portfolio .hdr-klnnb,
-body.tab-portfolio .hdr-room  { display: none !important; }
+body.tab-portfolio .col-klnnb, body.tab-portfolio .hdr-klnnb { display: none !important; }
 
 /* Cột portfolio — ẩn mặc định, hiện khi tab-portfolio */
 .col-pf, .hdr-pf { display: none; }
@@ -576,7 +580,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 
 <!-- TABS -->
 <div id="tabBar">
-  <button class="tab-btn active" data-tab="VN30" onclick="switchTab(this)">VN30 <span class="tab-count" id="cnt-VN30">30</span></button>
+  <button class="tab-btn" data-tab="VN30" onclick="switchTab(this)">VN30 <span class="tab-count" id="cnt-VN30">30</span></button>
   <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
   <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
   <button class="tab-btn" data-tab="upcom" onclick="switchTab(this)">UPCOM <span class="tab-count" id="cnt-upcom">...</span></button>
@@ -597,45 +601,48 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
     <thead>
       <!-- Row 1: group headers -->
       <tr>
-        <th class="left" rowspan="2" style="min-width:52px;width:52px" onclick="sortBy('sym')">CK</th>
-        <th class="hdr-ceil"  rowspan="2" style="width:48px" onclick="sortBy('ceil')">Trần</th>
-        <th class="hdr-floor" rowspan="2" style="width:48px" onclick="sortBy('floor')">Sàn</th>
-        <th rowspan="2" style="width:48px" onclick="sortBy('ref')">TC</th>
+        <th class="left" rowspan="2" style="min-width:44px;width:44px" onclick="sortBy('sym')">Mã CK</th>
+        <th rowspan="2" style="width:56px" onclick="sortBy('ref')">TC</th>
+        <th class="hdr-ceil"  rowspan="2" style="width:56px" onclick="sortBy('ceil')">Trần</th>
+        <th class="hdr-floor" rowspan="2" style="width:56px" onclick="sortBy('floor')">Sàn</th>
+        <th rowspan="2" style="width:80px" onclick="sortBy('vol')">Tổng KL</th>
         <th class="grp-bid" colspan="6" style="text-align:center">Bên mua</th>
-        <th class="grp-match" colspan="4" style="text-align:center">Khớp lệnh</th>
+        <th class="grp-match" colspan="3" style="text-align:center">Khớp lệnh</th>
         <th class="grp-ask" colspan="6" style="text-align:center">Bên bán</th>
-        <th rowspan="2" style="width:68px" onclick="sortBy('vol')">Tổng KL</th>
-        <th class="hdr-high" rowspan="2" style="width:48px" onclick="sortBy('high')">Cao</th>
-        <th class="hdr-low"  rowspan="2" style="width:48px" onclick="sortBy('low')">Thấp</th>
-        <th class="hdr-open" rowspan="2" style="width:48px" onclick="sortBy('open')">Mở</th>
+        <th class="grp-price" colspan="2" style="text-align:center">Giá</th>
+        <th class="grp-du" colspan="2" style="text-align:center">Dư</th>
         <th class="grp-dtnn" colspan="2" style="text-align:center">ĐTNN</th>
         <th class="hdr-pf" colspan="2" style="text-align:center">Danh mục</th>
-        <th class="hdr-room" rowspan="2" style="width:62px" onclick="sortBy('room')">Room</th>
       </tr>
       <!-- Row 2: sub-column headers -->
       <tr>
         <!-- Bên mua: Giá 3 → KL 3 → Giá 2 → KL 2 → Giá 1 → KL 1 -->
-        <th class="grp-bid hdr-bid3"    style="width:48px" onclick="sortBy('bid3')">Giá 3</th>
-        <th class="grp-bid hdr-bid3vol" style="width:52px" onclick="sortBy('bid3vol')">KL 3</th>
-        <th class="grp-bid hdr-bid2"    style="width:48px" onclick="sortBy('bid2')">Giá 2</th>
-        <th class="grp-bid hdr-bid2vol" style="width:52px" onclick="sortBy('bid2vol')">KL 2</th>
-        <th class="grp-bid hdr-bid1"    style="width:48px" onclick="sortBy('bid1')">Giá 1</th>
-        <th class="grp-bid hdr-bid1vol" style="width:52px" onclick="sortBy('bid1vol')">KL 1</th>
-        <!-- Khớp lệnh -->
-        <th class="grp-match" style="width:52px" onclick="sortBy('match')">Giá</th>
-        <th class="grp-match" style="width:58px" onclick="sortBy('matchvol')">KL</th>
-        <th class="grp-match" style="width:52px" onclick="sortBy('change')">+/-</th>
-        <th class="grp-match" style="width:56px" onclick="sortBy('changePct')">+/- (%)</th>
+        <th class="grp-bid hdr-bid3"    style="width:46px" onclick="sortBy('bid3')">Giá 3</th>
+        <th class="grp-bid hdr-bid3vol" style="width:43px" onclick="sortBy('bid3vol')">KL 3</th>
+        <th class="grp-bid hdr-bid2"    style="width:46px" onclick="sortBy('bid2')">Giá 2</th>
+        <th class="grp-bid hdr-bid2vol" style="width:43px" onclick="sortBy('bid2vol')">KL 2</th>
+        <th class="grp-bid hdr-bid1"    style="width:46px" onclick="sortBy('bid1')">Giá 1</th>
+        <th class="grp-bid hdr-bid1vol" style="width:43px" onclick="sortBy('bid1vol')">KL 1</th>
+        <!-- Khớp lệnh (3 cols: Giá, KL, +/-+%) -->
+        <th class="grp-match" style="width:46px" onclick="sortBy('match')">Giá</th>
+        <th class="grp-match" style="width:52px" onclick="sortBy('matchvol')">KL</th>
+        <th class="grp-match" id="chgModeHdr" style="width:60px" onclick="toggleChangeMode()"></th>
         <!-- Bên bán: Giá 1 → KL 1 → Giá 2 → KL 2 → Giá 3 → KL 3 -->
-        <th class="grp-ask hdr-ask1"    style="width:48px" onclick="sortBy('ask1')">Giá 1</th>
-        <th class="grp-ask hdr-ask1vol" style="width:52px" onclick="sortBy('ask1vol')">KL 1</th>
-        <th class="grp-ask hdr-ask2"    style="width:48px" onclick="sortBy('ask2')">Giá 2</th>
-        <th class="grp-ask hdr-ask2vol" style="width:52px" onclick="sortBy('ask2vol')">KL 2</th>
-        <th class="grp-ask hdr-ask3"    style="width:48px" onclick="sortBy('ask3')">Giá 3</th>
-        <th class="grp-ask hdr-ask3vol" style="width:52px" onclick="sortBy('ask3vol')">KL 3</th>
+        <th class="grp-ask hdr-ask1"    style="width:46px" onclick="sortBy('ask1')">Giá 1</th>
+        <th class="grp-ask hdr-ask1vol" style="width:43px" onclick="sortBy('ask1vol')">KL 1</th>
+        <th class="grp-ask hdr-ask2"    style="width:46px" onclick="sortBy('ask2')">Giá 2</th>
+        <th class="grp-ask hdr-ask2vol" style="width:43px" onclick="sortBy('ask2vol')">KL 2</th>
+        <th class="grp-ask hdr-ask3"    style="width:46px" onclick="sortBy('ask3')">Giá 3</th>
+        <th class="grp-ask hdr-ask3vol" style="width:43px" onclick="sortBy('ask3vol')">KL 3</th>
+        <!-- Giá: Cao, Thấp -->
+        <th class="grp-price hdr-high" style="width:46px" onclick="sortBy('high')">Cao</th>
+        <th class="grp-price hdr-low"  style="width:46px" onclick="sortBy('low')">Thấp</th>
+        <!-- Dư: Mua, Bán -->
+        <th class="grp-du hdr-dumua" style="width:54px" onclick="sortBy('duMua')">Mua</th>
+        <th class="grp-du hdr-duban" style="width:54px" onclick="sortBy('duBan')">Bán</th>
         <!-- ĐTNN sub -->
-        <th class="grp-dtnn hdr-dtnn-m hdr-klnnm" style="width:62px" onclick="sortBy('nnBuy')">NN mua</th>
-        <th class="grp-dtnn hdr-klnnb"             style="width:62px" onclick="sortBy('nnSell')">NN bán</th>
+        <th class="grp-dtnn hdr-dtnn-m hdr-klnnm" style="width:50px" onclick="sortBy('nnBuy')">NN mua</th>
+        <th class="grp-dtnn hdr-klnnb"             style="width:50px" onclick="sortBy('nnSell')">NN bán</th>
         <!-- Portfolio sub (thay ĐTNN khi tab danh mục) -->
         <th class="hdr-pf" style="width:62px" onclick="sortBy('pf-cost')">Giá vốn</th>
         <th class="hdr-pf" style="width:68px" onclick="sortBy('pf-pnl')">Lãi / Lỗ %</th>
@@ -1385,11 +1392,12 @@ document.getElementById('tbody').addEventListener('click', e => {
 });
 
 // ──── State ────────────────────────────────────────────────────────────────────
-let allData    = {};   // tab → array of stock objects
-let currentTab = 'VN30';
-let sortKey    = 'match';
-let sortDir    = -1;   // -1 = desc, 1 = asc
-let isLive     = true;
+let allData      = {};   // tab → array of stock objects
+let currentTab   = localStorage.getItem('pb_tab') || 'VN30';
+let sortKey      = 'match';
+let sortDir      = -1;   // -1 = desc, 1 = asc
+let isLive       = true;
+let changeMode   = localStorage.getItem('pb_changeMode') || 'abs'; // 'abs' | 'pct'
 
 // Portfolio state
 let portfolioData    = {};  // { SYM: [{qty, price, date, id}] }
@@ -1513,7 +1521,7 @@ const INDEX_IDS = ['VNINDEX','VN30','HNXIndex','HNX30','UpcomIndex'];
 // ──── Format helpers ───────────────────────────────────────────────────────────
 const fmtP = v => v == null || v === 0 ? '' : (v / 1000).toFixed(2);
 const fmtPct = v => v == null ? '' : (v > 0 ? '+' : '') + parseFloat(v.toFixed(2)) + '%';
-const fmtChg = v => v == null || v === 0 ? '' : (v > 0 ? '+' : '') + parseFloat((v / 1000).toFixed(2));
+const fmtChg = v => v == null || v === 0 ? '' : (v > 0 ? '+' : '') + (v / 1000).toFixed(2);
 const fmtVol = v => v == null || v === 0 ? '' : Math.round(v).toLocaleString('en-US').slice(0, -1);
 const fmtNN  = v => v == null || v === 0 ? '' : Math.round(v).toLocaleString('en-US').slice(0, -1);
 
@@ -1621,7 +1629,8 @@ function stockRow(s) {
   const a2cls = levelClass(s.best2Offer, s);
   const a3cls = levelClass(s.best3Offer, s);
 
-  const room = fmtNN(s.remainForeignQtty);
+  const duMua = fmtNN((s.best1BidVol ?? 0) + (s.best2BidVol ?? 0) + (s.best3BidVol ?? 0));
+  const duBan = fmtNN((s.best1OfferVol ?? 0) + (s.best2OfferVol ?? 0) + (s.best3OfferVol ?? 0));
 
   // Ô portfolio (hiện khi tab danh mục)
   let pfCells = '<td class="col-pf"></td><td class="col-pf"></td>';
@@ -1641,33 +1650,32 @@ function stockRow(s) {
 
   return `<tr id="row-${sym}" data-sym="${sym}">
     <td class="left sym-cell ${pc}">${sym}</td>
+    <td class="p-ref">${ref}</td>
     <td class="p-ceil col-ceil">${ceil}</td>
     <td class="p-floor col-floor">${floor}</td>
-    <td class="p-ref">${ref}</td>
-    <td class="col-bid3 ${b3cls}" data-field="best3Bid">${b3}</td>
-    <td class="col-bid3vol bid-vol" data-field="best3BidVol">${b3v}</td>
-    <td class="col-bid2 ${b2cls}" data-field="best2Bid">${b2}</td>
-    <td class="col-bid2vol bid-vol" data-field="best2BidVol">${b2v}</td>
-    <td class="col-bid1 ${b1cls}" data-field="best1Bid">${b1}</td>
-    <td class="col-bid1vol bid-vol" data-field="best1BidVol">${b1v}</td>
-    <td class="${pc} fw" data-field="matchedPrice">${mp}</td>
-    <td data-field="matchedVolume">${mvol}</td>
-    <td class="${cc}" data-field="priceChange">${chg}</td>
-    <td class="${cc}" data-field="priceChangePercent">${pct}</td>
-    <td class="col-ask1 ${a1cls}" data-field="best1Offer">${a1}</td>
-    <td class="col-ask1vol ask-vol" data-field="best1OfferVol">${a1v}</td>
-    <td class="col-ask2 ${a2cls}" data-field="best2Offer">${a2}</td>
-    <td class="col-ask2vol ask-vol" data-field="best2OfferVol">${a2v}</td>
-    <td class="col-ask3 ${a3cls}" data-field="best3Offer">${a3}</td>
-    <td class="col-ask3vol ask-vol" data-field="best3OfferVol">${a3v}</td>
     <td data-field="nmTotalTradedQty">${vol}</td>
+    <td class="col-bid3 ${b3cls}" data-field="best3Bid">${b3}</td>
+    <td class="col-bid3vol bid-vol ${b3cls}" data-field="best3BidVol">${b3v}</td>
+    <td class="col-bid2 ${b2cls}" data-field="best2Bid">${b2}</td>
+    <td class="col-bid2vol bid-vol ${b2cls}" data-field="best2BidVol">${b2v}</td>
+    <td class="col-bid1 ${b1cls}" data-field="best1Bid">${b1}</td>
+    <td class="col-bid1vol bid-vol ${b1cls}" data-field="best1BidVol">${b1v}</td>
+    <td class="${pc} fw" data-field="matchedPrice">${mp}</td>
+    <td class="${pc}" data-field="matchedVolume">${mvol}</td>
+    <td class="${cc}" data-field="priceChange" data-chg="${chg}" data-pct="${pct}">${changeMode === 'pct' ? pct : chg}</td>
+    <td class="col-ask1 ${a1cls}" data-field="best1Offer">${a1}</td>
+    <td class="col-ask1vol ask-vol ${a1cls}" data-field="best1OfferVol">${a1v}</td>
+    <td class="col-ask2 ${a2cls}" data-field="best2Offer">${a2}</td>
+    <td class="col-ask2vol ask-vol ${a2cls}" data-field="best2OfferVol">${a2v}</td>
+    <td class="col-ask3 ${a3cls}" data-field="best3Offer">${a3}</td>
+    <td class="col-ask3vol ask-vol ${a3cls}" data-field="best3OfferVol">${a3v}</td>
     <td class="col-high ${levelClass(s.highest, s)}">${high}</td>
     <td class="col-low  ${levelClass(s.lowest,  s)}">${low}</td>
-    <td class="col-open ${levelClass(s.openPrice, s)}">${open}</td>
-    <td class="col-klnnm ${nnM !== '--' && s.buyForeignQtty > s.sellForeignQtty ? 'p-up' : ''}">${nnM}</td>
-    <td class="col-klnnb ${nnB !== '--' && s.sellForeignQtty > s.buyForeignQtty ? 'p-dn' : ''}">${nnB}</td>
+    <td class="col-dumua">${duMua}</td>
+    <td class="col-duban">${duBan}</td>
+    <td class="col-klnnm ${nnM !== '' && s.buyForeignQtty > s.sellForeignQtty ? 'p-up' : ''}">${nnM}</td>
+    <td class="col-klnnb ${nnB !== '' && s.sellForeignQtty > s.buyForeignQtty ? 'p-dn' : ''}">${nnB}</td>
     ${pfCells}
-    <td class="hdr-room">${room}</td>
   </tr>`;
 }
 
@@ -1699,6 +1707,8 @@ function getSortValue(s, key) {
     case 'ask2vol':  return s.best2OfferVol ?? 0;
     case 'ask3':     return s.best3Offer ?? 0;
     case 'ask3vol':  return s.best3OfferVol ?? 0;
+    case 'duMua':    return (s.best1BidVol ?? 0) + (s.best2BidVol ?? 0) + (s.best3BidVol ?? 0);
+    case 'duBan':    return (s.best1OfferVol ?? 0) + (s.best2OfferVol ?? 0) + (s.best3OfferVol ?? 0);
     case 'room':     return s.remainForeignQtty ?? 0;
     case 'pf-cost': {
       const pos = portfolioData[s.stockSymbol ?? s.code ?? ''];
@@ -1739,6 +1749,7 @@ function renderTable() {
 
   document.getElementById('tbody').innerHTML = sorted.map(stockRow).join('');
   updateSortHeader();
+  updateChgModeHdr();
   updateStats(data);
 }
 
@@ -1789,7 +1800,9 @@ async function switchTab(btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentTab = btn.dataset.tab;
+  localStorage.setItem('pb_tab', currentTab);
   activeSector = null;
+  localStorage.removeItem('pb_sector');
   document.getElementById('sectorTabLabel').textContent = '';
 
   // Toggle CSS class để show/hide cột portfolio
@@ -1848,6 +1861,25 @@ async function switchTab(btn) {
   renderTable();
 }
 
+// ──── Change mode toggle (+/- ↔ %) ────────────────────────────────────────────
+function updateChgModeHdr() {
+  const hdr = document.getElementById('chgModeHdr');
+  if (!hdr) return;
+  hdr.innerHTML = changeMode === 'pct'
+    ? '&#9664; % &#9654;'
+    : '&#9664; +/- &#9654;';
+}
+
+function toggleChangeMode() {
+  changeMode = changeMode === 'abs' ? 'pct' : 'abs';
+  localStorage.setItem('pb_changeMode', changeMode);
+  updateChgModeHdr();
+  // Cập nhật tất cả ô data-field="priceChange" mà không re-render toàn bộ
+  document.querySelectorAll('td[data-field="priceChange"]').forEach(td => {
+    td.textContent = changeMode === 'pct' ? td.dataset.pct : td.dataset.chg;
+  });
+}
+
 // ──── Live toggle ──────────────────────────────────────────────────────────────
 function toggleLive() {
   isLive = !isLive;
@@ -1860,11 +1892,70 @@ function toggleLive() {
 }
 
 const FLASH_FIELDS = [
-  'matchedPrice', 'matchedVolume', 'priceChange', 'priceChangePercent',
+  'matchedPrice', 'matchedVolume', 'priceChange',
   'best1Bid', 'best1BidVol', 'best2Bid', 'best2BidVol', 'best3Bid', 'best3BidVol',
   'best1Offer', 'best1OfferVol', 'best2Offer', 'best2OfferVol', 'best3Offer', 'best3OfferVol',
   'nmTotalTradedQty',
 ];
+
+const flashTimers = new Map(); // cell → timeoutId
+const ALL_FLASH_CLS = ['flash-g', 'flash-r', 'flash-ceil', 'flash-floor', 'flash-ref'];
+const VOL_ARROW_FIELDS = new Set([
+  'best1BidVol', 'best2BidVol', 'best3BidVol',
+  'best1OfferVol', 'best2OfferVol', 'best3OfferVol',
+]);
+
+function getFlashCls(cell, isUp) {
+  // 1. Nếu cell đã có price-level class → dùng luôn
+  if (cell.classList.contains('p-ceil'))  return 'flash-ceil';
+  if (cell.classList.contains('p-floor')) return 'flash-floor';
+  if (cell.classList.contains('p-ref'))   return 'flash-ref';
+  if (cell.classList.contains('p-up'))    return 'flash-g';
+  if (cell.classList.contains('p-dn'))    return 'flash-r';
+
+  // 2. Không có class → tra allData theo data-sym của row, so với trần/sàn/TC
+  const row = cell.closest('tr');
+  const sym = row?.dataset?.sym;
+  if (sym) {
+    const s = findStock(sym);
+    if (s) {
+      const mp = s.matchedPrice;
+      if (mp && mp >= s.ceiling)  return 'flash-ceil';
+      if (mp && mp <= s.floor)    return 'flash-floor';
+      if (mp && mp === s.refPrice) return 'flash-ref';
+      if (s.priceChange > 0)  return 'flash-g';
+      if (s.priceChange < 0)  return 'flash-r';
+    }
+  }
+  return isUp ? 'flash-g' : 'flash-r';
+}
+
+function flashCell(cell, isUp) {
+  const newCls = getFlashCls(cell, isUp);
+  // Huỷ timer cũ nếu có
+  if (flashTimers.has(cell)) clearTimeout(flashTimers.get(cell));
+  // Đổi màu ngay
+  cell.classList.remove(...ALL_FLASH_CLS);
+  cell.classList.add(newCls);
+  // Thêm mũi tên cho cột KL bên mua/bán
+  if (VOL_ARROW_FIELDS.has(cell.dataset.field)) {
+    const orig = cell.dataset.origText ?? cell.textContent;
+    cell.dataset.origText = orig;
+    cell.classList.add('has-arrow');
+    cell.innerHTML = `<span class="flash-arrow">${isUp ? '▲' : '▼'}</span><span>${orig}</span>`;
+  }
+  // Sau 2s: xoá class + mũi tên → CSS transition fade out 0.5s
+  const tid = setTimeout(() => {
+    cell.classList.remove(...ALL_FLASH_CLS);
+    if (cell.dataset.origText !== undefined) {
+      cell.textContent = cell.dataset.origText;
+      cell.classList.remove('has-arrow');
+      delete cell.dataset.origText;
+    }
+    flashTimers.delete(cell);
+  }, 2000);
+  flashTimers.set(cell, tid);
+}
 
 function flashCells(oldData, newData) {
   const oldMap = {};
@@ -1880,10 +1971,7 @@ function flashCells(oldData, newData) {
       const newVal = s[field];
       if (oldVal == null || newVal == null || oldVal === newVal) continue;
       const cell = row.querySelector(`[data-field="${field}"]`);
-      if (!cell) continue;
-      cell.classList.remove('flash-g', 'flash-r');
-      void cell.offsetWidth;
-      cell.classList.add(newVal > oldVal ? 'flash-g' : 'flash-r');
+      if (cell) flashCell(cell, newVal > oldVal);
     }
   }
 }
@@ -1927,16 +2015,16 @@ function updateRow(sym, s, old) {
   tmp.innerHTML = stockRow(s);
   const newRow = tmp.firstElementChild;
 
-  // Flash changed cells trước khi replace
+  row.replaceWith(newRow);
+  // Flash sau khi row đã vào DOM — dùng timer 2s
   if (old) {
     for (const field of FLASH_FIELDS) {
       const oldVal = old[field], newVal = s[field];
       if (oldVal == null || newVal == null || oldVal === newVal) continue;
       const cell = newRow.querySelector(`[data-field="${field}"]`);
-      if (cell) cell.classList.add(newVal > oldVal ? 'flash-g' : 'flash-r');
+      if (cell) flashCell(cell, newVal > oldVal);
     }
   }
-  row.replaceWith(newRow);
 }
 
 function updateTimestamp() {
@@ -1988,6 +2076,8 @@ async function selectSector(name) {
   document.getElementById('sectorTabBtn').classList.add('active');
   activeSector = name;
   currentTab = 'sector';
+  localStorage.setItem('pb_tab', 'sector');
+  localStorage.setItem('pb_sector', name);
   document.getElementById('sectorTabLabel').textContent = ': ' + name;
   // Update active item highlight
   document.querySelectorAll('.sector-opt').forEach(el => {
@@ -2023,21 +2113,63 @@ async function selectSector(name) {
 
 // ──── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
+  const savedTab    = localStorage.getItem('pb_tab') || 'VN30';
+  const savedSector = localStorage.getItem('pb_sector');
+
+  // Kích hoạt tab button ngay lập tức (trước khi fetch)
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (savedTab === 'sector') {
+    document.getElementById('sectorTabBtn').classList.add('active');
+    if (savedSector) {
+      document.getElementById('sectorTabLabel').textContent = ': ' + savedSector;
+      activeSector = savedSector;
+    }
+  } else {
+    const btn = document.querySelector(`.tab-btn[data-tab="${savedTab}"]`);
+    if (btn) btn.classList.add('active');
+  }
+  currentTab = savedTab;
+  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio');
+
+  // Xác định tab cần fetch
+  const tabsToFetch = new Set();
+  if (savedTab === 'portfolio' || savedTab === 'sector') {
+    tabsToFetch.add('hose'); tabsToFetch.add('hnx'); tabsToFetch.add('upcom');
+  } else {
+    tabsToFetch.add(savedTab === 'VN30' ? 'VN30' : savedTab);
+    if (savedTab !== 'VN30') tabsToFetch.add('VN30'); // fetch VN30 ngầm để có count
+  }
+
   showLoading(true);
   try {
-    const [data, sectors] = await Promise.all([
-      fetchTab('VN30'),
+    const [sectors] = await Promise.all([
       fetch('/api/sectors').then(r => r.json()),
       refreshIndexes(),
       loadPortfolio(),
       loadIntradayHistory(),
+      ...[...tabsToFetch].map(async t => {
+        const d = await fetchTab(t);
+        allData[t] = d;
+        const el = document.getElementById(`cnt-${t}`);
+        if (el) el.textContent = d.length;
+      }),
     ]);
-    allData['VN30'] = data;
-    document.getElementById('cnt-VN30').textContent = data.length;
     buildSectorDropdown(sectors);
+    if (savedSector) {
+      document.querySelectorAll('.sector-opt').forEach(el => {
+        el.classList.toggle('active', el.dataset.sector === savedSector);
+      });
+    }
   } finally {
     showLoading(false);
   }
+
+  if (savedTab === 'sector' && savedSector) {
+    allData['sector'] = getDataForSector(savedSector);
+  } else if (savedTab === 'portfolio') {
+    allData['portfolio'] = getDataForPortfolio();
+  }
+
   renderTable();
   updateTimestamp();
   if (isLive) connectWs();
