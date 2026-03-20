@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bảng Giá Chứng Khoán</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f1117;
+  --bg: #202127;
   --bg2: #161b27;
   --bg3: #1e2535;
   --border: #2a3347;
@@ -28,31 +26,31 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* ── TOP HEADER ── */
 #header {
   height: var(--header-h);
-  background: var(--bg2);
+  background: #28292f;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   padding: 0 16px;
   gap: 12px;
   flex-shrink: 0;
+  color: #fff;
 }
 #header h1 {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 12px;
+  color: #fff;
   letter-spacing: -0.3px;
 }
 .header-spacer { flex: 1; }
@@ -62,7 +60,7 @@ body {
   border-radius: 8px;
   padding: 6px 12px;
   color: var(--text);
-  font-size: 13px;
+  font-size: 12px;
   width: 160px;
   outline: none;
   transition: border-color 0.15s;
@@ -77,7 +75,7 @@ body {
   padding: 6px 12px;
   color: var(--text2);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   display: flex; align-items: center; gap: 6px;
   transition: background 0.15s;
 }
@@ -91,7 +89,7 @@ body {
 #refreshBtn.live #refreshDot { background: var(--green); animation: blink 1.5s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-#lastUpdate { color: var(--text3); font-size: 12px; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+#lastUpdate { color: var(--text3); font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
 
 /* ── INDEX CARDS ── */
 #indexBar {
@@ -115,10 +113,10 @@ body {
   transition: border-color 0.15s;
 }
 .idx-card:hover { border-color: #3b5380; }
-.idx-name { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; }
-.idx-val  { font-size: 17px; font-weight: 700; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; margin: 2px 0; }
-.idx-chg  { font-size: 11px; font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
-.idx-stats { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.idx-name { font-size: 12px; color: var(--text2); letter-spacing: 0.5px; }
+.idx-val  { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; margin: 2px 0; }
+.idx-chg  { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
+.idx-stats { font-size: 12px; color: var(--text3); margin-top: 2px; }
 .idx-spark { display: block; width: 100%; height: 88px; margin-top: 6px; }
 .up   { color: var(--green); }
 .dn   { color: var(--red); }
@@ -140,8 +138,7 @@ body {
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--text3);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
   padding: 8px 14px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
@@ -150,7 +147,7 @@ body {
 .tab-btn:hover { color: var(--text2); }
 .tab-btn.active { color: #60a5fa; border-color: #60a5fa; }
 .tab-count {
-  font-size: 10px;
+  font-size: 12px;
   background: var(--bg3);
   border-radius: 10px;
   padding: 1px 5px;
@@ -168,7 +165,7 @@ body {
 
 #stockTable {
   border-collapse: collapse;
-  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
   font-size: 12px;
   width: 100%;
   table-layout: fixed;
@@ -176,10 +173,10 @@ body {
 
 #stockTable thead th {
   position: sticky;
-  background: #1a2133;
-  color: var(--text3);
-  font-size: 10px;
-  font-weight: 600;
+  background: #202127;
+  color: #fff;
+  font-size: 12px;
+  font-weight: normal;
   letter-spacing: 0.4px;
   padding: 5px 6px;
   text-align: right;
@@ -200,11 +197,11 @@ body {
 #stockTable thead th.sort-asc::after  { content: ' ▲'; color: #60a5fa; }
 #stockTable thead th.sort-desc::after { content: ' ▼'; color: #60a5fa; }
 
-.bid-vol, .ask-vol { font-size: 10.5px; }
-td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
+.bid-vol, .ask-vol { font-size: 12px; }
+td[data-field="priceChange"] { font-family: Tahoma, Helvetica, Arial, sans-serif; }
 #chgModeHdr { letter-spacing: 0; }
 .has-arrow { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
-.flash-arrow { font-size: 8px; line-height: 1; flex-shrink: 0; }
+.flash-arrow { font-size: 12px; line-height: 1; flex-shrink: 0; }
 
 /* Cell borders */
 #stockTable th,
@@ -220,6 +217,7 @@ td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
   border-bottom: 1px solid #1c2336;
   transition: background 0.08s;
 }
+#stockTable tbody tr:nth-child(odd) { background: #28292f; }
 #stockTable tbody tr:hover { background: #1e2a3a; }
 
 #stockTable td {
@@ -233,7 +231,6 @@ td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
 /* Symbol column */
 .sym-cell {
   font-size: 12px;
-  font-weight: 600;
   letter-spacing: 0.3px;
   text-align: left;
 }
@@ -263,11 +260,11 @@ td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
   padding: 0 16px;
   gap: 20px;
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text3);
 }
 .stat-item { display: flex; gap: 5px; }
-.stat-item span { font-weight: 600; }
+.stat-item span { }
 .stat-up { color: var(--green); }
 .stat-dn { color: var(--red); }
 .stat-nc { color: var(--ref); }
@@ -289,12 +286,12 @@ td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--text2); font-size: 13px; }
+.loading-text { color: var(--text2); font-size: 12px; }
 
 /* ── MOBILE ── */
 @media (max-width: 767px) {
   body { font-size: 12px; }
-  #header h1 { font-size: 14px; }
+  #header h1 { font-size: 12px; }
   #searchBox { width: 120px; }
   #lastUpdate { display: none; }
   .col-high, .col-low, .col-dumua, .col-duban,
@@ -305,7 +302,7 @@ td[data-field="priceChange"] { font-family: 'Inter', sans-serif; }
   .grp-bid, .grp-ask, .grp-dtnn, .grp-price, .grp-du { display: none !important; }
   .grp-match { display: none !important; }
   .idx-card { min-width: 120px; }
-  .idx-val { font-size: 14px; }
+  .idx-val { font-size: 12px; }
 }
 
 /* ── PORTFOLIO TAB ── */
@@ -368,10 +365,57 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 .sector-opt.active { color: #60a5fa; }
 .sector-opt-count {
   color: var(--text3);
-  font-size: 11px;
-  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 12px;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
   flex-shrink: 0;
 }
+
+/* Portfolio dropdown */
+#portfolioTabWrap { position: relative; }
+#portfolioDropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 230px;
+  max-height: 340px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+#portfolioDropdown.open { display: block; }
+.portfolio-opt {
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+.portfolio-opt:hover { background: var(--bg3); color: var(--text); }
+.portfolio-opt.active { color: #60a5fa; }
+.portfolio-opt-count {
+  color: var(--text3);
+  font-size: 12px;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
+  flex-shrink: 0;
+}
+.portfolio-divider { border-top: 1px solid var(--border); margin: 4px 0; }
+.portfolio-create-btn {
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #60a5fa;
+  transition: background 0.1s;
+}
+.portfolio-create-btn:hover { background: var(--bg3); }
 
 /* ── STOCK MODAL ── */
 #stockModal {
@@ -395,15 +439,15 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
   display: flex; align-items: center; gap: 10px;
   border-bottom: 1px solid var(--border);
 }
-.m-sym { font-size: 18px; font-weight: 700; font-family: 'SF Mono','Menlo','Consolas',monospace; }
+.m-sym { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
 .m-badge {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+  font-size: 12px; letter-spacing: 0.5px;
   padding: 2px 7px; border-radius: 4px;
   background: #1e3a5f; color: #60a5fa;
 }
-.m-name { font-size: 13px; color: var(--text2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-name { font-size: 12px; color: var(--text2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .modal-close {
-  background: none; border: none; color: var(--text3); font-size: 18px;
+  background: none; border: none; color: var(--text3); font-size: 12px;
   cursor: pointer; padding: 4px 8px; border-radius: 4px; line-height: 1;
   transition: color .15s, background .15s; margin-left: auto;
 }
@@ -414,12 +458,12 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
-.m-price { font-size: 26px; font-weight: 700; font-family: 'SF Mono','Menlo','Consolas',monospace; }
-.m-chg   { font-size: 13px; font-family: 'SF Mono','Menlo','Consolas',monospace; }
+.m-price { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
+.m-chg   { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
 .m-stats { display: flex; gap: 20px; margin-left: auto; flex-wrap: wrap; }
 .m-stat  { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-.m-stat-label { font-size: 10px; color: var(--text3); font-weight: 600; letter-spacing: 0.3px; }
-.m-stat-val   { font-size: 12px; font-family: 'SF Mono','Menlo','Consolas',monospace; }
+.m-stat-label { font-size: 12px; color: var(--text3); letter-spacing: 0.3px; }
+.m-stat-val   { font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif; }
 
 .modal-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
 .modal-chart { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
@@ -430,7 +474,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 }
 .tf-btn {
   background: none; border: none; color: var(--text3);
-  font-size: 12px; font-weight: 500; padding: 3px 9px;
+  font-size: 12px; padding: 3px 9px;
   border-radius: 4px; cursor: pointer;
   transition: color .15s, background .15s;
 }
@@ -438,7 +482,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 .tf-btn.active { color: #60a5fa; background: rgba(59,130,246,0.15); }
 .chart-legend {
   padding: 3px 10px; flex-shrink: 0;
-  font-size: 11px; font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif;
   display: flex; gap: 12px; align-items: center; min-height: 22px;
   color: var(--text2);
 }
@@ -459,24 +503,24 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 .depth-top { flex: 0 0 45%; display: flex; flex-direction: column; overflow: hidden; }
 .depth-bottom { flex: 0 0 55%; display: flex; flex-direction: column; border-top: 1px solid var(--border); overflow: hidden; }
 .depth-title {
-  padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--text2);
+  padding: 8px 12px; font-size: 12px; color: var(--text2);
   border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .depth-table {
   width: 100%; border-collapse: collapse;
-  font-size: 11.5px; font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif;
 }
 .depth-table th {
-  padding: 5px 8px; font-size: 10px; font-weight: 600; color: var(--text3);
+  padding: 5px 8px; font-size: 12px; color: var(--text3);
   border-bottom: 1px solid var(--border); text-align: right;
 }
 .depth-table th.left { text-align: left; }
 .depth-table td { padding: 5px 8px; text-align: right; border-bottom: 1px solid #1c2336; }
 .depth-table td.left { text-align: left; }
-.depth-bid { color: var(--green); font-weight: 600; }
-.depth-ask { color: var(--red); font-weight: 600; }
-.depth-row-total td.bid-total { background: rgba(38,166,154,0.22); color: var(--green); font-weight: 700; }
-.depth-row-total td.ask-total { background: rgba(239,83,80,0.22); color: var(--red); font-weight: 700; }
+.depth-bid { color: var(--green); }
+.depth-ask { color: var(--red); }
+.depth-row-total td.bid-total { background: rgba(38,166,154,0.22); color: var(--green); }
+.depth-row-total td.ask-total { background: rgba(239,83,80,0.22); color: var(--red); }
 .depth-row-total td { border-bottom: none; padding: 6px 8px; }
 .depth-chart-wrap { padding: 6px 8px; flex: 1; min-height: 0; }
 #depth-chart { width: 100%; height: 100%; display: block; }
@@ -488,15 +532,15 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 .va-header {
   padding: 6px 12px; flex-shrink: 0;
   border-bottom: 1px solid var(--border);
-  font-size: 11.5px; font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif;
   display: flex; gap: 16px; align-items: center;
 }
-.va-hdr-label { color: var(--text3); font-size: 10px; font-weight: 600; }
+.va-hdr-label { color: var(--text3); font-size: 12px; }
 .va-hdr-val   { color: var(--text2); }
-.va-hdr-buy   { color: var(--green); font-weight: 600; }
-.va-hdr-sell  { color: var(--red);   font-weight: 600; }
+.va-hdr-buy   { color: var(--green); }
+.va-hdr-sell  { color: var(--red); }
 .va-title {
-  padding: 8px 12px; font-size: 11px; font-weight: 600; color: var(--text2);
+  padding: 8px 12px; font-size: 12px; color: var(--text2);
   border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .va-list {
@@ -504,17 +548,17 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 }
 .va-table {
   width: 100%; border-collapse: collapse; table-layout: fixed;
-  font-size: 11px; font-family: 'SF Mono','Menlo','Consolas',monospace;
+  font-size: 12px; font-family: Tahoma, Helvetica, Arial, sans-serif;
 }
 .va-table th {
-  padding: 5px 4px; font-size: 10px; font-weight: 600; color: var(--text3);
+  padding: 5px 4px; font-size: 12px; color: var(--text3);
   border-bottom: 1px solid var(--border); text-align: right; position: sticky; top: 0; background: var(--bg2); z-index: 1;
   overflow: hidden; white-space: nowrap;
 }
 .va-table th.left { text-align: left; }
 .va-table td { padding: 4px 4px; text-align: right; border-bottom: 1px solid #1c2336; overflow: hidden; white-space: nowrap; }
 .va-table td.left { text-align: left; color: var(--text3); }
-.va-empty { color: var(--text3); font-size: 11px; padding: 16px 12px; text-align: center; }
+.va-empty { color: var(--text3); font-size: 12px; padding: 16px 12px; text-align: center; }
 .va-buy  { color: var(--green); }
 .va-sell { color: var(--red); }
 .va-neutral { color: var(--text2); }
@@ -584,9 +628,12 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
   <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
   <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
   <button class="tab-btn" data-tab="upcom" onclick="switchTab(this)">UPCOM <span class="tab-count" id="cnt-upcom">...</span></button>
-  <button class="tab-btn" data-tab="portfolio" onclick="switchTab(this)">💼 Danh mục <span class="tab-count" id="cnt-portfolio">--</span></button>
+  <div id="portfolioTabWrap">
+    <button class="tab-btn" id="portfolioTabBtn" onclick="togglePortfolioDropdown(event)">💼 Danh mục<span id="portfolioTabLabel"></span> <span style="font-size: 12px;opacity:.7">▾</span></button>
+    <div id="portfolioDropdown" role="listbox"></div>
+  </div>
   <div id="sectorTabWrap">
-    <button class="tab-btn" id="sectorTabBtn" onclick="toggleSectorDropdown(event)">CP Ngành<span id="sectorTabLabel"></span> <span style="font-size:9px;opacity:.7">▾</span></button>
+    <button class="tab-btn" id="sectorTabBtn" onclick="toggleSectorDropdown(event)">CP Ngành<span id="sectorTabLabel"></span> <span style="font-size: 12px;opacity:.7">▾</span></button>
     <div id="sectorDropdown" role="listbox"></div>
   </div>
 </div>
@@ -838,7 +885,7 @@ function drawSparkline(id) {
   // ── Time axis ──
   // Session hours in VN: 9,10,11 (morning) + 13,14,15 (afternoon); skip 12 (lunch)
   const sessionHours = [9, 10, 11, 13, 14, 15];
-  ctx.font = `9px 'SF Mono','Menlo','Consolas',monospace`;
+  ctx.font = `9px Tahoma, Helvetica, Arial, sans-serif`;
   ctx.fillStyle = '#64748b';
   ctx.textAlign = 'center';
 
@@ -950,7 +997,7 @@ async function initChart(sym, resolution = '1', days = 1) {
 
   if (!candles.length) {
     legend.innerHTML = '';
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;font-size:13px">Không có dữ liệu</div>';
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b;font-size: 12px">Không có dữ liệu</div>';
     return;
   }
 
@@ -963,7 +1010,7 @@ async function initChart(sym, resolution = '1', days = 1) {
       background: { type: 'solid', color: '#0f1117' },
       textColor: '#64748b',
       fontSize: 11,
-      fontFamily: "'SF Mono','Menlo','Consolas',monospace",
+      fontFamily: "Tahoma, Helvetica, Arial, sans-serif",
     },
     grid: {
       vertLines: { color: '#1a2133', style: 1 },
@@ -1157,7 +1204,7 @@ function drawDepthChart(s) {
   ctx.beginPath(); ctx.moveTo(0, chartH); ctx.lineTo(W, chartH); ctx.stroke();
 
   // ── Price labels ──
-  ctx.font = `9px 'SF Mono','Menlo','Consolas',monospace`;
+  ctx.font = `9px Tahoma, Helvetica, Arial, sans-serif`;
   ctx.textAlign = 'center';
   const labeled = new Set();
   const allPts = [...bidPts, ...askPts];
@@ -1402,6 +1449,8 @@ let changeMode   = localStorage.getItem('pb_changeMode') || 'abs'; // 'abs' | 'p
 // Portfolio state
 let portfolioData    = {};  // { SYM: [{qty, price, date, id}] }
 let portfolioSymbols = new Set();
+let watchlists       = JSON.parse(localStorage.getItem('pb_watchlists') || '[]'); // [{name, symbols:[]}]
+let activeWatchlist  = null; // name of active custom watchlist, null = main portfolio
 
 function getDataForPortfolio() {
   return [
@@ -1411,13 +1460,21 @@ function getDataForPortfolio() {
   ].filter(s => portfolioSymbols.has(s.stockSymbol ?? s.code ?? ''));
 }
 
+function getDataForWatchlist(symsSet) {
+  return [
+    ...(allData['hose']  ?? []),
+    ...(allData['hnx']   ?? []),
+    ...(allData['upcom'] ?? []),
+  ].filter(s => symsSet.has(s.stockSymbol ?? s.code ?? ''));
+}
+
 async function loadPortfolio() {
   try {
     const r = await fetch('/portfolio');
     portfolioData = await r.json();
     portfolioSymbols = new Set(Object.keys(portfolioData));
-    document.getElementById('cnt-portfolio').textContent = portfolioSymbols.size;
   } catch {}
+  buildPortfolioDropdown();
 }
 
 // ──── WebSocket ────────────────────────────────────────────────────────────────
@@ -1806,7 +1863,7 @@ async function switchTab(btn) {
   document.getElementById('sectorTabLabel').textContent = '';
 
   // Toggle CSS class để show/hide cột portfolio
-  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio');
+  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio' || currentTab === 'watchlist');
 
   if (currentTab === 'portfolio') {
     // Cần data từ cả 3 sàn
@@ -1988,10 +2045,15 @@ function applyTabUpdate(tab, updates) {
     dataMap.set(key, s);
 
     // Update row nếu đang hiển thị
-    const inSector   = currentTab === 'sector' && activeSector && sectorSymbols[activeSector]?.has(key);
+    const inSector    = currentTab === 'sector' && activeSector && sectorSymbols[activeSector]?.has(key);
     const inPortfolio = currentTab === 'portfolio' && portfolioSymbols.has(key);
+    const inWatchlist = currentTab === 'watchlist' && activeWatchlist && (() => {
+      const wl = watchlists.find(w => w.name === activeWatchlist);
+      return wl?.symbols.includes(key);
+    })();
     const visible    = currentTab === tab || (inSector && ['hose','hnx','upcom'].includes(tab))
-                       || (inPortfolio && ['hose','hnx','upcom'].includes(tab));
+                       || (inPortfolio && ['hose','hnx','upcom'].includes(tab))
+                       || (inWatchlist && ['hose','hnx','upcom'].includes(tab));
     if (visible) updateRow(key, s, old);
   }
 
@@ -2001,6 +2063,10 @@ function applyTabUpdate(tab, updates) {
   }
   if (currentTab === 'portfolio' && ['hose','hnx','upcom'].includes(tab)) {
     allData['portfolio'] = getDataForPortfolio();
+  }
+  if (currentTab === 'watchlist' && activeWatchlist && ['hose','hnx','upcom'].includes(tab)) {
+    const wl = watchlists.find(w => w.name === activeWatchlist);
+    allData['watchlist'] = getDataForWatchlist(new Set(wl?.symbols ?? []));
   }
   updateStats(allData[currentTab] ?? []);
   updateTimestamp();
@@ -2048,6 +2114,107 @@ function getDataForSector(name) {
   ].filter(s => syms.has(s.stockSymbol ?? s.code ?? ''));
 }
 
+// ──── Portfolio dropdown ────────────────────────────────────────────────────────
+function buildPortfolioDropdown() {
+  const dd = document.getElementById('portfolioDropdown');
+  if (!dd) return;
+  const wlHtml = watchlists.map(wl => {
+    const safe = wl.name.replace(/'/g, "\\'");
+    return `<div class="portfolio-opt" onclick="selectPortfolioList('${safe}')" data-wl="${wl.name}">
+      <span>${wl.name}</span>
+      <span class="portfolio-opt-count">${wl.symbols.length}</span>
+    </div>`;
+  }).join('');
+  dd.innerHTML = `
+    <div class="portfolio-opt" onclick="selectPortfolioList('__portfolio__')" data-wl="__portfolio__">
+      <span>Danh mục cổ phiếu đang mua</span>
+      <span class="portfolio-opt-count" id="cnt-portfolio">${portfolioSymbols.size || '--'}</span>
+    </div>
+    ${wlHtml}
+    <div class="portfolio-divider"></div>
+    <div class="portfolio-create-btn" onclick="createWatchlist()">+ Tạo danh mục mới</div>
+  `;
+  const activeKey = activeWatchlist ?? '__portfolio__';
+  dd.querySelectorAll('.portfolio-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.wl === activeKey);
+  });
+}
+
+function togglePortfolioDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('portfolioDropdown').classList.toggle('open');
+}
+
+async function selectPortfolioList(name) {
+  document.getElementById('portfolioDropdown').classList.remove('open');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('portfolioTabBtn').classList.add('active');
+  activeSector = null;
+  localStorage.removeItem('pb_sector');
+  document.getElementById('sectorTabLabel').textContent = '';
+
+  activeWatchlist = name === '__portfolio__' ? null : name;
+  localStorage.setItem('pb_portfolio_list', name);
+
+  if (name === '__portfolio__') {
+    currentTab = 'portfolio';
+    document.getElementById('portfolioTabLabel').textContent = '';
+  } else {
+    currentTab = 'watchlist';
+    document.getElementById('portfolioTabLabel').textContent = ': ' + name;
+  }
+  localStorage.setItem('pb_tab', currentTab);
+  document.body.classList.add('tab-portfolio');
+
+  document.querySelectorAll('.portfolio-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.wl === name);
+  });
+
+  const missing = ['hose', 'hnx', 'upcom'].filter(t => !allData[t]);
+  if (missing.length > 0) {
+    showLoading(true);
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      for (const t of missing) ws.send(JSON.stringify({ sub: t }));
+      const waitStart = Date.now();
+      await new Promise(resolve => {
+        const check = setInterval(() => {
+          if (missing.every(t => allData[t]) || Date.now() - waitStart > 4000) {
+            clearInterval(check); resolve();
+          }
+        }, 100);
+      });
+    } else {
+      try {
+        await Promise.all(missing.map(async t => { allData[t] = await fetchTab(t); }));
+      } catch {}
+    }
+    showLoading(false);
+  }
+
+  if (currentTab === 'portfolio') {
+    allData['portfolio'] = getDataForPortfolio();
+  } else {
+    const wl = watchlists.find(w => w.name === name);
+    allData['watchlist'] = getDataForWatchlist(new Set(wl?.symbols ?? []));
+  }
+  renderTable();
+}
+
+function createWatchlist() {
+  document.getElementById('portfolioDropdown').classList.remove('open');
+  const name = prompt('Tên danh mục mới:');
+  if (!name || !name.trim()) return;
+  const trimmed = name.trim();
+  if (watchlists.find(w => w.name === trimmed)) {
+    alert('Danh mục "' + trimmed + '" đã tồn tại!');
+    return;
+  }
+  watchlists.push({ name: trimmed, symbols: [] });
+  localStorage.setItem('pb_watchlists', JSON.stringify(watchlists));
+  buildPortfolioDropdown();
+  selectPortfolioList(trimmed);
+}
+
 function buildSectorDropdown(sectors) {
   sectorSymbols = {};
   const dd = document.getElementById('sectorDropdown');
@@ -2068,6 +2235,7 @@ function toggleSectorDropdown(e) {
 
 document.addEventListener('click', () => {
   document.getElementById('sectorDropdown')?.classList.remove('open');
+  document.getElementById('portfolioDropdown')?.classList.remove('open');
 });
 
 async function selectSector(name) {
@@ -2113,8 +2281,9 @@ async function selectSector(name) {
 
 // ──── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
-  const savedTab    = localStorage.getItem('pb_tab') || 'VN30';
-  const savedSector = localStorage.getItem('pb_sector');
+  const savedTab          = localStorage.getItem('pb_tab') || 'VN30';
+  const savedSector       = localStorage.getItem('pb_sector');
+  const savedPortfolioList = localStorage.getItem('pb_portfolio_list') || '__portfolio__';
 
   // Kích hoạt tab button ngay lập tức (trước khi fetch)
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2124,16 +2293,22 @@ async function init() {
       document.getElementById('sectorTabLabel').textContent = ': ' + savedSector;
       activeSector = savedSector;
     }
+  } else if (savedTab === 'portfolio' || savedTab === 'watchlist') {
+    document.getElementById('portfolioTabBtn').classList.add('active');
+    activeWatchlist = savedPortfolioList === '__portfolio__' ? null : savedPortfolioList;
+    if (savedTab === 'watchlist' && activeWatchlist) {
+      document.getElementById('portfolioTabLabel').textContent = ': ' + activeWatchlist;
+    }
   } else {
     const btn = document.querySelector(`.tab-btn[data-tab="${savedTab}"]`);
     if (btn) btn.classList.add('active');
   }
   currentTab = savedTab;
-  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio');
+  document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio' || currentTab === 'watchlist');
 
   // Xác định tab cần fetch
   const tabsToFetch = new Set();
-  if (savedTab === 'portfolio' || savedTab === 'sector') {
+  if (savedTab === 'portfolio' || savedTab === 'watchlist' || savedTab === 'sector') {
     tabsToFetch.add('hose'); tabsToFetch.add('hnx'); tabsToFetch.add('upcom');
   } else {
     tabsToFetch.add(savedTab === 'VN30' ? 'VN30' : savedTab);
@@ -2160,6 +2335,12 @@ async function init() {
         el.classList.toggle('active', el.dataset.sector === savedSector);
       });
     }
+    // Highlight active portfolio option
+    if (savedTab === 'portfolio' || savedTab === 'watchlist') {
+      document.querySelectorAll('.portfolio-opt').forEach(el => {
+        el.classList.toggle('active', el.dataset.wl === savedPortfolioList);
+      });
+    }
   } finally {
     showLoading(false);
   }
@@ -2168,6 +2349,9 @@ async function init() {
     allData['sector'] = getDataForSector(savedSector);
   } else if (savedTab === 'portfolio') {
     allData['portfolio'] = getDataForPortfolio();
+  } else if (savedTab === 'watchlist' && activeWatchlist) {
+    const wl = watchlists.find(w => w.name === activeWatchlist);
+    allData['watchlist'] = getDataForWatchlist(new Set(wl?.symbols ?? []));
   }
 
   renderTable();
