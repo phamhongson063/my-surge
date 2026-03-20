@@ -54,19 +54,74 @@ body {
   letter-spacing: -0.3px;
 }
 .header-spacer { flex: 1; }
+#searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding-bottom: 6px;
+}
 #searchBox {
   background: var(--bg3);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 12px;
+  border-radius: 6px;
+  padding: 4px 10px;
   color: var(--text);
   font-size: 12px;
-  width: 160px;
+  width: 140px;
   outline: none;
   transition: border-color 0.15s;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
 }
 #searchBox:focus { border-color: #3b82f6; }
 #searchBox::placeholder { color: var(--text3); }
+#addSymBtn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text3);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+#addSymBtn:hover { background: #263044; color: var(--text); }
+body.tab-watchlist #addSymBtn { color: #60a5fa; border-color: #3b82f6; }
+
+/* Search suggestions */
+#searchSuggest {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+#searchSuggest.open { display: block; }
+.suggest-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.1s;
+  white-space: nowrap;
+}
+.suggest-item:hover, .suggest-item.active { background: var(--bg3); }
+.suggest-sym { color: var(--text); }
+.suggest-name { color: var(--text3); font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
 
 #refreshBtn {
   background: var(--bg3);
@@ -128,7 +183,7 @@ body {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   padding: 0 16px;
   gap: 2px;
   flex-shrink: 0;
@@ -580,7 +635,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
     <div id="refreshDot"></div>
     <span id="refreshLabel">Live</span>
   </button>
-  <input id="searchBox" type="text" placeholder="Tìm mã CK..." oninput="renderTable()" autocomplete="off">
+
 </div>
 
 <!-- INDEX CARDS -->
@@ -624,6 +679,14 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 
 <!-- TABS -->
 <div id="tabBar">
+  <div id="searchWrap" style="position:relative">
+    <input id="searchBox" type="text" placeholder="Tìm mã CK..."
+      oninput="this.value=this.value.trimStart().toUpperCase();renderTable();showSuggestions(this.value)"
+      onkeydown="handleSearchKey(event)"
+      autocomplete="off">
+    <button id="addSymBtn" onclick="addSymbolToWatchlist()" title="Thêm vào danh mục">+</button>
+    <div id="searchSuggest"></div>
+  </div>
   <button class="tab-btn" data-tab="VN30" onclick="switchTab(this)">VN30 <span class="tab-count" id="cnt-VN30">30</span></button>
   <button class="tab-btn" data-tab="hose" onclick="switchTab(this)">HOSE <span class="tab-count" id="cnt-hose">...</span></button>
   <button class="tab-btn" data-tab="hnx" onclick="switchTab(this)">HNX <span class="tab-count" id="cnt-hnx">...</span></button>
@@ -1864,6 +1927,7 @@ async function switchTab(btn) {
 
   // Toggle CSS class để show/hide cột portfolio
   document.body.classList.toggle('tab-portfolio', currentTab === 'portfolio' || currentTab === 'watchlist');
+  document.body.classList.remove('tab-watchlist');
 
   if (currentTab === 'portfolio') {
     // Cần data từ cả 3 sàn
@@ -2165,6 +2229,7 @@ async function selectPortfolioList(name) {
   }
   localStorage.setItem('pb_tab', currentTab);
   document.body.classList.add('tab-portfolio');
+  document.body.classList.toggle('tab-watchlist', currentTab === 'watchlist');
 
   document.querySelectorAll('.portfolio-opt').forEach(el => {
     el.classList.toggle('active', el.dataset.wl === name);
@@ -2197,6 +2262,102 @@ async function selectPortfolioList(name) {
     const wl = watchlists.find(w => w.name === name);
     allData['watchlist'] = getDataForWatchlist(new Set(wl?.symbols ?? []));
   }
+  renderTable();
+}
+
+// ──── Search suggestions ────────────────────────────────────────────────────────
+let suggestIndex = -1;
+
+function getAllSymbols() {
+  const seen = new Set();
+  const result = [];
+  for (const tab of ['VN30', 'hose', 'hnx', 'upcom']) {
+    for (const s of (allData[tab] ?? [])) {
+      const sym = s.stockSymbol ?? s.code ?? '';
+      if (sym && !seen.has(sym)) {
+        seen.add(sym);
+        result.push({ sym, name: s.companyNameVi ?? '' });
+      }
+    }
+  }
+  return result;
+}
+
+function showSuggestions(q) {
+  const dd = document.getElementById('searchSuggest');
+  if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; suggestIndex = -1; return; }
+  const matches = getAllSymbols()
+    .filter(s => s.sym.startsWith(q) || s.sym.includes(q))
+    .sort((a, b) => (a.sym.startsWith(q) ? -1 : 1) - (b.sym.startsWith(q) ? -1 : 1))
+    .slice(0, 20);
+  if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  suggestIndex = -1;
+  dd.innerHTML = matches.map((s, i) =>
+    `<div class="suggest-item" data-sym="${s.sym}" onmousedown="selectSuggestion('${s.sym}')">
+      <span class="suggest-sym">${s.sym}</span>
+      <span class="suggest-name">${s.name}</span>
+    </div>`
+  ).join('');
+  dd.classList.add('open');
+}
+
+function selectSuggestion(sym) {
+  const box = document.getElementById('searchBox');
+  box.value = sym;
+  renderTable();
+  document.getElementById('searchSuggest').classList.remove('open');
+  suggestIndex = -1;
+}
+
+function handleSearchKey(e) {
+  const dd = document.getElementById('searchSuggest');
+  const items = dd.querySelectorAll('.suggest-item');
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (suggestIndex >= 0 && items[suggestIndex]) {
+      selectSuggestion(items[suggestIndex].dataset.sym);
+    } else {
+      addSymbolToWatchlist();
+    }
+    return;
+  }
+  if (e.key === 'Escape') {
+    dd.classList.remove('open'); suggestIndex = -1; return;
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    suggestIndex = Math.min(suggestIndex + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    suggestIndex = Math.max(suggestIndex - 1, -1);
+  }
+  items.forEach((el, i) => el.classList.toggle('active', i === suggestIndex));
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#searchWrap')) {
+    document.getElementById('searchSuggest')?.classList.remove('open');
+    suggestIndex = -1;
+  }
+});
+
+function addSymbolToWatchlist() {
+  if (currentTab !== 'watchlist' || !activeWatchlist) return;
+  const sym = document.getElementById('searchBox').value.trim().toUpperCase();
+  if (!sym) return;
+  const wl = watchlists.find(w => w.name === activeWatchlist);
+  if (!wl) return;
+  if (wl.symbols.includes(sym)) {
+    document.getElementById('searchBox').value = '';
+    renderTable();
+    return;
+  }
+  wl.symbols.push(sym);
+  localStorage.setItem('pb_watchlists', JSON.stringify(watchlists));
+  buildPortfolioDropdown();
+  const symsSet = new Set(wl.symbols);
+  allData['watchlist'] = getDataForWatchlist(symsSet);
+  document.getElementById('searchBox').value = '';
   renderTable();
 }
 
