@@ -82,7 +82,11 @@
       "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock/recenttrades?symbol=VCB\" -H \"User-Agent: Mozilla/5.0\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -v)",
       "Bash(curl -s \"https://iboard-query.ssi.com.vn/le-table/stock/VCB?pageSize=50\" -H \"User-Agent: Mozilla/5.0\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
       "Bash(curl -s \"http://localhost:3000/api/recent-trades?symbol=VCB\")",
-      "Bash(curl -s \"http://localhost:3000/api/recent-trades?symbol=VCB&pageSize=5\")"
+      "Bash(curl -s \"http://localhost:3000/api/recent-trades?symbol=VCB&pageSize=5\")",
+      "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=ACB&days=1100\")",
+      "Bash(find /Users/son.ph/my-surge/cache -name *.json)",
+      "Bash(find /Users/son.ph/my-surge/cache -name \"*.json\" -delete)",
+      "Bash(curl -s http://localhost:3000/analyze-detail?symbol=ACB)"
     ]
   }
 }

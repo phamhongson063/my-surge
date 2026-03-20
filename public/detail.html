@@ -34,6 +34,10 @@
         --am-bd: #fde68a;
         --ind: #6366f1;
         --ind-bg: #eef2ff;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+        --radius: 16px;
+        --radius-sm: 10px;
       }
       * {
         box-sizing: border-box;
@@ -57,7 +61,12 @@
       .card {
         background: var(--wht);
         border: 1px solid var(--gray200);
-        border-radius: 16px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.2s;
+      }
+      .card:hover {
+        box-shadow: var(--shadow-md);
       }
       .card-pad {
         padding: 28px 32px;
@@ -71,6 +80,8 @@
         margin-bottom: 20px;
         padding-bottom: 12px;
         border-bottom: 2px solid var(--gray100);
+        border-left: 3px solid var(--navy);
+        padding-left: 10px;
       }
 
       .badge {
@@ -170,6 +181,9 @@
       }
       .a4 {
         animation-delay: 0.24s;
+      }
+      .a5 {
+        animation-delay: 0.30s;
       }
       .sh {
         background: linear-gradient(
@@ -406,6 +420,11 @@
         /* Trend + Indicators: stack */
         #trendIndicGrid {
           grid-template-columns: 1fr !important;
+        }
+
+        /* Group separators: smaller text on mobile */
+        .group-sep span {
+          font-size: 10px !important;
         }
 
         /* Prediction table: single column + scrollable rows */
@@ -952,6 +971,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 0;
+                background: linear-gradient(135deg, #fff 0%, var(--navy-l) 100%);
               "
             >
               <!-- Row 1: symbol + badges + watchlist -->
@@ -1096,7 +1116,7 @@
                       font-weight: 800;
                       font-size: 46px;
                       color: var(--gray900);
-                      letter-spacing: -1px;
+                      letter-spacing: -2px;
                       line-height: 1;
                       padding: 2px 4px;
                       border-radius: 6px;
@@ -1151,6 +1171,9 @@
                 >
               </div>
 
+              <!-- Divider -->
+              <div style="height: 1px; background: var(--gray200); margin-bottom: 16px;"></div>
+
               <!-- OHLC stats grid -->
               <div
                 id="ohlcGrid"
@@ -1167,6 +1190,7 @@
                   style="
                     padding: 9px 14px;
                     border-right: 1px solid var(--gray200);
+                    background: var(--gray50);
                   "
                 >
                   <div
@@ -1196,6 +1220,7 @@
                   style="
                     padding: 9px 14px;
                     border-right: 1px solid var(--gray200);
+                    background: var(--gray50);
                   "
                 >
                   <div
@@ -1224,6 +1249,7 @@
                   style="
                     padding: 9px 14px;
                     border-right: 1px solid var(--gray200);
+                    background: var(--gray50);
                   "
                 >
                   <div
@@ -1249,7 +1275,7 @@
                     >—</span
                   >
                 </div>
-                <div style="padding: 9px 14px">
+                <div style="padding: 9px 14px; background: var(--gray50);">
                   <div
                     style="
                       font-size: 10px;
@@ -1315,7 +1341,7 @@
               style="display: flex; align-items: center; gap: 12px; flex: 1"
             >
               <div class="sec-title" style="flex: 1">
-                📉 Biểu đồ giá & chỉ báo
+                Biểu đồ giá & chỉ báo
               </div>
               <div
                 id="chartControls"
@@ -1374,6 +1400,25 @@
                     🕯 Nến
                   </button>
                 </div>
+                <!-- Trendline toggle -->
+                <button
+                  id="ctTrendline"
+                  onclick="toggleTrendlines()"
+                  style="
+                    height: 32px;
+                    padding: 0 14px;
+                    border-radius: 8px;
+                    border: 1.5px solid var(--navy);
+                    background: var(--navy);
+                    color: #fff;
+                    font-size: 12px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.15s;
+                    white-space: nowrap;
+                    margin-right: 4px;
+                  "
+                >〜 Trendline</button>
                 <button
                   onclick="setChartRange(66)"
                   id="cr66"
@@ -1431,6 +1476,25 @@
                 >
                   1 Năm
                 </button>
+                <button
+                  onclick="setChartRange(756)"
+                  id="cr756"
+                  class="cb"
+                  style="
+                    height: 34px;
+                    padding: 0 18px;
+                    border-radius: 8px;
+                    border: 2px solid var(--gray200);
+                    background: var(--wht);
+                    color: var(--gray500);
+                    font-size: 13px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.15s;
+                  "
+                >
+                  3 Năm
+                </button>
               </div>
             </div>
             <div class="toggle-icon" style="margin-left: 12px">
@@ -1448,7 +1512,7 @@
             </div>
           </div>
           <div class="card-body">
-            <div style="height: 400px; position: relative">
+            <div id="mainChartWrap" style="height: 520px; position: relative">
               <canvas id="mainChart"></canvas>
             </div>
             <div
@@ -1508,33 +1572,86 @@
           </div>
         </div>
 
-        <!-- ═══ Dự đoán điểm mua / bán — FULL WIDTH, 2 cột 50/50 ═══ -->
-        <div class="card an a3" style="margin-bottom: 20px">
-          <div class="card-header" onclick="toggleCard(this)">
-            <div class="sec-title">🎯 Dự đoán điểm mua / bán</div>
-            <div class="toggle-icon">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--gray500)"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+        <!-- ══ GROUP SEPARATOR: CƠ SỞ PHÂN TÍCH ══ -->
+        <div class="group-sep" style="display:flex;align-items:center;gap:12px;margin:8px 0;opacity:.45">
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gray400);text-transform:uppercase">CƠ SỞ PHÂN TÍCH</span>
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
+        </div>
+
+        <!-- ═══ ROW: Xu hướng + Chỉ số (2 cột) ═══ -->
+        <div
+          id="trendIndicGrid"
+          style="
+            display: grid;
+            grid-template-columns: 35fr 65fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: start;
+          "
+        >
+          <!-- Xu hướng -->
+          <div class="card an a1">
+            <div class="card-header" onclick="toggleCard(this)">
+              <div class="sec-title">Xu hướng đa khung</div>
+              <div class="toggle-icon">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--gray500)"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="trendContent"></div>
+              <div
+                id="alignmentBadge"
+                style="
+                  margin-top: 16px;
+                  padding: 14px 18px;
+                  border-radius: 12px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  line-height: 1.6;
+                "
+              ></div>
             </div>
           </div>
-          <div class="card-body">
-            <div id="predictionsContent"></div>
+          <!-- Chỉ số + Khối lượng -->
+          <div class="card an a2">
+            <div class="card-header" onclick="toggleCard(this)">
+              <div class="sec-title">Chỉ số & Khối lượng</div>
+              <div class="toggle-icon">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--gray500)"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="indicatorsContent"></div>
+              <div id="volumeContent" style="margin-top: 14px"></div>
+            </div>
           </div>
         </div>
 
-        <!-- ═══ Quản lý vị thế đã mua ═══ -->
-        <div class="card an a3" style="margin-bottom: 20px">
+        <!-- ═══ RS vs VNINDEX ═══ -->
+        <div class="card an a2" style="margin-bottom: 20px">
           <div class="card-header" onclick="toggleCard(this)">
-            <div class="sec-title">📊 Quản lý vị thế</div>
+            <div class="sec-title">Sức mạnh tương đối vs VNINDEX</div>
             <div class="toggle-icon">
               <svg
                 width="14"
@@ -1550,8 +1667,15 @@
             </div>
           </div>
           <div class="card-body">
-            <div id="portfolioContent"></div>
+            <div id="rsContent"></div>
           </div>
+        </div>
+
+        <!-- ══ GROUP SEPARATOR: PHÂN TÍCH KỸ THUẬT ══ -->
+        <div class="group-sep" style="display:flex;align-items:center;gap:12px;margin:8px 0;opacity:.45">
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gray400);text-transform:uppercase">PHÂN TÍCH KỸ THUẬT</span>
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
         </div>
 
         <!-- ═══ ROW: Mẫu hình nến + Hỗ trợ & Kháng cự (2 cột, sát nhau) ═══ -->
@@ -1568,7 +1692,7 @@
           <!-- Mẫu hình nến -->
           <div class="card an a3">
             <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">🕯️ Mẫu hình nến</div>
+              <div class="sec-title">Mẫu hình nến</div>
               <div class="toggle-icon">
                 <svg
                   width="14"
@@ -1590,7 +1714,7 @@
           <!-- Hỗ trợ & Kháng cự -->
           <div class="card an a3">
             <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">🔒 Hỗ trợ & Kháng cự</div>
+              <div class="sec-title">Hỗ trợ & Kháng cự</div>
               <div class="toggle-icon">
                 <svg
                   width="14"
@@ -1611,33 +1735,10 @@
           </div>
         </div>
 
-        <!-- ═══ Đánh giá nhóm đầu tư ═══ -->
-        <div class="card an a1" style="margin-bottom: 20px">
-          <div class="card-header" onclick="toggleCard(this)">
-            <div class="sec-title">🏷️ Đánh giá nhóm đầu tư</div>
-            <div class="toggle-icon">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--gray500)"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
-          </div>
-          <div class="card-body">
-            <div id="investProfileContent"></div>
-          </div>
-        </div>
-
         <!-- ═══ ROW: Bullish & Bearish Patterns (full width, 3 tabs) ═══ -->
-        <div class="card an a2" style="margin-bottom: 20px">
+        <div class="card an a3" style="margin-bottom: 20px">
           <div class="card-header" onclick="toggleCard(this)">
-            <div class="sec-title">🐂🐻 Bullish & Bearish Patterns</div>
+            <div class="sec-title">Bullish & Bearish Patterns</div>
             <div class="toggle-icon">
               <svg
                 width="14"
@@ -1734,9 +1835,9 @@
             align-items: start;
           "
         >
-          <div class="card an a3" id="card-canslim">
+          <div class="card an a4" id="card-canslim">
             <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">📋 CANSLIM</div>
+              <div class="sec-title">CANSLIM</div>
               <div class="toggle-icon">
                 <svg
                   width="14"
@@ -1753,9 +1854,9 @@
             </div>
             <div class="card-body"><div id="canslimContent"></div></div>
           </div>
-          <div class="card an a3" id="card-sepa">
+          <div class="card an a4" id="card-sepa">
             <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">🎯 SEPA (Minervini)</div>
+              <div class="sec-title">SEPA (Minervini)</div>
               <div class="toggle-icon">
                 <svg
                   width="14"
@@ -1774,7 +1875,7 @@
           </div>
           <div class="card an a4" id="card-momentum">
             <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">🚀 Momentum</div>
+              <div class="sec-title">Momentum</div>
               <div class="toggle-icon">
                 <svg
                   width="14"
@@ -1793,10 +1894,10 @@
           </div>
         </div>
 
-        <!-- ═══ RS vs VNINDEX ═══ -->
-        <div class="card an a4" style="margin-bottom: 20px">
+        <!-- ═══ Đánh giá nhóm đầu tư ═══ -->
+        <div class="card an a5" style="margin-bottom: 20px">
           <div class="card-header" onclick="toggleCard(this)">
-            <div class="sec-title">⚡ Sức mạnh tương đối vs VNINDEX</div>
+            <div class="sec-title">Đánh giá nhóm đầu tư</div>
             <div class="toggle-icon">
               <svg
                 width="14"
@@ -1812,76 +1913,60 @@
             </div>
           </div>
           <div class="card-body">
-            <div id="rsContent"></div>
+            <div id="investProfileContent"></div>
           </div>
         </div>
 
-        <!-- ═══ ROW: Xu hướng + Chỉ số (2 cột) ═══ -->
-        <div
-          id="trendIndicGrid"
-          style="
-            display: grid;
-            grid-template-columns: 35fr 65fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            align-items: start;
-          "
-        >
-          <!-- Xu hướng -->
-          <div class="card an a1">
-            <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">📊 Xu hướng đa khung</div>
-              <div class="toggle-icon">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--gray500)"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="trendContent"></div>
-              <div
-                id="alignmentBadge"
-                style="
-                  margin-top: 16px;
-                  padding: 14px 18px;
-                  border-radius: 12px;
-                  font-size: 14px;
-                  font-weight: 600;
-                  line-height: 1.6;
-                "
-              ></div>
+        <!-- ══ GROUP SEPARATOR: KẾT LUẬN & HÀNH ĐỘNG ══ -->
+        <div class="group-sep" style="display:flex;align-items:center;gap:12px;margin:8px 0;opacity:.45">
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gray400);text-transform:uppercase">KẾT LUẬN & HÀNH ĐỘNG</span>
+          <div style="flex:1;height:1px;background:var(--gray200)"></div>
+        </div>
+
+        <!-- ═══ Dự đoán điểm mua / bán — FULL WIDTH, 2 cột 50/50 ═══ -->
+        <div class="card an a5" style="margin-bottom: 20px">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="sec-title">Dự đoán điểm mua / bán</div>
+            <div class="toggle-icon">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--gray500)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
             </div>
           </div>
-          <!-- Chỉ số + Khối lượng -->
-          <div class="card an a2">
-            <div class="card-header" onclick="toggleCard(this)">
-              <div class="sec-title">📈 Chỉ số & Khối lượng</div>
-              <div class="toggle-icon">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--gray500)"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
+          <div class="card-body">
+            <div id="predictionsContent"></div>
+          </div>
+        </div>
+
+        <!-- ═══ Quản lý vị thế đã mua ═══ -->
+        <div class="card an a5" style="margin-bottom: 20px">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="sec-title">Quản lý vị thế</div>
+            <div class="toggle-icon">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--gray500)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
             </div>
-            <div class="card-body">
-              <div id="indicatorsContent"></div>
-              <div id="volumeContent" style="margin-top: 14px"></div>
-            </div>
+          </div>
+          <div class="card-body">
+            <div id="portfolioContent"></div>
           </div>
         </div>
       </div>
@@ -2210,7 +2295,7 @@
         btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:sp .7s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`;
         try {
           const r = await fetch(
-            `${SERVER}/api/history-fetch?symbol=${sym}&days=420`
+            `${SERVER}/api/history-fetch?symbol=${sym}&days=1100`
           );
           const j = await r.json();
           if (!r.ok || j.error) {
@@ -2295,7 +2380,7 @@
             setLoadingMsg(`Đang tải dữ liệu mới ${sym} từ SSI…`);
             try {
               const dlRes = await fetch(
-                `${SERVER}/api/history-fetch?symbol=${sym}&days=420`
+                `${SERVER}/api/history-fetch?symbol=${sym}&days=1100`
               );
               const dlJson = await dlRes.json();
               if (!dlRes.ok || dlJson.error) {
@@ -2333,7 +2418,7 @@
           if (j.error && j.error.includes("Không tìm thấy")) {
             setLoadingMsg(`Chưa có dữ liệu, đang tải ${sym} từ SSI…`);
             const dlRes = await fetch(
-              `${SERVER}/api/history-fetch?symbol=${sym}&days=420`
+              `${SERVER}/api/history-fetch?symbol=${sym}&days=1100`
             );
             const dlJson = await dlRes.json();
             if (!dlRes.ok || dlJson.error)
@@ -3076,267 +3161,406 @@
 
       function renderPredictions(pred) {
         const el = document.getElementById("predictionsContent");
-        if (!pred.bestBuy) {
-          el.innerHTML = `<div style="padding:32px;text-align:center;color:var(--gray400)">Không đủ dữ liệu</div>`;
-          return;
-        }
-        const b = pred.bestBuy;
-        const sv = b.sellStrategy;
-        const ss = b.splitStrategy;
 
-        const fv = (v) => {
+        // ── Formatters ─────────────────────────────────────────────────────
+        const fvMoney = (v) => {
           if (!v) return "—";
+          if (v >= 1e9) return (v / 1e9).toFixed(2) + " tỷ";
           if (v >= 1e6) return (v / 1e6).toFixed(1) + " tr";
           return v.toLocaleString("vi-VN") + "đ";
         };
-        const fl = (v) => (v ? Number(v).toLocaleString("vi-VN") + " CP" : "—");
-        const fvol = (v) => {
+        const fLots = (v) => (v ? Number(v).toLocaleString("vi-VN") + " CP" : "—");
+        const fVolK = (v) => {
           if (!v) return "—";
           if (v >= 1e6) return (v / 1e6).toFixed(1) + "M";
           if (v >= 1e3) return Math.round(v / 1e3) + "K";
           return String(v);
         };
-
-        // days chip
-        const dChip = (de, isUp) => {
+        const dChip = (de) => {
           if (!de) return '<span style="color:var(--gray300)">—</span>';
-          if (de.immediate)
-            return `<span style="font-size:12px;font-weight:700;color:var(--up)">Vào ngay</span>`;
-          const c = isUp ? "var(--up)" : "var(--navy)";
-          return `<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${c}">~${de.days}p</span><br><span style="font-size:11px;color:var(--gray400)">${de.minDays}–${de.maxDays}</span>`;
+          if (de.immediate) return `<span style="font-size:12px;font-weight:700;color:var(--up)">Vào ngay</span>`;
+          return `<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--navy)">~${de.days}p</span><br><span style="font-size:11px;color:var(--gray400)">${de.minDays}–${de.maxDays}</span>`;
         };
 
-        // liquidity
-        const lc = ss
-          ? ss.liquidityLevel === "high"
-            ? "var(--up)"
-            : ss.liquidityLevel === "medium"
-            ? "var(--navy)"
-            : ss.liquidityLevel === "low"
-            ? "var(--am)"
-            : "var(--dn)"
-          : "var(--gray400)";
+        // ── Grade colors ───────────────────────────────────────────────────
+        const gradeColor = (g) => g === "A+" ? "var(--up)" : g === "A" ? "#22c55e" : g === "B" ? "var(--navy)" : g === "C" ? "var(--am)" : "var(--dn)";
+        const gradeBg    = (g) => g === "A+" ? "var(--up-bg)" : g === "A" ? "#f0fdf4" : g === "B" ? "var(--navy-l)" : g === "C" ? "var(--am-bg)" : "var(--dn-bg)";
+        const gradeBd    = (g) => g === "A+" ? "var(--up-bd)" : g === "A" ? "#bbf7d0" : g === "B" ? "rgba(0,58,107,.2)" : g === "C" ? "var(--am-bd)" : "var(--dn-bd)";
 
-        // ═══ LEFT: MUA ═══════════════════════════════════════════════════════════
-        // — giá vào + SL
-        let buyHtml = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <span style="font-size:12px;font-weight:700;color:var(--up);letter-spacing:.8px">📥 VÀO LỆNH</span>
-      ${
-        b.quality
-          ? `<span style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)">${b.quality}</span>`
-          : ""
-      }
+        if (!pred.bestBuy && !pred.checklist) {
+          el.innerHTML = `<div style="padding:32px;text-align:center;color:var(--gray400)">Không đủ dữ liệu</div>`;
+          return;
+        }
+
+        const b  = pred.bestBuy || {};
+        const sv = b.sellStrategy;
+        const ss = b.splitStrategy;
+
+        // ════════════════════════════════════════════════════════════════════
+        // SECTION 1 — Signal Header (Setup Grade + Market Phase + Trigger)
+        // ════════════════════════════════════════════════════════════════════
+        const grade      = pred.setupGrade || b.setupGrade || "—";
+        const gradeC     = gradeColor(grade);
+        const gradeBgC   = gradeBg(grade);
+        const gradeBdC   = gradeBd(grade);
+        const chkPct     = pred.checklistPct ?? 0;
+        const trigger    = pred.entryTrigger || b.entryTrigger;
+        const mPhaseLabel= pred.marketPhaseLabel || b.marketPhaseLabel || "—";
+        const mPhaseC    = pred.marketPhaseColor || b.marketPhaseColor || "var(--gray500)";
+        const vPhaseLabel= pred.volumePhaseLabel || b.volumePhaseLabel || "—";
+        const adRatio    = pred.adRatio ?? b.adRatio ?? 0.5;
+
+        // Checklist bar segments
+        const checklist  = pred.checklist || b.checklist || [];
+        const chkMet     = pred.checklistMet ?? 0;
+        const chkTotal   = pred.checklistTotal ?? 1;
+
+        let headerHtml = `
+<div style="display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;padding:20px 24px;border-radius:14px;background:${gradeBgC};border:2px solid ${gradeBdC};margin-bottom:20px">
+  <!-- Grade circle -->
+  <div style="width:72px;height:72px;border-radius:50%;background:${gradeC};display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px ${gradeC}40">
+    <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:#fff">${grade}</span>
+  </div>
+  <!-- Center info -->
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+      <span style="font-size:17px;font-weight:800;color:var(--gray900)">Setup ${grade} — ${chkPct}% điều kiện đạt</span>
+      ${trigger ? `<span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;background:${trigger.color}">${trigger.label}</span>` : ""}
     </div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:40px;color:var(--navy);line-height:1;margin-bottom:6px">${fp(
-      b.price
-    )}</div>
-    <div style="font-size:13px;color:var(--gray500);margin-bottom:20px;line-height:1.5">${
-      b.reason || ""
-    }</div>
+    <!-- Progress bar -->
+    <div style="height:8px;border-radius:4px;background:rgba(0,0,0,.08);margin-bottom:8px;overflow:hidden">
+      <div style="height:100%;width:${chkPct}%;background:${gradeC};border-radius:4px;transition:width .5s"></div>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <span style="font-size:12px;color:${mPhaseC};font-weight:600">${mPhaseLabel}</span>
+      <span style="font-size:12px;color:${adRatio > 0.55 ? "var(--up)" : adRatio < 0.45 ? "var(--dn)" : "var(--gray500)"};font-weight:600">● ${vPhaseLabel} (${(adRatio * 100).toFixed(0)}%)</span>
+      ${trigger ? `<span style="font-size:12px;color:var(--gray500)">${trigger.desc}</span>` : ""}
+    </div>
+  </div>
+  <!-- Confidence score -->
+  ${b.confidenceScore != null ? `
+  <div style="text-align:center;flex-shrink:0;padding-left:16px;border-left:1px solid ${gradeBdC}">
+    <div style="font-size:11px;color:var(--gray400);margin-bottom:4px;font-weight:600;letter-spacing:.5px">TIN CẬY</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:800;color:${gradeC};line-height:1">${b.confidenceScore}</div>
+    <div style="font-size:11px;color:var(--gray400)">/100</div>
+  </div>` : ""}
+</div>`;
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-      <div style="padding:12px 16px;border-radius:10px;background:var(--dn-bg);border:1px solid var(--dn-bd)">
-        <div style="font-size:11px;font-weight:700;color:var(--dn);letter-spacing:.6px;margin-bottom:6px">STOPLOSS</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--dn);line-height:1">${fp(
-          b.stoploss
-        )}</div>
-        <div style="font-size:12px;color:var(--gray500);margin-top:4px">${
-          b.stoplossPct
-        }% &nbsp;·&nbsp; ${b.stoplossMethod || "Fixed 5%"}</div>
-      </div>
-      <div style="padding:12px 16px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
-        <div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.6px;margin-bottom:6px">RỦI RO / CP</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--gray900);line-height:1">${fp(
-          b.riskPerShare
-        )}</div>
-        <div style="font-size:12px;color:var(--gray500);margin-top:4px">Biến động ${
-          b.volatility
-        }%/ngày</div>
-      </div>
-    </div>`;
-
-        // — bảng lệnh
-        if (ss) {
-          // meta row
-          buyHtml += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:2px solid var(--gray200);border-bottom:1px solid var(--gray200);margin-bottom:0">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:13px;font-weight:700;color:var(--gray700)">Ngân sách</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy)">${fv(
-          ss.budget
-        )}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:12px;font-weight:700;color:${lc}">● ${
-            ss.liquidityLabel || ""
-          }</span>
-        <span style="font-size:11px;color:var(--gray400)">TB20: ${fvol(
-          ss.avgVol20
-        )} CP</span>
+        // ════════════════════════════════════════════════════════════════════
+        // SECTION 2 — Pre-entry Checklist
+        // ════════════════════════════════════════════════════════════════════
+        let checklistHtml = "";
+        if (checklist.length > 0) {
+          checklistHtml = `
+<div style="margin-bottom:20px">
+  <div style="font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px">⚡ Điều kiện vào lệnh — ${chkMet}/${chkTotal} điểm đạt</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+          checklist.forEach(c => {
+            const cc = c.met ? "var(--up)" : "var(--dn)";
+            const cbg = c.met ? "var(--up-bg)" : "var(--dn-bg)";
+            const cbd = c.met ? "var(--up-bd)" : "var(--dn-bd)";
+            checklistHtml += `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;background:${cbg};border:1px solid ${cbd}">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px">${c.met ? "✅" : "❌"}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--gray900);margin-bottom:2px">${c.label}</div>
+        <div style="font-size:11px;color:var(--gray500);line-height:1.4">${c.desc}</div>
       </div>
     </div>`;
-          if (ss.liquidityWarning) {
-            buyHtml += `<div style="font-size:12px;color:var(--am);font-weight:600;padding:8px 0;border-bottom:1px solid var(--gray100)">${ss.liquidityWarning}</div>`;
-          }
-          // table header
-          buyHtml += `<div style="display:grid;grid-template-columns:88px 72px 1fr 100px 72px;font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;padding:8px 0;border-bottom:2px solid var(--gray200)">
-      <span>LỆNH</span>
-      <span>GIÁ</span>
-      <span>GHI CHÚ</span>
-      <span style="text-align:right">SỐ CP</span>
-      <span style="text-align:right">DỰ KIẾN</span>
-    </div>`;
-          ss.orders.forEach((o, i) => {
-            const isDummy = o.action === "Dự phòng";
-            const clr =
-              o.action === "Mua"
-                ? "var(--up)"
-                : o.action === "Mua thêm"
-                ? "var(--navy)"
-                : "var(--gray400)";
-            const rowBg = isDummy ? "rgba(0,0,0,.02)" : "transparent";
-            const note = o.note.replace(/^Lệnh \d+:\s*/, "");
-            buyHtml += `
-      <div style="display:grid;grid-template-columns:88px 72px 1fr 100px 72px;padding:11px 0;border-bottom:1px solid var(--gray100);align-items:center;background:${rowBg}">
-        <div>
-          <div style="font-size:14px;font-weight:700;color:${clr}">${
-              isDummy ? "Dự phòng" : o.action
-            }</div>
-          <div style="font-size:12px;color:var(--gray400);margin-top:1px">${
-            o.pct
-          }%</div>
-        </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--gray900)">${
-          o.price ? fp(o.price) : "—"
-        }</div>
-        <div style="font-size:12px;color:var(--gray500);padding-right:8px;line-height:1.4">${note}</div>
-        <div style="text-align:right">
-          ${
-            !isDummy && o.lots
-              ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${clr}">${fl(
-                  o.lots
-                )}</div><div style="font-size:11px;color:var(--gray400);margin-top:1px">≈ ${fv(
-                  o.amount
-                )}</div>`
-              : isDummy && o.amount
-              ? `<div style="font-size:13px;font-weight:600;color:var(--gray400)">${fv(
-                  o.amount
-                )}</div>`
-              : '<span style="color:var(--gray300)">—</span>'
-          }
-        </div>
-        <div style="text-align:right">${dChip(o.daysEstimate, false)}</div>
-      </div>`;
           });
-          // tổng
-          const act = ss.orders.filter((o) => o.lots > 0 && o.amount > 0);
-          const totLots = act.reduce((s, o) => s + (o.lots || 0), 0);
-          const totAmt = act.reduce((s, o) => s + (o.amount || 0), 0);
-          if (totLots > 0) {
-            buyHtml += `<div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:10px 0 0;border-top:2px solid var(--gray200);margin-top:0">
-        <span style="font-size:12px;color:var(--gray500)">Tổng mua</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy)">${fl(
-          totLots
-        )}</span>
-        <span style="color:var(--gray300)">·</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy)">${fv(
-          totAmt
-        )}</span>
-      </div>`;
+          checklistHtml += `</div></div>`;
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // SECTION 3 — Entry Zone (multi-factor) + Trade metrics (2 columns)
+        // ════════════════════════════════════════════════════════════════════
+        const ez = pred.entryZone || b.entryZone;
+        const curPrice = analysisData?.latestPrice;
+
+        let entryZoneHtml = "";
+        if (ez) {
+          const distSign = ez.distFromCurrent > 0 ? "+" : "";
+          entryZoneHtml = `
+<div style="padding:16px 18px;border-radius:12px;background:var(--navy-l);border:1.5px solid rgba(0,58,107,.2);margin-bottom:16px">
+  <div style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.8px;margin-bottom:12px">🎯 VÙNG MUA TỐI ƯU (Multi-factor)</div>
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:11px;color:var(--gray400);margin-bottom:3px">Giá tối ưu</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:28px;color:var(--navy);line-height:1">${fp(ez.optimal)}</div>
+      <div style="font-size:12px;color:${ez.distFromCurrent > 0 ? "var(--up)" : "var(--navy)"};margin-top:3px">${distSign}${ez.distFromCurrent}% so với giá hiện tại</div>
+    </div>
+    <div style="height:48px;width:1px;background:rgba(0,58,107,.15)"></div>
+    <div>
+      <div style="font-size:11px;color:var(--gray400);margin-bottom:3px">Vùng chấp nhận</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${fp(ez.floor)} – ${fp(ez.ceiling)}</div>
+    </div>
+    <div style="height:48px;width:1px;background:rgba(0,58,107,.15)"></div>
+    <div style="flex:1">
+      <div style="font-size:11px;color:var(--gray400);margin-bottom:6px">Confluence factors</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${ez.factors.map(f => `<span style="padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(0,58,107,.1);color:var(--navy);border:1px solid rgba(0,58,107,.15)">${f.label} · ${fp(f.price)}</span>`).join("")}
+      </div>
+    </div>
+  </div>
+</div>`;
+        }
+
+        // ── Main buy price + SL + metrics ──────────────────────────────────
+        let buyMetricsHtml = "";
+        if (pred.bestBuy) {
+          const qualC = gradeColor(b.quality || "B");
+          buyMetricsHtml = `
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+  <span style="font-size:11px;font-weight:700;color:var(--up);letter-spacing:.8px">📥 GIÁ VÀO LỆNH (từ S1)</span>
+  ${b.quality ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${gradeBg(b.quality)};color:${qualC};border:1px solid ${gradeBd(b.quality)}">${b.quality}</span>` : ""}
+</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:38px;color:var(--navy);line-height:1;margin-bottom:4px">${fp(b.price)}</div>
+<div style="font-size:13px;color:var(--gray500);margin-bottom:16px;line-height:1.5">${b.reason || ""}</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+  <div style="padding:10px 12px;border-radius:10px;background:var(--dn-bg);border:1px solid var(--dn-bd)">
+    <div style="font-size:10px;font-weight:700;color:var(--dn);letter-spacing:.6px;margin-bottom:4px">STOPLOSS</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--dn)">${fp(b.stoploss)}</div>
+    <div style="font-size:11px;color:var(--gray500);margin-top:3px">${b.stoplossPct}% · ${b.stoplossMethod || "ATR×1.5"}</div>
+  </div>
+  <div style="padding:10px 12px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+    <div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:4px">RỦI RO/CP</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--gray900)">${fp(b.riskPerShare)}</div>
+    <div style="font-size:11px;color:var(--gray500);margin-top:3px">Biến động ${b.volatility}%/ngày</div>
+  </div>
+  <div style="padding:10px 12px;border-radius:10px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2)">
+    <div style="font-size:10px;font-weight:700;color:var(--ind);letter-spacing:.6px;margin-bottom:4px">ATR(14)</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--ind)">${b.atrPct ?? "—"}%</div>
+    <div style="font-size:11px;color:var(--gray500);margin-top:3px">Biến động bình quân</div>
+  </div>
+</div>`;
+
+          // Confidence breakdown
+          if (b.confidenceDetails) {
+            const cd = b.confidenceDetails;
+            buyMetricsHtml += `
+<div style="padding:12px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200);margin-bottom:16px">
+  <div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.6px;margin-bottom:10px">PHÂN TÍCH ĐỘ TIN CẬY</div>
+  ${Object.entries(cd).map(([k, v]) => {
+    const labels = { trend: "Xu hướng", rsi: "RSI", support: "Hỗ trợ", riskReward: "R:R" };
+    const pct = Math.round((v.score / v.max) * 100);
+    const bc = pct >= 70 ? "var(--up)" : pct >= 40 ? "var(--am)" : "var(--dn)";
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:12px;font-weight:600;color:var(--gray700)">${labels[k] || k}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${bc}">${v.score}/${v.max} · ${v.reason}</span>
+      </div>
+      <div style="height:4px;border-radius:2px;background:var(--gray100)"><div style="height:100%;width:${pct}%;background:${bc};border-radius:2px"></div></div>
+    </div>`;
+  }).join("")}
+</div>`;
           }
         }
 
-        // ═══ RIGHT: BÁN ══════════════════════════════════════════════════════════
-        let sellHtml = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <span style="font-size:12px;font-weight:700;color:var(--dn);letter-spacing:.8px">📤 CHỐT LỜI</span>
-      ${
-        sv
-          ? `<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;color:#fff;background:${
-              sv.tradeType === "TREND" ? "var(--up)" : "#e8590c"
-            }">${sv.tradeType === "TREND" ? "TREND" : "SWING"}</span>`
-          : ""
-      }
-    </div>`;
-
-        if (sv) {
-          sellHtml += `<div style="font-size:13px;color:var(--gray500);margin-bottom:20px;line-height:1.5">${sv.desc}</div>`;
-          // sell table header
-          sellHtml += `<div style="display:grid;grid-template-columns:1fr 80px 48px 72px;font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;padding:10px 0 8px;border-top:2px solid var(--gray200);border-bottom:2px solid var(--gray200)">
-      <span>MỤC TIÊU</span>
-      <span style="text-align:right">GIÁ</span>
-      <span style="text-align:right">BÁN</span>
-      <span style="text-align:right">DỰ KIẾN</span>
-    </div>`;
-          const tpD = [b.tp1Days, b.tp2Days, b.tp3Days];
-          sv.targets.forEach((t, i) => {
-            const de = tpD[i];
-            const pct = parseFloat(t.pct);
-            sellHtml += `
-      <div style="display:grid;grid-template-columns:1fr 80px 48px 72px;padding:11px 0;border-bottom:1px solid var(--gray100);align-items:center">
-        <div>
-          <div style="font-size:14px;font-weight:700;color:var(--gray900)">${t.name.replace(
-            / — .*/,
-            ""
-          )}</div>
-          <div style="font-size:11px;color:var(--gray400);margin-top:2px">R:R ${
-            t.rr
-          }:1 &nbsp;·&nbsp; ${t.note}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--up)">${fp(
-            t.price
-          )}</div>
-          <div style="font-size:11px;color:var(--up);margin-top:1px">+${pct}%</div>
-        </div>
-        <div style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--navy)">${
-          t.sellPct
-        }%</div>
-        <div style="text-align:right">${dChip(de, true)}</div>
-      </div>`;
+        // ── Split strategy table ──────────────────────────────────────────
+        let splitHtml = "";
+        if (ss) {
+          const lc = ss.liquidityLevel === "high" ? "var(--up)" : ss.liquidityLevel === "medium" ? "var(--navy)" : ss.liquidityLevel === "low" ? "var(--am)" : "var(--dn)";
+          splitHtml = `
+<div style="border-top:2px solid var(--gray100);padding-top:16px;margin-top:4px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <span style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.6px">KẾ HOẠCH VÀO LỆNH</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(ss.budget)}</span>
+      <span style="font-size:12px;font-weight:700;color:${lc}">● ${ss.liquidityLabel || ""}</span>
+      <span style="font-size:11px;color:var(--gray400)">TB20: ${fVolK(ss.avgVol20)} CP</span>
+    </div>
+  </div>
+  ${ss.liquidityWarning ? `<div style="font-size:12px;color:var(--am);font-weight:600;padding:8px 12px;background:var(--am-bg);border-radius:8px;margin-bottom:10px;border:1px solid var(--am-bd)">${ss.liquidityWarning}</div>` : ""}
+  <div style="font-size:11px;color:var(--gray400);margin-bottom:10px">${ss.desc}</div>
+  <div style="display:grid;grid-template-columns:90px 70px 1fr 100px 68px;font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.5px;padding:7px 0;border-top:1px solid var(--gray200);border-bottom:2px solid var(--gray200)">
+    <span>LỆNH</span><span>GIÁ</span><span>GHI CHÚ</span><span style="text-align:right">SỐ CP</span><span style="text-align:right">DỰ KIẾN</span>
+  </div>`;
+          ss.orders.forEach(o => {
+            const isDummy = o.action === "Dự phòng";
+            const clr = o.action === "Mua" ? "var(--up)" : o.action === "Mua thêm" ? "var(--navy)" : "var(--gray400)";
+            const note = o.note.replace(/^Lệnh \d+:\s*/, "");
+            splitHtml += `
+  <div style="display:grid;grid-template-columns:90px 70px 1fr 100px 68px;padding:10px 0;border-bottom:1px solid var(--gray100);align-items:center">
+    <div><div style="font-size:13px;font-weight:700;color:${clr}">${isDummy ? "Dự phòng" : o.action}</div><div style="font-size:11px;color:var(--gray400)">${o.pct}%</div></div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px">${o.price ? fp(o.price) : "—"}</div>
+    <div style="font-size:12px;color:var(--gray500);padding-right:6px;line-height:1.4">${note}</div>
+    <div style="text-align:right">${!isDummy && o.lots ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${clr}">${fLots(o.lots)}</div><div style="font-size:11px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : isDummy && o.amount ? `<div style="font-size:12px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : "—"}</div>
+    <div style="text-align:right">${dChip(o.daysEstimate)}</div>
+  </div>`;
           });
+          const actOrders = ss.orders.filter(o => o.lots > 0);
+          const totLots = actOrders.reduce((s, o) => s + (o.lots || 0), 0);
+          const totAmt  = actOrders.reduce((s, o) => s + (o.amount || 0), 0);
+          if (totLots > 0) {
+            splitHtml += `<div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:10px 0 0;border-top:2px solid var(--gray200)">
+    <span style="font-size:12px;color:var(--gray500)">Tổng mua</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fLots(totLots)}</span>
+    <span style="color:var(--gray200)">·</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(totAmt)}</span>
+  </div>`;
+          }
+          splitHtml += `</div>`;
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // RIGHT COLUMN — Exit Strategy + Scenarios + Fib
+        // ════════════════════════════════════════════════════════════════════
+
+        // ── Sell strategy ──────────────────────────────────────────────────
+        let exitHtml = `<div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:12px">📤 CHIẾN LƯỢC THOÁT LỆNH</div>`;
+        if (sv) {
+          const isTrend = sv.tradeType === "TREND";
+          exitHtml += `
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+  <span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;background:${isTrend ? "var(--up)" : "#e8590c"}">${sv.tradeType}</span>
+  <span style="font-size:12px;color:var(--gray500)">${sv.desc}</span>
+</div>`;
+
+          sv.targets.forEach((t, i) => {
+            const tColors = ["var(--up)", "#22c55e", "#4ade80"];
+            const tc = tColors[i] || "var(--up)";
+            const pct = parseFloat(t.pct);
+            exitHtml += `
+<div style="display:flex;align-items:center;gap:0;margin-bottom:8px">
+  <!-- Timeline dot -->
+  <div style="display:flex;flex-direction:column;align-items:center;margin-right:12px;flex-shrink:0">
+    <div style="width:10px;height:10px;border-radius:50%;background:${tc};box-shadow:0 0 0 3px ${tc}25"></div>
+    ${i < sv.targets.length - 1 ? `<div style="width:2px;height:28px;background:var(--gray200);margin-top:3px"></div>` : ""}
+  </div>
+  <div style="flex:1;padding:10px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:13px;font-weight:700;color:var(--gray900)">${t.name.replace(/ — .*/, "")}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:${tc}">${fp(t.price)}</span>
+        <span style="font-size:12px;color:${tc};font-weight:600">+${pct}%</span>
+        <span style="padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:var(--navy-l);color:var(--navy)">R:R ${t.rr}:1</span>
+        <span style="font-size:12px;font-weight:700;color:var(--dn)">Bán ${t.sellPct}%</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--gray400)">${t.note}</div>
+  </div>
+</div>`;
+          });
+
           if (sv.trailingStop) {
-            sellHtml += `<div style="display:flex;align-items:center;gap:8px;padding:12px 0 2px">
-        <span style="font-size:14px">🔔</span>
-        <span style="font-size:13px;font-weight:700;color:var(--am)">Trailing Stop ${sv.trailingStop.pct}%</span>
-        <span style="font-size:12px;color:var(--gray400)">&nbsp;${sv.trailingStop.desc}</span>
-      </div>`;
+            exitHtml += `
+<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:var(--am-bg);border:1px solid var(--am-bd);margin-top:8px">
+  <span style="font-size:16px">🔔</span>
+  <div>
+    <span style="font-size:13px;font-weight:700;color:var(--am)">Trailing Stop ${sv.trailingStop.pct}%</span>
+    <span style="font-size:12px;color:var(--gray500);margin-left:8px">${sv.trailingStop.desc}</span>
+  </div>
+</div>`;
           }
         } else {
-          sellHtml += `<div style="padding:20px 0;color:var(--gray400);font-size:13px">Không đủ dữ liệu</div>`;
+          exitHtml += `<div style="padding:20px 0;color:var(--gray400);font-size:13px">Không đủ dữ liệu</div>`;
         }
 
-        // worst row
-        const mkW = (label, d) =>
-          d
-            ? `<div style="display:flex;align-items:center;gap:10px">
-    <span style="font-size:12px;color:var(--gray400)">${label}</span>
-    <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--dn)">${fp(
-      d.price
-    )}</span>
-    <span style="font-size:12px;color:var(--gray400)">${(
-      d.reason ||
-      d.risk ||
-      ""
-    ).slice(0, 55)}${(d.reason || d.risk || "").length > 55 ? "…" : ""}</span>
-  </div>`
-            : "";
+        // ── Invalidation level ────────────────────────────────────────────
+        exitHtml += `<div style="margin-top:16px;padding:12px 16px;border-radius:10px;background:var(--dn-bg);border:1px solid var(--dn-bd)">
+  <div style="font-size:11px;font-weight:700;color:var(--dn);letter-spacing:.6px;margin-bottom:6px">⛔ ĐIỂM VÔ HIỆU HOÁ SETUP</div>
+  <div style="font-size:13px;color:var(--dn);font-weight:600">${pred.bestBuy ? `Giá đóng cửa dưới ${fp(b.stoploss)} với khối lượng cao → Cắt lỗ, setup hủy bỏ` : `Phá vỡ vùng hỗ trợ chính với volume tăng mạnh`}</div>
+  <div style="font-size:11px;color:var(--gray500);margin-top:4px">Kỷ luật: Chấp nhận lỗ nhỏ để tránh lỗ lớn. Không trung bình giá khi đã cắt lỗ.</div>
+</div>`;
 
-        el.innerHTML = `
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start">
-    <div style="padding-right:28px;border-right:2px solid var(--gray100)">${buyHtml}</div>
-    <div style="padding-left:28px">${sellHtml}</div>
+        // ── Scenario Analysis ─────────────────────────────────────────────
+        const scenarios = pred.scenarios || b.scenarios;
+        let scenarioHtml = "";
+        if (scenarios) {
+          scenarioHtml = `
+<div style="margin-top:16px">
+  <div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:12px">🔮 PHÂN TÍCH KỊCH BẢN</div>
+  <div style="display:flex;flex-direction:column;gap:8px">`;
+          const sData = [
+            { key: "bull",  icon: "🟢", c: "var(--up)", bg: "var(--up-bg)", bd: "var(--up-bd)" },
+            { key: "base",  icon: "🔵", c: "var(--navy)", bg: "var(--navy-l)", bd: "rgba(0,58,107,.2)" },
+            { key: "bear",  icon: "🔴", c: "var(--dn)", bg: "var(--dn-bg)", bd: "var(--dn-bd)" },
+          ];
+          sData.forEach(({ key, icon, c, bg, bd }) => {
+            const s = scenarios[key];
+            if (!s) return;
+            const pctNum = parseFloat(s.targetPct);
+            const pctSign = pctNum >= 0 ? "+" : "";
+            scenarioHtml += `
+  <div style="padding:12px 14px;border-radius:10px;background:${bg};border:1px solid ${bd}">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:14px">${icon}</span>
+        <span style="font-size:13px;font-weight:700;color:${c}">${s.label}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${c}">${fp(s.target)}</span>
+        <span style="font-size:12px;font-weight:600;color:${c}">${pctSign}${s.targetPct}%</span>
+        <span style="padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(0,0,0,.06);color:var(--gray600)">${s.probability}%</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--gray500)">${s.trigger}</div>
+  </div>`;
+          });
+          scenarioHtml += `</div></div>`;
+        }
+
+        // ── Fibonacci levels (compact) ─────────────────────────────────────
+        const fibs = pred.fibLevels || b.fibLevels;
+        let fibHtml = "";
+        if (fibs) {
+          const fibData = [
+            { label: "Fib 23.6%", val: fibs.fib236, key: "fib236" },
+            { label: "Fib 38.2%", val: fibs.fib382, key: "fib382" },
+            { label: "Fib 50.0%", val: fibs.fib500, key: "fib500" },
+            { label: "Fib 61.8%", val: fibs.fib618, key: "fib618" },
+            { label: "Fib 78.6%", val: fibs.fib786, key: "fib786" },
+          ];
+          const priceRef = curPrice || b.price;
+          fibHtml = `
+<div style="margin-top:16px">
+  <div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:10px">📐 FIBONACCI RETRACEMENT (${fibs.swingLow} → ${fibs.swingHigh})</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+    ${fibData.map(f => {
+      const isNear = priceRef && Math.abs(priceRef - f.val) / priceRef < 0.03;
+      const isBelow = priceRef && priceRef < f.val;
+      const fc = isNear ? "var(--am)" : isBelow ? "var(--dn)" : "var(--up)";
+      const fbg = isNear ? "var(--am-bg)" : "var(--gray50)";
+      const fbd = isNear ? "var(--am-bd)" : "var(--gray200)";
+      return `<div style="padding:8px 6px;border-radius:8px;background:${fbg};border:1px solid ${fbd};text-align:center${isNear ? ";box-shadow:0 0 0 2px var(--am)40" : ""}">
+        <div style="font-size:10px;font-weight:700;color:var(--gray400);margin-bottom:3px">${f.label}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${fc}">${fp(f.val)}</div>
+        ${isNear ? `<div style="font-size:10px;color:var(--am);margin-top:2px">◆ Giá hiện tại</div>` : ""}
+      </div>`;
+    }).join("")}
   </div>
-  ${
-    pred.worstBuy || pred.worstSell
-      ? `
-  <div style="margin-top:16px;padding-top:14px;border-top:2px solid var(--gray100);display:flex;flex-direction:column;gap:8px">
-    ${mkW("Mua tệ nhất", pred.worstBuy)}
-    ${mkW("Bán tệ nhất", pred.worstSell)}
-  </div>`
-      : ""
-  }`;
+</div>`;
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // ASSEMBLE — 2-column layout
+        // ════════════════════════════════════════════════════════════════════
+        el.innerHTML = `
+${headerHtml}
+${checklistHtml}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start">
+  <!-- LEFT: Entry + Split -->
+  <div style="padding-right:28px;border-right:2px solid var(--gray100)">
+    ${entryZoneHtml}
+    ${buyMetricsHtml}
+    ${splitHtml}
+  </div>
+  <!-- RIGHT: Exit + Scenarios + Fib -->
+  <div style="padding-left:28px">
+    ${exitHtml}
+    ${scenarioHtml}
+    ${fibHtml}
+  </div>
+</div>
+${(pred.worstBuy || pred.worstSell) ? `
+<div style="margin-top:16px;padding:12px 16px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200);display:flex;gap:24px;flex-wrap:wrap">
+  <span style="font-size:11px;font-weight:700;color:var(--gray500)">⚠️ TRÁNH MUA</span>
+  ${pred.worstBuy ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Mua tệ nhất:</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstBuy.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstBuy.reason || pred.worstBuy.risk || "").slice(0, 70)}</span></div>` : ""}
+  ${pred.worstSell ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Bán tệ nhất:</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstSell.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstSell.reason || pred.worstSell.risk || "").slice(0, 70)}</span></div>` : ""}
+</div>` : ""}`;
       }
+
 
       // ═══ QUẢN LÝ VỊ THẾ (Portfolio) ═══════════════════════════════════════════
       async function getPortfolio() {
@@ -4640,6 +4864,88 @@
         }
         if (analysisData) renderCharts(analysisData);
       }
+      // ── Trendlines ────────────────────────────────────────────────────────────
+      let showTrendlines = true;
+      function toggleTrendlines() {
+        showTrendlines = !showTrendlines;
+        const btn = document.getElementById("ctTrendline");
+        if (btn) {
+          btn.style.background = showTrendlines ? "var(--navy)" : "var(--wht)";
+          btn.style.color = showTrendlines ? "#fff" : "var(--gray500)";
+          btn.style.borderColor = showTrendlines ? "var(--navy)" : "var(--gray200)";
+        }
+        if (mainChartInstance) mainChartInstance.update("none");
+      }
+
+      // Tìm swing highs/lows có prominence đủ lớn
+      // win: số phiên tối thiểu mỗi bên để coi là swing
+      // minProminencePct: đỉnh phải nổi hơn vùng xung quanh ít nhất X%
+      function findSwings(highs, lows, win) {
+        const n = highs.length;
+        const swingHighs = [], swingLows = [];
+
+        for (let i = win; i < n - win; i++) {
+          // Swing High: highs[i] cao hơn TẤT CẢ điểm trong cửa sổ
+          const h = highs[i];
+          if (h == null) continue;
+          let isHigh = true;
+          for (let j = i - win; j <= i + win; j++) {
+            if (j !== i && highs[j] != null && highs[j] >= h) { isHigh = false; break; }
+          }
+          if (isHigh) {
+            // Tính prominence: khoảng cách từ đỉnh xuống đáy gần nhất trong cửa sổ rộng hơn
+            const localMin = Math.min(...lows.slice(Math.max(0, i - win * 2), i + win * 2 + 1).filter(v => v != null));
+            const prominence = (h - localMin) / h;
+            swingHighs.push({ i, v: h, prominence });
+          }
+
+          // Swing Low: lows[i] thấp hơn TẤT CẢ điểm trong cửa sổ
+          const l = lows[i];
+          if (l == null) continue;
+          let isLow = true;
+          for (let j = i - win; j <= i + win; j++) {
+            if (j !== i && lows[j] != null && lows[j] <= l) { isLow = false; break; }
+          }
+          if (isLow) {
+            const localMax = Math.max(...highs.slice(Math.max(0, i - win * 2), i + win * 2 + 1).filter(v => v != null));
+            const prominence = (localMax - l) / localMax;
+            swingLows.push({ i, v: l, prominence });
+          }
+        }
+        return { swingHighs, swingLows };
+      }
+
+      // Chọn 2 đỉnh/đáy nổi bật nhất để vẽ trendline
+      // Ưu tiên: prominence cao + gần cuối chart
+      function pickBestPair(swings, n) {
+        if (swings.length < 2) return null;
+        // Lọc chỉ lấy swings có prominence >= 1.5% để tránh nhiễu
+        const significant = swings.filter(s => s.prominence >= 0.015);
+        if (significant.length < 2) return swings.slice(-2); // fallback
+        // Lấy 2 swing gần nhất
+        return significant.slice(-2);
+      }
+
+      function computeTrendlines(highs, lows) {
+        const n = highs.length;
+        // Window thích nghi: ~8% của chiều dài, tối thiểu 5 phiên
+        const win = Math.max(5, Math.round(n * 0.08));
+        const { swingHighs, swingLows } = findSwings(highs, lows, win);
+        const lines = [];
+
+        const resPair = pickBestPair(swingHighs, n);
+        if (resPair && resPair.length === 2) {
+          lines.push({ type: "resistance", x1: resPair[0].i, y1: resPair[0].v, x2: resPair[1].i, y2: resPair[1].v });
+        }
+
+        const supPair = pickBestPair(swingLows, n);
+        if (supPair && supPair.length === 2) {
+          lines.push({ type: "support", x1: supPair[0].i, y1: supPair[0].v, x2: supPair[1].i, y2: supPair[1].v });
+        }
+
+        return lines;
+      }
+
       function renderCharts(d) {
         destroyCharts();
         const c = d.chart,
@@ -4916,6 +5222,7 @@
             },
           });
           mainChartInstance._srLevels = d.chart.srLevels || null;
+          mainChartInstance._trendlines = computeTrendlines(highs, lows);
         } else {
           // ── Line mode (original) ─────────────────────────────────────────────
           mainChartInstance = new Chart(document.getElementById("mainChart"), {
@@ -5035,6 +5342,10 @@
             },
           });
           mainChartInstance._srLevels = d.chart.srLevels || null;
+          mainChartInstance._trendlines = computeTrendlines(
+            highs.map((v, i) => v ?? prices[i]),
+            lows.map((v, i)  => v ?? prices[i])
+          );
         }
 
         rsiChartInstance = new Chart(document.getElementById("rsiChart"), {
@@ -5166,6 +5477,152 @@
             ctx.strokeStyle = color;
             ctx.lineWidth = 1;
             ctx.strokeRect(x - half, bodyTop, half * 2, bodyH);
+            ctx.restore();
+          });
+        },
+      });
+
+      // ── Trendline plugin ─────────────────────────────────────────────────────────
+      Chart.register({
+        id: "trendlinePlugin",
+        afterDraw(chart) {
+          if (!showTrendlines) return;
+          const lines = chart._trendlines;
+          if (!lines || !lines.length) return;
+          const yScale = chart.scales["yP"];
+          if (!yScale) return;
+          // Dùng x-scale trực tiếp — đáng tin cậy hơn meta.data[i].x
+          const xScale = chart.scales["x"];
+          if (!xScale) return;
+          const labels = chart.data.labels;
+          const n = labels.length;
+          // Lấy pixel x theo index — dùng getPixelForValue với label string
+          const getX = (i) => {
+            const idx = Math.max(0, Math.min(n - 1, i));
+            return xScale.getPixelForValue(labels[idx]);
+          };
+          const getY = (v) => yScale.getPixelForValue(v);
+          const { top, bottom, left, right } = chart.chartArea;
+          const ctx = chart.ctx;
+
+          lines.forEach((line) => {
+            const isRes = line.type === "resistance";
+            const color    = isRes ? "rgba(224,49,49,.8)"  : "rgba(47,158,68,.8)";
+            const colorDot = isRes ? "#e03131" : "#2f9e44";
+            const colorFill= isRes ? "rgba(224,49,49,.07)" : "rgba(47,158,68,.07)";
+            const dx = line.x2 - line.x1;
+            if (dx === 0) return;
+            // slope tính theo đơn vị giá / phiên (index space)
+            const slope = (line.y2 - line.y1) / dx;
+
+            // x pixel của 2 điểm neo (chính xác 100% vì lấy từ scale)
+            const xPx1 = getX(line.x1);
+            const xPx2 = getX(line.x2);
+            const yPx1 = getY(line.y1);
+            const yPx2 = getY(line.y2);
+
+            // Kéo dài từ điểm đầu tiên ra tới mép phải chart
+            // y tại mép phải (index n-1)
+            const yValRight = line.y1 + slope * ((n - 1) - line.x1);
+            const xPxRight  = getX(n - 1);
+            const yPxRight  = getY(yValRight);
+
+            // Kéo ngược về bên trái một chút (từ peak 1 về ~10% để tạo context)
+            const extLeft = Math.max(0, line.x1 - Math.round(n * 0.08));
+            const yValLeft = line.y1 + slope * (extLeft - line.x1);
+            const xPxLeft  = getX(extLeft);
+            const yPxLeft  = getY(yValLeft);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(left, top, right - left, bottom - top);
+            ctx.clip();
+
+            // ── Vùng fill nhạt dưới/trên đường ──
+            ctx.beginPath();
+            ctx.moveTo(xPxLeft, yPxLeft);
+            ctx.lineTo(xPxRight, yPxRight);
+            if (isRes) {
+              ctx.lineTo(xPxRight, top);
+              ctx.lineTo(xPxLeft, top);
+            } else {
+              ctx.lineTo(xPxRight, bottom);
+              ctx.lineTo(xPxLeft, bottom);
+            }
+            ctx.closePath();
+            ctx.fillStyle = colorFill;
+            ctx.fill();
+
+            // ── Đường trendline: solid giữa 2 đỉnh, dashed phần kéo dài ──
+            // Phần kéo dài bên trái (dashed mờ)
+            ctx.beginPath();
+            ctx.setLineDash([4, 5]);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.45;
+            ctx.moveTo(xPxLeft, yPxLeft);
+            ctx.lineTo(xPx1, yPx1);
+            ctx.stroke();
+
+            // Phần giữa 2 đỉnh (solid đậm)
+            ctx.beginPath();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.9;
+            ctx.moveTo(xPx1, yPx1);
+            ctx.lineTo(xPx2, yPx2);
+            ctx.stroke();
+
+            // Phần kéo dài bên phải (dashed)
+            ctx.beginPath();
+            ctx.setLineDash([6, 5]);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.65;
+            ctx.moveTo(xPx2, yPx2);
+            ctx.lineTo(xPxRight, yPxRight);
+            ctx.stroke();
+
+            // ── Label ở mép phải ──
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+            const labelText = isRes ? "Kháng cự" : "Hỗ trợ";
+            ctx.font = "bold 10px 'IBM Plex Mono'";
+            const textW = ctx.measureText(labelText).width;
+            const lx = Math.min(xPxRight + 4, right - textW - 4);
+            const ly = Math.max(top + 12, Math.min(bottom - 4, yPxRight + 4));
+            // Badge nhỏ
+            ctx.fillStyle = colorFill.replace(".07", ".55");
+            ctx.beginPath();
+            ctx.roundRect(lx - 2, ly - 11, textW + 8, 14, 3);
+            ctx.fill();
+            ctx.fillStyle = colorDot;
+            ctx.fillText(labelText, lx + 2, ly);
+
+            // ── Chấm tròn tại đỉnh/đáy (vẽ SAU cùng để đè lên đường) ──
+            [[line.x1, line.y1], [line.x2, line.y2]].forEach(([xi, yi]) => {
+              const px = getX(xi);
+              const py = getY(yi);
+              // Vòng ngoài mờ
+              ctx.beginPath();
+              ctx.arc(px, py, 6, 0, Math.PI * 2);
+              ctx.fillStyle = colorFill.replace(".07", ".3");
+              ctx.fill();
+              // Chấm giữa
+              ctx.beginPath();
+              ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+              ctx.fillStyle = colorDot;
+              ctx.globalAlpha = 1;
+              ctx.fill();
+              // Viền trắng
+              ctx.beginPath();
+              ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+              ctx.strokeStyle = "#fff";
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            });
+
             ctx.restore();
           });
         },

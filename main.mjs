@@ -25,8 +25,10 @@ import { handle as analyzeRoutes } from "./routes/analyze.mjs";
 import { handle as realtimeRoutes } from "./routes/realtime.mjs";
 import { handle as staticRoutes } from "./routes/static.mjs";
 import { handleBoardWsUpgrade } from "./ws/board.mjs";
+import { killPort } from "./kill-port.mjs";
 
 const PORT = process.env.PORT || 3000;
+await killPort(PORT);
 
 loadSsiToken();
 
@@ -43,7 +45,11 @@ const ROUTES = [
 
 const server = http.createServer(async (req, res) => {
   setCORS(res);
-  if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
   const parsed = url.parse(req.url, true);
   const ctx = { pathname: parsed.pathname, parsed };
   for (const handle of ROUTES) {

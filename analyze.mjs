@@ -889,38 +889,477 @@ function generatePredictions(
   volData = null,
   budget = 50_000_000,
   prices = null,
-  ma20Arr = null
+  ma20Arr = null,
+  ma50Arr = null,
+  ma200Arr = null
 ) {
   const priceArr = prices ?? data.map(d => d.price).filter(Boolean);
   const latest = data[data.length - 1];
   const price = latest.price;
   const currentRSI = rsi[rsi.length - 1];
+  const n = priceArr.length;
+
+  // ── Fibonacci retracement — pivot detection thực sự ─────────────────────
+  // Swing high/low phải là pivot point được xác nhận bởi các nến hai bên,
+  // không phải chỉ là max/min cơ học (có thể là gap hoặc spike không có ý nghĩa)
+  const fbLookback = Math.min(88, n); // mở rộng lookback để tìm pivot rõ hơn
+  const fbData     = data.slice(-fbLookback);
+  const fbLen      = fbData.length;
+
+  // Tìm significant swing high: high[i] cao hơn 3 nến trước và 3 nến sau
+  // (left=3, right=3 → xác nhận pivot đủ mạnh, tránh spike 1 nến)
+  const PIVOT_WING = 3;
+  let pivotHigh = null, pivotHighIdx = -1;
+  let pivotLow  = null, pivotLowIdx  = -1;
+
+  for (let i = PIVOT_WING; i < fbLen - PIVOT_WING; i++) {
+    const hi = fbData[i].high ?? fbData[i].price;
+    const lo = fbData[i].low  ?? fbData[i].price;
+    if (!hi || !lo) continue;
+
+    // Kiểm tra pivot high
+    let isHigh = true;
+    for (let j = i - PIVOT_WING; j <= i + PIVOT_WING; j++) {
+      if (j === i) continue;
+      const h = fbData[j].high ?? fbData[j].price;
+      if (h && h >= hi) { isHigh = false; break; }
+    }
+    if (isHigh && (pivotHigh === null || hi > pivotHigh)) {
+      pivotHigh = hi; pivotHighIdx = i;
+    }
+
+    // Kiểm tra pivot low
+    let isLow = true;
+    for (let j = i - PIVOT_WING; j <= i + PIVOT_WING; j++) {
+      if (j === i) continue;
+      const l = fbData[j].low ?? fbData[j].price;
+      if (l && l <= lo) { isLow = false; break; }
+    }
+    if (isLow && (pivotLow === null || lo < pivotLow)) {
+      pivotLow = lo; pivotLowIdx = i;
+    }
+  }
+
+  // Xác định hướng sóng: nếu pivot high xảy ra SAU pivot low → đang retracement từ đỉnh
+  // Nếu pivot low xảy ra SAU pivot high → đang bounce từ đáy
+  // → chỉ vẽ Fibonacci theo cặp (swingLow → swingHigh) theo thứ tự thời gian
+  const fibValid = pivotHigh !== null && pivotLow !== null
+    && Math.abs(pivotHigh - pivotLow) / pivotLow > 0.04; // range > 4% mới có ý nghĩa
+
+  let fibSwingLow, fibSwingHigh;
+  if (fibValid) {
+    // Cặp theo thứ tự thời gian gần nhất
+    if (pivotLowIdx < pivotHighIdx) {
+      // Sóng tăng: low → high (đang tính retracement từ đỉnh xuống)
+      fibSwingLow  = round2(pivotLow);
+      fibSwingHigh = round2(pivotHigh);
+    } else {
+      // Sóng giảm: high → low (đang tính extension hoặc bounce)
+      fibSwingLow  = round2(pivotLow);
+      fibSwingHigh = round2(pivotHigh);
+    }
+  } else {
+    // Fallback: dùng max/min nhưng trên high/low thực (không phải close)
+    const highs = fbData.map(d => d.high ?? d.price).filter(Boolean);
+    const lows  = fbData.map(d => d.low  ?? d.price).filter(Boolean);
+    fibSwingHigh = round2(Math.max(...highs));
+    fibSwingLow  = round2(Math.min(...lows));
+  }
+
+  const fibRange  = fibSwingHigh - fibSwingLow;
+  const fibLevels = fibRange > 0 ? {
+    fib236: round2(fibSwingHigh - fibRange * 0.236),
+    fib382: round2(fibSwingHigh - fibRange * 0.382),
+    fib500: round2(fibSwingHigh - fibRange * 0.500),
+    fib618: round2(fibSwingHigh - fibRange * 0.618),
+    fib786: round2(fibSwingHigh - fibRange * 0.786),
+    swingHigh: fibSwingHigh,
+    swingLow : fibSwingLow,
+    pivotConfirmed: fibValid, // để UI biết đây là pivot thực hay fallback
+  } : null;
+
+  // ── Chaikin A/D Line (last 20 bars) ──────────────────────────────────────
+  // CLV = (close - low - (high - close)) / (high - low)  — vị trí đóng cửa trong range nến
+  // Money Flow Volume = CLV × volume
+  // Nến đóng ở trên giữa range (CLV > 0) = áp lực mua dù giá tăng hay giảm
+  const last20 = data.slice(-20);
+  let adCumPos = 0, adCumNeg = 0, adCumTotal = 0;
+  last20.forEach(d => {
+    if (!d.volume || !d.high || !d.low) return;
+    const range = d.high - d.low;
+    if (range < 0.001) return; // doji range quá nhỏ → bỏ qua
+    const clv = ((d.price - d.low) - (d.high - d.price)) / range; // [-1, +1]
+    const mfv = clv * d.volume;
+    adCumTotal += Math.abs(mfv);
+    if (mfv > 0) adCumPos += mfv;
+    else adCumNeg += Math.abs(mfv);
+  });
+  // adRatio: [0, 1] — >0.6 = tích lũy rõ, <0.4 = phân phối rõ
+  const adRatio = adCumTotal > 0 ? adCumPos / adCumTotal : 0.5;
+  const volumePhase      = adRatio > 0.60 ? "accumulation" : adRatio < 0.40 ? "distribution" : "neutral";
+  const volumePhaseLabel = adRatio > 0.60 ? "Tích lũy" : adRatio < 0.40 ? "Phân phối" : "Trung tính";
+  const volumePhaseDesc  = adRatio > 0.60
+    ? `Chaikin A/D: ${(adRatio*100).toFixed(0)}% — giá đóng gần đỉnh nến, tổ chức đang hấp thụ`
+    : adRatio < 0.40
+    ? `Chaikin A/D: ${(adRatio*100).toFixed(0)}% — giá đóng gần đáy nến, tổ chức đang phân phối`
+    : `Chaikin A/D: ${(adRatio*100).toFixed(0)}% — dòng tiền trung tính, chưa có tín hiệu rõ`;
+
+  // ── Market phase (Wyckoff-inspired) ──────────────────────────────────────
+  let marketPhase, marketPhaseLabel, marketPhaseColor;
+  if (trend.alignment === "STRONG_UP" && adRatio > 0.55) {
+    marketPhase = "markup"; marketPhaseLabel = "📈 Markup (Tăng mạnh)"; marketPhaseColor = "var(--up)";
+  } else if (trend.alignment === "STRONG_DOWN" && adRatio < 0.45) {
+    marketPhase = "markdown"; marketPhaseLabel = "📉 Markdown (Giảm mạnh)"; marketPhaseColor = "var(--dn)";
+  } else if ((trend.alignment === "MIXED" || trend.alignment === "MODERATE_UP") && adRatio >= 0.50 && currentRSI < 58) {
+    marketPhase = "accumulation"; marketPhaseLabel = "🔄 Tích lũy (Accumulation)"; marketPhaseColor = "var(--navy)";
+  } else if ((trend.alignment === "MIXED" || trend.alignment === "MODERATE_DOWN") && adRatio < 0.50 && currentRSI > 42) {
+    marketPhase = "distribution"; marketPhaseLabel = "🔄 Phân phối (Distribution)"; marketPhaseColor = "var(--am)";
+  } else {
+    marketPhase = "transition"; marketPhaseLabel = "↔️ Chuyển tiếp"; marketPhaseColor = "var(--gray500)";
+  }
+
+  // ── Pre-entry checklist (institutional framework) ─────────────────────────
+  const bbLowerNow   = bb.lower[bb.lower.length - 1];
+  const macdHist     = macd.histogram[macd.histogram.length - 1];
+  const macdHistPrev = macd.histogram[macd.histogram.length - 2];
+  const macdLineNow  = macd.macd?.[macd.macd.length - 1];
+  const macdSigNow   = macd.signal?.[macd.signal.length - 1];
+  const ma20Now  = ma20Arr  ? ma20Arr [n - 1] : null;
+  const ma50Now  = ma50Arr  ? ma50Arr [n - 1] : null;
+  const ma200Now = ma200Arr ? ma200Arr[n - 1] : null;
+  const s1price  = sr.supports[0]?.price;
+
+  const checklist = [
+    {
+      id: "trend_long",
+      label: "Xu hướng dài/trung hạn tăng",
+      met: trend.longTerm.direction === "UPTREND" || trend.midTerm.direction === "UPTREND",
+      desc: trend.longTerm.direction === "UPTREND"
+        ? `MA200 hướng lên, xu hướng dài hạn tăng — nền tảng vững chắc`
+        : trend.midTerm.direction === "UPTREND"
+        ? `MA50 hướng lên, xu hướng trung hạn tăng — đang trong sóng hồi phục`
+        : `Xu hướng dài và trung hạn đang giảm — thận trọng với lệnh mua`,
+      weight: 3,
+    },
+    {
+      id: "ma_stack",
+      label: "Cấu trúc MA (20 > 50 > 200)",
+      met: !!(ma20Now && ma50Now && ma20Now > ma50Now && (!ma200Now || ma50Now > ma200Now)),
+      desc: (ma20Now && ma50Now && ma200Now)
+        ? (ma20Now > ma50Now && ma50Now > ma200Now
+          ? `MA20(${Math.round(ma20Now)}) > MA50(${Math.round(ma50Now)}) > MA200(${Math.round(ma200Now)}) — uptrend hoàn hảo`
+          : `MA chưa xếp thuận — xu hướng chưa đủ mạnh`)
+        : (ma20Now && ma50Now
+          ? (ma20Now > ma50Now ? `MA20 > MA50 — ngắn/trung hạn đang tốt` : `MA20 < MA50 — short-term yếu hơn mid-term`)
+          : `Không đủ dữ liệu MA`),
+      weight: 2,
+    },
+    {
+      id: "price_vs_ma",
+      label: "Giá trên MA50/MA200",
+      met: ma200Now ? price > ma200Now : (ma50Now ? price > ma50Now : true),
+      desc: ma200Now
+        ? (price > ma200Now
+          ? `Giá +${((price - ma200Now) / ma200Now * 100).toFixed(1)}% trên MA200 — vùng tăng trưởng dài hạn`
+          : `Giá ${((price - ma200Now) / ma200Now * 100).toFixed(1)}% dưới MA200 — vùng nguy hiểm`)
+        : (ma50Now
+          ? (price > ma50Now ? `Giá trên MA50 — tích cực` : `Giá dưới MA50 — cẩn thận`)
+          : `Không đủ dữ liệu`),
+      weight: 2,
+    },
+    {
+      id: "rsi_zone",
+      label: "RSI vùng lý tưởng (30–65)",
+      met: currentRSI != null && currentRSI >= 30 && currentRSI <= 65,
+      desc: currentRSI < 30
+        ? `RSI=${currentRSI?.toFixed(0)} — Quá bán sâu, cơ hội mua ngược chiều mạnh`
+        : currentRSI <= 50
+        ? `RSI=${currentRSI?.toFixed(0)} — Vùng lý tưởng, còn nhiều dư địa tăng`
+        : currentRSI <= 65
+        ? `RSI=${currentRSI?.toFixed(0)} — Đang tăng động lực, chưa quá mua`
+        : currentRSI <= 70
+        ? `RSI=${currentRSI?.toFixed(0)} — Cận quá mua, giảm kích thước lệnh`
+        : `RSI=${currentRSI?.toFixed(0)} — Quá mua, đợi điều chỉnh trước khi mua`,
+      weight: 2,
+    },
+    {
+      id: "macd_momentum",
+      label: "MACD momentum tích cực",
+      met: !!(macdHist != null && macdHistPrev != null && macdHist > macdHistPrev),
+      desc: (macdLineNow > macdSigNow && macdHist > 0)
+        ? `MACD cross trên signal, histogram dương và đang tăng — momentum mạnh`
+        : (macdHist > macdHistPrev)
+        ? `MACD histogram đang phục hồi (tăng ${macdHist >= 0 ? "tiếp" : "về 0"}) — momentum đang cải thiện`
+        : `MACD histogram đang giảm — chưa có tín hiệu đảo chiều rõ ràng`,
+      weight: 2,
+    },
+    {
+      id: "volume_confirm",
+      label: "Dòng tiền tích lũy",
+      met: volumePhase === "accumulation",
+      desc: volumePhase === "accumulation"
+        ? `A/D ratio ${(adRatio * 100).toFixed(0)}% — tổ chức đang mua ròng (accumulation)`
+        : volumePhase === "distribution"
+        ? `A/D ratio ${(adRatio * 100).toFixed(0)}% — tổ chức đang bán ròng (distribution) ⚠️`
+        : `A/D ratio ${(adRatio * 100).toFixed(0)}% — dòng tiền trung tính, cần thêm xác nhận`,
+      weight: 2,
+    },
+    {
+      id: "at_support",
+      label: "Giá tại vùng hỗ trợ",
+      met: !!(s1price && Math.abs(price - s1price) / price < 0.05),
+      desc: s1price
+        ? (Math.abs(price - s1price) / price < 0.02
+          ? `Giá đang đúng tại hỗ trợ S1=${s1price} (${sr.supports[0].touches} lần giữ) — vùng mua lý tưởng`
+          : Math.abs(price - s1price) / price < 0.05
+          ? `Cách hỗ trợ S1=${s1price} khoảng ${Math.abs(((price - s1price) / price) * 100).toFixed(1)}% — có thể chờ về gần hơn`
+          : `Giá còn cách xa hỗ trợ S1=${s1price} — chưa phải vùng mua tối ưu`)
+        : `Không tìm thấy vùng hỗ trợ rõ ràng`,
+      weight: 3,
+    },
+    {
+      id: "pullback_health",
+      label: "Pullback lành mạnh (volume thấp)",
+      met: !!(volData && (volData.trend === "decreasing" || volData.trend === "slightly_decreasing") && trend.shortTerm.direction !== "DOWNTREND"),
+      desc: (volData?.trend === "decreasing")
+        ? `Volume giảm trong đà pullback — tổ chức không thoát, selloff yếu`
+        : (volData?.trend === "slightly_decreasing")
+        ? `Volume giảm nhẹ — pullback khá lành mạnh`
+        : (volData?.trend === "increasing" && trend.shortTerm.direction === "DOWNTREND")
+        ? `Volume tăng trong đà giảm — áp lực bán mạnh, rủi ro break support`
+        : `Volume ổn định — theo dõi thêm diễn biến`,
+      weight: 1,
+    },
+  ];
+
+  const checklistMet   = checklist.reduce((s, c) => s + (c.met ? c.weight : 0), 0);
+  const checklistTotal = checklist.reduce((s, c) => s + c.weight, 0);
+  const checklistPct   = Math.round((checklistMet / checklistTotal) * 100);
+  const setupGrade     = checklistPct >= 80 ? "A+" : checklistPct >= 65 ? "A" : checklistPct >= 50 ? "B" : checklistPct >= 35 ? "C" : "D";
+
+  // ── Entry zone (multi-factor confluence) ──────────────────────────────────
+  const ezFactors = [];
+  if (s1price) ezFactors.push({ label: `Hỗ trợ S1 (${sr.supports[0].touches}× giữ)`, price: s1price, weight: 3 });
+  if (bbLowerNow > 0) ezFactors.push({ label: "Bollinger Band dưới", price: round2(bbLowerNow), weight: 2 });
+  if (ma20Now && Math.abs(price - ma20Now) / price < 0.10) ezFactors.push({ label: "MA20", price: round2(ma20Now), weight: 2 });
+  if (ma50Now && Math.abs(price - ma50Now) / price < 0.15) ezFactors.push({ label: "MA50", price: round2(ma50Now), weight: 2 });
+  if (fibLevels) {
+    const fibCands = [fibLevels.fib618, fibLevels.fib500, fibLevels.fib382, fibLevels.fib236].filter(Boolean);
+    const fibMap   = { [fibLevels.fib618]: "Fib 61.8%", [fibLevels.fib500]: "Fib 50%", [fibLevels.fib382]: "Fib 38.2%", [fibLevels.fib236]: "Fib 23.6%" };
+    const nearFib  = fibCands.find(f => f <= price * 1.03 && f >= price * 0.88);
+    if (nearFib) ezFactors.push({ label: fibMap[nearFib] || "Fib retracement", price: nearFib, weight: 1 });
+  }
+  let entryZone = null;
+  if (ezFactors.length > 0) {
+    const sortedEZ = [...ezFactors].sort((a, b) => a.price - b.price);
+    const wSum = ezFactors.reduce((s, f) => s + f.price * f.weight, 0);
+    const wTot = ezFactors.reduce((s, f) => s + f.weight, 0);
+    const optimal = round2(wSum / wTot);
+    entryZone = {
+      optimal,
+      floor  : sortedEZ[0].price,
+      ceiling: sortedEZ[sortedEZ.length - 1].price,
+      factors: ezFactors,
+      distFromCurrent: round2(((price - optimal) / price) * 100),
+    };
+  }
+
+  // ── Entry trigger ─────────────────────────────────────────────────────────
+  let entryTrigger;
+  const nearSupport = s1price && Math.abs(price - s1price) / price < 0.03;
+  if (currentRSI < 35 && macdHist != null && macdHistPrev != null && macdHist > macdHistPrev) {
+    entryTrigger = { type: "immediate", label: "Vào ngay", color: "var(--up)",
+      desc: "RSI quá bán + MACD histogram đang phục hồi → Setup đã hội tụ, có thể vào lệnh" };
+  } else if (nearSupport && volumePhase === "accumulation") {
+    entryTrigger = { type: "bounce", label: "Chờ nến xác nhận", color: "var(--navy)",
+      desc: "Tại vùng hỗ trợ + dòng tiền tích lũy → chờ nến tăng xác nhận (Hammer/Engulfing) với volume ≥ MA20" };
+  } else if (!nearSupport && trend.shortTerm.direction === "UPTREND" && sr.resistances.length > 0) {
+    entryTrigger = { type: "breakout", label: "Chờ Breakout", color: "#6366f1",
+      desc: `Đợi giá đóng cửa vượt kháng cự ${sr.resistances[0].price} với volume ≥ 1.5× TB20 phiên` };
+  } else if (s1price && price > s1price * 1.05) {
+    entryTrigger = { type: "pullback", label: "Chờ Pullback", color: "var(--am)",
+      desc: `Giá còn cách vùng mua tối ưu — đợi kéo về quanh ${entryZone?.optimal ?? s1price} để R:R tốt hơn` };
+  } else {
+    entryTrigger = { type: "watch", label: "Theo dõi thêm", color: "var(--gray500)",
+      desc: "Chưa đủ điều kiện — theo dõi thêm 2–3 phiên hoặc đợi breakout/pullback rõ ràng hơn" };
+  }
+
+  // ── Scenario analysis — xác suất tính động ───────────────────────────────
+  const r1price = sr.resistances[0]?.price;
+  const r2price = sr.resistances[1]?.price;
+  const s2price = sr.supports[1]?.price;
+
+  // Điểm bull: mỗi yếu tố tích lũy → cộng điểm
+  let bullScore = 0;
+  // Xu hướng (0-35)
+  bullScore += trend.alignment === "STRONG_UP"    ? 35
+             : trend.alignment === "MODERATE_UP"  ? 25
+             : trend.alignment === "MIXED"         ? 12
+             : trend.alignment === "MODERATE_DOWN" ? 5
+             : 0;
+  // Dòng tiền Chaikin (0-25)
+  bullScore += adRatio >= 0.70 ? 25
+             : adRatio >= 0.60 ? 18
+             : adRatio >= 0.50 ? 10
+             : adRatio >= 0.40 ? 4
+             : 0;
+  // RSI vùng thuận lợi (0-20)
+  bullScore += currentRSI < 30  ? 20   // quá bán → bounce mạnh
+             : currentRSI < 45  ? 16
+             : currentRSI < 60  ? 10
+             : currentRSI < 70  ? 4
+             : 0;                       // quá mua → dễ đảo chiều
+  // Checklist setup (0-20)
+  bullScore += Math.round(checklistPct * 0.20);
+
+  // Clamp [0, 100]
+  bullScore = Math.min(100, Math.max(0, bullScore));
+
+  // Xác suất kịch bản — tổng 3 kịch bản phải hợp lý (không cộng = 100 cứng)
+  // Bull prob tỉ lệ thuận bullScore, bear prob nghịch
+  const bullProb = Math.round(20 + bullScore * 0.40);   // [20, 60]
+  const bearProb = Math.round(50 - bullScore * 0.30);   // [20, 50] giảm dần
+  const baseProb = Math.max(10, 100 - bullProb - bearProb);
+
+  const scenarios = {
+    bull: {
+      label: "Tích cực (Bull)",
+      probability: bullProb,
+      trigger: `Giữ hỗ trợ ${s1price ?? "—"}, Chaikin A/D duy trì tích lũy, breakout ${r1price ?? "—"} với volume ≥1.5× TB`,
+      target: r2price ?? (r1price ? round2(r1price * 1.07) : round2(price * 1.15)),
+      targetPct: (() => {
+        const t = r2price ?? (r1price ? round2(r1price * 1.07) : round2(price * 1.15));
+        return ((t - price) / price * 100).toFixed(1);
+      })(),
+      bullScore, // export để debug / hiển thị
+    },
+    base: {
+      label: "Cơ sở (Base)",
+      probability: baseProb,
+      trigger: `Sideway vùng ${s1price ?? "—"} – ${r1price ?? "—"}, A/D trung tính, chờ catalyst rõ hơn`,
+      target: r1price ?? round2(price * 1.08),
+      targetPct: (((r1price ?? round2(price * 1.08)) - price) / price * 100).toFixed(1),
+    },
+    bear: {
+      label: "Tiêu cực (Bear)",
+      probability: bearProb,
+      trigger: `Chaikin A/D chuyển phân phối, giá phá hỗ trợ ${s1price ?? "—"} đóng cửa dưới → cắt lỗ`,
+      target: s2price ?? round2(price * 0.90),
+      targetPct: (((s2price ?? round2(price * 0.90)) - price) / price * 100).toFixed(1),
+    },
+  };
 
   const predictions = {
     bestBuy: null,
     worstBuy: null,
     bestSell: null,
     worstSell: null,
+    // Institutional-grade fields (available even without bestBuy)
+    checklist, checklistMet, checklistTotal, checklistPct, setupGrade,
+    marketPhase, marketPhaseLabel, marketPhaseColor,
+    volumePhase, volumePhaseLabel, volumePhaseDesc, adRatio: round2(adRatio),
+    fibLevels,
+    entryZone,
+    entryTrigger,
+    scenarios,
   };
 
   if (sr.supports.length > 0) {
     const s1 = sr.supports[0];
+
+    // ── Giá mua tối ưu — không cứng = S1 ─────────────────────────────────
+    // Ưu tiên: giá thấp nhất trong {S1, BB_lower, Fib618} nhưng vẫn > 85% giá hiện tại
+    // Logic: muốn mua tại điểm confluence thấp nhất còn hợp lý, không phải bất kỳ giá nào
+    const bbLower    = bb.lower[bb.lower.length - 1];
+    const fib618     = fibLevels?.fib618;
+    const candidates = [s1.price];
+    if (bbLower  > 0 && bbLower  >= price * 0.82) candidates.push(bbLower);
+    if (fib618   > 0 && fib618   >= price * 0.82) candidates.push(fib618);
+
+    // Nếu có nhiều confluence gần nhau (trong 3%) → chọn cận trên (an toàn hơn)
+    // Nếu giá đang tại vùng mua (≤ 2% trên S1) → giữ nguyên S1
+    // Nếu giá đang xa vùng mua (> 5% trên S1) → chọn điểm confluence có R:R tốt nhất
+    const minCand = Math.min(...candidates);
+    const maxCand = Math.max(...candidates);
+    const clustered = (maxCand - minCand) / minCand < 0.03; // trong vòng 3%
+
+    let buyPrice;
+    if (price <= s1.price * 1.02) {
+      // Giá đang ngay tại/dưới hỗ trợ → mua tại S1
+      buyPrice = s1.price;
+    } else if (clustered) {
+      // Các mức hội tụ gần nhau → chọn giá cao nhất của cluster (xác nhận mạnh hơn)
+      buyPrice = round2(maxCand);
+    } else {
+      // Mức phân tán → chọn mức gần giá hiện tại nhất (ít phải chờ nhất)
+      buyPrice = candidates.reduce((best, c) =>
+        Math.abs(c - price) < Math.abs(best - price) ? c : best
+      );
+      buyPrice = round2(buyPrice);
+    }
+
+    // Lý do chọn giá mua
+    const buyPriceSource =
+      buyPrice === s1.price           ? `Hỗ trợ S1 (${s1.touches} lần giữ)`
+      : buyPrice === round2(bbLower)  ? `Bollinger Band dưới (confluence với S1)`
+      : buyPrice === fib618           ? `Fib 61.8% retracement (confluence)`
+      :                                 `Vùng confluence đa yếu tố`;
+
     const quality = trend.alignment.includes("UP")
       ? "A+"
       : trend.alignment === "MIXED"
       ? "B"
       : "C";
-    const buyPrice = s1.price;
 
-    // Dynamic stoploss: ATR x 1.5 — reuse precomputed ATR if available
-    const atrArr = precomputedAtr ?? calcATR(data, 14);
+    // ── Stoploss cấu trúc: swing low dưới vùng mua ───────────────────────
+    // Ưu tiên 1: swing low gần nhất trong 20 phiên NẰM DƯỚI buyPrice
+    // Ưu tiên 2: hỗ trợ S2 (nếu có)
+    // Fallback: ATR×1.5 (cơ học)
+    const atrArr    = precomputedAtr ?? calcATR(data, 14);
     const latestATR = atrArr[atrArr.length - 1];
-    const atrMultiplier = 1.5;
-    const stoploss = latestATR
-      ? round2(buyPrice - latestATR * atrMultiplier)
-      : round2(buyPrice * 0.95);
-    const atrPct = latestATR ? ((latestATR / buyPrice) * 100).toFixed(2) : null;
-    const riskPerShare = Math.max(buyPrice - stoploss, buyPrice * 0.01);
+    const atrPct    = latestATR ? ((latestATR / buyPrice) * 100).toFixed(2) : null;
+
+    // Tìm swing low: low thấp nhất trong 20 phiên gần nhất, nằm dưới buyPrice
+    const recent20data = data.slice(-20);
+    let structuralSwingLow = null;
+    let swingLowMethod = "";
+
+    // Pivot low: low[i] thấp hơn cả low[i-1] và low[i+1] (xác nhận 2 bên)
+    for (let i = 1; i < recent20data.length - 1; i++) {
+      const lo = recent20data[i].low;
+      if (!lo) continue;
+      if (lo < recent20data[i-1].low && lo < recent20data[i+1].low && lo < buyPrice * 0.99) {
+        if (structuralSwingLow === null || lo < structuralSwingLow) {
+          structuralSwingLow = lo;
+        }
+      }
+    }
+
+    // S2 như là fallback cấu trúc
+    const s2Fallback = sr.supports[1]?.price;
+
+    let stoploss, stoplossMethod;
+    if (structuralSwingLow && structuralSwingLow < buyPrice * 0.98
+        && structuralSwingLow > buyPrice * 0.88) {
+      // Swing low hợp lệ: dưới buyPrice 2–12%, đặt SL 0.3% dưới swing low
+      stoploss = round2(structuralSwingLow * 0.997);
+      stoplossMethod = `Swing low cấu trúc (${round2(structuralSwingLow)}) − 0.3%`;
+    } else if (s2Fallback && s2Fallback < buyPrice * 0.97 && s2Fallback > buyPrice * 0.85) {
+      // Dùng S2 làm mức SL cấu trúc
+      stoploss = round2(s2Fallback * 0.997);
+      stoplossMethod = `Hỗ trợ S2 (${s2Fallback}) − 0.3%`;
+    } else if (latestATR) {
+      // Fallback: ATR×1.5
+      stoploss = round2(buyPrice - latestATR * 1.5);
+      stoplossMethod = `ATR(14)×1.5 = ${latestATR?.toFixed(2)} (không tìm được swing low)`;
+    } else {
+      stoploss = round2(buyPrice * 0.95);
+      stoplossMethod = "Cố định 5% (thiếu dữ liệu ATR và swing low)";
+    }
+
+    // Đảm bảo SL không âm và không rộng hơn 15%
+    stoploss = Math.max(stoploss, round2(buyPrice * 0.85));
+    const riskPerShare = Math.max(buyPrice - stoploss, buyPrice * 0.005);
 
     // ── Trade type classification: TREND vs SWING ──
     const isTrend =
@@ -1276,10 +1715,11 @@ function generatePredictions(
 
     predictions.bestBuy = {
       price: buyPrice,
-      reason: `Vùng hỗ trợ mạnh (${s1.touches} lần chạm). ${
-        currentRSI < 40
-          ? "RSI quá bán hỗ trợ tín hiệu mua."
-          : "Chờ RSI < 40 để xác nhận."
+      priceSource: buyPriceSource,
+      reason: `${buyPriceSource}. ${
+        currentRSI < 35 ? "RSI quá bán — xác suất bật cao."
+        : currentRSI < 50 ? "RSI vùng lý tưởng để tích lũy."
+        : "Chờ RSI hạ nhiệt về dưới 50 để R:R tốt hơn."
       }`,
       quality,
       confidenceScore,
@@ -1287,9 +1727,7 @@ function generatePredictions(
       stoploss,
       stoplossPct: pctOf(stoploss),
       atrPct,
-      stoplossMethod: latestATR
-        ? `ATR(14)×${atrMultiplier} = ${latestATR?.toFixed(2)}`
-        : "Cố định 5%",
+      stoplossMethod,
       tp1,
       tp2,
       tp3,
@@ -1303,6 +1741,23 @@ function generatePredictions(
       volatility: round2(volatility),
       splitStrategy,
       sellStrategy,
+      // Institutional-grade enrichments
+      entryZone,
+      entryTrigger,
+      checklist,
+      checklistMet,
+      checklistTotal,
+      checklistPct,
+      setupGrade,
+      marketPhase,
+      marketPhaseLabel,
+      marketPhaseColor,
+      volumePhase,
+      volumePhaseLabel,
+      volumePhaseDesc,
+      adRatio: round2(adRatio),
+      fibLevels,
+      scenarios,
     };
   }
 
@@ -3139,7 +3594,9 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     vol,          // truyền volume data để tính thanh khoản
     50_000_000,   // ngân sách 50 triệu / cổ phiếu
     prices,       // mảng giá để estimate days
-    ma20          // MA20 cho mean reversion
+    ma20,         // MA20 cho mean reversion
+    ma50,         // MA50 để entry zone
+    ma200         // MA200 để entry zone
   );
   const mtfPatterns = detectMultiTimeframePatterns(
     stockData,
@@ -3183,7 +3640,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
   );
 
   // Chart data — slice pre-computed arrays instead of recalculating
-  const chartLen = Math.min(264, stockData.length);
+  const chartLen = Math.min(1100, stockData.length);
   const priceStart = n - chartLen;
   const chartData = stockData.slice(-chartLen);
 

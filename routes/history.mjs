@@ -79,7 +79,7 @@ export async function handle(req, res, { pathname, parsed }) {
   // ─── API: Fetch & save historical price (SSI nếu có token, fallback CafeF) ──
   if (pathname === "/api/history-fetch" && req.method === "GET") {
     const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
-    const days = parseInt(parsed.query.days) || 420;
+    const days = parseInt(parsed.query.days) || 1100;
     if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym)) {
       sendJSON(res, 400, { error: "Mã không hợp lệ" });
       return true;
