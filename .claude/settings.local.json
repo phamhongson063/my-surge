@@ -68,7 +68,21 @@
       "Bash(node --check lib/ssiToken.mjs)",
       "Bash(node --check lib/snapshot.mjs)",
       "Bash(node --check lib/cafef.mjs)",
-      "Bash(node --check routes/board.mjs)"
+      "Bash(node --check routes/board.mjs)",
+      "Bash(curl -s -L \"https://iboard.ssi.com.vn\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/static/js/Dx43vt_6.js\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/static/js/1OH_qC0n.js\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/static/js/BIq2yDr9.js\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/static/js/CHrCAfVO.js\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(wc -l grep -io \"websocket\\\\|socket\\\\.io\\\\|signalr\\\\|hub\\\\|subscribe\\\\|ws://\" /tmp/BIq2yDr9.js)",
+      "Bash(wc -l grep -io \"websocket\\\\|socket\\\\.io\\\\|signalr\\\\|hub\\\\|subscribe\\\\|ws://\" /tmp/1OH_qC0n.js)",
+      "Bash(curl -s \"https://iboard.ssi.com.vn/build/static/js/BWiSvl8f.js\" -H \"User-Agent: Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(grep -o \"..\\\\{200\\\\}wss://price-streaming\" /tmp/BWiSvl8f.js)",
+      "Bash(python3:*)",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/stock/recenttrades?symbol=VCB\" -H \"User-Agent: Mozilla/5.0\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -v)",
+      "Bash(curl -s \"https://iboard-query.ssi.com.vn/le-table/stock/VCB?pageSize=50\" -H \"User-Agent: Mozilla/5.0\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\")",
+      "Bash(curl -s \"http://localhost:3000/api/recent-trades?symbol=VCB\")",
+      "Bash(curl -s \"http://localhost:3000/api/recent-trades?symbol=VCB&pageSize=5\")"
     ]
   }
 }

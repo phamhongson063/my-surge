@@ -47,17 +47,17 @@ export async function handle(req, res, { pathname, parsed }) {
             rsp.on("end", () => {
               res.writeHead(200, { "Content-Type": "application/json" });
               res.end(Buffer.concat(chunks));
-              resolve();
+              resolve(true);
             });
             rsp.on("error", (e) => {
               sendJSON(res, 502, { error: e.message });
-              resolve();
+              resolve(true);
             });
           }
         )
         .on("error", (e) => {
           sendJSON(res, 502, { error: e.message });
-          resolve();
+          resolve(true);
         });
     });
     return true;
@@ -83,10 +83,10 @@ export async function handle(req, res, { pathname, parsed }) {
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(Buffer.concat(chunks));
           } catch { sendJSON(res, 502, { error: "error" }); }
-          resolve();
+          resolve(true);
         });
-        rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(); });
-      }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(); });
+        rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+      }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
     });
     return true;
   }
@@ -117,6 +117,79 @@ export async function handle(req, res, { pathname, parsed }) {
     saveSsiToken(token);
     sendJSON(res, 200, { ok: true });
     return true;
+  }
+
+  // ── /api/chart-data — OHLCV daily từ SSI stats (không cần token) ───────────
+  if (pathname === "/api/chart-data") {
+    const sym  = (parsed.query.symbol ?? "").toUpperCase().trim();
+    const days = parseInt(parsed.query.days) || 365;
+    const resolution = ["1","5","15","30","60","1D"].includes(parsed.query.resolution)
+      ? parsed.query.resolution : "1D";
+    if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym)) {
+      sendJSON(res, 400, { error: "Thiếu hoặc sai symbol" });
+      return true;
+    }
+    const now  = Math.floor(Date.now() / 1000);
+    // Intraday: from = 9:00 AM VN today (UTC+7 = UTC-2h offset inverted)
+    let from;
+    if (resolution !== "1D") {
+      const vnNow  = new Date(Date.now() + 7 * 3600000);
+      const vnDay  = Date.UTC(vnNow.getUTCFullYear(), vnNow.getUTCMonth(), vnNow.getUTCDate());
+      from = Math.floor(vnDay / 1000) - 7 * 3600 + 9 * 3600; // 9:00 AM VN in UTC seconds
+    } else {
+      from = now - days * 86400;
+    }
+    const ssiUrl = `https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=${resolution}&symbol=${sym}&from=${from}&to=${now}`;
+    return new Promise((resolve) => {
+      https.get(ssiUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          Origin: "https://iboard.ssi.com.vn",
+          Referer: "https://iboard.ssi.com.vn/",
+          Accept: "application/json",
+        },
+      }, (rsp) => {
+        const chunks = [];
+        rsp.on("data", c => chunks.push(c));
+        rsp.on("end", () => {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(Buffer.concat(chunks));
+          resolve(true);
+        });
+        rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+      }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+    });
+  }
+
+  // ── /api/recent-trades — lịch sử khớp lệnh từ SSI iboard-query ─────────────
+  if (pathname === "/api/recent-trades") {
+    const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym)) {
+      sendJSON(res, 400, { error: "Thiếu hoặc sai symbol" });
+      return true;
+    }
+    const pageSize = Math.min(parseInt(parsed.query.pageSize) || 50, 100);
+    const lastId   = parsed.query.lastId ? `&lastId=${encodeURIComponent(parsed.query.lastId)}` : '';
+    const ssiUrl = `https://iboard-query.ssi.com.vn/le-table/stock/${sym}?pageSize=${pageSize}${lastId}`;
+    return new Promise((resolve) => {
+      https.get(ssiUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          Origin: "https://iboard.ssi.com.vn",
+          Referer: "https://iboard.ssi.com.vn/",
+          Accept: "application/json",
+        },
+      }, (rsp) => {
+        const chunks = [];
+        rsp.on("data", c => chunks.push(c));
+        rsp.on("end", () => {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(Buffer.concat(chunks));
+          resolve(true);
+        });
+        rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+      }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+    });
   }
 
   return false;

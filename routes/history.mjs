@@ -174,7 +174,7 @@ export async function handle(req, res, { pathname, parsed }) {
                     count: records.length,
                     source: "ssi",
                   });
-                  return resolve();
+                  return resolve(true);
                 }
                 console.warn(
                   `[History/SSI] ⚠️ ${sym}: no data → fallback CafeF`
@@ -185,17 +185,17 @@ export async function handle(req, res, { pathname, parsed }) {
                 );
               }
               await fetchHistoryCafeF(sym, days, res);
-              resolve();
+              resolve(true);
             });
             rsp.on("error", async () => {
               await fetchHistoryCafeF(sym, days, res);
-              resolve();
+              resolve(true);
             });
           }
         )
         .on("error", async () => {
           await fetchHistoryCafeF(sym, days, res);
-          resolve();
+          resolve(true);
         });
     });
     return true;
