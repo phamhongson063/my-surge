@@ -62,7 +62,13 @@
       "Bash(node --check /Users/son.ph/my-surge/main.mjs)",
       "Bash(curl -s http://localhost:3000/portfolio)",
       "Bash(curl -s \"https://iboard-query.ssi.com.vn/exchange-index/VNINDEX?hasHistory=true\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"User-Agent: Mozilla/5.0\")",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\)[''''data'''']; h=d[''''history'''']; print\\(f''''Total points: {len\\(h\\)}''''\\); print\\(''''First 3:'''', h[:3]\\); print\\(''''Last 3:'''', h[-3:]\\); print\\(''''prevIndexValue:'''', d.get\\(''''prevIndexValue''''\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\)[''''data'''']; h=d[''''history'''']; print\\(f''''Total points: {len\\(h\\)}''''\\); print\\(''''First 3:'''', h[:3]\\); print\\(''''Last 3:'''', h[-3:]\\); print\\(''''prevIndexValue:'''', d.get\\(''''prevIndexValue''''\\)\\)\")",
+      "Bash(wc -l /Users/son.ph/my-surge/lib/*.mjs /Users/son.ph/my-surge/routes/*.mjs /Users/son.ph/my-surge/ws/*.mjs)",
+      "Bash(node --check lib/utils.mjs)",
+      "Bash(node --check lib/ssiToken.mjs)",
+      "Bash(node --check lib/snapshot.mjs)",
+      "Bash(node --check lib/cafef.mjs)",
+      "Bash(node --check routes/board.mjs)"
     ]
   }
 }
