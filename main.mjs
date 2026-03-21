@@ -24,7 +24,7 @@ import { handle as watchlistRoutes } from "./routes/watchlist.mjs";
 import { handle as analyzeRoutes } from "./routes/analyze.mjs";
 import { handle as realtimeRoutes } from "./routes/realtime.mjs";
 import { handle as staticRoutes } from "./routes/static.mjs";
-import { handleBoardWsUpgrade } from "./ws/board.mjs";
+import { handleBoardWsUpgrade } from "./lib/board.mjs";
 import { killPort } from "./kill-port.mjs";
 
 const PORT = process.env.PORT || 3000;
