@@ -2,81 +2,9 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import { sendJSON, BASE_DIR } from "../lib/utils.mjs";
-import { isoToApi, isoToDisplay, todayISO, fetchFromCafeF, fetchHistoryCafeF } from "../lib/cafef.mjs";
-
-const TMP_DIR = "tmp";
-
-async function handleDownload(req, res, query) {
-  const symbol = (query.symbol ?? "").toUpperCase().trim();
-  const start = query.start ?? "2025-01-01";
-  const end = query.end ?? todayISO();
-
-  if (!symbol) return sendJSON(res, 400, { error: "Thiếu tham số symbol" });
-  if (!/^[A-Z0-9]{1,10}$/.test(symbol))
-    return sendJSON(res, 400, { error: "Mã chứng khoán không hợp lệ" });
-
-  const startApi = isoToApi(start);
-  const endApi = isoToApi(end);
-  const fileName = `${symbol}.xlsx`;
-  const savePath = path.join(TMP_DIR, fileName);
-  fs.mkdirSync(TMP_DIR, { recursive: true });
-
-  const params = new URLSearchParams({
-    Type: "EXPORT",
-    Symbol: symbol,
-    StartDate: startApi,
-    EndDate: endApi,
-    PageIndex: "1",
-    PageSize: "20",
-  });
-  const cafefUrl = `https://cafef.vn/du-lieu/Ajax/PageNew/DataHistory/PriceHistory.ashx?${params}`;
-
-  console.log(
-    `\n[${new Date().toLocaleTimeString("vi-VN")}] ▶ ${symbol} | ${isoToDisplay(
-      start
-    )} → ${isoToDisplay(end)}`
-  );
-  console.log(`   URL: ${cafefUrl}`);
-
-  try {
-    const { buffer, contentType } = await fetchFromCafeF(cafefUrl, symbol);
-
-    // Kiểm tra buffer có phải Excel thật không
-    // Excel (xlsx) bắt đầu bằng magic bytes: PK (50 4B)
-    const isPKzip = buffer[0] === 0x50 && buffer[1] === 0x4b;
-    if (!isPKzip) {
-      const preview = buffer.slice(0, 200).toString("utf8").replace(/\n/g, " ");
-      console.warn(`   ⚠️  Không phải Excel! Content-Type: ${contentType}`);
-      console.warn(`   Preview: ${preview}`);
-      return sendJSON(res, 502, {
-        error:
-          "CafeF không trả về file Excel. Có thể cần đăng nhập hoặc mã không tồn tại.",
-        preview: preview.slice(0, 100),
-      });
-    }
-
-    fs.writeFileSync(savePath, buffer);
-    const kb = (buffer.length / 1024).toFixed(1);
-    console.log(`   ✅ Lưu: ${path.resolve(savePath)} (${kb} KB)`);
-
-    // Chỉ trả JSON — file đã lưu ngầm trên server, không gửi blob về browser
-    sendJSON(res, 200, {
-      ok: true,
-      symbol,
-      fileName,
-      filePath: path.resolve(savePath),
-      sizeKb: kb,
-      start: startApi,
-      end: endApi,
-    });
-  } catch (err) {
-    console.error(`   ❌ Lỗi: ${err.message}`);
-    sendJSON(res, 502, { error: err.message });
-  }
-}
 
 export async function handle(req, res, { pathname, parsed }) {
-  // ─── API: Fetch & save historical price (SSI nếu có token, fallback CafeF) ──
+  // ─── API: Fetch & save historical price (SSI) ─────────────────────────────
   if (pathname === "/api/history-fetch" && req.method === "GET") {
     const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
     const days = parseInt(parsed.query.days) || 1100;
@@ -105,7 +33,7 @@ export async function handle(req, res, { pathname, parsed }) {
       }
     }
 
-    // ── SSI statistics API (không cần token) ─────────────────────────────────
+    // ── SSI statistics API ────────────────────────────────────────────────────
     const now = Math.floor(Date.now() / 1000);
     const from = now - days * 86400;
     const ssiUrl = `https://iboard-api.ssi.com.vn/statistics/charts/history?resolution=1D&symbol=${sym}&from=${from}&to=${now}`;
@@ -146,11 +74,7 @@ export async function handle(req, res, { pathname, parsed }) {
                     }))
                     .sort((a, b) => a.date.localeCompare(b.date));
 
-                  const histDir = path.join(
-                    BASE_DIR,
-                    "database",
-                    "history"
-                  );
+                  const histDir = path.join(BASE_DIR, "database", "history");
                   fs.mkdirSync(histDir, { recursive: true });
                   fs.writeFileSync(
                     path.join(histDir, `${sym}.json`),
@@ -165,9 +89,7 @@ export async function handle(req, res, { pathname, parsed }) {
                       2
                     )
                   );
-                  console.log(
-                    `[History/SSI] ✅ ${sym}: ${records.length} phiên`
-                  );
+                  console.log(`[History/SSI] ✅ ${sym}: ${records.length} phiên`);
                   sendJSON(res, 200, {
                     ok: true,
                     symbol: sym,
@@ -176,37 +98,29 @@ export async function handle(req, res, { pathname, parsed }) {
                   });
                   return resolve(true);
                 }
-                console.warn(
-                  `[History/SSI] ⚠️ ${sym}: no data → fallback CafeF`
-                );
+                console.warn(`[History/SSI] ⚠️ ${sym}: no data`);
+                sendJSON(res, 502, { error: "Không có dữ liệu từ SSI" });
               } catch (e) {
-                console.warn(
-                  `[History/SSI] Parse error ${sym}: ${e.message} → fallback CafeF`
-                );
+                console.warn(`[History/SSI] Parse error ${sym}: ${e.message}`);
+                sendJSON(res, 502, { error: e.message });
               }
-              await fetchHistoryCafeF(sym, days, res);
               resolve(true);
             });
-            rsp.on("error", async () => {
-              await fetchHistoryCafeF(sym, days, res);
+            rsp.on("error", (e) => {
+              sendJSON(res, 502, { error: e.message });
               resolve(true);
             });
           }
         )
-        .on("error", async () => {
-          await fetchHistoryCafeF(sym, days, res);
+        .on("error", (e) => {
+          sendJSON(res, 502, { error: e.message });
           resolve(true);
         });
     });
     return true;
   }
 
-  if (pathname === "/download" && req.method === "GET") {
-    await handleDownload(req, res, parsed.query);
-    return true;
-  }
-
-  // ─── Symbols — list mã đã có data trong tmp/ ────────────────────────────────
+  // ─── Symbols — list mã đã có data ────────────────────────────────────────
   if (pathname === "/symbols" && req.method === "GET") {
     try {
       const histDir = path.join(BASE_DIR, "database", "history");
