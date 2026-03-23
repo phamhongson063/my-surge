@@ -376,6 +376,30 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 .pf-loss { color: var(--red); }
 .pf-zero { color: var(--ref); }
 
+/* Nút xoá cổ phiếu khỏi danh mục */
+.sym-cell { position: relative; }
+.sym-remove-btn {
+  display: none;
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 11px;
+  line-height: 11px;
+  text-align: center;
+  font-size: 9px;
+  color: var(--text3);
+  cursor: pointer;
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+}
+.sym-remove-btn:hover { background: var(--red); color: #fff; }
+body.tab-portfolio .sym-cell:hover .sym-remove-btn,
+body.tab-watchlist .sym-cell:hover .sym-remove-btn { display: block; }
+
 /* Nav link */
 .nav-link {
   color: var(--text3);
@@ -711,7 +735,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
     <thead>
       <!-- Row 1: group headers -->
       <tr>
-        <th class="left" rowspan="2" style="min-width:44px;width:44px" onclick="sortBy('sym')">Mã CK</th>
+        <th class="left" rowspan="2" style="min-width:49px;width:49px" onclick="sortBy('sym')">Mã CK</th>
         <th rowspan="2" style="width:56px" onclick="sortBy('ref')">TC</th>
         <th class="hdr-ceil"  rowspan="2" style="width:56px" onclick="sortBy('ceil')">Trần</th>
         <th class="hdr-floor" rowspan="2" style="width:56px" onclick="sortBy('floor')">Sàn</th>
@@ -735,7 +759,7 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
         <th class="grp-bid hdr-bid1vol" style="width:43px" onclick="sortBy('bid1vol')">KL 1</th>
         <!-- Khớp lệnh (3 cols: Giá, KL, +/-+%) -->
         <th class="grp-match" style="width:46px" onclick="sortBy('match')">Giá</th>
-        <th class="grp-match" style="width:52px" onclick="sortBy('matchvol')">KL</th>
+        <th class="grp-match" style="width:42px" onclick="sortBy('matchvol')">KL</th>
         <th class="grp-match" id="chgModeHdr" style="width:60px" onclick="toggleChangeMode()"></th>
         <!-- Bên bán: Giá 1 → KL 1 → Giá 2 → KL 2 → Giá 3 → KL 3 -->
         <th class="grp-ask hdr-ask1"    style="width:46px" onclick="sortBy('ask1')">Giá 1</th>
@@ -1769,7 +1793,7 @@ function stockRow(s) {
   }
 
   return `<tr id="row-${sym}" data-sym="${sym}">
-    <td class="left sym-cell ${pc}">${sym}</td>
+    <td class="left sym-cell ${pc}">${sym}<span class="sym-remove-btn" title="Xoá khỏi danh mục" onclick="removeStockFromList(event,'${sym}')">×</span></td>
     <td class="p-ref">${ref}</td>
     <td class="p-ceil col-ceil">${ceil}</td>
     <td class="p-floor col-floor">${floor}</td>
@@ -2374,6 +2398,28 @@ function createWatchlist() {
   localStorage.setItem('pb_watchlists', JSON.stringify(watchlists));
   buildPortfolioDropdown();
   selectPortfolioList(trimmed);
+}
+
+async function removeStockFromList(e, sym) {
+  e.stopPropagation();
+  if (currentTab === 'portfolio') {
+    await fetch('/portfolio/remove-symbol', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol: sym })
+    });
+    await loadPortfolio();
+    allData['portfolio'] = getDataForPortfolio();
+    renderTable();
+  } else if (currentTab === 'watchlist' && activeWatchlist) {
+    const wl = watchlists.find(w => w.name === activeWatchlist);
+    if (!wl) return;
+    wl.symbols = wl.symbols.filter(s => s !== sym);
+    localStorage.setItem('pb_watchlists', JSON.stringify(watchlists));
+    buildPortfolioDropdown();
+    allData['watchlist'] = getDataForWatchlist(new Set(wl.symbols));
+    renderTable();
+  }
 }
 
 function buildSectorDropdown(sectors) {

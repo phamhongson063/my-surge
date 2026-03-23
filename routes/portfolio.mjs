@@ -74,6 +74,17 @@ export async function handle(req, res, { pathname, parsed }) {
     return true;
   }
 
+  if (pathname === "/portfolio/remove-symbol" && req.method === "POST") {
+    const sym = (body?.symbol ?? "").toUpperCase().trim();
+    if (!sym) { sendJSON(res, 400, { error: "Thiếu mã" }); return true; }
+    const pf = loadPortfolio();
+    delete pf[sym];
+    savePortfolio(pf);
+    console.log(`[Portfolio] 🗑️ Xoá toàn bộ ${sym}`);
+    sendJSON(res, 200, { ok: true });
+    return true;
+  }
+
   if (pathname === "/portfolio/remove" && req.method === "POST") {
     const sym = (body?.symbol ?? "").toUpperCase().trim();
     const id = body?.id;
