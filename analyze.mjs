@@ -867,8 +867,8 @@ function estimateDaysToPullback(data, prices, currentPrice, targetPrice, atrArr,
     dropPct: round2(dropPct),
     immediate: false,
     methods: {
-      atr:       atrDays       ? { days: atrDays,       label: "ATR pullback" }        : null,
-      analog:    analogDays    ? { days: analogDays,    label: "Lịch sử pullback",
+      atr:       atrDays       ? { days: atrDays,       label: "ATR điều chỉnh" }      : null,
+      analog:    analogDays    ? { days: analogDays,    label: "Lịch sử điều chỉnh",
                                    sampleSize: pullbackDurations.length }               : null,
       reversion: reversionDays ? { days: reversionDays, label: "Mean reversion MA20" } : null,
     },
@@ -1120,12 +1120,12 @@ function generatePredictions(
     },
     {
       id: "pullback_health",
-      label: "Pullback lành mạnh (volume thấp)",
+      label: "Điều chỉnh lành mạnh (volume thấp)",
       met: !!(volData && (volData.trend === "decreasing" || volData.trend === "slightly_decreasing") && trend.shortTerm.direction !== "DOWNTREND"),
       desc: (volData?.trend === "decreasing")
-        ? `Volume giảm trong đà pullback — tổ chức không thoát, selloff yếu`
+        ? `Volume giảm trong đà điều chỉnh — tổ chức không thoát, selloff yếu`
         : (volData?.trend === "slightly_decreasing")
-        ? `Volume giảm nhẹ — pullback khá lành mạnh`
+        ? `Volume giảm nhẹ — điều chỉnh khá lành mạnh`
         : (volData?.trend === "increasing" && trend.shortTerm.direction === "DOWNTREND")
         ? `Volume tăng trong đà giảm — áp lực bán mạnh, rủi ro break support`
         : `Volume ổn định — theo dõi thêm diễn biến`,
@@ -1178,11 +1178,11 @@ function generatePredictions(
     entryTrigger = { type: "breakout", label: "Chờ Breakout", color: "#6366f1",
       desc: `Đợi giá đóng cửa vượt kháng cự ${sr.resistances[0].price} với volume ≥ 1.5× TB20 phiên` };
   } else if (s1price && price > s1price * 1.05) {
-    entryTrigger = { type: "pullback", label: "Chờ Pullback", color: "var(--am)",
-      desc: `Giá còn cách vùng mua tối ưu — đợi kéo về quanh ${entryZone?.optimal ?? s1price} để R:R tốt hơn` };
+    entryTrigger = { type: "pullback", label: "Chờ Điều Chỉnh", color: "var(--am)",
+      desc: `Giá còn cách vùng mua tối ưu — đợi điều chỉnh về quanh ${entryZone?.optimal ?? s1price} để R:R tốt hơn` };
   } else {
     entryTrigger = { type: "watch", label: "Theo dõi thêm", color: "var(--gray500)",
-      desc: "Chưa đủ điều kiện — theo dõi thêm 2–3 phiên hoặc đợi breakout/pullback rõ ràng hơn" };
+      desc: "Chưa đủ điều kiện — theo dõi thêm 2–3 phiên hoặc đợi breakout/điều chỉnh rõ ràng hơn" };
   }
 
   // ── Scenario analysis — xác suất tính động ───────────────────────────────
@@ -1602,7 +1602,7 @@ function generatePredictions(
             price: null,
             lots: 0,
             amount: Math.round((budget * alloc[2]) / 100),
-            note: "Lệnh 3: Giữ chờ pullback hoặc thêm khi breakout",
+            note: "Lệnh 3: Giữ chờ điều chỉnh hoặc thêm khi breakout",
           },
         ],
       };
@@ -3379,9 +3379,9 @@ function assessInvestmentProfile(
           : "Tránh giao dịch ngắn hạn lúc này";
       suggestion =
         score >= 70
-          ? "Vào lệnh khi breakout hoặc pullback về MA20, stoploss 3-5%"
+          ? "Vào lệnh khi breakout hoặc điều chỉnh về MA20, stoploss 3-5%"
           : score >= 50
-          ? "Chờ giá pullback về MA20, stoploss chặt 3%"
+          ? "Chờ giá điều chỉnh về MA20, stoploss chặt 3%"
           : "Chờ hoặc chuyển sang mã khác";
     } else if (period <= 80) {
       verdict =

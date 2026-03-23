@@ -681,9 +681,9 @@ function renderHeroExtra(d) {
       h += `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)">▼ KC ${fp(nearRes.price)} <span style="font-size:10px;opacity:.8">+${diff}%</span></span>`;
     }
     if (sc) {
-      const badge = (lbl, g) => g ? `<span style="padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;background:${_gbg(g)};color:${_gc(g)};border:1px solid ${_gbd(g)}">${lbl}:${g}</span>` : "";
+      const badge = (lbl, g, tip) => g ? `<span title="${tip}" style="cursor:default;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;background:${_gbg(g)};color:${_gc(g)};border:1px solid ${_gbd(g)}">${lbl}:${g}</span>` : "";
       if (h) h += `<span style="color:var(--gray300)">·</span>`;
-      h += badge("C", sc.canslim?.grade) + badge("S", sc.sepa?.grade) + badge("M", sc.momentum?.grade);
+      h += badge("C", sc.canslim?.grade, "CANSLIM — Hệ thống chọn cổ phiếu tăng trưởng của William O'Neil") + badge("S", sc.sepa?.grade, "SEPA — Phương pháp phân tích kỹ thuật của Mark Minervini") + badge("M", sc.momentum?.grade, "Momentum — Đánh giá động lực tăng giá");
     }
     srEl.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap";
     srEl.innerHTML = h;
