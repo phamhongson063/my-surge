@@ -13,6 +13,7 @@ import path from "path";
 import url from "url";
 import zlib from "zlib";
 import { promisify } from "util";
+import { determineTrendPro } from "./lib/trend.mjs";
 
 const inflateRaw = promisify(zlib.inflateRaw);
 
@@ -3578,7 +3579,19 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
   const bb = calcBB(prices);
   const atr = calcATR(stockData, 14);
 
+  // ── 52-week range ──
+  const slice252 = prices.slice(Math.max(0, n - 252));
+  const high52w = round2(Math.max(...slice252));
+  const low52w  = round2(Math.min(...slice252));
+  const pctFromHigh52w = round2(((latest.price - high52w) / high52w) * 100);
+
+  // ── Giá trần / sàn HSX/HNX (±7% từ TC) ──
+  const latestRef   = n >= 2 ? round2(stockData[n - 2].price) : null;
+  const ceilingPrice = latestRef != null ? round2(latestRef * 1.07) : null;
+  const floorPrice   = latestRef != null ? round2(latestRef * 0.93) : null;
+
   const trend = determineTrend(prices, ma20, ma50, ma200, rsi, macd);
+  const trendPro = determineTrendPro(stockData, { rsi });
   const sr = findSupportResistance(stockData.slice(-200), latest.price);
   const patterns = detectLatestPatterns(stockData);
   const vol = analyzeVolume(stockData);
@@ -3652,6 +3665,12 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
     latestHigh: latest.high,
     latestLow: latest.low,
     latestChange: latest.change,
+    latestRef,
+    high52w,
+    low52w,
+    pctFromHigh52w,
+    ceiling: ceilingPrice,
+    floor:   floorPrice,
     totalSessions: stockData.length,
     dateRange: { from: stockData[0].date, to: latest.date },
     indicators: {
@@ -3674,6 +3693,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
           : null,
     },
     trend,
+    trendPro,
     supportResistance: sr,
     candlePatterns: patterns,
     volume: vol,

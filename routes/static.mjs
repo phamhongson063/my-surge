@@ -20,6 +20,14 @@ const staticFiles = {
     file: "public/detail.html",
     mime: "text/html; charset=utf-8",
   },
+  "/detail.css": {
+    file: "public/detail.css",
+    mime: "text/css; charset=utf-8",
+  },
+  "/detail.js": {
+    file: "public/detail.js",
+    mime: "application/javascript; charset=utf-8",
+  },
   "/watchlist.html": {
     file: "public/watchlist.html",
     mime: "text/html; charset=utf-8",

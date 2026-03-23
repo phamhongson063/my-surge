@@ -86,7 +86,18 @@
       "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=ACB&days=1100\")",
       "Bash(find /Users/son.ph/my-surge/cache -name *.json)",
       "Bash(find /Users/son.ph/my-surge/cache -name \"*.json\" -delete)",
-      "Bash(curl -s http://localhost:3000/analyze-detail?symbol=ACB)"
+      "Bash(curl -s http://localhost:3000/analyze-detail?symbol=ACB)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/detail.css)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/detail.js)",
+      "Bash(/tmp/func_sizes.sh:*)",
+      "Bash(chmod +x /tmp/func_sizes.sh)",
+      "Bash(/tmp/func_sizes.sh)",
+      "Bash(/tmp/check_vars.sh:*)",
+      "Bash(bash /tmp/check_vars.sh)",
+      "Bash(git stash:*)",
+      "Bash(grep -o \"\"renderPortfolio[^\"\"]*\"\" /Users/son.ph/.claude/projects/-Users-son-ph-my-surge/a3336052-127a-405c-beea-e91ed922943c.jsonl)",
+      "Bash(ls -la /tmp/*.js)",
+      "Read(//Users/son.ph/.Trash/**)"
     ]
   }
 }
