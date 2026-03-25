@@ -236,20 +236,12 @@ function toggleAddForm(){
   }
 }
 
-const CAFEF_PRICE=SERVER+'/price?symbol=';
-
 async function fetchRealtimePrice(sym){
   try{
-    const r=await fetch(CAFEF_PRICE+sym);
+    const r=await fetch(SERVER+'/price?symbol='+sym);
+    if(!r.ok) return null;
     const d=await r.json();
-    if(d.Success&&d.Data&&d.Data.Gia!=null){
-      const ref=d.Data.GiaThamChieu||0;
-      const gia=d.Data.Gia;
-      const chgVal=ref>0?gia-ref:null;
-      const chgPct=ref>0?((gia-ref)/ref*100):null;
-      const chgStr=chgVal!=null?`${chgVal>0?'+':''}${chgVal.toFixed(1)}(${chgVal>0?'+':''}${chgPct.toFixed(2)}%)`:null;
-      return{price:gia,change:chgStr,ref};
-    }
+    if(d.price!=null) return{price:d.price,change:d.change,ref:d.ref};
   }catch(e){}
   return null;
 }

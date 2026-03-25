@@ -3,6 +3,7 @@ import fs from "fs";
 import { sendJSON } from "../lib/utils.mjs";
 import { getSsiToken, saveSsiToken, getSsiTokenFile } from "../lib/ssiToken.mjs";
 import { parseBody } from "../analyze.mjs";
+import { lookupStockFromCache, fetchStockFromSSI } from "../lib/board.mjs";
 
 export async function handle(req, res, { pathname, parsed }) {
   if (pathname === "/api/board") {
@@ -87,6 +88,33 @@ export async function handle(req, res, { pathname, parsed }) {
         });
         rsp.on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
       }).on("error", e => { sendJSON(res, 502, { error: e.message }); resolve(true); });
+    });
+    return true;
+  }
+
+  // ── /price?symbol=XXX — giá realtime 1 mã từ SSI (dùng cho portfolio) ──────
+  if (pathname === "/price" && req.method === "GET") {
+    const sym = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!sym || !/^[A-Z0-9]{1,10}$/.test(sym)) {
+      sendJSON(res, 400, { error: "Thiếu hoặc sai symbol" });
+      return true;
+    }
+    let s = lookupStockFromCache(sym) || await fetchStockFromSSI(sym);
+    if (!s) {
+      sendJSON(res, 404, { error: "Không tìm thấy mã " + sym });
+      return true;
+    }
+    const mp  = s.matchedPrice ?? 0;  // raw VND
+    const ref = s.refPrice ?? s.referencePrice ?? 0;
+    const chgVal = ref > 0 ? (mp - ref) / 1000 : null;
+    const chgPct = ref > 0 ? ((mp - ref) / ref * 100) : null;
+    const chgStr = chgVal != null
+      ? `${chgVal >= 0 ? '+' : ''}${chgVal.toFixed(2)}(${chgPct >= 0 ? '+' : ''}${chgPct.toFixed(2)}%)`
+      : null;
+    sendJSON(res, 200, {
+      price: mp / 1000,
+      ref:   ref / 1000,
+      change: chgStr,
     });
     return true;
   }

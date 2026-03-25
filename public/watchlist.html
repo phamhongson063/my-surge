@@ -579,7 +579,7 @@
           <div class="win-controls">
             <button
               class="win-btn close"
-              onclick="window.location.href='/'"
+              onclick="history.back()"
             ></button>
             <button class="win-btn min"></button>
             <button class="win-btn max"></button>
@@ -723,7 +723,8 @@
           >
             <div style="display: flex; align-items: center; gap: 16px">
               <a
-                href="/"
+                href="#"
+                onclick="history.back();return false"
                 style="
                   display: flex;
                   align-items: center;
@@ -747,7 +748,7 @@
                   stroke-linecap="round"
                 >
                   <polyline points="15 18 9 12 15 6" /></svg
-                >Quay lại</a
+                >Back</a
               >
               <div
                 style="width: 1px; height: 24px; background: var(--gray200)"
@@ -1528,7 +1529,7 @@
 
     <!-- Taskbar -->
     <div class="win-taskbar">
-      <a class="win-tb-back" href="/">
+      <a class="win-tb-back" href="#" onclick="history.back();return false">
         <svg
           width="14"
           height="14"
@@ -1540,7 +1541,7 @@
         >
           <path d="M19 12H5M12 5l-7 7 7 7" />
         </svg>
-        Desktop
+        Back
       </a>
       <div class="win-tb-center">
         <div class="win-tb-icon">

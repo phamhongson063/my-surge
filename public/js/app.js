@@ -65,13 +65,13 @@ function stopDownload() {
   addLog("warn", "⚠ Đang dừng hệ thống...");
 }
 
-async function downloadTask(sym, start, end) {
+// start: YYYY-MM-DD — tính số ngày từ đó đến nay để truyền vào SSI
+async function downloadTask(sym, startDate) {
   try {
-    const res = await fetch(
-      `${SERVER}/download?symbol=${sym}&start=${start}&end=${end}`
-    );
+    const days = Math.ceil((Date.now() - new Date(startDate).getTime()) / 86400000) + 7;
+    const res = await fetch(`${SERVER}/api/history-fetch?symbol=${sym}&days=${days}`);
     const data = await res.json();
-    return { sym, ok: data.ok || data.success };
+    return { sym, ok: data.ok || false };
   } catch (e) {
     return { sym, ok: false };
   }
@@ -82,19 +82,28 @@ async function doDownloadAll() {
   const btnAll = document.getElementById("btnDownloadAll");
   const btnStop = document.getElementById("btnStop");
   const progCont = document.getElementById("progressContainer");
-  const spinner = document.getElementById("spinnerIcon"); // Lấy thẻ bánh xe
+  const spinner = document.getElementById("spinnerIcon");
 
   try {
-    isStopping = false; // Reset trạng thái dừng
+    isStopping = false;
 
-    // 1. Đọc danh sách mã chứng khoán
-    const resCsv = await fetch("/stocks.csv");
-    if (!resCsv.ok) throw new Error("Không tìm thấy stocks.csv trên server");
-    const text = await resCsv.text();
-    const stocks = text
-      .split(/\r?\n/)
-      .map((s) => s.trim())
-      .filter((s) => s && s.toLowerCase() !== "symbol");
+    // 1. Lấy danh sách mã từ SSI (HOSE + HNX + UPCOM)
+    addLog("info", "⏳ Đang lấy danh sách mã từ SSI...");
+    const [rHose, rHnx, rUpcom] = await Promise.all([
+      fetch(`${SERVER}/api/board?exchange=hose`).then(r => r.json()).catch(() => null),
+      fetch(`${SERVER}/api/board?exchange=hnx`).then(r => r.json()).catch(() => null),
+      fetch(`${SERVER}/api/board?exchange=upcom`).then(r => r.json()).catch(() => null),
+    ]);
+    const extractSyms = (j) => (Array.isArray(j?.data) ? j.data : Array.isArray(j) ? j : [])
+      .map(s => (s.stockSymbol ?? s.code ?? "").toUpperCase().trim())
+      .filter(s => s && /^[A-Z0-9]{1,10}$/.test(s));
+    const stocks = [...new Set([
+      ...extractSyms(rHose),
+      ...extractSyms(rHnx),
+      ...extractSyms(rUpcom),
+    ])].sort();
+
+    if (!stocks.length) throw new Error("Không lấy được danh sách mã từ SSI");
 
     // 2. Kích hoạt giao diện tải
     if (progCont) progCont.classList.remove("hidden");
@@ -109,29 +118,20 @@ async function doDownloadAll() {
     }
 
     // 3. Chuẩn bị tham số thời gian
-    const start = document
-      .getElementById("startDate")
-      .value.split("-")
-      .reverse()
-      .join("/");
-    const end = document
-      .getElementById("endDate")
-      .value.split("-")
-      .reverse()
-      .join("/");
+    const startDate = document.getElementById("startDate").value; // YYYY-MM-DD
     let completed = 0,
       success = 0;
     const pool = new Set();
 
-    addLog("info", `🚀 BẮT ĐẦU: Xử lý ${stocks.length} mã chứng khoán`);
+    addLog("info", `🚀 BẮT ĐẦU: Xử lý ${stocks.length} mã (HOSE + HNX + UPCOM)`);
 
     // 4. Vòng lặp tải dữ liệu
     for (const sym of stocks) {
-      if (isStopping) break; // Dừng vòng lặp nếu bấm nút STOP
+      if (isStopping) break;
 
       if (pool.size >= CONCURRENT_LIMIT) await Promise.race(pool);
 
-      const promise = downloadTask(sym, start, end).then((res) => {
+      const promise = downloadTask(sym, startDate).then((res) => {
         completed++;
         if (res.ok) success++;
 
@@ -218,21 +218,12 @@ async function doDownload() {
     return;
   }
 
-  clearLog(); // Xóa log cũ như bạn muốn
+  clearLog();
   addLog("info", `⏳ ĐANG TẢI ${sym}...`);
 
-  const start = document
-    .getElementById("startDate")
-    .value.split("-")
-    .reverse()
-    .join("/");
-  const end = document
-    .getElementById("endDate")
-    .value.split("-")
-    .reverse()
-    .join("/");
+  const startDate = document.getElementById("startDate").value; // YYYY-MM-DD
 
-  const res = await downloadTask(sym, start, end);
+  const res = await downloadTask(sym, startDate);
   if (res.ok) addLog("success", `✔ MÃ ${sym}: TẢI THÀNH CÔNG`);
   else addLog("error", `✖ MÃ ${sym}: THẤT BẠI`);
 }

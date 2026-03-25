@@ -1,12 +1,10 @@
 import { sendJSON } from "../lib/utils.mjs";
 import { analyzeAll, analyzeDetail } from "../analyze.mjs";
 
-const TMP_DIR = "tmp";
-
 export async function handle(req, res, { pathname, parsed }) {
   if (pathname === "/analyze" && req.method === "GET") {
     const maPeriod = parseInt(parsed.query.ma) || 20;
-    const result = await analyzeAll(TMP_DIR, { maPeriod });
+    const result = await analyzeAll(null, { maPeriod });
     sendJSON(res, result.error ? 400 : 200, result);
     return true;
   }
@@ -22,7 +20,7 @@ export async function handle(req, res, { pathname, parsed }) {
       )}] 🔍 Phân tích chi tiết: ${symbol}`
     );
     try {
-      const result = await analyzeDetail(TMP_DIR, symbol);
+      const result = await analyzeDetail(null, symbol);
       sendJSON(res, result.error ? 400 : 200, result);
     } catch (err) {
       console.error(`   ❌ Lỗi: ${err.message}`);

@@ -3439,35 +3439,27 @@ function assessInvestmentProfile(
 // EXPORT: analyzeAll — bulk scan all xlsx files
 // ══════════════════════════════════════════════════════════════════════════════
 
-export async function analyzeAll(tmpDir, options = {}) {
+export async function analyzeAll(_tmpDir, options = {}) {
   const { maPeriod = 20, topN = 264 } = options;
 
-  if (!fs.existsSync(tmpDir))
-    return { error: `Không tìm thấy thư mục ${tmpDir}` };
+  if (!fs.existsSync(HISTORY_DIR))
+    return { error: `Không tìm thấy thư mục dữ liệu lịch sử` };
 
-  const files = fs
-    .readdirSync(tmpDir)
-    .filter((f) => /\.xlsx$/i.test(f) && !f.startsWith("~$"));
-  if (files.length === 0)
-    return { error: `Không tìm thấy file xlsx nào trong ${tmpDir}` };
+  const symbols = fs
+    .readdirSync(HISTORY_DIR)
+    .filter((f) => /\.json$/i.test(f))
+    .map((f) => f.replace(/\.json$/i, "").toUpperCase());
+  if (symbols.length === 0)
+    return { error: `Không tìm thấy dữ liệu lịch sử nào` };
 
   const results = [];
 
-  for (const file of files) {
-    const symbol = path.basename(file, path.extname(file)).toUpperCase();
-    const filePath = path.join(tmpDir, file);
-
-    let data;
-    try {
-      data = await readXlsx(filePath);
-    } catch (e) {
-      console.error(`  ⚠️  ${symbol}: ${e.message}`);
-      continue;
-    }
+  for (const symbol of symbols) {
+    const data = readHistoryJson(symbol);
 
     if (!data || data.length < maPeriod + 1) {
       console.log(
-        `  ⏭  ${symbol}: bỏ qua (${data?.length ?? 0} hàng < ${maPeriod + 1})`
+        `  ⏭  ${symbol}: bỏ qua (${data?.length ?? 0} phiên < ${maPeriod + 1})`
       );
       continue;
     }
@@ -3524,7 +3516,7 @@ export async function analyzeAll(tmpDir, options = {}) {
     });
   }
 
-  return { scannedFiles: files.length, maPeriod, results };
+  return { scannedFiles: symbols.length, maPeriod, results };
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
