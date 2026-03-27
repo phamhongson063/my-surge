@@ -1,5 +1,15 @@
 [
   {
+    "id": 1774497219271,
+    "symbol": "PGC",
+    "qty": 1000,
+    "buyPrice": 14.05,
+    "sellPrice": 13.9,
+    "sellDate": "2026-03-26",
+    "pnl": -150,
+    "pnlPct": -1.07
+  },
+  {
     "id": 1774409127525,
     "symbol": "FPT",
     "qty": 100,

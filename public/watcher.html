@@ -112,6 +112,7 @@
           <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">XU HƯỚNG</th>
           <th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU NỔI BẬT</th>
           <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KHUYẾN NGHỊ</th>
+          <th style="padding:13px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KLGD</th>
           <th style="padding:13px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">ĐIỂM</th>
         </tr>
       </thead>
@@ -125,7 +126,8 @@
 const SERVER = `http://${location.hostname}:3000`;
 const BATCH  = 5; // số mã phân tích song song cùng lúc
 
-const fp = v => v == null ? "—" : parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
+const fp   = v => v == null ? "—" : parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
+const fvol = v => { if(v==null) return "—"; if(v>=1e6) return (v/1e6).toFixed(2)+"M"; if(v>=1e3) return (v/1e3).toFixed(1)+"K"; return v.toLocaleString("vi-VN"); };
 
 function parseChange(r){
   if(!r) return {val:null,pct:null,dir:0};
@@ -239,6 +241,8 @@ async function startScan(){
           return allSigs[0] || null;
         })();
 
+        const lastVol = d.chart?.volumes?.[d.chart.volumes.length - 1];
+
         scanResults.push({
           symbol: sym,
           price: d.latestPrice,
@@ -252,6 +256,7 @@ async function startScan(){
           recPrio: recPriority(rec),
           topScore,
           topSig,
+          volume: lastVol ?? null,
           date: d.latestDate,
           error: null,
         });
@@ -263,10 +268,10 @@ async function startScan(){
     }));
   }
 
-  // Sort: theo priority rồi theo score giảm dần
+  // Sort: theo priority rồi theo khối lượng giảm dần
   scanResults.sort((a,b) => {
     if(a.recPrio !== b.recPrio) return a.recPrio - b.recPrio;
-    return (b.topScore ?? 0) - (a.topScore ?? 0);
+    return (b.volume ?? 0) - (a.volume ?? 0);
   });
 
   document.getElementById("loadingState").style.display="none";
@@ -302,7 +307,7 @@ function renderTable(rows){
     // Group header
     if(r.recPrio !== lastPrio && r.recPrio <= 4){
       const g = GROUP[r.recPrio];
-      html += `<tr><td colspan="8" class="group-header"
+      html += `<tr><td colspan="9" class="group-header"
         style="color:${g.color};background:${g.bg};border-bottom-color:${g.bd}">
         ${g.label} · ${rows.filter(x=>x.recPrio===r.recPrio).length} mã
       </td></tr>`;
@@ -312,7 +317,7 @@ function renderTable(rows){
     if(r.error){
       html += `<tr class="row-an" style="animation-delay:${i*0.015}s;opacity:.5">
         <td style="padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--gray400)">${r.symbol}</td>
-        <td colspan="7" style="padding:12px 16px;font-size:13px;color:var(--dn)">${r.error}</td>
+        <td colspan="8" style="padding:12px 16px;font-size:13px;color:var(--dn)">${r.error}</td>
       </tr>`;
       return;
     }
@@ -356,6 +361,7 @@ function renderTable(rows){
       <td style="padding:13px 16px;text-align:center">
         ${r.rec?`<span class="badge ${recClass}">${r.rec}</span>`:'<span style="color:var(--gray400);font-size:12px">—</span>'}
       </td>
+      <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--gray700)">${fvol(r.volume)}</td>
       <td style="padding:13px 16px;text-align:center">${scoreHtml}</td>
     </tr>`;
   });

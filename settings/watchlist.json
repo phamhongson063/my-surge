@@ -5,7 +5,10 @@
     "VSI",
     "ADG",
     "NVL",
-    "NAF"
+    "NAF",
+    "CRC",
+    "HUT",
+    "HDG"
   ],
   "lastScan": "2026-03-16T18:17:12.161Z",
   "alerts": [
