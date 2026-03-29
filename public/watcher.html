@@ -30,6 +30,7 @@
     tr:hover td{background:var(--gray50)}
     .progress-bar{height:4px;border-radius:2px;background:var(--gray200);overflow:hidden;margin-top:6px}
     .progress-fill{height:100%;border-radius:2px;background:var(--navy);transition:width .3s ease}
+    .th-tip{display:inline-flex;align-items:center;gap:4px;cursor:help;white-space:nowrap}
   </style>
 </head>
 <body>
@@ -107,13 +108,13 @@
   </div>
 
   <!-- Tab bar -->
-  <div id="tabBar" style="display:none;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--gray200);padding-bottom:0;overflow-x:auto;white-space:nowrap"></div>
+  <div id="tabBar" style="display:none;gap:0;margin-bottom:0;padding-bottom:1px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;align-items:flex-end;flex-wrap:nowrap"></div>
 
   <!-- Table -->
-  <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;overflow:hidden">
-    <table style="width:100%;border-collapse:collapse">
+  <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:0 16px 16px 16px;overflow-x:auto">
+    <table id="mainTable" style="width:100%;border-collapse:collapse;min-width:900px">
       <thead>
-        <tr style="background:var(--gray50);border-bottom:2px solid var(--gray200)">
+        <tr id="tableHeadRow" style="background:var(--gray50);border-bottom:2px solid var(--gray200)">
           <th style="padding:13px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>
           <th style="padding:13px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">GIÁ</th>
           <th style="padding:13px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">THAY ĐỔI</th>
@@ -257,15 +258,25 @@ async function startScan(){
         const ch = parseChange(d.latestChange);
         const rec = d.predictions?.recommendation;
         const recColor = d.predictions?.recColor;
-        const buySignals = (d.predictions?.bestBuy ? 1 : 0);
 
         // Score tổng hợp: lấy max của 3 scoring methods
-        const scores = [
-          d.scoring?.canslim?.total,
-          d.scoring?.sepa?.total,
-          d.scoring?.momentum?.total,
-        ].filter(v => v != null);
+        const canslimTotal = d.scoring?.canslim?.total ?? null;
+        const canslimGrade = d.scoring?.canslim?.grade ?? null;
+        const sepaTotal    = d.scoring?.sepa?.total ?? null;
+        const sepaGrade    = d.scoring?.sepa?.grade ?? null;
+        const scores = [canslimTotal, sepaTotal, d.scoring?.momentum?.total].filter(v => v != null);
         const topScore = scores.length ? Math.max(...scores) : null;
+
+        // Điểm tổ chức: CANSLIM 40% + SEPA 35% + A/D 15% + Checklist 10%
+        const adRatio       = d.predictions?.adRatio ?? null;
+        const checklistPct  = d.predictions?.checklistPct ?? null;
+        const setupGrade    = d.predictions?.setupGrade ?? null;
+        const marketPhase   = d.predictions?.marketPhase ?? null;
+        const canslimNorm   = canslimTotal != null ? (canslimTotal / 70) * 100 : null;
+        const sepaNorm      = sepaTotal    != null ? (sepaTotal    / 80) * 100 : null;
+        const instScore = (canslimNorm != null && sepaNorm != null)
+          ? Math.round(canslimNorm * 0.40 + sepaNorm * 0.35 + (adRatio != null ? adRatio * 100 : 50) * 0.15 + (checklistPct ?? 50) * 0.10)
+          : null;
 
         // Top signal
         const topSig = (() => {
@@ -293,6 +304,11 @@ async function startScan(){
           topSig,
           volume: lastVol ?? null,
           date: d.latestDate,
+          // institutional
+          canslimTotal, canslimGrade,
+          sepaTotal, sepaGrade,
+          adRatio, checklistPct, setupGrade, marketPhase,
+          instScore,
           error: null,
         });
         updateProgress(sym, rec);
@@ -321,12 +337,14 @@ function renderTabs(allRows){
   const counts = {0:0,1:0,2:0,3:0,4:0};
   allRows.forEach(r => { if(r.recPrio<=4) counts[r.recPrio]++; });
   const total = allRows.filter(r=>r.recPrio<=4).length;
+  const instCount = allRows.filter(r => r.instScore != null).length;
 
   const tb = document.getElementById("tabBar");
   tb.style.display = "flex";
 
   const tabs = [
-    { key: null, label: "Tất cả", count: total, color: "var(--navy)", bg: "var(--navy-l)", bd: "var(--navy)" },
+    { key: null,   label: "Tất cả",   count: total,     color: "var(--navy)", bg: "var(--navy-l)", bd: "var(--navy)" },
+    { key: 'inst', label: "Tổ chức",  count: instCount, color: "#7c3aed",     bg: "#f5f3ff",       bd: "#7c3aed" },
     ...Object.entries(counts).filter(([,v])=>v>0).map(([p,v])=>{
       const g = GROUP[p];
       return { key: parseInt(p), label: g.label, count: v, color: g.color, bg: g.bg, bd: g.color };
@@ -335,12 +353,13 @@ function renderTabs(allRows){
 
   tb.innerHTML = tabs.map(t => {
     const isActive = activeTab === t.key;
-    return `<button onclick="setTab(${t.key === null ? 'null' : t.key})"
-      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:700;color:${isActive ? t.color : 'var(--gray500)'};border-bottom:2px solid ${isActive ? t.color : 'transparent'};margin-bottom:-2px;transition:all .15s;white-space:nowrap"
-      onmouseenter="if(${!isActive})this.style.color='var(--gray700)'"
-      onmouseleave="if(${!isActive})this.style.color='var(--gray500)'">
+    const keyStr = t.key === null ? 'null' : typeof t.key === 'string' ? `'${t.key}'` : t.key;
+    return `<button onclick="setTab(${keyStr})"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px 12px;border:1px solid ${isActive ? t.bd : 'transparent'};border-bottom:${isActive ? '1px solid var(--wht)' : '1px solid var(--gray200)'};background:${isActive ? 'var(--wht)' : t.bg};cursor:pointer;font-size:13px;font-weight:700;color:${t.color};border-radius:10px 10px 0 0;margin-bottom:-1px;position:relative;transition:all .15s;white-space:nowrap;opacity:${isActive ? '1' : '0.7'}"
+      onmouseenter="if(!${isActive})this.style.opacity='1'"
+      onmouseleave="if(!${isActive})this.style.opacity='0.7'">
       ${t.label}
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;padding:1px 7px;border-radius:20px;background:${isActive ? t.bg : 'var(--gray100)'};color:${isActive ? t.color : 'var(--gray400)'};">${t.count}</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:1px 7px;border-radius:20px;background:${t.bd}22;color:${t.color};">${t.count}</span>
     </button>`;
   }).join('');
 }
@@ -354,7 +373,12 @@ function setTab(prio){
 
 function getFilteredRows(){
   const textFilter = document.getElementById("filterInput").value.toUpperCase().trim();
-  let rows = activeTab === null ? scanResults : scanResults.filter(r => r.recPrio === activeTab);
+  let rows;
+  if(activeTab === 'inst'){
+    rows = [...scanResults].filter(r => r.instScore != null).sort((a,b) => (b.instScore??0) - (a.instScore??0));
+  } else {
+    rows = activeTab === null ? scanResults : scanResults.filter(r => r.recPrio === activeTab);
+  }
   if(textFilter) rows = rows.filter(r => r.symbol.includes(textFilter));
   return rows;
 }
@@ -364,9 +388,113 @@ function renderTable(rows){
   renderRows(rows);
 }
 
+const GRADE_COLOR = { 'A+':'var(--up)','A':'var(--up)','B':'var(--navy)','C':'var(--am)','D':'var(--dn)' };
+const GRADE_BG    = { 'A+':'var(--up-bg)','A':'var(--up-bg)','B':'var(--navy-l)','C':'var(--am-bg)','D':'var(--dn-bg)' };
+const GRADE_BD    = { 'A+':'var(--up-bd)','A':'var(--up-bd)','B':'#bfdbfe','C':'var(--am-bd)','D':'var(--dn-bd)' };
+
+function gradeHtml(grade, score, max){
+  if(grade == null) return '<span style="color:var(--gray400)">—</span>';
+  const c = GRADE_COLOR[grade]||'var(--gray500)';
+  const bg = GRADE_BG[grade]||'var(--gray100)';
+  const bd = GRADE_BD[grade]||'var(--gray200)';
+  return `<span style="display:inline-flex;align-items:center;gap:5px">
+    <span style="background:${bg};color:${c};border:1px solid ${bd};border-radius:6px;padding:2px 7px;font-weight:700;font-size:12px">${grade}</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gray500)">${score}/${max}</span>
+  </span>`;
+}
+
 function renderRows(rows){
   document.getElementById("tableWrap").style.display="block";
   const tbody = document.getElementById("tableBody");
+  const headRow = document.getElementById("tableHeadRow");
+  const TH = (label, align) => `<th style="padding:13px 16px;text-align:${align};font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px;white-space:nowrap">${label}</th>`;
+
+  const tbl = document.getElementById("mainTable");
+  if(activeTab === 'inst'){
+    tbl.style.minWidth = '1050px';
+    tbl.style.tableLayout = 'fixed';
+    tbl.style.width = '100%';
+  } else {
+    tbl.style.minWidth = '900px';
+    tbl.style.tableLayout = '';
+    tbl.style.width = '100%';
+  }
+
+  const THW = (label, align, w, color) =>
+    `<th style="width:${w};padding:10px 12px;text-align:${align};font-size:11px;font-weight:700;color:${color||'var(--gray500)'};letter-spacing:.5px;white-space:nowrap;overflow:hidden">${label}</th>`;
+
+  if(activeTab === 'inst'){
+    headRow.innerHTML =
+      THW('MÃ','left','150px')+
+      THW('GIÁ','right','75px')+
+      THW('THAY ĐỔI','right','85px')+
+      THW('CANSLIM','center','110px')+
+      THW('SEPA','center','110px')+
+      `<th style="width:110px;padding:10px 12px;text-align:center;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px;white-space:nowrap;overflow:hidden"><span class="th-tip" data-tip="Chaikin A/D Ratio đo tỷ lệ giá đóng cửa nằm ở đâu trong nến:\n\n• > 60% → Tích lũy: giá đóng gần đỉnh nến, tổ chức đang mua vào\n• < 40% → Phân phối: giá đóng gần đáy nến, tổ chức đang bán ra\n• 40–60% → Trung tính">A/D RATIO ⓘ</span></th>`+
+      THW('MARKET PHASE','center','120px')+
+      THW('SETUP','center','80px')+
+      THW('ĐIỂM TỔ CHỨC','center','115px','#7c3aed');
+
+    let html = "";
+    rows.forEach((r, i) => {
+      if(r.error){ html += `<tr><td style="padding:12px 20px;color:var(--gray400);font-family:'IBM Plex Mono',monospace;font-weight:700">${r.symbol}</td><td colspan="8" style="padding:12px 16px;font-size:13px;color:var(--dn)">${r.error}</td></tr>`; return; }
+      const changeColor = r.changeDir>0?"var(--up)":r.changeDir<0?"var(--dn)":"var(--gray500)";
+      const changeText  = r.changePct!=null?`${r.changeDir>0?"+":""}${r.changePct.toFixed(2)}%`:"—";
+      const adPct = r.adRatio != null ? Math.round(r.adRatio * 100) : null;
+      const adColor = r.adRatio==null?"var(--gray400)":r.adRatio>0.6?"var(--up)":r.adRatio<0.4?"var(--dn)":"var(--am)";
+      const adLabel = r.adRatio==null?"—":r.adRatio>0.6?"Tích lũy":r.adRatio<0.4?"Phân phối":"Trung tính";
+      const phaseMap = {accumulation:"Tích lũy",distribution:"Phân phối",neutral:"Trung tính",markup:"Markup",markdown:"Markdown",consolidation:"Tích lũy"};
+      const phaseColor = {accumulation:"var(--up)",distribution:"var(--dn)",neutral:"var(--am)"};
+      const phaseBg = {accumulation:"var(--up-bg)",distribution:"var(--dn-bg)",neutral:"var(--am-bg)"};
+      const phaseBd = {accumulation:"var(--up-bd)",distribution:"var(--dn-bd)",neutral:"var(--am-bd)"};
+      const phase = r.marketPhase || null;
+      const phaseHtml = phase
+        ? `<span style="background:${phaseBg[phase]||'var(--gray100)'};color:${phaseColor[phase]||'var(--gray500)'};border:1px solid ${phaseBd[phase]||'var(--gray200)'};border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600">${phaseMap[phase]||phase}</span>`
+        : '<span style="color:var(--gray400)">—</span>';
+      const setupC = GRADE_COLOR[r.setupGrade]||'var(--gray400)';
+      const setupBg = GRADE_BG[r.setupGrade]||'var(--gray100)';
+      const setupBd = GRADE_BD[r.setupGrade]||'var(--gray200)';
+      const setupHtml = r.setupGrade
+        ? `<span style="background:${setupBg};color:${setupC};border:1px solid ${setupBd};border-radius:6px;padding:2px 9px;font-weight:700;font-size:13px">${r.setupGrade}</span>`
+        : '<span style="color:var(--gray400)">—</span>';
+      const instC = r.instScore>=70?"var(--up)":r.instScore>=50?"#7c3aed":"var(--am)";
+      const rank = i + 1;
+
+      html += `<tr class="row-an" style="border-bottom:1px solid var(--gray100);animation-delay:${i*0.015}s;cursor:pointer"
+          onclick="window.open('/detail.html?s=${r.symbol}','_blank')">
+        <td style="padding:13px 20px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--gray400);min-width:20px">#${rank}</span>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--navy)">${r.symbol}</div>
+              <div style="font-size:11px;color:var(--gray400)">${r.date||''}</div>
+            </div>
+          </div>
+        </td>
+        <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px">${fp(r.price)}</td>
+        <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${changeColor}">${changeText}</td>
+        <td style="padding:13px 16px;text-align:center">${gradeHtml(r.canslimGrade, r.canslimTotal, 70)}</td>
+        <td style="padding:13px 16px;text-align:center">${gradeHtml(r.sepaGrade, r.sepaTotal, 80)}</td>
+        <td style="padding:13px 16px;text-align:center">
+          ${adPct!=null?`<div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${adColor}">${adPct}%</div><div style="font-size:11px;color:${adColor}">${adLabel}</div>`:'<span style="color:var(--gray400)">—</span>'}
+        </td>
+        <td style="padding:13px 16px;text-align:center">${phaseHtml}</td>
+        <td style="padding:13px 16px;text-align:center">${setupHtml}</td>
+        <td style="padding:13px 16px;text-align:center">
+          <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${instC}">${r.instScore}</span>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+    return;
+  }
+
+  // --- Standard view: restore header ---
+  headRow.innerHTML =
+    `<th style="padding:13px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>`+
+    TH('GIÁ','right')+TH('THAY ĐỔI','right')+TH('RSI','center')+TH('XU HƯỚNG','center')+
+    `<th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU NỔI BẬT</th>`+
+    TH('KHUYẾN NGHỊ','center')+TH('KLGD','right')+TH('ĐIỂM','center');
 
   let html = "";
 
@@ -430,6 +558,28 @@ function renderRows(rows){
 window.addEventListener("load", () => {
   startScan();
 });
+
+// Global tooltip for .th-tip elements
+(function(){
+  const tt = document.createElement('div');
+  tt.style.cssText = 'position:fixed;background:#1a1a2e;color:#fff;font-size:12px;line-height:1.6;padding:8px 12px;border-radius:8px;width:240px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:pre-line';
+  document.body.appendChild(tt);
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('.th-tip');
+    if(!el || !el.dataset.tip) return;
+    tt.textContent = el.dataset.tip;
+    tt.style.opacity = '1';
+  });
+  document.addEventListener('mousemove', e => {
+    if(tt.style.opacity === '0') return;
+    const x = e.clientX + 14, y = e.clientY + 14;
+    tt.style.left = (x + 240 > window.innerWidth ? e.clientX - 254 : x) + 'px';
+    tt.style.top  = (y + tt.offsetHeight > window.innerHeight ? e.clientY - tt.offsetHeight - 6 : y) + 'px';
+  });
+  document.addEventListener('mouseout', e => {
+    if(e.target.closest('.th-tip')) tt.style.opacity = '0';
+  });
+})();
 
 function applyFilter(val){
   if(!scanResults.length) return;
