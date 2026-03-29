@@ -354,5 +354,89 @@ export async function handle(req, res, { pathname, parsed }) {
     return true;
   }
 
+  // ─── API: Company info — thông tin cơ bản 1 mã (cache theo tuần) ───────────
+  if (pathname === "/api/company-info" && req.method === "GET") {
+    const symbol = (parsed.query.symbol ?? "").toUpperCase().trim();
+    if (!symbol) { sendJSON(res, 400, { error: "Thiếu symbol" }); return true; }
+
+    const cacheFile = path.join(BASE_DIR, "database", "company_info.json");
+
+    // weekKey = "YYYY-WW" (ISO week)
+    const now = new Date();
+    const jan4 = new Date(now.getFullYear(), 0, 4);
+    const isoWeek = Math.ceil(((now - jan4) / 86400000 + jan4.getDay() + 1) / 7);
+    const weekKey = `${now.getFullYear()}-W${String(isoWeek).padStart(2, "0")}`;
+
+    // Đọc cache
+    let cache = {};
+    try { if (fs.existsSync(cacheFile)) cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); }
+    catch (_) { cache = {}; }
+
+    // Trả cache nếu còn trong tuần
+    const cached = cache[symbol];
+    if (cached?.weekKey === weekKey) {
+      sendJSON(res, 200, cached.data);
+      return true;
+    }
+
+    // ── Fetch mới ────────────────────────────────────────────────────────────
+    const ssiPath = path.join(BASE_DIR, "database", "ssi_sectors.csv");
+    let nameVi = "", nameEn = "", icbCode = "", sectorVi = "", sectorEn = "", exchange = "";
+
+    if (fs.existsSync(ssiPath)) {
+      const lines = fs.readFileSync(ssiPath, "utf8").split("\n");
+      for (const line of lines.slice(1)) {
+        if (!line.trim()) continue;
+        const c = parseCSVLine(line);
+        if ((c[1]?.trim() ?? "") !== symbol) continue;
+        icbCode  = c[2]?.trim() ?? "";
+        sectorVi = c[3]?.trim() ?? "";
+        sectorEn = c[4]?.trim() ?? "";
+        nameVi   = c[5]?.trim() ?? "";
+        exchange = c[6]?.trim() ?? "";
+        break;
+      }
+    }
+
+    let indexGroups = [], parValue = null, isin = "", nameEnLive = "";
+    try {
+      const r = await fetch(`https://iboard-query.ssi.com.vn/stock?symbol=${symbol}`, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          Origin: "https://iboard.ssi.com.vn",
+          Referer: "https://iboard.ssi.com.vn/",
+          Accept: "application/json",
+        },
+      });
+      const j = await r.json();
+      const stock = (j.data ?? []).find(s => s.stockSymbol === symbol && s.stockType === "s");
+      if (stock) {
+        indexGroups = stock.indexGroups ?? [];
+        parValue    = stock.parValue ?? null;
+        isin        = stock.isin ?? "";
+        nameEnLive  = stock.companyNameEn ?? "";
+        if (!nameVi && stock.companyNameVi) nameVi = stock.companyNameVi;
+        if (!exchange && stock.exchange) {
+          exchange = { hose: "HOSE", hnx: "HASTC", upcom: "UPCOM" }[stock.exchange] ?? stock.exchange;
+        }
+      }
+    } catch (_) { /* ignore */ }
+
+    const data = {
+      symbol, nameVi, nameEn: nameEnLive || nameEn,
+      icbCode, sectorVi, sectorEn,
+      exchange, indexGroups, parValue, isin,
+    };
+
+    // Lưu cache
+    try {
+      cache[symbol] = { weekKey, data };
+      fs.writeFileSync(cacheFile, JSON.stringify(cache, null, 2), "utf8");
+    } catch (_) { /* ignore */ }
+
+    sendJSON(res, 200, data);
+    return true;
+  }
+
   return false;
 }

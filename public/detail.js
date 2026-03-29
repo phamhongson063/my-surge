@@ -497,6 +497,7 @@ async function loadAnalysis(sym, forceRefresh = false) {
     renderAll(analysisData);
     updateWatchlistBtn();
     loadRealtimePrice(sym);
+    renderCompanyInfo(analysisData.companyInfo);
   } catch (e) {
     document.getElementById("loadingState").style.display = "none";
     document.getElementById("errorState").style.display = "block";
@@ -636,7 +637,7 @@ function renderHeroExtra(d) {
         <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dn);white-space:nowrap">${fp(d.low52w)}</span>
         <div style="flex:1;height:6px;background:var(--gray200);border-radius:3px;position:relative;min-width:60px">
           <div style="position:absolute;left:0;top:0;height:100%;width:${pos}%;background:${barC};border-radius:3px"></div>
-          <div style="position:absolute;top:50%;left:${dotPos}%;width:12px;height:12px;background:${barC};border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,.25)"></div>
+          <div style="position:absolute;top:50%;left:${dotPos}%;width:11px;height:11px;background:#f59e0b;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 5px rgba(0,0,0,.3)"></div>
         </div>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--up);white-space:nowrap">${fp(d.high52w)}</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:${pFHColor};white-space:nowrap">${pFH > 0 ? "+" : ""}${pFH}% từ đỉnh</span>
@@ -657,36 +658,35 @@ function renderHeroExtra(d) {
         ${lbl}<span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${isUp?"+":""}${d_.toFixed(1)}%</span>
       </span>`;
     };
-    maEl.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap";
-    maEl.innerHTML = `<span style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.5px">MA</span>`
-      + maItem("MA20", ind.ma20)
-      + maItem("MA50", ind.ma50)
-      + maItem("MA200", ind.ma200);
-  }
-
-  // 8. S/R + Scoring mini row
-  const srEl = document.getElementById("heroSrScoreRow");
-  if (srEl) {
+    // 8. S/R + Scoring — gộp cùng dòng MA
     const sr  = d.supportResistance;
     const sc  = d.scoring;
     const nearSup = sr?.supports?.[0];
     const nearRes = sr?.resistances?.[0];
-    let h = "";
+    let srH = "";
     if (nearSup?.price) {
       const diff = ((price - nearSup.price) / price * 100).toFixed(1);
-      h += `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)">▲ HT ${fp(nearSup.price)} <span style="font-size:10px;opacity:.8">−${diff}%</span></span>`;
+      srH += `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--up-bg);color:var(--up);border:1px solid var(--up-bd)">▲ HT ${fp(nearSup.price)} <span style="font-size:10px;opacity:.8">−${diff}%</span></span>`;
     }
     if (nearRes?.price) {
       const diff = ((nearRes.price - price) / price * 100).toFixed(1);
-      h += `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)">▼ KC ${fp(nearRes.price)} <span style="font-size:10px;opacity:.8">+${diff}%</span></span>`;
+      srH += `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)">▼ KC ${fp(nearRes.price)} <span style="font-size:10px;opacity:.8">+${diff}%</span></span>`;
     }
     if (sc) {
       const badge = (lbl, g, tip) => g ? `<span title="${tip}" style="cursor:default;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:700;background:${_gbg(g)};color:${_gc(g)};border:1px solid ${_gbd(g)}">${lbl}:${g}</span>` : "";
-      if (h) h += `<span style="color:var(--gray300)">·</span>`;
-      h += badge("C", sc.canslim?.grade, "CANSLIM — Hệ thống chọn cổ phiếu tăng trưởng của William O'Neil") + badge("S", sc.sepa?.grade, "SEPA — Phương pháp phân tích kỹ thuật của Mark Minervini") + badge("M", sc.momentum?.grade, "Momentum — Đánh giá động lực tăng giá");
+      if (srH) srH += `<span style="color:var(--gray300);flex-shrink:0">·</span>`;
+      srH += badge("C", sc.canslim?.grade, "CANSLIM — Hệ thống chọn cổ phiếu tăng trưởng của William O'Neil") + badge("S", sc.sepa?.grade, "SEPA — Phương pháp phân tích kỹ thuật của Mark Minervini") + badge("M", sc.momentum?.grade, "Momentum — Đánh giá động lực tăng giá");
     }
-    srEl.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap";
-    srEl.innerHTML = h;
+    const sep = srH ? `<span style="color:var(--gray300);flex-shrink:0">·</span>` : "";
+    maEl.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden";
+    maEl.innerHTML = `<span style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.5px;flex-shrink:0">MA</span>`
+      + maItem("MA20", ind.ma20)
+      + maItem("MA50", ind.ma50)
+      + maItem("MA200", ind.ma200)
+      + sep + srH;
+
+    const srEl = document.getElementById("heroSrScoreRow");
+    if (srEl) srEl.style.display = "none";
   }
 }
 
@@ -4103,3 +4103,52 @@ window.addEventListener("load", () => {
     }
   }
 });
+
+function renderCompanyInfo(d) {
+  const el = document.getElementById("companyInfo");
+  if (!el || !d) return;
+
+  const dot = `<span style="color:var(--gray300);margin:0 2px">·</span>`;
+
+  const fmtShares = (n) => {
+    if (!n) return null;
+    if (n >= 1e9) return (n / 1e9).toFixed(2).replace(/\.?0+$/, "") + " tỷ CP";
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.?0+$/, "") + " triệu CP";
+    return n.toLocaleString("vi-VN") + " CP";
+  };
+
+  const rows = [];
+
+  // Dòng 1: Tên công ty
+  if (d.nameVi) {
+    rows.push(`<div style="font-size:13px;font-weight:600;color:var(--gray700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.nameVi}</div>`);
+  }
+
+  // Dòng 2: Sàn · Ngành · ICB · Index groups · Mệnh giá
+  const meta = [];
+  if (d.exchange) meta.push(`<span style="font-weight:700;color:#3b82f6">${d.exchange}</span>`);
+  if (d.sectorVi) meta.push(`<span>${d.sectorVi}</span>`);
+  if (d.icbCode)  meta.push(`<span style="color:var(--gray400)">ICB ${d.icbCode}</span>`);
+  const idxBadge = (label, color) =>
+    `<span style="font-weight:700;font-size:10px;padding:1px 6px;border-radius:4px;background:${color}18;color:${color};border:1px solid ${color}30">${label}</span>`;
+  if (d.indexGroups?.includes("VN30"))     meta.push(idxBadge("VN30", "#7c3aed"));
+  if (d.indexGroups?.includes("VNINDEX"))  meta.push(idxBadge("VNINDEX", "#0369a1"));
+  if (d.indexGroups?.includes("HNXIndex")) meta.push(idxBadge("HNXIndex", "#0369a1"));
+  if (d.parValue) meta.push(`<span style="color:var(--gray400)">Mệnh giá ${(d.parValue / 1000).toLocaleString("vi-VN")}k</span>`);
+  if (meta.length) {
+    rows.push(`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--gray500)">${meta.join(dot)}</div>`);
+  }
+
+  // Dòng 3: KL niêm yết · SLCP lưu hành
+  const shareItems = [];
+  const ls = fmtShares(d.issueShare);
+  const os = fmtShares(d.outstandingShare);
+  if (ls) shareItems.push(`<span>KL niêm yết <b style="color:var(--gray700)">${ls}</b></span>`);
+  if (os) shareItems.push(`<span>SLCP lưu hành <b style="color:var(--gray700)">${os}</b></span>`);
+  if (shareItems.length) {
+    rows.push(`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--gray500)">${shareItems.join(dot)}</div>`);
+  }
+
+  el.style.display = rows.length ? "flex" : "none";
+  el.innerHTML = rows.join("");
+}

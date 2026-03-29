@@ -400,6 +400,17 @@ body.tab-portfolio .hdr-pf  { display: table-cell; }
 body.tab-portfolio .sym-cell:hover .sym-remove-btn,
 body.tab-watchlist .sym-cell:hover .sym-remove-btn { display: block; }
 
+/* Home button */
+.home-btn {
+  font-size: 18px;
+  text-decoration: none;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.home-btn:hover { background: var(--bg3); }
+
 /* Nav link */
 .nav-link {
   color: var(--text3);
@@ -650,6 +661,7 @@ body.tab-watchlist .sym-cell:hover .sym-remove-btn { display: block; }
 
 <!-- HEADER -->
 <div id="header">
+  <a href="http://localhost:3000" class="home-btn" title="Trang chủ">🏠</a>
   <h1>📊 Bảng Giá</h1>
   <a href="/sector.html" class="nav-link">Ngành</a>
   <a href="/" class="nav-link">Phân tích</a>

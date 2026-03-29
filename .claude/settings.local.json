@@ -97,7 +97,17 @@
       "Bash(git stash:*)",
       "Bash(grep -o \"\"renderPortfolio[^\"\"]*\"\" /Users/son.ph/.claude/projects/-Users-son-ph-my-surge/a3336052-127a-405c-beea-e91ed922943c.jsonl)",
       "Bash(ls -la /tmp/*.js)",
-      "Read(//Users/son.ph/.Trash/**)"
+      "Read(//Users/son.ph/.Trash/**)",
+      "Bash(curl -s \"https://iboard-api.ssi.com.vn/statistics/company/overview?symbol=ACB\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"Accept: application/json\")",
+      "Bash(curl -s \"https://iboard-api.ssi.com.vn/statistics/company/profile?symbol=ACB\" -H \"Origin: https://iboard.ssi.com.vn\" -H \"Referer: https://iboard.ssi.com.vn/\" -H \"Accept: application/json\")",
+      "Bash(ls /Users/son.ph/my-surge/public/detail*)",
+      "Bash(head -20 grep -n \"ssi_sectors\\\\|sectors\\\\.csv\\\\|companyName\" /Users/son.ph/my-surge/routes/board.mjs)",
+      "Bash(curl -s \"https://s.cafef.vn/ajax/StockInfoAjax.aspx?symbol=ACB\" -H \"Referer: https://cafef.vn/\")",
+      "Bash(head -5 grep -n \"msh-stream\\\\|msh_url\\\\|MSH\" /Users/son.ph/my-surge/routes/board.mjs)",
+      "Bash(grep -rn \"msh-stream\\\\|msh_stream\\\\|msh\" /Users/son.ph/my-surge/routes/*.mjs)",
+      "Bash(grep -rn msh /Users/son.ph/my-surge/main.mjs /Users/son.ph/my-surge/lib/*.mjs)",
+      "Bash(grep -rn \"msh-stream\\\\|text/event-stream\" /Users/son.ph/my-surge/ --include=*.mjs)",
+      "Bash(grep -rn \"msh-stream\\\\|mshUrl\\\\|MSH_URL\" /Users/son.ph/my-surge/ --include=*.mjs --include=*.js)"
     ]
   }
 }
