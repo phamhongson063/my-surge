@@ -16,6 +16,10 @@ const staticFiles = {
     file: "public/surge.html",
     mime: "text/html; charset=utf-8",
   },
+  "/library.html": {
+    file: "public/library.html",
+    mime: "text/html; charset=utf-8",
+  },
   "/detail.html": {
     file: "public/detail.html",
     mime: "text/html; charset=utf-8",

@@ -76,6 +76,7 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log("\nEndpoints:");
   console.log(`  GET /              → Giao diện HTML (front.html)`);
   console.log(`  GET /surge.html    → Quét khối lượng đột biến`);
+  console.log(`  GET /library.html    → Thư viện`);
   console.log(`  GET /detail.html?s=DGC → Phân tích chi tiết 1 mã`);
   console.log(`  GET /download?symbol=DPM&start=2025-01-01&end=2026-03-13`);
   console.log(`  GET /health        → Health check`);
