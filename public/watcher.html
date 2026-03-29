@@ -268,6 +268,7 @@ async function startScan(){
         const topScore = scores.length ? Math.max(...scores) : null;
 
         // Điểm tổ chức: CANSLIM 40% + SEPA 35% + A/D 15% + Checklist 10%
+        const entryOptimal  = d.predictions?.bestBuy?.entryZone?.optimal ?? null;
         const adRatio       = d.predictions?.adRatio ?? null;
         const checklistPct  = d.predictions?.checklistPct ?? null;
         const setupGrade    = d.predictions?.setupGrade ?? null;
@@ -303,6 +304,7 @@ async function startScan(){
           topScore,
           topSig,
           volume: lastVol ?? null,
+          entryOptimal,
           date: d.latestDate,
           // institutional
           canslimTotal, canslimGrade,
@@ -492,7 +494,7 @@ function renderRows(rows){
   // --- Standard view: restore header ---
   headRow.innerHTML =
     `<th style="padding:13px 20px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">MÃ</th>`+
-    TH('GIÁ','right')+TH('THAY ĐỔI','right')+TH('RSI','center')+TH('XU HƯỚNG','center')+
+    TH('GIÁ','right')+TH('ENTRY TỐI ƯU','right')+TH('THAY ĐỔI','right')+TH('RSI','center')+TH('XU HƯỚNG','center')+
     `<th style="padding:13px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.5px">TÍN HIỆU NỔI BẬT</th>`+
     TH('KHUYẾN NGHỊ','center')+TH('KLGD','right')+TH('ĐIỂM','center');
 
@@ -539,6 +541,12 @@ function renderRows(rows){
         <div style="font-size:11px;color:var(--gray400)">${r.date||''}</div>
       </td>
       <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px">${fp(r.price)}</td>
+      <td style="padding:13px 16px;text-align:right">
+        ${r.entryOptimal != null
+          ? `<div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--up)">${fp(r.entryOptimal)}</div>
+             <div style="font-size:10px;color:var(--gray400)">${r.price != null && r.entryOptimal < r.price ? '▼ '+(((r.entryOptimal-r.price)/r.price)*100).toFixed(1)+'%' : r.price != null ? '▲ '+(((r.entryOptimal-r.price)/r.price)*100).toFixed(1)+'%' : ''}</div>`
+          : '<span style="color:var(--gray400);font-size:12px">—</span>'}
+      </td>
       <td style="padding:13px 16px;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${changeColor}">${changeText}</td>
       <td style="padding:13px 16px;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:${rsiColor}">${rsiText}</td>
       <td style="padding:13px 16px;text-align:center;font-size:13px;font-weight:600;color:${trendC}">${trendText}</td>

@@ -590,8 +590,9 @@ function renderHeroExtra(d) {
       "Strong Bearish": { bg:"var(--dn-bg)",   bd:"var(--dn-bd)",   tx:"var(--dn)"  },
     };
     const c = STATE_MAP[d.trendPro.summary.marketState] || STATE_MAP["Sideways"];
-    tpEl.style.cssText = `display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:${c.bg};color:${c.tx};border:1px solid ${c.bd}`;
-    tpEl.textContent = d.trendPro.summary.action;
+    tpEl.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:${c.bg};color:${c.tx};border:1px solid ${c.bd};cursor:help`;
+    tpEl.innerHTML = `${d.trendPro.summary.action} <span style="opacity:.6;font-size:11px">ⓘ</span>`;
+    tpEl.dataset.tooltip = buildTrendProTooltip(d.trendPro.summary.action, d);
   }
 
   // 3. Volume ratio pill
@@ -1251,9 +1252,13 @@ function renderTrendPro(t) {
     ${scoreBar("Ngắn hạn (30 phiên)", st.score, st.divergence)}
     ${scoreBar("Trung hạn (60 phiên)", mt.score, mt.divergence)}
     ${ftdHtml}
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:${sc.bg};border:1px solid ${sc.bd}">
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;background:${sc.bg};border:1px solid ${sc.bd};cursor:help"
+      data-tooltip="${buildTrendProTooltip(summary.action, analysisData)}">
       <div style="flex:1">
-        <div style="font-size:12px;font-weight:700;color:${sc.tx};letter-spacing:.3px">${summary.action}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;font-weight:700;color:${sc.tx};letter-spacing:.3px">${summary.action}</span>
+          <span style="font-size:11px;opacity:.5;color:${sc.tx}">ⓘ</span>
+        </div>
         <div style="font-size:11px;color:var(--gray500);margin-top:2px">${summary.warning !== "Ổn định" ? "⚠ " + summary.warning : "✓ " + summary.warning}</div>
       </div>
     </div>
@@ -4152,3 +4157,56 @@ function renderCompanyInfo(d) {
   el.style.display = rows.length ? "flex" : "none";
   el.innerHTML = rows.join("");
 }
+
+// ── TrendPro tooltip content ──
+function buildTrendProTooltip(action, d) {
+  const base =
+    "TrendPro · Đánh giá đà NGẮN HẠN (30 nến)\n" +
+    "Dựa trên: MA5/MA20 · Volume · RSI Divergence\n\n" +
+    "Khác với nhãn chính (MA20/50/200 dài hạn)\n" +
+    "→ Xu hướng dài hạn và ngắn hạn có thể trái chiều.";
+
+  const isBearish = action && (action.includes("BÁN") || action.includes("EXIT") || action.includes("GIẢM"));
+  if (!isBearish || !d) return base;
+
+  const fp = v => v != null ? parseFloat(v).toLocaleString("vi-VN", { minimumFractionDigits: 1, maximumFractionDigits: 2 }) : "—";
+  const s1  = d.supportResistance?.supports?.[0]?.price;
+  const s2  = d.supportResistance?.supports?.[1]?.price;
+  const opt = d.predictions?.bestBuy?.entryZone?.optimal;
+  const ma20 = d.indicators?.ma20;
+
+  return base +
+    "\n\n— Vùng mua lại ngắn hạn —\n" +
+    (s1  != null ? `• Hỗ trợ S1 : ${fp(s1)}\n` : "") +
+    (s2  != null ? `• Hỗ trợ S2 : ${fp(s2)}\n` : "") +
+    (opt != null ? `• Entry tối ưu: ${fp(opt)}\n` : "") +
+    (ma20 != null ? `• MA20      : ${fp(ma20)}` : "");
+}
+
+// ── Global tooltip system ──
+(function () {
+  const tt = document.createElement("div");
+  tt.style.cssText =
+    "position:fixed;background:#1a1a2e;color:#fff;font-size:12px;line-height:1.6;" +
+    "padding:10px 14px;border-radius:10px;max-width:280px;pointer-events:none;" +
+    "opacity:0;transition:opacity .15s;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3);" +
+    "white-space:pre-line;word-break:break-word";
+  document.body.appendChild(tt);
+
+  document.addEventListener("mouseover", (e) => {
+    const el = e.target.closest("[data-tooltip]");
+    if (!el) return;
+    tt.textContent = el.dataset.tooltip;
+    tt.style.opacity = "1";
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (tt.style.opacity === "0") return;
+    const x = e.clientX + 14;
+    const y = e.clientY + 14;
+    tt.style.left = (x + 280 > window.innerWidth ? e.clientX - 294 : x) + "px";
+    tt.style.top  = (y + tt.offsetHeight > window.innerHeight ? e.clientY - tt.offsetHeight - 8 : y) + "px";
+  });
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.closest("[data-tooltip]")) tt.style.opacity = "0";
+  });
+})();
