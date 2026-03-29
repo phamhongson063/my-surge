@@ -124,7 +124,7 @@ function filterAutocomplete(val) {
   dd.innerHTML = matches
     .map(
       (s, i) => `<div data-i="${i}" onmousedown="pickSymbol('${s}')"
-style="padding:9px 16px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer;border-bottom:1px solid var(--gray100)"
+style="padding:9px 16px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer;border-bottom:1px solid var(--gray100)"
 onmouseover="this.style.background='var(--navy-l)'" onmouseout="this.style.background=''">${s}</div>`
     )
     .join("");
@@ -635,13 +635,13 @@ function renderHeroExtra(d) {
     barEl.innerHTML = `
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;white-space:nowrap;min-width:56px">52 TUẦN</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dn);white-space:nowrap">${fp(d.low52w)}</span>
+        <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;color:var(--dn);white-space:nowrap">${fp(d.low52w)}</span>
         <div style="flex:1;height:6px;background:var(--gray200);border-radius:3px;position:relative;min-width:60px">
           <div style="position:absolute;left:0;top:0;height:100%;width:${pos}%;background:${barC};border-radius:3px"></div>
           <div style="position:absolute;top:50%;left:${dotPos}%;width:11px;height:11px;background:#f59e0b;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 5px rgba(0,0,0,.3)"></div>
         </div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--up);white-space:nowrap">${fp(d.high52w)}</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:${pFHColor};white-space:nowrap">${pFH > 0 ? "+" : ""}${pFH}% từ đỉnh</span>
+        <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;color:var(--up);white-space:nowrap">${fp(d.high52w)}</span>
+        <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;color:${pFHColor};white-space:nowrap">${pFH > 0 ? "+" : ""}${pFH}% từ đỉnh</span>
       </div>`;
   }
 
@@ -656,7 +656,7 @@ function renderHeroExtra(d) {
       const bg = isUp ? "var(--up-bg)" : "var(--dn-bg)";
       const bd = isUp ? "var(--up-bd)" : "var(--dn-bd)";
       return `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:${bg};color:${c};border:1px solid ${bd}">
-        ${lbl}<span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${isUp?"+":""}${d_.toFixed(1)}%</span>
+        ${lbl}<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:11px">${isUp?"+":""}${d_.toFixed(1)}%</span>
       </span>`;
     };
     // 8. S/R + Scoring — gộp cùng dòng MA
@@ -755,7 +755,7 @@ function renderInvestProfile(ip) {
     <div style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.5);overflow:hidden"><div style="height:100%;width:${pct}%;background:${_gc(
       p.grade
     )};border-radius:4px"></div></div>
-    <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${_gc(
+    <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:16px;color:${_gc(
       p.grade
     )}">${p.score}</span>
   </div>
@@ -779,7 +779,7 @@ function renderInvestProfile(ip) {
       h += `<div style="margin-bottom:10px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
     <span style="font-size:12px;font-weight:600;color:var(--gray700)">${f.name}</span>
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${fc}">${f.score}/${f.max}</span>
+    <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:${fc}">${f.score}/${f.max}</span>
   </div>
   <div style="height:4px;border-radius:2px;background:var(--gray100);margin-bottom:3px"><div style="height:100%;width:${fpct}%;background:${fc};border-radius:2px"></div></div>
   <div style="font-size:11px;color:var(--gray400)">${f.detail}</div>
@@ -853,7 +853,7 @@ function renderOneScore(elId, s) {
   <span style="font-size:13px;font-weight:600;color:var(--gray900)">${ic} ${
       c.key || ""
     } ${c.name}</span>
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${bc2}">${sc2}/${mx}</span>
+  <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:${bc2}">${sc2}/${mx}</span>
 </div>
 <div style="font-size:12px;color:var(--gray500);margin-bottom:6px">${
   c.detail || ""
@@ -930,13 +930,13 @@ function renderMTFPatterns(mtf, verdict) {
           : "var(--am)";
       return `<div style="text-align:center;flex:1">
   <div style="font-size:11px;color:var(--gray400);margin-bottom:4px">${label}</div>
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:800;color:${c}">${tf.score}</div>
+  <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:18px;font-weight:800;color:${c}">${tf.score}</div>
   <div style="font-size:11px;font-weight:600;color:${c}">${tf.grade}</div>
 </div>`;
     };
     summaryEl.innerHTML = `<div style="display:flex;align-items:center;gap:20px;padding:20px;border-radius:12px;background:linear-gradient(135deg,var(--gray50),#fff);border:2px solid ${gc}20">
 <div style="flex-shrink:0;width:72px;height:72px;border-radius:50%;background:${gc}15;display:flex;align-items:center;justify-content:center;border:3px solid ${gc}">
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:900;color:${gc}">${
+  <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:32px;font-weight:900;color:${gc}">${
       ov.grade
     }</span>
 </div>
@@ -978,7 +978,7 @@ function renderMTFPatterns(mtf, verdict) {
     return `<div style="margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--up)08;border:1px solid var(--up)20;display:flex;align-items:center;gap:6px">
       <span style="font-size:12px">💰</span>
       <span style="font-size:12px;color:var(--gray600)">Giá mua chấp nhận được:</span>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px">${rangeHtml}</span>
+      <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px">${rangeHtml}</span>
       ${
         diffLabel
           ? `<span style="font-size:11px;color:var(--gray400)">(${diffLabel} so với giá hiện tại)</span>`
@@ -1050,7 +1050,7 @@ function renderMTFPatterns(mtf, verdict) {
     verdictEl.innerHTML = `<div style="padding:16px 20px;border-radius:12px;background:${vc}08;border:1px solid ${vc}25">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
   <div style="display:flex;align-items:center;gap:10px">
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:900;color:${vc}">${
+    <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:24px;font-weight:900;color:${vc}">${
       tv.grade
     }</span>
     <div>
@@ -1141,7 +1141,7 @@ ${
         <span style="padding:2px 6px;border-radius:4px;background:var(--gray100);font-size:11px" title="${catLabel}">${catIcon}</span>
         <span style="font-size:14px;font-weight:700;color:${color}">${p.name}</span>
       </div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${barColor}">${p.strength}%</span>
+      <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:${barColor}">${p.strength}%</span>
     </div>
     <div style="font-size:13px;color:var(--gray700);line-height:1.5;margin-bottom:8px">${p.desc}</div>
     <div style="height:4px;border-radius:2px;background:rgba(0,0,0,.06)"><div style="height:100%;width:${barW}%;background:${barColor};border-radius:2px"></div></div>
@@ -1166,16 +1166,14 @@ f.label
 }</div><div style="font-size:13px;color:var(--gray500);margin-top:3px">${
     f.signal
   }</div></div>
-<div style="display:flex;align-items:center;gap:8px"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:${
+<div style="display:flex;align-items:center;gap:8px"><span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;color:${
 f.pctChange > 0
   ? "var(--up)"
   : f.pctChange < 0
   ? "var(--dn)"
   : "var(--am)"
 }">${f.pctChange > 0 ? "+" : ""}${f.pctChange}%</span>
-<span class="badge ${bc(f.direction)}">${ta(f.direction)} ${tl(
-    f.direction
-  )}</span></div></div>`;
+<span class="badge ${bc(f.direction)}">${ta(f.direction)}</span></div></div>`;
   el.innerHTML = r(t.shortTerm) + r(t.midTerm) + r(t.longTerm);
   const a = document.getElementById("alignmentBadge"),
     u = t.alignment.includes("UP"),
@@ -1212,7 +1210,7 @@ function renderTrendPro(t) {
     return `<div style="margin-bottom:10px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
         <span style="font-size:13px;color:var(--gray500);font-weight:600">${label}${divHtml}</span>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${clr}">${s}/100</span>
+        <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:${clr}">${s}/100</span>
       </div>
       <div style="height:6px;border-radius:3px;background:var(--gray100);overflow:hidden">
         <div style="height:100%;width:${pct}%;background:${clr};border-radius:3px;transition:width 0.5s ease"></div>
@@ -1268,116 +1266,172 @@ function renderTrendPro(t) {
 function renderIndicators(ind) {
   const el = document.getElementById("indicatorsContent");
   const price = analysisData?.latestPrice;
+  if (!ind || !price) return;
 
-  // Tile: label top, value + tag inline
-  const tile = (label, val, color = "var(--gray900)", sub = "") => {
-    // So sánh giá hiện tại vs giá trị MA
-    let tag = "";
-    if (!sub && price && val && val !== "—") {
-      const numVal = parseFloat(
-        String(val).replace(/\./g, "").replace(",", ".")
-      );
-      if (!isNaN(numVal) && numVal > 0) {
-        const diff = (((price - numVal) / numVal) * 100).toFixed(1);
-        if (price > numVal)
-          tag = `<span style="color:var(--up);font-size:11px;font-weight:600">Giá trên +${diff}%</span>`;
-        else if (price < numVal)
-          tag = `<span style="color:var(--dn);font-size:11px;font-weight:600">Giá dưới ${diff}%</span>`;
-        else
-          tag = `<span style="color:var(--am);font-size:11px;font-weight:600">Bằng</span>`;
-      }
-    }
-    return `<div style="padding:10px 12px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray100)">
-<div style="font-size:11px;color:var(--gray400);font-weight:600;margin-bottom:4px">${label}</div>
-<div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px">
-  <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:${color}">${
-      val ?? "—"
-    }</span>
-  ${sub || tag}
-</div>
+  // ── 1. ĐƯỜNG TRUNG BÌNH ──────────────────────────────────────────────────
+  const mas = [
+    { label: "MA 5",   val: ind.ma5 },
+    { label: "MA 20",  val: ind.ma20 },
+    { label: "MA 50",  val: ind.ma50 },
+    { label: "MA 200", val: ind.ma200 },
+  ];
+  const aboveCount = mas.filter(m => m.val != null && price > m.val).length;
+  const validMAs   = mas.filter(m => m.val != null).length;
+  const maSig = aboveCount === validMAs ? { txt: `Giá trên cả ${validMAs} MA — xu hướng tăng`, c: "var(--up)", bg: "var(--up-bg)" }
+    : aboveCount === 0 ? { txt: `Giá dưới cả ${validMAs} MA — xu hướng giảm`, c: "var(--dn)", bg: "var(--dn-bg)" }
+    : { txt: `Giá trên ${aboveCount}/${validMAs} MA — xu hướng hỗn hợp`, c: "var(--am)", bg: "var(--am-bg)" };
+
+  const maGrid = mas.map(m => {
+    if (m.val == null) return `<div></div>`;
+    const diff = ((price - m.val) / m.val * 100);
+    const above = price > m.val;
+    const c = above ? "var(--up)" : price < m.val ? "var(--dn)" : "var(--gray500)";
+    return `<div style="text-align:center;padding:10px 6px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:10px;font-weight:700;color:var(--gray400);margin-bottom:4px">${m.label}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:14px;color:var(--gray900)">${fp(m.val)}</div>
+<div style="font-size:11px;font-weight:600;margin-top:3px;color:${c}">${above ? "▲" : "▼"} ${Math.abs(diff).toFixed(1)}%</div>
 </div>`;
-  };
+  }).join("");
 
-  const rc =
-    ind.rsi > 70
-      ? "var(--dn)"
-      : ind.rsi < 30
-      ? "var(--up)"
-      : "var(--gray900)";
-  const rsiSub =
-    ind.rsi > 70
-      ? '<span style="color:var(--dn);font-size:11px;font-weight:600">⚠ Quá mua</span>'
-      : ind.rsi < 30
-      ? '<span style="color:var(--up);font-size:11px;font-weight:600">✦ Quá bán</span>'
-      : "";
-  const macdC = ind.macd > 0 ? "var(--up)" : "var(--dn)";
-  const macdSub =
-    ind.macd > 0
-      ? '<span style="color:var(--up);font-size:11px">Dương ↑</span>'
-      : '<span style="color:var(--dn);font-size:11px">Âm ↓</span>';
+  // ── 2. RSI ────────────────────────────────────────────────────────────────
+  const rsi = ind.rsi;
+  const rsiPct = Math.round(Math.min(100, Math.max(0, rsi)));
+  const rsiC = rsi > 70 ? "var(--dn)" : rsi < 30 ? "var(--up)" : rsi > 50 ? "var(--navy)" : "var(--gray600)";
+  const rsiZone = rsi > 70 ? "Quá mua — cẩn thận điều chỉnh"
+    : rsi > 60 ? "Mạnh — còn room nhưng chú ý"
+    : rsi > 50 ? "Trên trung tính — xu hướng tăng nhẹ"
+    : rsi > 40 ? "Dưới trung tính — xu hướng yếu"
+    : rsi > 30 ? "Yếu — gần vùng quá bán"
+    : "Quá bán — có thể phản hồi kỹ thuật";
 
-  const atrSub =
-    ind.atrPct != null
-      ? `<span style="color:var(--am);font-size:11px;font-weight:600">${ind.atrPct}%/ngày</span>`
-      : "";
-  el.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-${tile("MA 5", fp(ind.ma5))}
-${tile("MA 20", fp(ind.ma20))}
-${tile("MA 50", fp(ind.ma50))}
-${tile("MA 200", fp(ind.ma200))}
-${tile("RSI (14)", ind.rsi != null ? ind.rsi.toFixed(1) : "—", rc, rsiSub)}
-${tile(
-"MACD",
-ind.macd != null ? ind.macd.toFixed(3) : "—",
-macdC,
-macdSub
-)}
-${tile("BB Upper", fp(ind.bbUpper), "var(--ind)")}
-${tile("BB Lower", fp(ind.bbLower), "var(--ind)")}
-${tile("ATR (14)", fp(ind.atr), "var(--am)", atrSub)}
-${tile("BB Mid", fp(ind.bbMid), "var(--ind)")}
-  </div>`;
+  // ── 3. MACD ───────────────────────────────────────────────────────────────
+  const hist = ind.macdHistogram;
+  const macdAboveZero = ind.macd > 0;
+  const histPositive = hist > 0;
+  let macdSig, macdSigC;
+  if (macdAboveZero && histPositive)      { macdSig = "Động lực tăng mạnh"; macdSigC = "var(--up)"; }
+  else if (!macdAboveZero && histPositive) { macdSig = "MACD cắt lên tín hiệu — phục hồi"; macdSigC = "var(--up)"; }
+  else if (macdAboveZero && !histPositive) { macdSig = "Đang suy yếu — cắt xuống tín hiệu"; macdSigC = "var(--am)"; }
+  else                                     { macdSig = "Động lực giảm tiếp tục"; macdSigC = "var(--dn)"; }
+
+  // ── 4. BOLLINGER BANDS ───────────────────────────────────────────────────
+  const bbPct = ind.bbUpper !== ind.bbLower
+    ? Math.round((price - ind.bbLower) / (ind.bbUpper - ind.bbLower) * 100)
+    : 50;
+  const bbWidth = ind.bbMid > 0
+    ? ((ind.bbUpper - ind.bbLower) / ind.bbMid * 100).toFixed(1)
+    : null;
+  const bbPos = bbPct > 80 ? { txt: "Gần dải trên — cẩn thận đảo chiều", c: "var(--dn)" }
+    : bbPct < 20 ? { txt: "Gần dải dưới — có thể phản hồi", c: "var(--up)" }
+    : { txt: `Trong dải (${bbPct}% từ đáy)`, c: "var(--gray600)" };
+  const squeeze = bbWidth != null && parseFloat(bbWidth) < 6;
+
+  let h = ``;
+
+  // ─ Block MA ─
+  h += `<div style="margin-bottom:12px">
+<div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;margin-bottom:8px">ĐƯỜNG TRUNG BÌNH</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">${maGrid}</div>
+<div style="padding:7px 12px;border-radius:8px;background:${maSig.bg};font-size:12px;font-weight:600;color:${maSig.c}">${maSig.txt}</div>
+</div>`;
+
+  // ─ Block RSI + MACD ─
+  h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">`;
+
+  // RSI
+  h += `<div style="padding:12px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;margin-bottom:8px">RSI (14)</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:22px;color:${rsiC};margin-bottom:6px">${rsi != null ? rsi.toFixed(1) : "—"}</div>
+<div style="position:relative;height:6px;border-radius:3px;background:var(--gray200);margin-bottom:6px;overflow:visible">
+  <div style="position:absolute;left:30%;width:1px;height:100%;background:var(--gray400);opacity:.4"></div>
+  <div style="position:absolute;left:70%;width:1px;height:100%;background:var(--gray400);opacity:.4"></div>
+  <div style="height:100%;width:${rsiPct}%;background:${rsiC};border-radius:3px;transition:width .5s"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray400);margin-bottom:6px"><span>0</span><span>30</span><span>70</span><span>100</span></div>
+<div style="font-size:11px;color:${rsiC};font-weight:600">${rsiZone}</div>
+</div>`;
+
+  // MACD
+  h += `<div style="padding:12px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;margin-bottom:8px">MACD</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:22px;color:${ind.macd > 0 ? "var(--up)" : "var(--dn)"};margin-bottom:6px">${ind.macd != null ? ind.macd.toFixed(2) : "—"}</div>
+<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px">
+  <div style="display:flex;justify-content:space-between;font-size:11px">
+    <span style="color:var(--gray500)">Histogram</span>
+    <span style="font-weight:700;color:${histPositive ? "var(--up)" : "var(--dn)"}">${histPositive ? "▲" : "▼"} ${hist != null ? Math.abs(hist).toFixed(3) : "—"}</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:11px">
+    <span style="color:var(--gray500)">Signal</span>
+    <span style="font-weight:600;color:var(--gray700)">${ind.macdSignal != null ? ind.macdSignal.toFixed(2) : "—"}</span>
+  </div>
+</div>
+<div style="font-size:11px;font-weight:600;color:${macdSigC}">${macdSig}</div>
+</div>`;
+
+  h += `</div>`;
+
+  // ─ Block BB ─
+  const bbBarPos = Math.min(96, Math.max(4, bbPct));
+  h += `<div style="padding:12px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+  <div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px">BOLLINGER BANDS</div>
+  ${squeeze ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:var(--am-bg);color:var(--am);border:1px solid var(--am-bd)">⚡ SQUEEZE</span>` : bbWidth != null ? `<span style="font-size:11px;color:var(--gray500)">Độ rộng ${bbWidth}%</span>` : ""}
+</div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray500);margin-bottom:4px">
+  <span>${fp(ind.bbLower)}</span><span style="color:var(--gray400)">mid ${fp(ind.bbMid)}</span><span>${fp(ind.bbUpper)}</span>
+</div>
+<div style="position:relative;height:8px;border-radius:4px;background:linear-gradient(to right,var(--up-bg),var(--gray100),var(--dn-bg));border:1px solid var(--gray200);margin-bottom:4px">
+  <div style="position:absolute;left:50%;transform:translateX(-50%);top:50%;height:60%;width:1px;background:var(--gray400);opacity:.5"></div>
+  <div style="position:absolute;left:${bbBarPos}%;transform:translateX(-50%);top:-3px;width:14px;height:14px;border-radius:50%;background:var(--navy);border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray400);margin-bottom:8px"><span>Dải dưới</span><span>Giữa</span><span>Dải trên</span></div>
+<div style="font-size:11px;font-weight:600;color:${bbPos.c}">${bbPos.txt}${squeeze ? " · Sắp có biến động lớn" : ""}</div>
+${ind.atrPct != null ? `<div style="margin-top:6px;font-size:11px;color:var(--gray500)">ATR: <b style="color:var(--am)">${ind.atr}</b> · biên độ ngày ~<b style="color:var(--am)">${ind.atrPct}%</b></div>` : ""}
+</div>`;
+
+  el.innerHTML = h;
 }
 
 function renderVolume(vol) {
   const el = document.getElementById("volumeContent");
-  const rc =
-    vol.ratio > 2
-      ? "var(--dn)"
-      : vol.ratio > 1.5
-      ? "var(--am)"
-      : "var(--up)";
-  const bar = Math.min((vol.ratio / 4) * 100, 100);
-  const sg = vol.isSurge
-    ? `<span class="badge b-dn" style="font-size:10px;padding:2px 8px">ĐỘT BIẾN</span>`
-    : "";
+  if (!vol) return;
 
-  el.innerHTML = `
-<div style="padding:12px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray100)">
+  const ratio = vol.ratio;
+  const rc = ratio >= 2 ? "var(--dn)" : ratio >= 1.5 ? "var(--am)" : ratio >= 1 ? "var(--up)" : "var(--gray500)";
+  const bar = Math.min((ratio / 3) * 100, 100);
+
+  const volSig = ratio >= 2 && vol.isSurge ? "Đột biến khối lượng — xác nhận tín hiệu mạnh"
+    : ratio >= 1.5 ? "Khối lượng cao — thị trường quan tâm"
+    : ratio >= 0.8 ? "Khối lượng bình thường"
+    : "Khối lượng thấp — thiếu xác nhận";
+
+  el.innerHTML = `<div style="padding:12px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200);margin-top:12px">
+<div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;margin-bottom:10px">KHỐI LƯỢNG</div>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-  <span style="font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.5px">KHỐI LƯỢNG</span>
-  <div style="display:flex;align-items:center;gap:6px">
-    <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${rc}">${
-    vol.ratio
-  }x</span>
-    ${sg}
+  <div>
+    <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:22px;color:${rc}">${ratio}x</span>
+    <span style="font-size:12px;color:var(--gray500);margin-left:4px">TB 20</span>
+    ${vol.isSurge ? `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd);margin-left:6px">ĐỘT BIẾN</span>` : ""}
   </div>
 </div>
-<div style="height:6px;border-radius:3px;background:var(--gray200);margin-bottom:10px;overflow:hidden"><div style="height:100%;width:${bar}%;background:${rc};border-radius:3px;transition:width .5s"></div></div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-  <div><div style="font-size:10px;color:var(--gray400)">Phiên cuối</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;margin-top:2px">${fv(
-    vol.latest
-  )}</div></div>
-  <div><div style="font-size:10px;color:var(--gray400)">TB 20</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;margin-top:2px">${fv(
-    vol.ma20
-  )}</div></div>
-  <div><div style="font-size:10px;color:var(--gray400)">TB 50</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;margin-top:2px">${fv(
-    vol.ma50
-  )}</div></div>
+<div style="height:6px;border-radius:3px;background:var(--gray200);margin-bottom:10px;overflow:hidden">
+  <div style="height:100%;width:${bar}%;background:${rc};border-radius:3px;transition:width .5s"></div>
 </div>
-<div style="margin-top:8px;padding:6px 10px;border-radius:6px;background:var(--gray100);font-size:12px;color:var(--gray700);text-align:center">${
-  vol.trendDesc
-}</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;margin-bottom:8px">
+  <div style="padding:7px;border-radius:8px;background:var(--gray100)">
+    <div style="font-size:9px;color:var(--gray400);font-weight:600;margin-bottom:2px">PHIÊN CUỐI</div>
+    <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:12px">${fv(vol.latest)}</div>
+  </div>
+  <div style="padding:7px;border-radius:8px;background:var(--gray100)">
+    <div style="font-size:9px;color:var(--gray400);font-weight:600;margin-bottom:2px">TB 20</div>
+    <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:12px">${fv(vol.ma20)}</div>
+  </div>
+  <div style="padding:7px;border-radius:8px;background:var(--gray100)">
+    <div style="font-size:9px;color:var(--gray400);font-weight:600;margin-bottom:2px">TB 50</div>
+    <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:12px">${fv(vol.ma50)}</div>
+  </div>
+</div>
+<div style="font-size:11px;font-weight:600;color:${rc}">${volSig}</div>
 </div>`;
 }
 
@@ -1401,7 +1455,7 @@ function renderPredictions(pred) {
   const dChip = (de) => {
     if (!de) return '<span style="color:var(--gray300)">—</span>';
     if (de.immediate) return `<span style="font-size:12px;font-weight:700;color:var(--up)">Vào ngay</span>`;
-    return `<span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--navy)">~${de.days}p</span><br><span style="font-size:11px;color:var(--gray400)">${de.minDays}–${de.maxDays}</span>`;
+    return `<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:var(--navy)">~${de.days}p</span><br><span style="font-size:11px;color:var(--gray400)">${de.minDays}–${de.maxDays}</span>`;
   };
 
   // ── Grade colors ───────────────────────────────────────────────────
@@ -1463,7 +1517,7 @@ ${trigger ? `<span style="font-size:12px;color:var(--gray500)">${trigger.desc}</
   ${b.confidenceScore != null ? `
   <div style="text-align:center;flex-shrink:0;padding-left:16px;border-left:1px solid ${gradeBdC}">
 <div style="font-size:11px;color:var(--gray400);margin-bottom:4px;font-weight:600;letter-spacing:.5px">TIN CẬY</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:800;color:${gradeC};line-height:1">${b.confidenceScore}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:28px;font-weight:800;color:${gradeC};line-height:1">${b.confidenceScore}</div>
 <div style="font-size:11px;color:var(--gray400)">/100</div>
   </div>` : ""}
 </div>`;
@@ -1508,13 +1562,13 @@ ${trigger ? `<span style="font-size:12px;color:var(--gray500)">${trigger.desc}</
   <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;flex-wrap:wrap">
 <div>
 <div style="font-size:11px;color:var(--gray400);margin-bottom:3px">Giá tối ưu</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:28px;color:var(--navy);line-height:1">${fp(ez.optimal)}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:28px;color:var(--navy);line-height:1">${fp(ez.optimal)}</div>
 <div style="font-size:12px;color:${ez.distFromCurrent > 0 ? "var(--up)" : "var(--navy)"};margin-top:3px">${distSign}${ez.distFromCurrent}% so với giá hiện tại</div>
 </div>
 <div style="height:48px;width:1px;background:rgba(0,58,107,.15)"></div>
 <div>
 <div style="font-size:11px;color:var(--gray400);margin-bottom:3px">Vùng chấp nhận</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--navy)">${fp(ez.floor)} – ${fp(ez.ceiling)}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:16px;color:var(--navy)">${fp(ez.floor)} – ${fp(ez.ceiling)}</div>
 </div>
 <div style="height:48px;width:1px;background:rgba(0,58,107,.15)"></div>
 <div style="flex:1">
@@ -1536,23 +1590,23 @@ ${trigger ? `<span style="font-size:12px;color:var(--gray500)">${trigger.desc}</
   <span style="font-size:11px;font-weight:700;color:var(--up);letter-spacing:.8px">📥 GIÁ VÀO LỆNH (từ S1)</span>
   ${b.quality ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${gradeBg(b.quality)};color:${qualC};border:1px solid ${gradeBd(b.quality)}">${b.quality}</span>` : ""}
 </div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:38px;color:var(--navy);line-height:1;margin-bottom:4px">${fp(b.price)}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:38px;color:var(--navy);line-height:1;margin-bottom:4px">${fp(b.price)}</div>
 <div style="font-size:13px;color:var(--gray500);margin-bottom:16px;line-height:1.5">${b.reason || ""}</div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
   <div style="padding:10px 12px;border-radius:10px;background:var(--dn-bg);border:1px solid var(--dn-bd)">
 <div style="font-size:10px;font-weight:700;color:var(--dn);letter-spacing:.6px;margin-bottom:4px">STOPLOSS</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--dn)">${fp(b.stoploss)}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:18px;color:var(--dn)">${fp(b.stoploss)}</div>
 <div style="font-size:11px;color:var(--gray500);margin-top:3px">${b.stoplossPct}% · ${b.stoplossMethod || "ATR×1.5"}</div>
   </div>
   <div style="padding:10px 12px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
 <div style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:4px">RỦI RO/CP</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--gray900)">${fp(b.riskPerShare)}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:18px;color:var(--gray900)">${fp(b.riskPerShare)}</div>
 <div style="font-size:11px;color:var(--gray500);margin-top:3px">Biến động ${b.volatility}%/ngày</div>
   </div>
   <div style="padding:10px 12px;border-radius:10px;background:var(--ind-bg);border:1px solid rgba(99,102,241,.2)">
 <div style="font-size:10px;font-weight:700;color:var(--ind);letter-spacing:.6px;margin-bottom:4px">ATR(14)</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:18px;color:var(--ind)">${b.atrPct ?? "—"}%</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:18px;color:var(--ind)">${b.atrPct ?? "—"}%</div>
 <div style="font-size:11px;color:var(--gray500);margin-top:3px">Biến động bình quân</div>
   </div>
 </div>`;
@@ -1570,7 +1624,7 @@ const bc = pct >= 70 ? "var(--up)" : pct >= 40 ? "var(--am)" : "var(--dn)";
 return `<div style="margin-bottom:8px">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
   <span style="font-size:12px;font-weight:600;color:var(--gray700)">${labels[k] || k}</span>
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${bc}">${v.score}/${v.max} · ${v.reason}</span>
+  <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:${bc}">${v.score}/${v.max} · ${v.reason}</span>
 </div>
 <div style="height:4px;border-radius:2px;background:var(--gray100)"><div style="height:100%;width:${pct}%;background:${bc};border-radius:2px"></div></div>
 </div>`;
@@ -1588,7 +1642,7 @@ return `<div style="margin-bottom:8px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
 <span style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.6px">KẾ HOẠCH VÀO LỆNH</span>
 <div style="display:flex;align-items:center;gap:8px">
-<span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(ss.budget)}</span>
+<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(ss.budget)}</span>
 <span style="font-size:12px;font-weight:700;color:${lc}">● ${ss.liquidityLabel || ""}</span>
 <span style="font-size:11px;color:var(--gray400)">TB20: ${fVolK(ss.avgVol20)} CP</span>
 </div>
@@ -1605,9 +1659,9 @@ return `<div style="margin-bottom:8px">
       splitHtml += `
   <div style="display:grid;grid-template-columns:90px 70px 1fr 100px 68px;padding:10px 0;border-bottom:1px solid var(--gray100);align-items:center">
 <div><div style="font-size:13px;font-weight:700;color:${clr}">${isDummy ? "Dự phòng" : o.action}</div><div style="font-size:11px;color:var(--gray400)">${o.pct}%</div></div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px">${o.price ? fp(o.price) : "—"}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:13px">${o.price ? fp(o.price) : "—"}</div>
 <div style="font-size:12px;color:var(--gray500);padding-right:6px;line-height:1.4">${note}</div>
-<div style="text-align:right">${!isDummy && o.lots ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${clr}">${fLots(o.lots)}</div><div style="font-size:11px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : isDummy && o.amount ? `<div style="font-size:12px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : "—"}</div>
+<div style="text-align:right">${!isDummy && o.lots ? `<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:${clr}">${fLots(o.lots)}</div><div style="font-size:11px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : isDummy && o.amount ? `<div style="font-size:12px;color:var(--gray400)">${fvMoney(o.amount)}</div>` : "—"}</div>
 <div style="text-align:right">${dChip(o.daysEstimate)}</div>
   </div>`;
     });
@@ -1617,9 +1671,9 @@ return `<div style="margin-bottom:8px">
     if (totLots > 0) {
       splitHtml += `<div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:10px 0 0;border-top:2px solid var(--gray200)">
 <span style="font-size:12px;color:var(--gray500)">Tổng mua</span>
-<span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fLots(totLots)}</span>
+<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:14px;color:var(--navy)">${fLots(totLots)}</span>
 <span style="color:var(--gray200)">·</span>
-<span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(totAmt)}</span>
+<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:14px;color:var(--navy)">${fvMoney(totAmt)}</span>
   </div>`;
     }
     splitHtml += `</div>`;
@@ -1654,7 +1708,7 @@ ${i < sv.targets.length - 1 ? `<div style="width:2px;height:28px;background:var(
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
 <span style="font-size:13px;font-weight:700;color:var(--gray900)">${t.name.replace(/ — .*/, "")}</span>
 <div style="display:flex;align-items:center;gap:8px">
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:${tc}">${fp(t.price)}</span>
+  <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:${tc}">${fp(t.price)}</span>
   <span style="font-size:12px;color:${tc};font-weight:600">+${pct}%</span>
   <span style="padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:var(--navy-l);color:var(--navy)">R:R ${t.rr}:1</span>
   <span style="font-size:12px;font-weight:700;color:var(--dn)">Bán ${t.sellPct}%</span>
@@ -1712,7 +1766,7 @@ ${i < sv.targets.length - 1 ? `<div style="width:2px;height:28px;background:var(
   <span style="font-size:13px;font-weight:700;color:${c}">${s.label}</span>
 </div>
 <div style="display:flex;align-items:center;gap:8px">
-  <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${c}">${fp(s.target)}</span>
+  <span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:${c}">${fp(s.target)}</span>
   <span style="font-size:12px;font-weight:600;color:${c}">${pctSign}${s.targetPct}%</span>
   <span style="padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(0,0,0,.06);color:var(--gray600)">${s.probability}%</span>
 </div>
@@ -1747,7 +1801,7 @@ const fbg = isNear ? "var(--am-bg)" : "var(--gray50)";
 const fbd = isNear ? "var(--am-bd)" : "var(--gray200)";
 return `<div style="padding:8px 6px;border-radius:8px;background:${fbg};border:1px solid ${fbd};text-align:center${isNear ? ";box-shadow:0 0 0 2px var(--am)40" : ""}">
   <div style="font-size:10px;font-weight:700;color:var(--gray400);margin-bottom:3px">${f.label}</div>
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${fc}">${fp(f.val)}</div>
+  <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:${fc}">${fp(f.val)}</div>
   ${isNear ? `<div style="font-size:10px;color:var(--am);margin-top:2px">◆ Giá hiện tại</div>` : ""}
 </div>`;
 }).join("")}
@@ -1778,8 +1832,8 @@ ${fibHtml}
 ${(pred.worstBuy || pred.worstSell) ? `
 <div style="margin-top:16px;padding:12px 16px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200);display:flex;gap:24px;flex-wrap:wrap">
   <span style="font-size:11px;font-weight:700;color:var(--gray500)">⚠️ TRÁNH MUA</span>
-  ${pred.worstBuy ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Mua tệ nhất:</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstBuy.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstBuy.reason || pred.worstBuy.risk || "").slice(0, 70)}</span></div>` : ""}
-  ${pred.worstSell ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Bán tệ nhất:</span><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstSell.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstSell.reason || pred.worstSell.risk || "").slice(0, 70)}</span></div>` : ""}
+  ${pred.worstBuy ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Mua tệ nhất:</span><span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstBuy.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstBuy.reason || pred.worstBuy.risk || "").slice(0, 70)}</span></div>` : ""}
+  ${pred.worstSell ? `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--gray500)">Bán tệ nhất:</span><span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:13px;color:var(--dn)">${fp(pred.worstSell.price)}</span><span style="font-size:11px;color:var(--gray400)">${(pred.worstSell.reason || pred.worstSell.risk || "").slice(0, 70)}</span></div>` : ""}
 </div>` : ""}`;
 }
 
@@ -2034,7 +2088,7 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
   const healthHtml = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
     <div style="font-size:11px;font-weight:700;color:var(--gray400)">HEALTH</div>
     <div style="flex:1;height:6px;border-radius:3px;background:var(--gray200);overflow:hidden"><div style="height:100%;width:${health}%;background:${hc};border-radius:3px;transition:width .5s"></div></div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:${hc}">${health}<span style="font-size:11px;font-weight:600;color:var(--gray400)">/100</span></div>
+    <div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:800;color:${hc}">${health}<span style="font-size:11px;font-weight:600;color:var(--gray400)">/100</span></div>
     <div style="font-size:11px;font-weight:700;color:${hc}">${hLabel}</div>
   </div>`;
 
@@ -2472,7 +2526,7 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
           canG
         )}10;border:1px solid ${gc(
           canG
-        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">CANSLIM</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(
+        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">CANSLIM</div><div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:16px;color:${gc(
           canG
         )}">${scoring.canslim.total}/${
           scoring.canslim.maxTotal || 70
@@ -2485,7 +2539,7 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
           sepaG
         )}10;border:1px solid ${gc(
           sepaG
-        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">SEPA</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(
+        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">SEPA</div><div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:16px;color:${gc(
           sepaG
         )}">${scoring.sepa.total}/${
           scoring.sepa.maxTotal || 80
@@ -2498,7 +2552,7 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
           momG
         )}10;border:1px solid ${gc(
           momG
-        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">MOMENTUM</div><div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:16px;color:${gc(
+        )}25;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--gray400)">MOMENTUM</div><div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:16px;color:${gc(
           momG
         )}">${scoring.momentum.total}/${
           scoring.momentum.maxTotal || 70
@@ -2605,11 +2659,11 @@ async function renderPortfolio() {
   <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:20px;border-bottom:2px solid var(--gray100)">
     <div style="flex:1;min-width:120px">
 <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">KHỐI LƯỢNG (CP)</label>
-<input id="pfQty" type="number" min="100" step="100" placeholder="VD: 500" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+<input id="pfQty" type="number" min="100" step="100" placeholder="VD: 500" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
     </div>
     <div style="flex:1;min-width:120px">
 <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">GIÁ MUA (nghìn đ)</label>
-<input id="pfPrice" type="number" min="0" step="0.1" placeholder="VD: 85.0" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+<input id="pfPrice" type="number" min="0" step="0.1" placeholder="VD: 85.0" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
     </div>
     <div style="flex:1;min-width:130px">
 <label style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">NGÀY MUA</label>
@@ -2618,7 +2672,7 @@ async function renderPortfolio() {
   .slice(
     0,
     10
-  )}" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
+  )}" style="width:100%;padding:10px 14px;border:1px solid var(--gray200);border-radius:10px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:14px;font-weight:600;outline:none;transition:border .2s" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray200)'"/>
     </div>
     <button id="pfSubmitBtn" onclick="submitPosition('${sym}')" style="padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Thêm lệnh</button>
     <button id="pfCancelBtn" onclick="cancelEdit()" style="display:none;padding:10px 16px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='var(--gray200)'" onmouseout="this.style.background='var(--gray100)'">Hủy</button>
@@ -2646,19 +2700,19 @@ async function renderPortfolio() {
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
     <div style="padding:14px 18px;border-radius:12px;background:var(--navy-l);border:1px solid var(--gray200)">
 <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">TỔNG CP</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--navy)">${totalQty.toLocaleString(
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;color:var(--navy)">${totalQty.toLocaleString(
   "vi-VN"
 )}</div>
     </div>
     <div style="padding:14px 18px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200)">
 <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">GIÁ VỐN TB</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--gray900)">${fp(
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;color:var(--gray900)">${fp(
   avgPrice
 )}</div>
     </div>
     <div style="padding:14px 18px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200)">
 <div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">GIÁ TRỊ</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:var(--gray900)">${
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;color:var(--gray900)">${
   curPrice ? (marketValue / 1e3).toFixed(1) + " tr" : "—"
 }</div>
 <div style="font-size:11px;color:var(--gray400);margin-top:2px">Vốn: ${(
@@ -2671,7 +2725,7 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
     pnl > 0 ? "var(--up-bd)" : pnl < 0 ? "var(--dn-bd)" : "var(--gray200)"
   }">
 <div style="font-size:11px;font-weight:700;color:${pnlColor};letter-spacing:.6px;margin-bottom:6px">LÃI / LỖ</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;color:${pnlColor}">${pnlSign}${(
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;color:${pnlColor}">${pnlSign}${(
     pnl / 1e3
   ).toFixed(2)} tr</div>
 <div style="font-size:12px;font-weight:700;color:${pnlColor};margin-top:2px">${pnlSign}${pnlPct.toFixed(
@@ -2687,11 +2741,11 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
     <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
 <div>
   <label style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">KL BÁN (CP)</label>
-  <input id="pfSellQty" type="number" min="100" step="100" placeholder="VD: 500" style="width:110px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;outline:none;background:var(--wht)"/>
+  <input id="pfSellQty" type="number" min="100" step="100" placeholder="VD: 500" style="width:110px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;outline:none;background:var(--wht)"/>
 </div>
 <div>
   <label style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">GIÁ BÁN (nghìn đ)</label>
-  <input id="pfSellPrice" type="number" min="0" step="0.05" placeholder="VD: 92.5" style="width:120px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;outline:none;background:var(--wht)"/>
+  <input id="pfSellPrice" type="number" min="0" step="0.05" placeholder="VD: 92.5" style="width:120px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;outline:none;background:var(--wht)"/>
 </div>
 <div>
   <label style="font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.6px;display:block;margin-bottom:4px">NGÀY BÁN</label>
@@ -2700,7 +2754,7 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
     .slice(
       0,
       10
-    )}" style="width:145px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;outline:none;background:var(--wht)"/>
+    )}" style="width:145px;padding:8px 12px;border:1px solid var(--dn-bd);border-radius:8px;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;outline:none;background:var(--wht)"/>
 </div>
 <button onclick="submitSell('${sym}')" style="padding:8px 20px;background:var(--dn);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Xác nhận bán</button>
 <button onclick="document.getElementById('pfSellFormWrap').style.display='none'" style="padding:8px 14px;background:var(--gray100);color:var(--gray700);border:1px solid var(--gray200);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Hủy</button>
@@ -2711,8 +2765,8 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
   // ── Bảng chi tiết từng lệnh ──
   html += `<div style="margin-bottom:20px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-<div style="display:grid;grid-template-columns:32px 1fr 90px 90px 110px 64px;flex:1;font-size:10px;font-weight:700;color:var(--gray400);letter-spacing:.8px;text-transform:uppercase;padding:8px 12px;background:var(--gray50);border-radius:10px">
-  <span>#</span><span>Ngày</span><span style="text-align:right">KL</span><span style="text-align:right">Giá mua</span><span style="text-align:right">Lãi / Lỗ</span><span></span>
+<div style="display:grid;grid-template-columns:28px 90px 70px 80px 90px 90px 130px 64px;flex:1;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:normal;color:var(--gray400);letter-spacing:0.4px;padding:5px 12px;background:var(--gray50);border-radius:10px;border-bottom:1px solid var(--gray200)">
+  <span>#</span><span>Ngày</span><span style="text-align:right">KL</span><span style="text-align:right">Giá mua</span><span style="text-align:right">GT mua</span><span style="text-align:right">GT hiện tại</span><span style="text-align:right">Lãi / Lỗ</span><span></span>
 </div>
 <button onclick="document.getElementById('pfSellFormWrap').style.display=document.getElementById('pfSellFormWrap').style.display==='none'?'block':'none'" style="margin-left:10px;padding:8px 16px;background:var(--dn-bg);color:var(--dn);border:1.5px solid var(--dn-bd);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="7 8 3 12 7 16"/><line x1="21" y1="12" x2="3" y2="12"/></svg>
@@ -2730,27 +2784,17 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
     const plBg =
       pl > 0 ? "#f0faf4" : pl < 0 ? "#fff5f5" : "var(--gray50)";
     html += `
-    <div style="display:grid;grid-template-columns:32px 1fr 90px 90px 110px 64px;padding:10px 12px;border-radius:10px;align-items:center;transition:background .15s;cursor:default" onmouseover="this.style.background='var(--gray50)'" onmouseout="this.style.background='transparent'">
-<span style="font-size:11px;color:var(--gray300);font-weight:600">${
-  i + 1
-}</span>
-<span style="font-size:12px;color:var(--gray500);font-family:'IBM Plex Mono',monospace">${
-  p.date
-}</span>
-<span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;color:var(--navy)">${p.qty.toLocaleString(
-  "vi-VN"
-)}</span>
-<span style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--gray700)">${fp(
-  p.price
-)}</span>
+    <div style="display:grid;grid-template-columns:28px 90px 70px 80px 90px 90px 130px 64px;padding:4px 12px;align-items:center;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;border-bottom:1px solid var(--gray100);transition:background .08s;cursor:default" onmouseover="this.style.background='#1e2a3a14'" onmouseout="this.style.background='transparent'">
+<span style="color:var(--gray400)">${i + 1}</span>
+<span style="color:var(--gray500)">${p.date}</span>
+<span style="text-align:right;color:var(--navy);font-weight:700">${p.qty.toLocaleString("en-US")}</span>
+<span style="text-align:right;color:var(--gray700)">${parseFloat(p.price.toFixed(2))}</span>
+<span style="text-align:right;color:var(--gray500)">${parseFloat((p.qty * p.price / 1e3).toFixed(2))}<span style="color:var(--gray400)">tr</span></span>
+<span style="text-align:right;color:var(--gray700)">${curPrice ? parseFloat((p.qty * curPrice / 1e3).toFixed(2)) : '—'}<span style="color:var(--gray400)">${curPrice ? 'tr' : ''}</span></span>
 <span style="text-align:right">
-  <span style="display:inline-flex;flex-direction:column;align-items:flex-end;background:${plBg};padding:3px 8px;border-radius:6px">
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${pc};white-space:nowrap">${ps}${(
-      pl / 1e3
-    ).toFixed(1)} tr</span>
-    <span style="font-size:10px;color:${pc}">${ps}${plPct.toFixed(
-      1
-    )}%</span>
+  <span style="display:inline-flex;align-items:center;background:${plBg};padding:2px 7px;border-radius:5px;gap:4px">
+    <span style="font-weight:700;color:${pc};white-space:nowrap">${ps}${parseFloat((pl / 1e3).toFixed(2))}tr</span>
+    <span style="color:${pc};white-space:nowrap">(${ps}${parseFloat(plPct.toFixed(2))}%)</span>
   </span>
 </span>
 <span style="display:flex;gap:4px;justify-content:flex-end;opacity:0.4;transition:opacity .15s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.4'">
@@ -2816,7 +2860,7 @@ function renderSR(sr, price) {
     )}</span></div>
 <div style="display:flex;gap:10px;align-items:center"><span style="font-size:13px;color:var(--gray400)">${
   l.touches
-} lần test</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${c}">${
+} lần test</span><span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;color:${c}">${
       d > 0 ? "+" : ""
     }${d}%</span></div></div>`;
   };
@@ -2858,48 +2902,115 @@ function renderRS(rs) {
   const el = document.getElementById("rsContent");
   if (!rs) {
     el.innerHTML =
-      '<div style="font-size:14px;color:var(--gray400)">Không có index.xlsx</div>';
+      '<div style="font-size:14px;color:var(--gray400)">Chưa có dữ liệu VNINDEX — chạy fetch VNINDEX trước</div>';
     return;
   }
-  let h = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px">`;
+
+  // ── Verdict config ────────────────────────────────────────────────────────
+  const verdictCfg = {
+    leader:      { bg: "var(--up-bg)",   color: "var(--up)",   icon: "★" },
+    strong:      { bg: "var(--up-bg)",   color: "var(--up)",   icon: "↑" },
+    mixed:       { bg: "var(--am-bg)",   color: "var(--am)",   icon: "~" },
+    weak:        { bg: "var(--dn-bg)",   color: "var(--dn)",   icon: "↓" },
+    laggard:     { bg: "var(--dn-bg)",   color: "var(--dn)",   icon: "▼" },
+    unknown:     { bg: "var(--gray100)", color: "var(--gray500)", icon: "?" },
+  };
+  const vc = verdictCfg[rs.verdict] || verdictCfg.unknown;
+
+  // RS Trend label
+  const trendLabel = rs.rsTrend === "improving"
+    ? `<span style="color:var(--up);font-weight:700;font-size:12px">↑ Đang tăng tốc</span>`
+    : rs.rsTrend === "deteriorating"
+    ? `<span style="color:var(--dn);font-weight:700;font-size:12px">↓ Đang chậm lại</span>`
+    : rs.rsTrend === "stable"
+    ? `<span style="color:var(--gray500);font-size:12px">→ Ổn định</span>`
+    : "";
+
+  // ── Summary header ────────────────────────────────────────────────────────
+  let h = `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:${vc.bg};border:1px solid ${vc.color}20;margin-bottom:14px">
+  <div style="font-size:22px;font-weight:900;color:${vc.color};min-width:28px;text-align:center">${vc.icon}</div>
+  <div style="flex:1">
+    <div style="font-size:14px;font-weight:700;color:${vc.color}">${rs.verdictDesc ?? "—"}</div>
+    <div style="font-size:12px;color:var(--gray500);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap">
+      ${rs.rsScore != null ? `<span>Mạnh hơn VNI <b>${rs.rsScore}%</b> số kỳ</span>` : ""}
+      ${rs.beta != null ? `<span>Beta <b>${rs.beta}</b></span>` : ""}
+      ${trendLabel}
+    </div>
+  </div>
+</div>`;
+
+  // ── Period grid ───────────────────────────────────────────────────────────
+  h += `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px">`;
   rs.periods.forEach((p) => {
-    const oc =
-      p.outperform === true
-        ? "var(--up)"
-        : p.outperform === false
-        ? "var(--dn)"
-        : "var(--gray400)";
-    h += `<div style="text-align:center;padding:16px 10px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200)">
-<div style="font-size:12px;color:var(--gray500);font-weight:600;margin-bottom:6px">${
-  p.label
-}</div>
-<div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${
-  p.stockPct > 0 ? "var(--up)" : "var(--dn)"
-}">${p.stockPct > 0 ? "+" : ""}${p.stockPct}%</div>
-<div style="font-size:12px;color:var(--gray400);margin-top:4px">VNI: ${
-  p.indexPct != null
-    ? (p.indexPct > 0 ? "+" : "") + p.indexPct + "%"
-    : "—"
-}</div>
-<div style="margin-top:6px;font-size:12px;font-weight:700;color:${oc}">${
-      p.outperform === true
-        ? "✓ Mạnh hơn"
-        : p.outperform === false
-        ? "✗ Yếu hơn"
-        : "—"
+    const oc = p.outperform === true ? "var(--up)" : p.outperform === false ? "var(--dn)" : "var(--gray400)";
+    const obg = p.outperform === true ? "var(--up-bg)" : p.outperform === false ? "var(--dn-bg)" : "var(--gray100)";
+    const alphaSign = p.alpha != null ? (p.alpha > 0 ? "+" : "") : "";
+    const alphaColor = p.alpha > 0 ? "var(--up)" : p.alpha < 0 ? "var(--dn)" : "var(--gray400)";
+    h += `<div style="text-align:center;padding:12px 6px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:11px;color:var(--gray500);font-weight:600;margin-bottom:5px">${p.label}</div>
+<div style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:16px;color:${p.stockPct > 0 ? "var(--up)" : "var(--dn)"}">${p.stockPct > 0 ? "+" : ""}${p.stockPct}%</div>
+<div style="font-size:11px;color:var(--gray400);margin-top:3px">VNI: ${p.indexPct != null ? (p.indexPct > 0 ? "+" : "") + p.indexPct + "%" : "—"}</div>
+${p.alpha != null ? `<div style="font-size:11px;font-weight:700;color:${alphaColor};margin-top:2px">α ${alphaSign}${p.alpha}%</div>` : ""}
+<div style="margin-top:5px;display:inline-block;padding:2px 7px;border-radius:20px;background:${obg};font-size:10px;font-weight:700;color:${oc}">${
+      p.outperform === true ? "Mạnh hơn" : p.outperform === false ? "Yếu hơn" : "—"
     }</div></div>`;
   });
   h += `</div>`;
-  if (rs.correlation != null) {
-    const cd =
-      rs.correlation > 0.6
-        ? "Tương quan chặt"
-        : rs.correlation > 0.3
-        ? "Tương quan trung bình"
-        : "Tương quan yếu";
-    h += `<div style="padding:14px 18px;border-radius:10px;background:var(--gray50);font-size:14px;display:flex;justify-content:space-between;border:1px solid var(--gray200)">
-<span style="color:var(--gray700)">Hệ số tương quan · ${cd}</span><span class="row-val" style="font-size:16px">${rs.correlation}</span></div>`;
+
+  // ── Stats row: correlation + beta ─────────────────────────────────────────
+  const corrLabel = rs.correlation != null
+    ? (rs.correlation > 0.6 ? "Tương quan chặt" : rs.correlation > 0.3 ? "Tương quan TB" : "Tương quan yếu")
+    : null;
+  const betaDesc = rs.beta != null
+    ? `VNI ±10% → cổ phiếu thường ±${Math.round(Math.abs(rs.beta) * 10)}%`
+    : null;
+
+  if (corrLabel || betaDesc) {
+    h += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">`;
+    if (corrLabel) {
+      h += `<div style="padding:10px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200);display:flex;justify-content:space-between;align-items:center">
+<div><div style="font-size:11px;color:var(--gray500);font-weight:600">TƯƠNG QUAN VỚI VNI</div><div style="font-size:12px;color:var(--gray600);margin-top:1px">${corrLabel}</div></div>
+<span style="font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:700;font-size:16px;color:var(--navy)">${rs.correlation}</span></div>`;
+    }
+    if (betaDesc) {
+      const betaColor = rs.beta > 1.3 ? "var(--am)" : rs.beta < 0.7 ? "var(--up)" : "var(--navy)";
+      h += `<div style="padding:10px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:11px;color:var(--gray500);font-weight:600;margin-bottom:4px">ĐỘ BIẾN ĐỘNG SO VỚI THỊ TRƯỜNG</div>
+<div style="font-size:12px;color:var(--gray700)">${betaDesc}</div></div>`;
+    }
+    h += `</div>`;
   }
+
+  // ── Đánh giá chi tiết ─────────────────────────────────────────────────────
+  const outCount = rs.periods.filter(p => p.outperform === true).length;
+  const totalValid = rs.periods.filter(p => p.outperform !== null).length;
+  const bestPeriod = [...rs.periods].filter(p => p.alpha != null).sort((a, b) => b.alpha - a.alpha)[0];
+  const worstPeriod = [...rs.periods].filter(p => p.alpha != null).sort((a, b) => a.alpha - b.alpha)[0];
+
+  const insights = [];
+  if (outCount === totalValid) insights.push("Mạnh hơn VNINDEX ở <b>tất cả các kỳ</b> — cổ phiếu dẫn đầu thị trường.");
+  else if (outCount === 0) insights.push("Yếu hơn VNINDEX ở <b>tất cả các kỳ</b> — tránh hoặc chờ tín hiệu phục hồi.");
+  else insights.push(`Mạnh hơn VNINDEX trong <b>${outCount}/${totalValid} kỳ</b> đo lường.`);
+
+  if (bestPeriod) insights.push(`Kỳ tốt nhất: <b>${bestPeriod.label}</b> với alpha <b>${bestPeriod.alpha > 0 ? "+" : ""}${bestPeriod.alpha}%</b>.`);
+  if (worstPeriod && worstPeriod.label !== bestPeriod?.label) insights.push(`Kỳ yếu nhất: <b>${worstPeriod.label}</b> với alpha <b>${worstPeriod.alpha > 0 ? "+" : ""}${worstPeriod.alpha}%</b>.`);
+
+  if (rs.rsTrend === "improving") insights.push("Hiệu suất ngắn hạn <b>tốt hơn</b> dài hạn — cổ phiếu đang tăng tốc so với thị trường.");
+  else if (rs.rsTrend === "deteriorating") insights.push("Hiệu suất ngắn hạn <b>kém hơn</b> dài hạn — cổ phiếu đang chậm lại so với thị trường, cần thận trọng.");
+
+  if (rs.beta != null) {
+    if (rs.beta > 1.3) insights.push(`VNI giảm 10% thì cổ phiếu thường giảm ~<b>${Math.round(rs.beta * 10)}%</b> — biến động mạnh, rủi ro cao hơn thị trường.`);
+    else if (rs.beta < 0.7) insights.push(`VNI giảm 10% thì cổ phiếu thường chỉ giảm ~<b>${Math.round(rs.beta * 10)}%</b> — ít biến động, tương đối an toàn hơn.`);
+  }
+
+  if (insights.length > 0) {
+    h += `<div style="padding:12px 14px;border-radius:10px;background:var(--gray50);border:1px solid var(--gray200)">
+<div style="font-size:11px;font-weight:700;color:var(--gray500);letter-spacing:.6px;margin-bottom:8px">NHẬN XÉT</div>
+<ul style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:5px">
+${insights.map(i => `<li style="font-size:13px;color:var(--gray700);line-height:1.4">${i}</li>`).join("")}
+</ul></div>`;
+  }
+
   el.innerHTML = h;
 }
 
@@ -2966,8 +3077,8 @@ function _pipHtml(s) {
 html,body{width:100%;height:100%}
 body{background:${bg};display:flex;align-items:center;padding:0 14px;gap:10px;overflow:hidden}
 .sym{font-family:system-ui,sans-serif;font-weight:800;font-size:11px;color:#1a1f5e;flex-shrink:0}
-.price{font-family:'IBM Plex Mono',monospace;font-weight:800;font-size:22px;letter-spacing:-1px;color:${col};flex-shrink:0;white-space:nowrap}
-.change{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:${col};white-space:nowrap;flex-shrink:0}
+.price{font-family:Tahoma,Helvetica,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-1px;color:${col};flex-shrink:0;white-space:nowrap}
+.change{font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;color:${col};white-space:nowrap;flex-shrink:0}
   </style>
   <div class="sym">${s.sym}</div>
   <div class="price">${s.price != null ? fp(s.price) : "—"}</div>
@@ -3201,7 +3312,7 @@ function renderCharts(d) {
         borderColor: "#e5e7eb",
         borderWidth: 1,
         padding: 12,
-        bodyFont: { family: "'IBM Plex Mono'", size: 12 },
+        bodyFont: { family: "Tahoma", size: 12 },
         titleFont: { family: "'Noto Sans'", weight: "bold", size: 13 },
       },
     },
@@ -3410,7 +3521,7 @@ function renderCharts(d) {
           x: {
             ticks: {
               maxTicksLimit: 10,
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#9ca3af",
             },
             grid: { color: "rgba(0,0,0,.04)" },
@@ -3420,7 +3531,7 @@ function renderCharts(d) {
             max: volAxisMax,
             ticks: {
               maxTicksLimit: 3,
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#94a3b8",
               callback: (v) =>
                 v >= 1e6
@@ -3436,7 +3547,7 @@ function renderCharts(d) {
             min: pMinPadded,
             max: pMax + pPad,
             ticks: {
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#6b7280",
             },
             grid: { drawOnChartArea: false },
@@ -3533,7 +3644,7 @@ function renderCharts(d) {
           x: {
             ticks: {
               maxTicksLimit: 10,
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#9ca3af",
             },
             grid: { color: "rgba(0,0,0,.04)" },
@@ -3542,7 +3653,7 @@ function renderCharts(d) {
             position: "left",
             ticks: {
               maxTicksLimit: 5,
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#9ca3af",
               callback: (v) =>
                 v >= 1e6
@@ -3556,7 +3667,7 @@ function renderCharts(d) {
           yP: {
             position: "right",
             ticks: {
-              font: { size: 11, family: "'IBM Plex Mono'" },
+              font: { size: 11, family: "Tahoma" },
               color: "#6b7280",
             },
             grid: { drawOnChartArea: false },
@@ -3615,7 +3726,7 @@ function renderCharts(d) {
           max: 100,
           ticks: {
             stepSize: 35,
-            font: { size: 10, family: "'IBM Plex Mono'" },
+            font: { size: 10, family: "Tahoma" },
             color: "#9ca3af",
           },
           grid: { color: "rgba(0,0,0,.04)" },
@@ -3643,7 +3754,7 @@ function renderCharts(d) {
         y: {
           ticks: {
             maxTicksLimit: 3,
-            font: { size: 10, family: "'IBM Plex Mono'" },
+            font: { size: 10, family: "Tahoma" },
             color: "#9ca3af",
           },
           grid: { color: "rgba(0,0,0,.04)" },
@@ -3811,7 +3922,7 @@ Chart.register({
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
       const labelText = isRes ? "Kháng cự" : "Hỗ trợ";
-      ctx.font = "bold 10px 'IBM Plex Mono'";
+      ctx.font = "bold 10px Tahoma";
       const textW = ctx.measureText(labelText).width;
       const lx = Math.min(xPxRight + 4, right - textW - 4);
       const ly = Math.max(top + 12, Math.min(bottom - 4, yPxRight + 4));
@@ -4160,27 +4271,69 @@ function renderCompanyInfo(d) {
 
 // ── TrendPro tooltip content ──
 function buildTrendProTooltip(action, d) {
-  const base =
-    "TrendPro · Đánh giá đà NGẮN HẠN (30 nến)\n" +
-    "Dựa trên: MA5/MA20 · Volume · RSI Divergence\n\n" +
-    "Khác với nhãn chính (MA20/50/200 dài hạn)\n" +
-    "→ Xu hướng dài hạn và ngắn hạn có thể trái chiều.";
-
-  const isBearish = action && (action.includes("BÁN") || action.includes("EXIT") || action.includes("GIẢM"));
-  if (!isBearish || !d) return base;
-
+  if (!action || !d) return "";
   const fp = v => v != null ? parseFloat(v).toLocaleString("vi-VN", { minimumFractionDigits: 1, maximumFractionDigits: 2 }) : "—";
-  const s1  = d.supportResistance?.supports?.[0]?.price;
-  const s2  = d.supportResistance?.supports?.[1]?.price;
-  const opt = d.predictions?.bestBuy?.entryZone?.optimal;
-  const ma20 = d.indicators?.ma20;
 
-  return base +
-    "\n\n— Vùng mua lại ngắn hạn —\n" +
-    (s1  != null ? `• Hỗ trợ S1 : ${fp(s1)}\n` : "") +
-    (s2  != null ? `• Hỗ trợ S2 : ${fp(s2)}\n` : "") +
-    (opt != null ? `• Entry tối ưu: ${fp(opt)}\n` : "") +
-    (ma20 != null ? `• MA20      : ${fp(ma20)}` : "");
+  const s1   = d.supportResistance?.supports?.[0]?.price;
+  const s2   = d.supportResistance?.supports?.[1]?.price;
+  const r1   = d.supportResistance?.resistances?.[0]?.price;
+  const ma20 = d.indicators?.ma20;
+  const ma5  = d.indicators?.ma5;
+  const opt  = d.predictions?.bestBuy?.entryZone?.optimal;
+  const stScore = d.trendPro?.shortTerm?.score;
+
+  // QUAN SÁT / WATCH — trung lập, chờ tín hiệu rõ
+  if (action.includes("QUAN SÁT") || action.includes("WATCH")) {
+    return "Đà ngắn hạn đang trung lập, chưa có hướng rõ.\n\n" +
+      "Chuyển sang MUA khi:\n" +
+      (ma20 != null ? `• Giá vượt MA20 (${fp(ma20)}) kèm volume tăng\n` : "") +
+      (r1   != null ? `• Giá breakout R1 (${fp(r1)})\n` : "") +
+      "\nChuyển sang BÁN khi:\n" +
+      (s1   != null ? `• Giá phá xuống S1 (${fp(s1)})\n` : "") +
+      (ma20 != null ? `• MA20 (${fp(ma20)}) bắt đầu quay đầu giảm` : "");
+  }
+
+  // THEO DÕI TĂNG / MILD BULLISH — sắp có tín hiệu mua
+  if (action.includes("THEO DÕI TĂNG") || action.includes("MILD BULLISH")) {
+    return "Đà ngắn hạn đang cải thiện, chưa đủ mạnh để mua.\n\n" +
+      "Vào lệnh khi:\n" +
+      (ma5  != null ? `• Giá giữ trên MA5 (${fp(ma5)}) ≥ 2 phiên liên tiếp\n` : "") +
+      (r1   != null ? `• Giá vượt R1 (${fp(r1)}) với volume tăng mạnh\n` : "") +
+      "\nHủy kế hoạch nếu:\n" +
+      (s1   != null ? `• Giá quay về dưới S1 (${fp(s1)})` : "");
+  }
+
+  // THEO DÕI GIẢM / MILD BEARISH — sắp có tín hiệu bán
+  if (action.includes("THEO DÕI GIẢM") || action.includes("MILD BEARISH")) {
+    return "Đà ngắn hạn đang suy yếu nhẹ, cần thận trọng.\n\n" +
+      "Cắt giảm vị thế khi:\n" +
+      (s1   != null ? `• Giá phá S1 (${fp(s1)}) với volume lớn\n` : "") +
+      (ma20 != null ? `• Giá đóng cửa dưới MA20 (${fp(ma20)})\n` : "") +
+      "\nPhục hồi nếu:\n" +
+      (ma5  != null ? `• Giá giữ MA5 (${fp(ma5)}) và volume thu hẹp` : "");
+  }
+
+  // BÁN / EXIT / GIẢM ĐỒNG THUẬN
+  if (action.includes("BÁN") || action.includes("EXIT") || action.includes("GIẢM")) {
+    return "Đà ngắn hạn yếu" + (stScore != null ? ` (score: ${stScore}/100)` : "") + " — nên đứng ngoài.\n\n" +
+      "Vùng mua lại ngắn hạn:\n" +
+      (s1   != null ? `• Hỗ trợ S1  : ${fp(s1)}\n` : "") +
+      (s2   != null ? `• Hỗ trợ S2  : ${fp(s2)}\n` : "") +
+      (opt  != null ? `• Entry tối ưu: ${fp(opt)}\n` : "") +
+      (ma20 != null ? `• MA20       : ${fp(ma20)}\n` : "") +
+      "\nMua lại khi giá + volume xác nhận vùng hỗ trợ.";
+  }
+
+  // MUA / NẮM GIỮ / TĂNG ĐỒNG THUẬN / FTD
+  if (action.includes("MUA") || action.includes("HOLD") || action.includes("TĂNG") || action.includes("FTD")) {
+    return "Đà ngắn hạn tích cực" + (stScore != null ? ` (score: ${stScore}/100)` : "") + ".\n\n" +
+      "Giữ vị thế, trailing stop:\n" +
+      (s1   != null ? `• Dưới S1 (${fp(s1)}) → xem xét chốt lời\n` : "") +
+      (ma5  != null ? `• Giá đóng cửa dưới MA5 (${fp(ma5)}) 2 phiên → cảnh báo\n` : "") +
+      (r1   != null ? `• Kháng cự R1 (${fp(r1)}) → có thể chốt một phần` : "");
+  }
+
+  return "";
 }
 
 // ── Global tooltip system ──

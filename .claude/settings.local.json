@@ -109,7 +109,10 @@
       "Bash(grep -rn \"msh-stream\\\\|text/event-stream\" /Users/son.ph/my-surge/ --include=*.mjs)",
       "Bash(grep -rn \"msh-stream\\\\|mshUrl\\\\|MSH_URL\" /Users/son.ph/my-surge/ --include=*.mjs --include=*.js)",
       "Bash(ls -la /Users/son.ph/my-surge/public/*.js)",
-      "Bash(grep -rn \"BÁN.*ĐỨNG\\\\|ĐỨNG.*BÁN\\\\|EXIT\" /Users/son.ph/my-surge/ --include=*.js --include=*.mjs --include=*.html)"
+      "Bash(grep -rn \"BÁN.*ĐỨNG\\\\|ĐỨNG.*BÁN\\\\|EXIT\" /Users/son.ph/my-surge/ --include=*.js --include=*.mjs --include=*.html)",
+      "Bash(curl -s \"http://localhost:3000/api/history-fetch?symbol=VNINDEX&days=1100\")",
+      "Bash(curl -s http://localhost:3000/analyze-detail?symbol=VCB)",
+      "Bash(curl -s \"http://localhost:3000/analyze-detail?symbol=VCB&refresh=1\")"
     ]
   }
 }

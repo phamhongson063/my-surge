@@ -1889,6 +1889,7 @@ function calcRS(stockData, indexData) {
     }
   }
   let correlation = null;
+  let beta = null;
   if (stockReturns.length > 20) {
     const avgS = stockReturns.reduce((a, b) => a + b, 0) / stockReturns.length;
     const avgI = indexReturns.reduce((a, b) => a + b, 0) / indexReturns.length;
@@ -1900,11 +1901,69 @@ function calcRS(stockData, indexData) {
       varS += (stockReturns[i] - avgS) ** 2;
       varI += (indexReturns[i] - avgI) ** 2;
     }
-    if (varS > 0 && varI > 0)
+    if (varS > 0 && varI > 0) {
       correlation = Math.round((cov / Math.sqrt(varS * varI)) * 1000) / 1000;
+      beta = Math.round((cov / varI) * 100) / 100;
+    }
   }
 
-  return { periods: results, correlation };
+  // Add alpha (spread stock - index) to each period
+  for (const r of results) {
+    r.alpha = r.stockPct != null && r.indexPct != null
+      ? round2(r.stockPct - r.indexPct)
+      : null;
+  }
+
+  // RS Score: số kỳ outperform / tổng kỳ có dữ liệu
+  const validPeriods = results.filter((r) => r.outperform !== null);
+  const outperformCount = validPeriods.filter((r) => r.outperform).length;
+  const rsScore = validPeriods.length > 0
+    ? Math.round((outperformCount / validPeriods.length) * 100)
+    : null;
+
+  // RS Trend: so sánh ngắn hạn (1w+1m) vs dài hạn (3m+6m+1y)
+  const shortTermAlpha = results
+    .slice(0, 2)
+    .filter((r) => r.alpha != null)
+    .map((r) => r.alpha);
+  const longTermAlpha = results
+    .slice(2)
+    .filter((r) => r.alpha != null)
+    .map((r) => r.alpha);
+  let rsTrend = null;
+  if (shortTermAlpha.length > 0 && longTermAlpha.length > 0) {
+    const avgShort = shortTermAlpha.reduce((a, b) => a + b, 0) / shortTermAlpha.length;
+    const avgLong = longTermAlpha.reduce((a, b) => a + b, 0) / longTermAlpha.length;
+    if (avgShort > avgLong + 2) rsTrend = "improving";
+    else if (avgShort < avgLong - 2) rsTrend = "deteriorating";
+    else rsTrend = "stable";
+  }
+
+  // Verdict
+  let verdict, verdictDesc;
+  if (rsScore === null) {
+    verdict = "unknown";
+    verdictDesc = "Không đủ dữ liệu";
+  } else if (rsScore >= 80 && rsTrend !== "deteriorating") {
+    verdict = "leader";
+    verdictDesc = "Cổ phiếu dẫn đầu thị trường";
+  } else if (rsScore >= 60) {
+    verdict = "strong";
+    verdictDesc = "Mạnh hơn thị trường";
+  } else if (rsScore >= 40) {
+    verdict = "mixed";
+    verdictDesc = "Tương đương thị trường";
+  } else if (rsScore >= 20) {
+    verdict = "weak";
+    verdictDesc = "Yếu hơn thị trường";
+  } else {
+    verdict = "laggard";
+    verdictDesc = "Tụt hậu so với thị trường";
+  }
+  if (rsTrend === "improving" && verdict !== "leader") verdictDesc += " · Đang tăng tốc so với thị trường";
+  if (rsTrend === "deteriorating") verdictDesc += " · Đang chậm lại so với thị trường";
+
+  return { periods: results, correlation, beta, rsScore, rsTrend, verdict, verdictDesc };
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -3554,7 +3613,7 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
       } phiên, cần >=30)`,
     };
 
-  indexData = null;
+  indexData = readHistoryJson("VNINDEX");
 
   const prices = stockData.map((d) => d.price).filter(Boolean);
   const n = prices.length;
@@ -3585,6 +3644,22 @@ export async function analyzeDetail(tmpDir, symbol, options = {}) {
   const trend = determineTrend(prices, ma20, ma50, ma200, rsi, macd);
   const trendPro = determineTrendPro(stockData, { rsi });
   const sr = findSupportResistance(stockData.slice(-200), latest.price);
+
+  // Enrich SIDEWAY signal with SR price range
+  if (sr) {
+    const nearSup = sr.supports?.[0]?.price ?? null;
+    const nearRes = sr.resistances?.[0]?.price ?? null;
+    for (const tf of [trend.shortTerm, trend.midTerm, trend.longTerm]) {
+      if (tf.direction === "SIDEWAY" && (nearSup || nearRes)) {
+        if (nearSup && nearRes)
+          tf.signal = `Sideway vùng ${round2(nearSup)} – ${round2(nearRes)} · Chờ breakout`;
+        else if (nearRes)
+          tf.signal = `Sideway dưới kháng cự ${round2(nearRes)} · Chờ breakout`;
+        else
+          tf.signal = `Sideway trên hỗ trợ ${round2(nearSup)} · Chờ breakdown`;
+      }
+    }
+  }
   const patterns = detectLatestPatterns(stockData);
   const vol = analyzeVolume(stockData);
   const rs = calcRS(stockData, indexData);
