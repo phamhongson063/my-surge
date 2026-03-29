@@ -124,14 +124,72 @@ export async function handle(req, res, { pathname, parsed }) {
   if (pathname === "/symbols" && req.method === "GET") {
     try {
       const histDir = path.join(BASE_DIR, "database", "history");
-      const files = fs.existsSync(histDir)
+      const delistedPath = path.join(BASE_DIR, "database", "delisted.json");
+
+      let delisted = new Set();
+      try {
+        if (fs.existsSync(delistedPath)) {
+          const d = JSON.parse(fs.readFileSync(delistedPath, "utf8"));
+          delisted = new Set(d.symbols || []);
+        }
+      } catch (_) {}
+
+      const minVolume = parseInt(parsed.query.minVolume) || 0;
+
+      let files = fs.existsSync(histDir)
         ? fs
             .readdirSync(histDir)
             .filter((f) => /\.json$/i.test(f))
             .map((f) => f.replace(/\.json$/i, "").toUpperCase())
+            .filter((sym) => !delisted.has(sym))
             .sort()
         : [];
+
+      if (minVolume > 0) {
+        files = files.filter((sym) => {
+          try {
+            const raw = JSON.parse(fs.readFileSync(path.join(histDir, `${sym}.json`), "utf8"));
+            const records = raw.records;
+            if (!Array.isArray(records) || records.length === 0) return false;
+            const lastVol = records[records.length - 1].volume ?? 0;
+            return lastVol >= minVolume;
+          } catch (_) { return false; }
+        });
+      }
+
       sendJSON(res, 200, { symbols: files });
+    } catch (e) {
+      sendJSON(res, 500, { error: e.message });
+    }
+    return true;
+  }
+
+  // ─── Mark delisted ────────────────────────────────────────────────────────
+  if (pathname === "/api/mark-delisted" && req.method === "POST") {
+    try {
+      const body = await new Promise((resolve, reject) => {
+        let raw = "";
+        req.on("data", (c) => (raw += c));
+        req.on("end", () => { try { resolve(JSON.parse(raw)); } catch (e) { reject(e); } });
+        req.on("error", reject);
+      });
+      const symbol = (body.symbol ?? "").toUpperCase().trim();
+      if (!symbol) { sendJSON(res, 400, { error: "Thiếu symbol" }); return true; }
+
+      const delistedPath = path.join(BASE_DIR, "database", "delisted.json");
+      let data = { symbols: [] };
+      try {
+        if (fs.existsSync(delistedPath))
+          data = JSON.parse(fs.readFileSync(delistedPath, "utf8"));
+      } catch (_) {}
+
+      if (!data.symbols.includes(symbol)) {
+        data.symbols.push(symbol);
+        data.symbols.sort();
+        fs.writeFileSync(delistedPath, JSON.stringify(data, null, 2), "utf8");
+        console.log(`[Delisted] ✂️  ${symbol} đã được đánh dấu hủy niêm yết`);
+      }
+      sendJSON(res, 200, { ok: true, symbol });
     } catch (e) {
       sendJSON(res, 500, { error: e.message });
     }

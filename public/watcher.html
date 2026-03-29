@@ -60,6 +60,15 @@
       </div>
       <span id="filterBadge" style="display:none;font-size:12px;color:var(--gray400)"></span>
       <span id="scanTime" style="font-size:12px;color:var(--gray400)"></span>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--gray700);user-select:none"
+        title="Chỉ quét mã có khối lượng giao dịch phiên cuối ≥ 1 triệu">
+        <div id="volToggleTrack" onclick="toggleVolFilter()"
+          style="width:36px;height:20px;border-radius:10px;background:var(--gray200);position:relative;transition:background .2s;cursor:pointer;flex-shrink:0">
+          <div id="volToggleThumb"
+            style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)"></div>
+        </div>
+        KLGD ≥ 1M
+      </label>
       <button id="scanBtn" onclick="startScan()"
         style="height:38px;padding:0 20px;border-radius:10px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s"
         onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">
@@ -97,8 +106,8 @@
       Tải dữ liệu tại surge.html</a>
   </div>
 
-  <!-- Summary bar -->
-  <div id="summaryBar" style="display:none;gap:12px;margin-bottom:20px;flex-wrap:wrap"></div>
+  <!-- Tab bar -->
+  <div id="tabBar" style="display:none;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--gray200);padding-bottom:0;overflow-x:auto;white-space:nowrap"></div>
 
   <!-- Table -->
   <div id="tableWrap" style="display:none;background:var(--wht);border:1px solid var(--gray200);border-radius:16px;overflow:hidden">
@@ -125,6 +134,21 @@
 <script>
 const SERVER = `http://${location.hostname}:3000`;
 const BATCH  = 5; // số mã phân tích song song cùng lúc
+
+let volFilterOn = localStorage.getItem("watcher_volFilter") === "1";
+function toggleVolFilter(){
+  volFilterOn = !volFilterOn;
+  localStorage.setItem("watcher_volFilter", volFilterOn ? "1" : "0");
+  document.getElementById("volToggleTrack").style.background = volFilterOn ? "var(--navy)" : "var(--gray200)";
+  document.getElementById("volToggleThumb").style.transform  = volFilterOn ? "translateX(16px)" : "translateX(0)";
+}
+// Khởi tạo trạng thái toggle từ localStorage
+window.addEventListener("DOMContentLoaded", () => {
+  if(volFilterOn){
+    document.getElementById("volToggleTrack").style.background = "var(--navy)";
+    document.getElementById("volToggleThumb").style.transform  = "translateX(16px)";
+  }
+});
 
 const fp   = v => v == null ? "—" : parseFloat(v).toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:2});
 const fvol = v => { if(v==null) return "—"; if(v>=1e6) return (v/1e6).toFixed(2)+"M"; if(v>=1e3) return (v/1e3).toFixed(1)+"K"; return v.toLocaleString("vi-VN"); };
@@ -157,12 +181,14 @@ const GROUP = {
 };
 
 let scanResults = [];
+let activeTab = null; // null = Tất cả
 
 async function startScan(){
   // Load symbol list
   let symbols = [];
   try {
-    const r = await fetch(`${SERVER}/symbols`);
+    const url = volFilterOn ? `${SERVER}/symbols?minVolume=1000000` : `${SERVER}/symbols`;
+    const r = await fetch(url);
     const d = await r.json();
     symbols = d.symbols || [];
   } catch(e) {
@@ -178,7 +204,7 @@ async function startScan(){
   // Reset UI
   document.getElementById("emptyState").style.display="none";
   document.getElementById("tableWrap").style.display="none";
-  document.getElementById("summaryBar").style.display="none";
+  document.getElementById("tabBar").style.display="none";
   document.getElementById("loadingState").style.display="block";
   document.getElementById("scanBtn").disabled=true;
   document.getElementById("scanBtn").style.opacity=".5";
@@ -215,9 +241,18 @@ async function startScan(){
     const batch = symbols.slice(i, i + BATCH);
     await Promise.all(batch.map(async sym => {
       try {
-        const r = await fetch(`${SERVER}/analyze-detail?symbol=${sym}`);
+        const r = await fetch(`${SERVER}/analyze-detail?symbol=${sym}&lite=1`);
         const d = await r.json();
-        if(d.error){ updateProgress(sym, null); return; }
+        if(d.error){
+          // Tự động đánh dấu hủy niêm yết nếu không có/không đủ dữ liệu
+          fetch(`${SERVER}/api/mark-delisted`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol: sym }),
+          }).catch(() => {});
+          updateProgress(sym, null);
+          return;
+        }
 
         const ch = parseChange(d.latestChange);
         const rec = d.predictions?.recommendation;
@@ -282,38 +317,60 @@ async function startScan(){
   renderTable(scanResults);
 }
 
-function renderTable(rows){
-  // Summary
+function renderTabs(allRows){
   const counts = {0:0,1:0,2:0,3:0,4:0};
-  rows.forEach(r => { if(r.recPrio<=4) counts[r.recPrio]++; });
-  const sb = document.getElementById("summaryBar");
-  sb.style.display="flex";
-  sb.innerHTML = Object.entries(counts).filter(([,v])=>v>0).map(([p,v])=>{
-    const g = GROUP[p];
-    return `<div style="padding:10px 18px;border-radius:10px;background:${g.bg};border:1px solid ${g.bd};font-size:13px;display:flex;align-items:center;gap:10px">
-      <span style="color:${g.color};font-weight:700">${g.label}</span>
-      <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;color:${g.color}">${v}</span>
-    </div>`;
-  }).join('');
+  allRows.forEach(r => { if(r.recPrio<=4) counts[r.recPrio]++; });
+  const total = allRows.filter(r=>r.recPrio<=4).length;
 
-  // Table
-  const tbody = document.getElementById("tableBody");
+  const tb = document.getElementById("tabBar");
+  tb.style.display = "flex";
+
+  const tabs = [
+    { key: null, label: "Tất cả", count: total, color: "var(--navy)", bg: "var(--navy-l)", bd: "var(--navy)" },
+    ...Object.entries(counts).filter(([,v])=>v>0).map(([p,v])=>{
+      const g = GROUP[p];
+      return { key: parseInt(p), label: g.label, count: v, color: g.color, bg: g.bg, bd: g.color };
+    })
+  ];
+
+  tb.innerHTML = tabs.map(t => {
+    const isActive = activeTab === t.key;
+    return `<button onclick="setTab(${t.key === null ? 'null' : t.key})"
+      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:700;color:${isActive ? t.color : 'var(--gray500)'};border-bottom:2px solid ${isActive ? t.color : 'transparent'};margin-bottom:-2px;transition:all .15s;white-space:nowrap"
+      onmouseenter="if(${!isActive})this.style.color='var(--gray700)'"
+      onmouseleave="if(${!isActive})this.style.color='var(--gray500)'">
+      ${t.label}
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;padding:1px 7px;border-radius:20px;background:${isActive ? t.bg : 'var(--gray100)'};color:${isActive ? t.color : 'var(--gray400)'};">${t.count}</span>
+    </button>`;
+  }).join('');
+}
+
+function setTab(prio){
+  activeTab = prio;
+  const filtered = getFilteredRows();
+  renderTabs(scanResults);
+  renderRows(filtered);
+}
+
+function getFilteredRows(){
+  const textFilter = document.getElementById("filterInput").value.toUpperCase().trim();
+  let rows = activeTab === null ? scanResults : scanResults.filter(r => r.recPrio === activeTab);
+  if(textFilter) rows = rows.filter(r => r.symbol.includes(textFilter));
+  return rows;
+}
+
+function renderTable(rows){
+  renderTabs(rows);
+  renderRows(rows);
+}
+
+function renderRows(rows){
   document.getElementById("tableWrap").style.display="block";
+  const tbody = document.getElementById("tableBody");
 
   let html = "";
-  let lastPrio = -1;
 
   rows.forEach((r, i) => {
-    // Group header
-    if(r.recPrio !== lastPrio && r.recPrio <= 4){
-      const g = GROUP[r.recPrio];
-      html += `<tr><td colspan="9" class="group-header"
-        style="color:${g.color};background:${g.bg};border-bottom-color:${g.bd}">
-        ${g.label} · ${rows.filter(x=>x.recPrio===r.recPrio).length} mã
-      </td></tr>`;
-      lastPrio = r.recPrio;
-    }
-
     if(r.error){
       html += `<tr class="row-an" style="animation-delay:${i*0.015}s;opacity:.5">
         <td style="padding:12px 20px;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--gray400)">${r.symbol}</td>
@@ -375,21 +432,16 @@ window.addEventListener("load", () => {
 });
 
 function applyFilter(val){
-  val = val.toUpperCase().trim();
-  const badge = document.getElementById("filterBadge");
-
   if(!scanResults.length) return;
-
-  const filtered = val ? scanResults.filter(r => r.symbol.includes(val)) : scanResults;
-
-  if(val){
+  const badge = document.getElementById("filterBadge");
+  const filtered = getFilteredRows();
+  if(val.trim()){
     badge.style.display = "inline";
     badge.textContent = filtered.length ? `${filtered.length} kết quả` : "Không tìm thấy";
   } else {
     badge.style.display = "none";
   }
-
-  renderTable(filtered);
+  renderRows(filtered);
 }
 </script>
 </body>

@@ -107,7 +107,8 @@
       "Bash(grep -rn \"msh-stream\\\\|msh_stream\\\\|msh\" /Users/son.ph/my-surge/routes/*.mjs)",
       "Bash(grep -rn msh /Users/son.ph/my-surge/main.mjs /Users/son.ph/my-surge/lib/*.mjs)",
       "Bash(grep -rn \"msh-stream\\\\|text/event-stream\" /Users/son.ph/my-surge/ --include=*.mjs)",
-      "Bash(grep -rn \"msh-stream\\\\|mshUrl\\\\|MSH_URL\" /Users/son.ph/my-surge/ --include=*.mjs --include=*.js)"
+      "Bash(grep -rn \"msh-stream\\\\|mshUrl\\\\|MSH_URL\" /Users/son.ph/my-surge/ --include=*.mjs --include=*.js)",
+      "Bash(ls -la /Users/son.ph/my-surge/public/*.js)"
     ]
   }
 }

@@ -108,11 +108,12 @@ export async function handle(req, res, { pathname, parsed }) {
       )}] 🔍 Phân tích chi tiết: ${symbol}`
     );
     try {
+      const lite = parsed.query.lite === "1";
       const [result, companyInfo] = await Promise.all([
         analyzeDetail(null, symbol),
-        getCompanyInfo(symbol),
+        lite ? Promise.resolve(null) : getCompanyInfo(symbol),
       ]);
-      if (!result.error) result.companyInfo = companyInfo;
+      if (!result.error && companyInfo) result.companyInfo = companyInfo;
       sendJSON(res, result.error ? 400 : 200, result);
     } catch (err) {
       console.error(`   ❌ Lỗi: ${err.message}`);
