@@ -8,42 +8,56 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0f1923;
-      --wht: #1a2f42;
-      --gray50: #172a3a;
-      --gray100: #1e3448;
-      --gray200: #2a4a63;
-      --gray400: #6b8ba4;
-      --gray500: #a8bfd0;
-      --gray700: #c8dce8;
-      --gray900: #e8edf2;
-      --navy: #4da3ff;
-      --navy-l: rgba(77,163,255,0.12);
-      --up: #00d26a;
-      --up-bg: rgba(0,210,106,0.08);
-      --dn: #ff4757;
-      --dn-bg: rgba(255,71,87,0.08);
-      --am: #ffb300;
-      --teal: #2dd4bf;
-      --teal-l: rgba(45,212,191,0.12);
-      --teal-bd: rgba(45,212,191,0.25);
-      --rose: #fb7185;
-      --rose-l: rgba(251,113,133,0.12);
-      --violet: #a78bfa;
-      --violet-l: rgba(167,139,250,0.12);
+      --bg: #eef2f8;
+      --surface: #ffffff;
+      --surface2: #f5f8fc;
+      --border: #dde5ef;
+      --shadow-sm: 0 1px 3px rgba(30,50,80,0.08), 0 1px 2px rgba(30,50,80,0.04);
+      --shadow-md: 0 4px 16px rgba(30,50,80,0.10), 0 2px 4px rgba(30,50,80,0.06);
+      --shadow-lg: 0 16px 48px rgba(30,50,80,0.14), 0 4px 12px rgba(30,50,80,0.08);
+      --text: #1a2840;
+      --text2: #475c7a;
+      --muted: #8aa0bb;
+      /* legacy aliases */
+      --wht: var(--surface);
+      --gray50: var(--surface2);
+      --gray100: #f1f5fb;
+      --gray200: var(--border);
+      --gray400: var(--muted);
+      --gray500: var(--text2);
+      --gray700: var(--text2);
+      --gray900: var(--text);
+      --navy: #2563eb;
+      --navy-l: rgba(37,99,235,0.09);
+      --up: #059669;
+      --up-bg: rgba(5,150,105,0.09);
+      --dn: #dc2626;
+      --dn-bg: rgba(220,38,38,0.09);
+      --am: #d97706;
+      --am-l: rgba(217,119,6,0.09);
+      --teal: #0d9488;
+      --teal-l: rgba(13,148,136,0.09);
+      --teal-bd: rgba(13,148,136,0.25);
+      --rose: #e11d48;
+      --rose-l: rgba(225,29,72,0.09);
+      --rose-bd: rgba(225,29,72,0.22);
+      --violet: #7c3aed;
+      --violet-l: rgba(124,58,237,0.09);
+      --violet-bd: rgba(124,58,237,0.22);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
       background: var(--bg);
-      color: var(--gray900);
+      color: var(--text);
       font-family: 'Noto Sans', sans-serif;
       font-size: 15px;
       overflow: hidden;
     }
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--gray200); border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
     /* ── Layout ── */
     .app-shell {
@@ -54,71 +68,126 @@
 
     /* ── Titlebar ── */
     .titlebar {
-      height: 52px;
-      background: rgba(20,38,58,0.95);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      height: 54px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      padding: 0 16px;
+      padding: 0 20px;
       gap: 12px;
       flex-shrink: 0;
-      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow-sm);
     }
     .btn-back {
       width: 32px; height: 32px;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.06);
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      color: var(--gray500);
+      color: var(--text2);
       transition: all 0.15s;
       text-decoration: none;
     }
-    .btn-back:hover { background: rgba(255,255,255,0.12); color: var(--gray900); }
+    .btn-back:hover { background: var(--border); color: var(--text); }
     .titlebar-icon {
       width: 32px; height: 32px;
-      border-radius: 8px;
+      border-radius: 9px;
       background: linear-gradient(145deg, #0d9488, #0f766e);
       display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(13,148,136,0.32);
     }
     .titlebar-title {
       font-size: 15px;
       font-weight: 700;
-      color: var(--gray900);
+      color: var(--text);
       letter-spacing: 0.3px;
     }
     .titlebar-sub {
       font-size: 11px;
-      color: var(--gray400);
+      color: var(--muted);
       margin-left: 2px;
     }
     .titlebar-spacer { flex: 1; }
     .search-wrap {
       position: relative;
-      width: 240px;
+      width: 260px;
     }
     .search-wrap svg {
       position: absolute;
       left: 10px; top: 50%;
       transform: translateY(-50%);
-      color: var(--gray400);
+      color: var(--muted);
       pointer-events: none;
     }
     #searchInput {
       width: 100%;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
       padding: 7px 12px 7px 34px;
       font-size: 13px;
-      color: var(--gray900);
+      color: var(--text);
       font-family: 'Noto Sans', sans-serif;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    #searchInput::placeholder { color: var(--gray400); }
-    #searchInput:focus { border-color: var(--teal); }
+    #searchInput::placeholder { color: var(--muted); }
+    #searchInput:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .stat-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stat-num {
+      font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text2);
+    }
+    .stats-divider {
+      width: 1px; height: 16px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+    .stats-spacer { flex: 1; }
+    .read-all-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .read-all-bar {
+      width: 80px; height: 4px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .read-all-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), #14b8a6);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
 
     /* ── Body: sidebar + main ── */
     .body-wrap {
@@ -129,23 +198,23 @@
 
     /* ── Sidebar ── */
     .sidebar {
-      width: 200px;
+      width: 218px;
       flex-shrink: 0;
-      background: rgba(20,38,58,0.6);
-      border-right: 1px solid rgba(255,255,255,0.06);
-      padding: 16px 12px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       overflow-y: auto;
     }
     .sidebar-label {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
-      color: var(--gray400);
-      padding: 4px 8px 8px;
+      color: var(--muted);
+      padding: 4px 10px 8px;
       margin-top: 8px;
     }
     .sidebar-label:first-child { margin-top: 0; }
@@ -154,22 +223,22 @@
       align-items: center;
       gap: 9px;
       padding: 8px 10px;
-      border-radius: 8px;
+      border-radius: 9px;
       cursor: pointer;
       transition: all 0.15s;
-      border: none;
+      border: 1.5px solid transparent;
       background: transparent;
-      color: var(--gray500);
+      color: var(--text2);
       font-size: 13px;
       font-family: 'Noto Sans', sans-serif;
       text-align: left;
       width: 100%;
     }
-    .cat-btn:hover { background: rgba(255,255,255,0.06); color: var(--gray900); }
+    .cat-btn:hover { background: var(--surface2); color: var(--text); }
     .cat-btn.active {
       background: var(--teal-l);
       color: var(--teal);
-      border: 1px solid var(--teal-bd);
+      border-color: var(--teal-bd);
     }
     .cat-btn .cat-icon {
       width: 28px; height: 28px;
@@ -180,21 +249,49 @@
     .cat-count {
       margin-left: auto;
       font-size: 11px;
-      background: rgba(255,255,255,0.07);
+      background: var(--border);
       border-radius: 10px;
-      padding: 1px 7px;
-      color: var(--gray400);
+      padding: 2px 8px;
+      color: var(--text2);
+      font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace;
     }
     .cat-btn.active .cat-count {
-      background: rgba(45,212,191,0.15);
+      background: var(--teal-bd);
       color: var(--teal);
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 4px 0;
+      border-top: 1px solid var(--border);
+    }
+    .progress-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-label strong { color: var(--text2); font-family: 'IBM Plex Mono', monospace; }
+    .progress-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), #14b8a6);
+      border-radius: 3px;
+      transition: width 0.4s ease;
     }
 
     /* ── Main content ── */
     .main-content {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 24px;
+      padding: 22px 24px 32px;
     }
     .section-header {
       display: flex;
@@ -203,38 +300,79 @@
       margin-bottom: 16px;
     }
     .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--gray900);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
     }
     .section-count {
       font-size: 12px;
-      color: var(--gray400);
+      color: var(--muted);
+      background: var(--border);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
     }
+
+    /* ── Level filter pills ── */
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .pill {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+      transition: all 0.15s;
+      font-family: 'Noto Sans', sans-serif;
+    }
+    .pill:hover { border-color: var(--teal-bd); color: var(--teal); }
+    .pill.active { background: var(--teal); color: #fff; border-color: var(--teal); }
 
     /* ── Article grid ── */
     .articles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
       gap: 16px;
     }
     .article-card {
-      background: var(--wht);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
     .article-card:hover {
-      border-color: rgba(255,255,255,0.14);
+      border-color: var(--teal-bd);
       transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+      box-shadow: var(--shadow-md);
+    }
+    .article-card.is-read { opacity: 0.72; }
+    .read-check {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 22px; height: 22px;
+      background: var(--up);
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(5,150,105,0.3);
     }
     .card-thumb {
-      height: 110px;
+      height: 124px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -243,10 +381,16 @@
     }
     .card-thumb-bg {
       position: absolute; inset: 0;
-      opacity: 0.15;
+      opacity: 0.18;
     }
     .card-thumb svg {
       position: relative; z-index: 1;
+    }
+    .card-thumb-dots {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.06;
     }
     .card-body {
       padding: 14px 16px 16px;
@@ -257,7 +401,7 @@
     }
     .card-tags {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
     .tag {
@@ -269,36 +413,48 @@
       font-weight: 700;
       letter-spacing: 0.2px;
     }
-    .tag-learn { background: var(--teal-l); color: var(--teal); border: 1px solid var(--teal-bd); }
-    .tag-story { background: var(--rose-l); color: var(--rose); border: 1px solid rgba(251,113,133,0.25); }
-    .tag-mindset { background: var(--violet-l); color: var(--violet); border: 1px solid rgba(167,139,250,0.25); }
-    .tag-strategy { background: rgba(255,179,0,0.1); color: var(--am); border: 1px solid rgba(255,179,0,0.25); }
-    .tag-beginner { background: var(--up-bg); color: var(--up); border: 1px solid rgba(0,210,106,0.2); }
-    .tag-advanced { background: var(--dn-bg); color: var(--dn); border: 1px solid rgba(255,71,87,0.2); }
+    .tag-learn { background: var(--teal-l); color: var(--teal); border: 1.5px solid var(--teal-bd); }
+    .tag-story { background: var(--rose-l); color: var(--rose); border: 1.5px solid var(--rose-bd); }
+    .tag-mindset { background: var(--violet-l); color: var(--violet); border: 1.5px solid var(--violet-bd); }
+    .tag-strategy { background: var(--am-l); color: var(--am); border: 1.5px solid rgba(217,119,6,0.22); }
+    .tag-beginner { background: var(--up-bg); color: var(--up); border: 1.5px solid rgba(5,150,105,0.22); }
+    .tag-advanced { background: var(--dn-bg); color: var(--dn); border: 1.5px solid rgba(220,38,38,0.22); }
 
     .card-title {
       font-size: 14px;
       font-weight: 700;
-      color: var(--gray900);
+      color: var(--text);
       line-height: 1.45;
     }
     .card-desc {
       font-size: 12.5px;
-      color: var(--gray500);
-      line-height: 1.55;
+      color: var(--text2);
+      line-height: 1.6;
       flex: 1;
     }
     .card-meta {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
       font-size: 11.5px;
-      color: var(--gray400);
-      padding-top: 8px;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      color: var(--muted);
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
       margin-top: auto;
     }
+    .card-meta-left { display: flex; align-items: center; gap: 5px; }
     .card-meta svg { flex-shrink: 0; }
+    .read-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--up);
+      background: var(--up-bg);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -306,7 +462,7 @@
       justify-content: center;
       gap: 12px;
       padding: 80px 20px;
-      color: var(--gray400);
+      color: var(--muted);
       text-align: center;
     }
     .empty-state p { font-size: 14px; }
@@ -314,7 +470,8 @@
     /* ── Article Modal ── */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.65);
+      background: rgba(26,40,64,0.45);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -328,41 +485,53 @@
       pointer-events: auto;
     }
     .modal-panel {
-      background: #132030;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
       width: 100%;
-      max-width: 720px;
+      max-width: 740px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transform: translateY(12px) scale(0.98);
-      transition: transform 0.2s;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      transform: translateY(16px) scale(0.97);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: var(--shadow-lg);
     }
     .modal-overlay.open .modal-panel {
       transform: translateY(0) scale(1);
     }
+    .modal-read-bar {
+      height: 3px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .modal-read-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), #14b8a6);
+      width: 0%;
+      transition: width 0.12s linear;
+    }
     .modal-header {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: flex-start;
       gap: 14px;
       flex-shrink: 0;
     }
     .modal-icon {
-      width: 44px; height: 44px;
-      border-radius: 12px;
+      width: 46px; height: 46px;
+      border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .modal-header-info { flex: 1; }
     .modal-title {
       font-size: 17px;
       font-weight: 800;
-      color: var(--gray900);
+      color: var(--text);
       line-height: 1.35;
       margin-bottom: 8px;
     }
@@ -371,40 +540,51 @@
       align-items: center;
       gap: 12px;
       font-size: 12px;
-      color: var(--gray400);
+      color: var(--muted);
       flex-wrap: wrap;
     }
     .btn-close {
       width: 30px; height: 30px;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.06);
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      color: var(--gray500);
+      color: var(--text2);
       transition: all 0.15s;
       flex-shrink: 0;
     }
-    .btn-close:hover { background: rgba(255,71,87,0.15); color: var(--dn); border-color: rgba(255,71,87,0.3); }
+    .btn-close:hover { background: var(--dn-bg); color: var(--dn); border-color: rgba(220,38,38,0.3); }
     .modal-body {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 28px;
+      padding: 24px 28px 28px;
     }
     /* Article typography */
     .article-content h2 {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 700;
       color: var(--teal);
-      margin: 20px 0 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(45,212,191,0.15);
+      margin: 22px 0 10px;
+      padding-bottom: 7px;
+      border-bottom: 1.5px solid var(--teal-bd);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .article-content h2::before {
+      content: '';
+      display: inline-block;
+      width: 3px; height: 14px;
+      background: var(--teal);
+      border-radius: 2px;
+      flex-shrink: 0;
     }
     .article-content h2:first-child { margin-top: 0; }
     .article-content p {
       font-size: 14px;
-      line-height: 1.75;
-      color: var(--gray700);
+      line-height: 1.82;
+      color: var(--text2);
       margin-bottom: 14px;
     }
     .article-content ul, .article-content ol {
@@ -413,41 +593,41 @@
     }
     .article-content li {
       font-size: 14px;
-      line-height: 1.75;
-      color: var(--gray700);
+      line-height: 1.82;
+      color: var(--text2);
       margin-bottom: 6px;
     }
-    .article-content strong { color: var(--gray900); font-weight: 700; }
+    .article-content strong { color: var(--text); font-weight: 700; }
     .article-content em { color: var(--am); font-style: normal; font-weight: 600; }
     .highlight-box {
       background: var(--teal-l);
-      border: 1px solid var(--teal-bd);
+      border: 1.5px solid var(--teal-bd);
       border-left: 3px solid var(--teal);
       border-radius: 0 10px 10px 0;
       padding: 14px 16px;
       margin: 16px 0;
       font-size: 13.5px;
-      line-height: 1.65;
-      color: var(--gray700);
+      line-height: 1.7;
+      color: var(--text2);
     }
     .highlight-box.rose {
       background: var(--rose-l);
-      border-color: rgba(251,113,133,0.25);
+      border-color: var(--rose-bd);
       border-left-color: var(--rose);
     }
     .highlight-box.violet {
       background: var(--violet-l);
-      border-color: rgba(167,139,250,0.25);
+      border-color: var(--violet-bd);
       border-left-color: var(--violet);
     }
     .highlight-box.amber {
-      background: rgba(255,179,0,0.08);
-      border-color: rgba(255,179,0,0.2);
+      background: var(--am-l);
+      border-color: rgba(217,119,6,0.22);
       border-left-color: var(--am);
     }
     .key-number {
       display: inline-block;
-      background: rgba(45,212,191,0.15);
+      background: var(--teal-l);
       color: var(--teal);
       border-radius: 6px;
       padding: 1px 8px;
@@ -455,6 +635,51 @@
       font-size: 13px;
       font-weight: 700;
     }
+    /* Related articles */
+    .related-section {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1.5px solid var(--border);
+    }
+    .related-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .related-list { display: flex; flex-direction: column; gap: 8px; }
+    .related-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--surface2);
+    }
+    .related-item:hover { border-color: var(--teal-bd); background: var(--teal-l); transform: translateX(2px); }
+    .related-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .related-info { flex: 1; min-width: 0; }
+    .related-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .related-meta { font-size: 11px; color: var(--muted); }
+    .related-arrow { color: var(--muted); flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -485,46 +710,82 @@
     </div>
   </header>
 
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-dot" style="background:var(--teal)"></span>
+      <span class="stat-num" id="statTotal">0</span> bài viết
+    </div>
+    <div class="stats-divider"></div>
+    <div class="stat-item">
+      <span class="stat-dot" style="background:var(--violet)"></span>
+      4 chủ đề
+    </div>
+    <div class="stats-divider"></div>
+    <div class="stat-item">
+      <span class="stat-dot" style="background:var(--up)"></span>
+      <span class="stat-num" id="statRead">0</span> đã đọc
+    </div>
+    <div class="stats-spacer"></div>
+    <div class="read-all-progress">
+      <span id="readAllPct">0%</span>
+      <div class="read-all-bar">
+        <div class="read-all-fill" id="readAllFill" style="width:0%"></div>
+      </div>
+      hoàn thành
+    </div>
+  </div>
+
   <div class="body-wrap">
 
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-label">Danh mục</div>
       <button class="cat-btn active" data-cat="all">
-        <span class="cat-icon" style="background:rgba(45,212,191,0.15)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="cat-icon" style="background:var(--teal-l)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </span>
         Tất cả
         <span class="cat-count" id="cnt-all">0</span>
       </button>
       <button class="cat-btn" data-cat="learn">
-        <span class="cat-icon" style="background:rgba(45,212,191,0.12)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span class="cat-icon" style="background:var(--teal-l)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </span>
         Học chứng khoán
         <span class="cat-count" id="cnt-learn">0</span>
       </button>
       <button class="cat-btn" data-cat="story">
-        <span class="cat-icon" style="background:rgba(251,113,133,0.12)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="cat-icon" style="background:var(--rose-l)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </span>
         Câu chuyện đầu tư
         <span class="cat-count" id="cnt-story">0</span>
       </button>
       <button class="cat-btn" data-cat="mindset">
-        <span class="cat-icon" style="background:rgba(167,139,250,0.12)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="cat-icon" style="background:var(--violet-l)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </span>
         Tâm lý đầu tư
         <span class="cat-count" id="cnt-mindset">0</span>
       </button>
       <button class="cat-btn" data-cat="strategy">
-        <span class="cat-icon" style="background:rgba(255,179,0,0.1)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffb300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="cat-icon" style="background:var(--am-l)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </span>
         Chiến lược
         <span class="cat-count" id="cnt-strategy">0</span>
       </button>
+
+      <div class="sidebar-footer">
+        <div class="progress-label">
+          <span>Tiến độ đọc</span>
+          <strong id="progressCount">0/0</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
     </aside>
 
     <!-- Main -->
@@ -532,6 +793,12 @@
       <div class="section-header">
         <div class="section-title" id="sectionTitle">Tất cả bài viết</div>
         <div class="section-count" id="sectionCount"></div>
+      </div>
+      <div class="filter-pills" id="filterPills">
+        <button class="pill active" data-level="all">Tất cả cấp độ</button>
+        <button class="pill" data-level="beginner">Cơ bản</button>
+        <button class="pill" data-level="advanced">Nâng cao</button>
+        <button class="pill" data-level="unread">Chưa đọc</button>
       </div>
       <div class="articles-grid" id="articlesGrid"></div>
     </main>
@@ -542,6 +809,7 @@
 <!-- Article Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-panel">
+    <div class="modal-read-bar"><div class="modal-read-fill" id="modalReadFill"></div></div>
     <div class="modal-header">
       <div class="modal-icon" id="modalIcon"></div>
       <div class="modal-header-info">
@@ -557,614 +825,65 @@
 </div>
 
 <script>
-// ── Article data ──
-const ARTICLES = [
-  // ── HỌC CHỨNG KHOÁN ──
-  {
-    id: 1,
-    cat: 'learn',
-    level: 'beginner',
-    title: 'RSI là gì? Hướng dẫn sử dụng chỉ báo sức mạnh tương đối',
-    desc: 'Tìm hiểu chỉ báo RSI (Relative Strength Index), cách đọc vùng mua bán quá mức và tín hiệu phân kỳ trong phân tích kỹ thuật.',
-    tags: ['learn', 'beginner'],
-    readTime: '8 phút',
-    thumb: '#0d9488',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(45,212,191,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#0d9488,#0f766e)',
-    content: `
-      <h2>RSI là gì?</h2>
-      <p>RSI (Relative Strength Index - Chỉ số sức mạnh tương đối) là chỉ báo động lực được phát triển bởi J. Welles Wilder Jr. vào năm 1978. RSI đo lường tốc độ và mức độ thay đổi giá, dao động trong khoảng từ <strong>0 đến 100</strong>.</p>
-      <div class="highlight-box">
-        <strong>Công thức tính:</strong><br/>
-        RSI = 100 − [100 ÷ (1 + RS)]<br/>
-        Trong đó RS = Trung bình tăng / Trung bình giảm (thường dùng 14 phiên)
-      </div>
-      <h2>Cách đọc RSI</h2>
-      <ul>
-        <li><strong>RSI > 70:</strong> Vùng <em>mua quá mức</em> (Overbought) — có thể sắp điều chỉnh</li>
-        <li><strong>RSI < 30:</strong> Vùng <em>bán quá mức</em> (Oversold) — có thể sắp hồi phục</li>
-        <li><strong>RSI = 50:</strong> Trung tính, không có xu hướng rõ ràng</li>
-      </ul>
-      <h2>Tín hiệu phân kỳ (Divergence)</h2>
-      <p>Đây là tín hiệu mạnh nhất của RSI:</p>
-      <ul>
-        <li><strong>Phân kỳ dương (Bullish Divergence):</strong> Giá tạo đáy thấp hơn, nhưng RSI tạo đáy cao hơn → tín hiệu đảo chiều tăng.</li>
-        <li><strong>Phân kỳ âm (Bearish Divergence):</strong> Giá tạo đỉnh cao hơn, nhưng RSI tạo đỉnh thấp hơn → tín hiệu đảo chiều giảm.</li>
-      </ul>
-      <div class="highlight-box rose">
-        <strong>Lưu ý thực tế:</strong> RSI trong xu hướng tăng mạnh có thể nằm ở vùng 60–80 trong thời gian dài mà không giảm. Đừng chỉ bán vì RSI > 70 khi cổ phiếu đang trong uptrend mạnh.
-      </div>
-      <h2>Ứng dụng thực tế</h2>
-      <p>Kết hợp RSI với các chỉ báo khác để tăng độ chính xác:</p>
-      <ul>
-        <li>RSI + MACD: Xác nhận xu hướng và điểm vào</li>
-        <li>RSI + Bollinger Bands: Nhận biết vùng quá mua/bán trong ngưỡng biến động</li>
-        <li>RSI + Hỗ trợ/Kháng cự: Tìm điểm đảo chiều tại các mức giá quan trọng</li>
-      </ul>
-      <p>RSI là công cụ hữu ích nhưng <strong>không bao giờ dùng một mình</strong>. Luôn xác nhận tín hiệu từ nhiều nguồn khác nhau trước khi ra quyết định.</p>
-    `
-  },
-  {
-    id: 2,
-    cat: 'learn',
-    level: 'beginner',
-    title: 'MACD — Chỉ báo xu hướng và động lực thị trường',
-    desc: 'MACD là một trong những chỉ báo phổ biến nhất. Tìm hiểu cách đọc đường tín hiệu, histogram và các tín hiệu giao cắt.',
-    tags: ['learn', 'beginner'],
-    readTime: '10 phút',
-    thumb: '#2563eb',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(96,165,250,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#2563eb,#1d4ed8)',
-    content: `
-      <h2>MACD là gì?</h2>
-      <p>MACD (Moving Average Convergence Divergence) được Gerald Appel phát triển vào cuối những năm 1970. Đây là chỉ báo theo xu hướng kết hợp với đo lường động lực, gồm 3 thành phần:</p>
-      <ul>
-        <li><strong>Đường MACD:</strong> EMA(12) − EMA(26)</li>
-        <li><strong>Đường Signal:</strong> EMA(9) của MACD</li>
-        <li><strong>Histogram:</strong> MACD − Signal (thể hiện lực đà)</li>
-      </ul>
-      <h2>Tín hiệu giao cắt (Crossover)</h2>
-      <div class="highlight-box">
-        <strong>Tín hiệu mua:</strong> Đường MACD cắt lên trên đường Signal từ dưới lên (Golden Cross)<br/>
-        <strong>Tín hiệu bán:</strong> Đường MACD cắt xuống dưới đường Signal từ trên xuống (Death Cross)
-      </div>
-      <h2>Đọc Histogram</h2>
-      <p>Histogram cho thấy <em>lực đà</em> đang thay đổi:</p>
-      <ul>
-        <li>Histogram tăng dần → lực tăng đang mạnh lên</li>
-        <li>Histogram giảm dần → đà tăng đang yếu đi (dù giá vẫn tăng)</li>
-        <li>Histogram chuyển sang âm → xu hướng đã đổi chiều</li>
-      </ul>
-      <h2>Phân kỳ MACD</h2>
-      <p>Tương tự RSI, phân kỳ giữa giá và MACD là tín hiệu đảo chiều quan trọng. Phân kỳ dương trên đường zero rất mạnh trong giai đoạn tích lũy.</p>
-      <div class="highlight-box rose">
-        <strong>Nhược điểm:</strong> MACD là chỉ báo trễ (lagging indicator) — tín hiệu đến sau khi giá đã di chuyển một đoạn. Trong thị trường sideway, MACD tạo ra nhiều tín hiệu giả.
-      </div>
-      <h2>Cài đặt tối ưu</h2>
-      <p>Cài đặt mặc định <span class="key-number">(12, 26, 9)</span> phù hợp cho swing trading. Với intraday có thể dùng <span class="key-number">(5, 13, 1)</span> để nhạy hơn.</p>
-    `
-  },
-  {
-    id: 3,
-    cat: 'learn',
-    level: 'beginner',
-    title: 'Bollinger Bands — Đo lường biến động và vùng giá cực trị',
-    desc: 'Bollinger Bands giúp xác định vùng giá cao/thấp bất thường và nhận biết thị trường chuẩn bị bứt phá hay điều chỉnh.',
-    tags: ['learn', 'beginner'],
-    readTime: '7 phút',
-    thumb: '#7c3aed',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#7c3aed,#5b21b6)',
-    content: `
-      <h2>Bollinger Bands là gì?</h2>
-      <p>Bollinger Bands được John Bollinger phát triển vào đầu những năm 1980, gồm 3 dải:</p>
-      <ul>
-        <li><strong>Dải giữa (Middle Band):</strong> SMA(20) — đường trung bình động 20 phiên</li>
-        <li><strong>Dải trên (Upper Band):</strong> SMA(20) + 2 × Độ lệch chuẩn</li>
-        <li><strong>Dải dưới (Lower Band):</strong> SMA(20) − 2 × Độ lệch chuẩn</li>
-      </ul>
-      <div class="highlight-box violet">
-        Khoảng 95% giá nằm trong hai dải. Khi giá chạm dải trên/dưới, đó là trạng thái bất thường về mặt thống kê.
-      </div>
-      <h2>Các chiến lược sử dụng</h2>
-      <h2>1. Bollinger Squeeze (Co thắt)</h2>
-      <p>Khi hai dải thu hẹp lại gần nhau → biến động thấp → chuẩn bị bứt phá mạnh. Đây là thời điểm cần chú ý vì bứt phá có thể xảy ra bất cứ lúc nào.</p>
-      <h2>2. Giao dịch ngược xu hướng (Mean Reversion)</h2>
-      <p>Trong thị trường sideway: giá chạm dải trên → cân nhắc bán, giá chạm dải dưới → cân nhắc mua.</p>
-      <h2>3. Ride the Bands (Đi theo dải)</h2>
-      <p>Trong uptrend mạnh, giá liên tục đi dọc dải trên (Riding the Upper Band). Đây là dấu hiệu cổ phiếu rất mạnh, <strong>không nên bán</strong> chỉ vì giá ở dải trên.</p>
-      <div class="highlight-box rose">
-        <strong>Sai lầm phổ biến:</strong> Tự động bán khi giá chạm dải trên trong uptrend mạnh. Bollinger Bands hoạt động tốt nhất trong thị trường sideway, kém hiệu quả trong xu hướng mạnh.
-      </div>
-    `
-  },
-  {
-    id: 4,
-    cat: 'learn',
-    level: 'beginner',
-    title: 'Phân tích khối lượng giao dịch — Hơi thở của thị trường',
-    desc: 'Khối lượng là chỉ báo sớm nhất và trung thực nhất. Học cách đọc khối lượng để xác nhận xu hướng và phát hiện tín hiệu sớm.',
-    tags: ['learn', 'beginner'],
-    readTime: '9 phút',
-    thumb: '#dc2626',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,71,87,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#dc2626,#991b1b)',
-    content: `
-      <h2>Tại sao khối lượng quan trọng?</h2>
-      <p>Giá nói lên <em>điều gì đang xảy ra</em>, khối lượng giải thích <em>tại sao</em> nó xảy ra. Khối lượng đại diện cho <strong>lực cầu và lực cung</strong> thực sự đứng sau mỗi sự thay đổi giá.</p>
-      <div class="highlight-box">
-        <strong>Nguyên tắc vàng:</strong><br/>
-        • Giá tăng + Khối lượng tăng = Xu hướng tăng <em>xác nhận</em><br/>
-        • Giá tăng + Khối lượng giảm = Xu hướng tăng <em>yếu, cảnh báo</em><br/>
-        • Giá giảm + Khối lượng tăng = Áp lực bán mạnh<br/>
-        • Giá giảm + Khối lượng giảm = Điều chỉnh thường
-      </div>
-      <h2>Đột biến khối lượng (Volume Surge)</h2>
-      <p>Khối lượng đột biến (gấp 2-3 lần trung bình 20 phiên) kết hợp giá tăng mạnh thường báo hiệu:</p>
-      <ul>
-        <li>Sự tham gia của tổ chức lớn (smart money)</li>
-        <li>Breakout thực sự khỏi vùng tích lũy</li>
-        <li>Bắt đầu một giai đoạn tăng mới</li>
-      </ul>
-      <h2>Phân tích On-Balance Volume (OBV)</h2>
-      <p>OBV tích lũy khối lượng theo hướng giá, giúp nhận biết dòng tiền thực đang vào hay ra. OBV tăng khi giá sideway = smart money đang tích lũy.</p>
-      <div class="highlight-box violet">
-        <strong>Ứng dụng trong ứng dụng này:</strong> Tính năng "Đột biến" (Surge) chính là công cụ phát hiện những cổ phiếu có khối lượng tăng đột biến so với MA20 — đây là nền tảng của phân tích khối lượng.
-      </div>
-    `
-  },
-  {
-    id: 5,
-    cat: 'learn',
-    level: 'beginner',
-    title: 'Hỗ trợ & Kháng cự — Nền tảng phân tích kỹ thuật',
-    desc: 'Vùng hỗ trợ và kháng cự là những khái niệm cơ bản nhất trong phân tích kỹ thuật. Hiểu đúng hai khái niệm này sẽ thay đổi cách nhìn của bạn về thị trường.',
-    tags: ['learn', 'beginner'],
-    readTime: '8 phút',
-    thumb: '#f59e0b',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,179,0,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#f59e0b,#d97706)',
-    content: `
-      <h2>Hỗ trợ là gì?</h2>
-      <p>Vùng <strong>hỗ trợ (Support)</strong> là mức giá mà tại đó lực cầu đủ mạnh để dừng đà giảm của giá. Đây là "sàn" tâm lý mà người mua sẵn sàng vào hàng.</p>
-      <h2>Kháng cự là gì?</h2>
-      <p>Vùng <strong>kháng cự (Resistance)</strong> là mức giá mà tại đó áp lực bán đủ lớn để ngăn giá tiếp tục tăng. Đây là "trần" mà người bán chốt lời hoặc short vào.</p>
-      <div class="highlight-box amber">
-        <strong>Nguyên tắc đảo vai trò:</strong> Khi giá phá vỡ kháng cự thành công → kháng cự đó trở thành hỗ trợ mới. Khi giá phá vỡ hỗ trợ → hỗ trợ đó trở thành kháng cự mới.
-      </div>
-      <h2>Cách xác định vùng hỗ trợ/kháng cự</h2>
-      <ul>
-        <li><strong>Đỉnh/Đáy lịch sử:</strong> Các điểm giá bị từ chối nhiều lần trong quá khứ</li>
-        <li><strong>Các mức round number:</strong> 10,000 / 20,000 / 50,000 VNĐ... có tâm lý mạnh</li>
-        <li><strong>Moving Average:</strong> MA20, MA50, MA200 đóng vai hỗ trợ/kháng cự động</li>
-        <li><strong>Fibonacci Retracement:</strong> Các mức 38.2%, 50%, 61.8%</li>
-      </ul>
-      <h2>Điểm mua lý tưởng</h2>
-      <p>Mua tại vùng hỗ trợ <em>chỉ khi có xác nhận</em> (nến đảo chiều, RSI oversold, khối lượng giảm khi giá chạm hỗ trợ). Không mua đơn thuần vì "giá đã về vùng hỗ trợ".</p>
-    `
-  },
-  {
-    id: 6,
-    cat: 'learn',
-    level: 'advanced',
-    title: 'Mô hình nến Nhật (Japanese Candlestick) cần biết',
-    desc: 'Từ Doji, Hammer, Engulfing đến Morning Star — các mô hình nến đảo chiều quan trọng và cách nhận biết chúng trong thực tế.',
-    tags: ['learn', 'advanced'],
-    readTime: '12 phút',
-    thumb: '#0891b2',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(45,191,210,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="12" rx="1"/><line x1="5" y1="4" x2="5" y2="2"/><line x1="5" y1="16" x2="5" y2="20"/><rect x="10" y="7" width="4" height="8" rx="1"/><line x1="12" y1="7" x2="12" y2="3"/><line x1="12" y1="15" x2="12" y2="19"/><rect x="17" y="5" width="4" height="10" rx="1"/><line x1="19" y1="5" x2="19" y2="2"/><line x1="19" y1="15" x2="19" y2="21"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#0891b2,#0e7490)',
-    content: `
-      <h2>Cấu trúc của một cây nến</h2>
-      <p>Mỗi cây nến gồm 4 giá trị: <strong>Open (Mở cửa), High (Cao nhất), Low (Thấp nhất), Close (Đóng cửa)</strong>. Thân nến (Body) là khoảng giữa Open và Close, râu nến (Wick/Shadow) là khoảng cao/thấp vượt ra ngoài thân.</p>
-      <h2>Mô hình đảo chiều tăng (Bullish Reversal)</h2>
-      <ul>
-        <li><strong>Hammer (Búa):</strong> Thân nhỏ ở trên, râu dưới dài — xuất hiện sau đà giảm, tín hiệu đảo chiều tăng mạnh</li>
-        <li><strong>Bullish Engulfing:</strong> Nến xanh to nuốt hoàn toàn nến đỏ trước → lực cầu áp đảo</li>
-        <li><strong>Morning Star:</strong> 3 nến — đỏ lớn, doji/spinning top, xanh lớn → điểm đáy rõ ràng</li>
-        <li><strong>Piercing Line:</strong> Nến xanh đóng cửa trên 50% thân nến đỏ trước</li>
-      </ul>
-      <h2>Mô hình đảo chiều giảm (Bearish Reversal)</h2>
-      <ul>
-        <li><strong>Shooting Star:</strong> Thân nhỏ ở dưới, râu trên dài — xuất hiện sau đà tăng, cảnh báo đảo chiều</li>
-        <li><strong>Bearish Engulfing:</strong> Nến đỏ to nuốt nến xanh trước</li>
-        <li><strong>Evening Star:</strong> Ngược lại với Morning Star — tín hiệu đỉnh</li>
-        <li><strong>Dark Cloud Cover:</strong> Nến đỏ đóng cửa dưới 50% thân nến xanh trước</li>
-      </ul>
-      <div class="highlight-box">
-        <strong>Doji:</strong> Open ≈ Close, thân rất nhỏ → thị trường do dự, cân bằng lực mua/bán. Doji sau xu hướng dài = cảnh báo đảo chiều.
-      </div>
-      <div class="highlight-box rose">
-        <strong>Quan trọng:</strong> Mô hình nến phải được đọc trong <em>bối cảnh</em> — cùng vị trí (hỗ trợ/kháng cự), xu hướng chính, và khối lượng giao dịch. Một cây Hammer trong uptrend không có ý nghĩa đảo chiều.
-      </div>
-    `
-  },
-  {
-    id: 7,
-    cat: 'learn',
-    level: 'advanced',
-    title: 'CANSLIM — Phương pháp chọn cổ phiếu của William O\'Neil',
-    desc: 'CANSLIM là bộ tiêu chí đầu tư kết hợp phân tích cơ bản và kỹ thuật, giúp tìm ra các cổ phiếu tăng trưởng tốt nhất trong thị trường.',
-    tags: ['learn', 'strategy', 'advanced'],
-    readTime: '15 phút',
-    thumb: '#16a34a',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(0,210,106,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#16a34a,#15803d)',
-    content: `
-      <h2>CANSLIM là gì?</h2>
-      <p>CANSLIM là phương pháp do William O'Neil phát triển sau khi nghiên cứu những cổ phiếu tăng mạnh nhất trong lịch sử thị trường Mỹ. Mỗi chữ cái là một tiêu chí:</p>
-      <div class="highlight-box">
-        <strong>C — Current Earnings:</strong> EPS quý gần nhất tăng ≥ 25%<br/>
-        <strong>A — Annual Earnings:</strong> EPS hằng năm tăng trưởng ≥ 25% trong 3-5 năm<br/>
-        <strong>N — New Products/Management/Highs:</strong> Sản phẩm mới, ban lãnh đạo mới, giá mới cao<br/>
-        <strong>S — Supply/Demand:</strong> Lượng CP lưu hành ít, tăng trưởng khối lượng khi phá đỉnh<br/>
-        <strong>L — Leader or Laggard:</strong> Chọn cổ phiếu dẫn đầu ngành (RS Rating > 80)<br/>
-        <strong>I — Institutional Sponsorship:</strong> Có tổ chức đang mua, số lượng tăng dần<br/>
-        <strong>M — Market Direction:</strong> Chỉ mua khi thị trường chung đang tăng (confirmed uptrend)
-      </div>
-      <h2>Điểm mua lý tưởng — Buy Point</h2>
-      <p>O'Neil đề xuất mua khi cổ phiếu <strong>breakout từ base pattern</strong> (Cup with Handle, Flat Base, Double Bottom...) với khối lượng tăng ít nhất 40-50% so với trung bình.</p>
-      <h2>Quản lý rủi ro trong CANSLIM</h2>
-      <ul>
-        <li>Cắt lỗ ngay khi giá giảm <strong>7-8%</strong> từ điểm mua — không ngoại lệ</li>
-        <li>Không mua thêm khi vị thế đang lỗ (averaging down)</li>
-        <li>Bán một phần khi cổ phiếu tăng 20-25% từ điểm mua</li>
-      </ul>
-      <div class="highlight-box violet">
-        <strong>Thị trường VN:</strong> CANSLIM có thể điều chỉnh với ngưỡng EPS thấp hơn (15-20%) do đặc thù thị trường mới nổi. Tiêu chí M (Market Direction) đặc biệt quan trọng ở VN-Index.
-      </div>
-    `
-  },
+// ── API loading ──
+let ARTICLES = [];
+let articlesLoaded = false;
 
-  // ── CÂU CHUYỆN ĐẦU TƯ ──
-  {
-    id: 8,
-    cat: 'story',
-    level: null,
-    title: 'Warren Buffett — Từ cậu bé bán kẹo đến nhà đầu tư vĩ đại nhất',
-    desc: 'Hành trình 70 năm đầu tư của Buffett và những bài học không thể quên về triết lý giá trị, kiên nhẫn và tư duy dài hạn.',
-    tags: ['story'],
-    readTime: '12 phút',
-    thumb: '#d97706',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,179,0,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#d97706,#b45309)',
-    content: `
-      <h2>Khởi đầu của một huyền thoại</h2>
-      <p>Warren Buffett mua cổ phiếu đầu tiên năm 11 tuổi — 3 cổ phiếu Cities Service ở giá 38$/cổ phiếu. Cổ phiếu giảm xuống 27$, cậu bé hoảng sợ bán ra khi vừa hồi về 40$. Chỉ vài tháng sau, giá tăng lên 200$. Đó là bài học đầu tiên về <strong>sự kiên nhẫn</strong>.</p>
-      <h2>Triết lý đầu tư giá trị</h2>
-      <p>Buffett học từ Benjamin Graham — tìm kiếm cổ phiếu đang giao dịch <em>dưới giá trị nội tại</em>. Nhưng ông đã tiến thêm bước nữa khi gặp Charlie Munger: <strong>"Mua một công ty tuyệt vời ở giá hợp lý, tốt hơn mua một công ty bình thường ở giá rẻ."</strong></p>
-      <div class="highlight-box amber">
-        <strong>"Rule No. 1: Never lose money. Rule No. 2: Never forget Rule No. 1."</strong><br/>— Warren Buffett
-      </div>
-      <h2>Moat — Hào kinh tế</h2>
-      <p>Buffett tìm kiếm các công ty có <strong>competitive moat</strong> (hào kinh tế) — lợi thế cạnh tranh bền vững ngăn đối thủ xâm phạm: thương hiệu mạnh (Coca-Cola), chi phí chuyển đổi cao (American Express), mạng lưới rộng (GEICO).</p>
-      <h2>Bài học về giá trị kép</h2>
-      <p>Buffett mua Coca-Cola năm 1988 với tổng giá trị 1.3 tỷ USD. Năm 2024, giá trị đó vượt 25 tỷ USD — chưa kể cổ tức hàng năm. <strong>Compound interest là kỳ quan thứ 8 của thế giới.</strong></p>
-      <div class="highlight-box">
-        <strong>Bài học chính:</strong><br/>
-        1. Đầu tư vào những gì bạn hiểu<br/>
-        2. Hãy tham lam khi người khác sợ hãi<br/>
-        3. Chỉ mua cổ phiếu bạn sẵn sàng nắm giữ nếu thị trường đóng cửa 10 năm<br/>
-        4. Thị trường là công cụ chuyển tiền từ người thiếu kiên nhẫn sang người kiên nhẫn
-      </div>
-    `
-  },
-  {
-    id: 9,
-    cat: 'story',
-    level: null,
-    title: 'Peter Lynch — Đánh bại phố Wall bằng những gì bạn biết',
-    desc: 'Peter Lynch quản lý Magellan Fund đạt 29.2%/năm trong 13 năm. Triết lý của ông: "Đầu tư vào những gì bạn hiểu" đơn giản nhưng cực kỳ mạnh mẽ.',
-    tags: ['story', 'strategy'],
-    readTime: '10 phút',
-    thumb: '#7c3aed',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#7c3aed,#5b21b6)',
-    content: `
-      <h2>Tenbagger — Cổ phiếu tăng 10 lần</h2>
-      <p>Peter Lynch nổi tiếng với khái niệm <strong>"Tenbagger"</strong> — cổ phiếu tăng 10 lần giá trị. Trong 13 năm quản lý Fidelity Magellan Fund (1977–1990), ông đạt tỉ suất sinh lợi trung bình <span class="key-number">29.2%/năm</span>, biến 10,000$ thành 280,000$.</p>
-      <h2>Triết lý "Invest in What You Know"</h2>
-      <p>Lynch tin rằng nhà đầu tư cá nhân có <em>lợi thế</em> so với tổ chức: họ nhìn thấy cơ hội trước Wall Street thông qua trải nghiệm sống hàng ngày.</p>
-      <div class="highlight-box violet">
-        Lynch phát hiện Dunkin' Donuts khi thấy hàng dài người xếp hàng mỗi sáng. Ông mua cổ phiếu Hanes sau khi vợ ông — và mọi người phụ nữ ông biết — đều mặc sản phẩm của họ. Đó là nghiên cứu thực địa đơn giản nhưng hiệu quả.
-      </div>
-      <h2>Phân loại cổ phiếu của Lynch</h2>
-      <ul>
-        <li><strong>Slow Growers:</strong> Tăng trưởng chậm, cổ tức ổn định (utility companies)</li>
-        <li><strong>Stalwarts:</strong> Tăng trưởng vừa phải, tên tuổi lớn (Coca-Cola)</li>
-        <li><strong>Fast Growers:</strong> Tăng trưởng nhanh 20-25%/năm — đây là mỏ vàng của Lynch</li>
-        <li><strong>Cyclicals:</strong> Lên xuống theo chu kỳ kinh tế</li>
-        <li><strong>Turnarounds:</strong> Công ty đang phục hồi từ khủng hoảng</li>
-        <li><strong>Asset Plays:</strong> Công ty sở hữu tài sản ẩn chưa được định giá đúng</li>
-      </ul>
-      <h2>PEG Ratio — Chỉ số Lynch yêu thích</h2>
-      <p>Lynch dùng <strong>PEG = P/E ÷ Tăng trưởng EPS</strong>. PEG < 1 thường cho thấy cổ phiếu đang undervalued so với tốc độ tăng trưởng.</p>
-      <div class="highlight-box">
-        <strong>Lời khuyên của Lynch:</strong> "Hãy biết mình sở hữu gì và tại sao mình sở hữu nó." Nếu bạn không thể giải thích trong 2 phút tại sao mình mua một cổ phiếu, đừng mua nó.
-      </div>
-    `
-  },
-  {
-    id: 10,
-    cat: 'story',
-    level: null,
-    title: 'Jesse Livermore — Bi kịch của nhà đầu cơ vĩ đại nhất',
-    desc: 'Jesse Livermore kiếm 100 triệu đô trong khủng hoảng 1929, rồi mất tất cả. Câu chuyện của ông là bài học đắt giá nhất về kỷ luật và tâm lý.',
-    tags: ['story', 'mindset'],
-    readTime: '14 phút',
-    thumb: '#dc2626',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,71,87,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#dc2626,#991b1b)',
-    content: `
-      <h2>Cậu bé thiên tài phố Bucket Shop</h2>
-      <p>Jesse Livermore bắt đầu giao dịch từ năm 14 tuổi tại các "bucket shop" ở Boston — nơi đặt cược giá cổ phiếu mà không thực sự sở hữu. Ở tuổi 20, ông đã bị <em>cấm cửa</em> tại hầu hết các bucket shop vì thắng quá nhiều.</p>
-      <h2>Thống trị phố Wall</h2>
-      <p>Livermore short sell trước cả hai khủng hoảng lớn:</p>
-      <ul>
-        <li><strong>Khủng hoảng 1907:</strong> Kiếm hàng triệu đô khi bán khống San Francisco Earthquake stocks</li>
-        <li><strong>Sụp đổ 1929:</strong> Kiếm <strong>100 triệu đô</strong> — tương đương hàng tỷ đô ngày nay — khi bán khống trước "Black Tuesday"</li>
-      </ul>
-      <div class="highlight-box rose">
-        Khi tin tức về khoản lợi nhuận 100 triệu đô lan ra, Livermore nhận được thư đe dọa và thậm chí đổ lỗi ông gây ra cuộc Đại khủng hoảng. Tổng thống Hoover mời ông vào Nhà Trắng để "chấm dứt bán khống" — ông từ chối.
-      </div>
-      <h2>Những lần phá sản</h2>
-      <p>Điều ít ai biết: Livermore <strong>phá sản 4 lần</strong> trong cuộc đời. Ông phá vỡ chính những quy tắc của mình — averaging down, nghe theo tin đồn, giao dịch dựa trên cảm xúc.</p>
-      <p>Năm 1934, ông tuyên bố phá sản lần cuối. Năm 1940, ở tuổi 63, Jesse Livermore kết thúc cuộc đời trong bi kịch.</p>
-      <h2>Quy tắc vàng của Livermore</h2>
-      <div class="highlight-box amber">
-        "Không bao giờ mất quá 10% vốn trong một giao dịch."<br/>
-        "Đừng bao giờ tranh luận với thị trường."<br/>
-        "Phố Wall không hề mới. Không thể có gì mới trong đầu cơ hoặc đầu tư vì cảm xúc con người không bao giờ thay đổi."<br/>
-        — Jesse Livermore, <em>Reminiscences of a Stock Operator</em>
-      </div>
-      <p>Bài học lớn nhất: <strong>Biết quy tắc chưa đủ, phải thực sự tuân theo chúng.</strong> Livermore biết mọi quy tắc nhưng không thể kiểm soát cảm xúc của chính mình.</p>
-    `
-  },
-  {
-    id: 11,
-    cat: 'story',
-    level: null,
-    title: 'Khủng hoảng 2008 — Bài học đắt giá cho mọi nhà đầu tư',
-    desc: 'Từ bong bóng nhà đất Mỹ đến sự sụp đổ của Lehman Brothers, cuộc khủng hoảng 2008 mang lại những bài học không thể quên về rủi ro hệ thống và tâm lý đám đông.',
-    tags: ['story', 'mindset'],
-    readTime: '11 phút',
-    thumb: '#0ea5e9',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#0ea5e9,#0369a1)',
-    content: `
-      <h2>Mầm mống của khủng hoảng</h2>
-      <p>Từ năm 2001-2006, giá nhà đất Mỹ tăng gấp đôi. Các ngân hàng cho vay tràn lan — kể cả với những người không có thu nhập, không có tài sản, không có việc làm (NINJA loans). Rủi ro được đóng gói thành các sản phẩm phức tạp (CDO, MBS) và bán cho nhà đầu tư toàn cầu.</p>
-      <h2>Domino sụp đổ</h2>
-      <ul>
-        <li><strong>2007:</strong> Thị trường nhà đất bắt đầu giảm, nợ xấu gia tăng</li>
-        <li><strong>Tháng 3/2008:</strong> Bear Stearns sụp đổ, được JPMorgan mua lại với giá 2$/cổ phiếu (so với đỉnh 173$)</li>
-        <li><strong>15/9/2008:</strong> Lehman Brothers phá sản — ngân hàng lớn thứ 4 nước Mỹ. Thị trường toàn cầu sụp đổ</li>
-        <li><strong>2008-2009:</strong> S&P 500 giảm <span class="key-number">57%</span> từ đỉnh. Hàng triệu người mất việc làm</li>
-      </ul>
-      <div class="highlight-box rose">
-        <strong>Tại Việt Nam:</strong> VN-Index giảm từ đỉnh 1,170 điểm (2007) xuống còn 234 điểm (2009) — tương đương giảm <strong>80%</strong>. Nhiều nhà đầu tư mới gia nhập năm 2007 mất gần như toàn bộ tài sản.
-      </div>
-      <h2>Những người thấy trước</h2>
-      <p>Michael Burry (nhân vật trong The Big Short) phát hiện bong bóng từ 2005, đặt cược chống lại thị trường nhà đất và kiếm hơn <strong>700 triệu USD</strong>. John Paulson kiếm 15 tỷ USD trong năm 2007.</p>
-      <h2>5 bài học từ 2008</h2>
-      <div class="highlight-box amber">
-        1. <strong>Đòn bẩy là con dao hai lưỡi</strong> — khuếch đại cả lợi nhuận lẫn thua lỗ<br/>
-        2. <strong>Rủi ro hệ thống tồn tại</strong> — đa dạng hóa không bảo vệ bạn khi mọi thứ tương quan<br/>
-        3. <strong>"Lần này khác"</strong> là 4 từ nguy hiểm nhất trong đầu tư<br/>
-        4. <strong>Thanh khoản có thể biến mất</strong> ngay khi bạn cần nhất<br/>
-        5. <strong>Khủng hoảng là cơ hội</strong> cho người có tiền mặt và can đảm (Buffett mua BofA, Goldman Sachs)
-      </div>
-    `
-  },
-
-  // ── TÂM LÝ ĐẦU TƯ ──
-  {
-    id: 12,
-    cat: 'mindset',
-    level: null,
-    title: 'Nỗi sợ và Tham lam — Hai kẻ thù lớn nhất của nhà đầu tư',
-    desc: 'Fear & Greed là hai cảm xúc chi phối thị trường. Hiểu chúng để không bị cuốn theo đám đông và đưa ra quyết định lý trí.',
-    tags: ['mindset'],
-    readTime: '9 phút',
-    thumb: '#7c3aed',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#7c3aed,#5b21b6)',
-    content: `
-      <h2>Tại sao cảm xúc phá hoại đầu tư?</h2>
-      <p>Nghiên cứu của Dalbar Inc. cho thấy nhà đầu tư cá nhân Mỹ chỉ đạt <span class="key-number">3.66%/năm</span> trong 20 năm, trong khi S&P 500 đạt 9.85%/năm. Lý do chính: <strong>mua cao, bán thấp</strong> do tâm lý đám đông.</p>
-      <h2>Vòng tròn cảm xúc của thị trường</h2>
-      <p>Thị trường đi qua các giai đoạn cảm xúc có thể đoán trước:</p>
-      <ul>
-        <li><strong>Lạc quan → Hưng phấn → Thỏa mãn</strong> (thị trường đang tăng)</li>
-        <li><strong>Lo lắng → Phủ nhận → Sợ hãi</strong> (thị trường bắt đầu giảm)</li>
-        <li><strong>Tuyệt vọng → Hoảng loạn → Đầu hàng</strong> (đáy thị trường)</li>
-        <li><strong>Hy vọng → Nhẹ nhõm → Lạc quan</strong> (thị trường phục hồi)</li>
-      </ul>
-      <div class="highlight-box violet">
-        <strong>Quy tắc ngược chiều (Contrarian):</strong> Khi mọi người trên báo đài đều nói về cổ phiếu và thị trường tuyệt vời → đó là lúc cẩn thận. Khi mọi người tuyệt vọng và nói "đừng mua cổ phiếu nữa" → đó thường là đáy.
-      </div>
-      <h2>FOMO — Nỗi sợ bỏ lỡ</h2>
-      <p>Fear Of Missing Out đẩy nhà đầu tư mua vào khi giá đã tăng cao vì "sợ bỏ lỡ cơ hội". Đây là nguyên nhân phổ biến nhất khiến nhà đầu tư mới thua lỗ — mua ở đỉnh.</p>
-      <h2>Cách kiểm soát cảm xúc</h2>
-      <ul>
-        <li><strong>Có kế hoạch cụ thể:</strong> Xác định điểm mua, điểm cắt lỗ, mục tiêu chốt lời TRƯỚC khi vào lệnh</li>
-        <li><strong>Nhật ký giao dịch:</strong> Ghi lại lý do mua/bán và cảm xúc lúc đó để học từ bản thân</li>
-        <li><strong>Sizing phù hợp:</strong> Đừng đầu tư quá nhiều tiền vào một vị thế đến mức mất ngủ</li>
-        <li><strong>Tắt màn hình:</strong> Kiểm tra giá ít hơn = ít cơ hội để cảm xúc can thiệp</li>
-      </ul>
-      <div class="highlight-box">
-        <strong>Test đơn giản:</strong> Nếu giá cổ phiếu giảm 30%, bạn sẽ làm gì? Nếu câu trả lời là "hoảng loạn bán ngay" — bạn đang nắm giữ quá nhiều rủi ro so với khả năng chịu đựng thực sự.
-      </div>
-    `
-  },
-  {
-    id: 13,
-    cat: 'mindset',
-    level: null,
-    title: 'Kỷ luật trong đầu tư — Yếu tố phân biệt thắng và thua',
-    desc: 'Tại sao những người thông minh lại thua lỗ trong đầu tư? Kỷ luật và hệ thống quan trọng hơn trí tuệ. Đây là cách xây dựng nó.',
-    tags: ['mindset', 'strategy'],
-    readTime: '10 phút',
-    thumb: '#16a34a',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(0,210,106,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#16a34a,#15803d)',
-    content: `
-      <h2>Nghịch lý của nhà đầu tư thông minh</h2>
-      <p>Nghiên cứu liên tục cho thấy: IQ cao <strong>không</strong> tương quan với kết quả đầu tư tốt hơn. Thậm chí, những người thông minh thường tạo ra lý do phức tạp để biện hộ cho những quyết định sai lầm.</p>
-      <div class="highlight-box rose">
-        <strong>Confirmation Bias:</strong> Chúng ta tìm kiếm thông tin xác nhận điều ta đã tin, bỏ qua thông tin trái chiều. Khi đã mua một cổ phiếu, ta có xu hướng đọc những tin tức tích cực về nó và bỏ qua cảnh báo.
-      </div>
-      <h2>Hệ thống vs. Cảm xúc</h2>
-      <p>Các nhà đầu tư thành công nhất không nhất thiết thông minh hơn, họ chỉ có <strong>hệ thống tốt hơn và tuân thủ nó nghiêm ngặt hơn</strong>.</p>
-      <p>Một hệ thống tốt cần trả lời rõ:</p>
-      <ul>
-        <li>Tôi sẽ mua <em>loại cổ phiếu nào</em>? (tiêu chí chọn lọc)</li>
-        <li>Tôi sẽ mua <em>khi nào</em>? (điểm vào lệnh)</li>
-        <li>Tôi sẽ mua <em>bao nhiêu</em>? (position sizing)</li>
-        <li>Tôi sẽ bán khi nào? (cắt lỗ và chốt lời)</li>
-      </ul>
-      <h2>Cắt lỗ — Kỹ năng quan trọng nhất</h2>
-      <p>Nhiều nhà đầu tư mất tất cả không phải vì chọn sai cổ phiếu, mà vì <strong>không chịu cắt lỗ</strong>. Một lệnh thua 50% cần tăng 100% để hòa vốn.</p>
-      <div class="highlight-box amber">
-        <strong>Toán học của cắt lỗ:</strong><br/>
-        Lỗ 10% → cần tăng 11.1% để hòa vốn<br/>
-        Lỗ 20% → cần tăng 25%<br/>
-        Lỗ 50% → cần tăng 100%<br/>
-        Lỗ 90% → cần tăng 900%
-      </div>
-      <h2>Xây dựng kỷ luật</h2>
-      <ul>
-        <li>Đặt lệnh stop-loss <em>ngay khi mua vào</em>, không đợi sau</li>
-        <li>Viết ra kế hoạch giao dịch bằng văn bản trước khi thực hiện</li>
-        <li>Review định kỳ (tuần/tháng) để học từ lỗi</li>
-        <li>Chấp nhận rằng thua lỗ là phần của đầu tư — không thể thắng 100% lệnh</li>
-      </ul>
-      <div class="highlight-box">
-        <strong>"Thành công trong đầu tư không đến từ việc làm đúng mọi lúc — mà từ việc không làm quá sai khi sai lầm."</strong><br/>— George Soros
-      </div>
-    `
-  },
-  {
-    id: 14,
-    cat: 'mindset',
-    level: null,
-    title: 'Thiên kiến nhận thức trong đầu tư (Cognitive Biases)',
-    desc: 'Não bộ chúng ta được thiết kế cho sự sống còn, không phải cho đầu tư. Hiểu 6 thiên kiến nhận thức phổ biến nhất sẽ giúp bạn tránh những bẫy tâm lý tốn kém.',
-    tags: ['mindset'],
-    readTime: '11 phút',
-    thumb: '#db2777',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(251,113,133,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#db2777,#be185d)',
-    content: `
-      <h2>Tại sao não bộ chúng ta phá hoại đầu tư?</h2>
-      <p>Trong hàng triệu năm tiến hóa, não người được tối ưu để <em>tránh nguy hiểm tức thì</em>, không phải để đưa ra quyết định xác suất dài hạn. Điều này tạo ra hàng loạt <strong>thiên kiến nhận thức</strong> cực kỳ tốn kém trong đầu tư.</p>
-      <h2>1. Loss Aversion (Sợ mất mát)</h2>
-      <p>Daniel Kahneman chứng minh: nỗi đau của việc mất 1 triệu đồng mạnh <span class="key-number">2×</span> niềm vui của việc kiếm 1 triệu đồng. Điều này khiến chúng ta giữ cổ phiếu thua lỗ quá lâu ("chờ hòa vốn") và bán cổ phiếu thắng quá sớm.</p>
-      <h2>2. Anchoring (Neo giá)</h2>
-      <p>Ta thường "neo" vào giá mua và coi đó là điểm tham chiếu. "Cổ phiếu này tôi mua 50,000 nên phải chờ nó về 50,000 mới bán." Thị trường không biết và không quan tâm giá bạn mua.</p>
-      <h2>3. Herding (Theo đám đông)</h2>
-      <p>Khi thấy mọi người mua cùng một cổ phiếu, não ta tự động cho rằng họ biết điều gì đó mình không biết. Nhưng đám đông thường sai ở các điểm ngoặt quan trọng nhất.</p>
-      <h2>4. Overconfidence (Tự tin thái quá)</h2>
-      <p>85% lái xe cho rằng mình lái giỏi hơn mức trung bình. Tương tự trong đầu tư — sau vài lần thắng trong bull market, nhiều người tin họ có kỹ năng đặc biệt, không phải may mắn.</p>
-      <div class="highlight-box rose">
-        <strong>Test overconfidence:</strong> Nếu market giảm 30%, bạn có thực sự "mua thêm" như bạn nghĩ không? Hãy trung thực với bản thân.
-      </div>
-      <h2>5. Recency Bias (Thiên kiến gần đây)</h2>
-      <p>Chúng ta cho rằng điều vừa xảy ra sẽ tiếp tục xảy ra. Sau bull market dài → "thị trường luôn tăng". Sau bear market → "mọi thứ đều sẽ sụp đổ". Cả hai đều sai.</p>
-      <h2>6. Sunk Cost Fallacy</h2>
-      <p>"Tôi đã mất quá nhiều với cổ phiếu này rồi, tôi phải tiếp tục giữ." Chi phí đã mất không thể lấy lại được — quyết định hôm nay phải dựa trên tương lai, không phải quá khứ.</p>
-      <div class="highlight-box">
-        <strong>Thuốc giải:</strong> Nhận thức được thiên kiến là bước đầu tiên. Sau đó, hãy thiết lập <em>quy tắc cứng</em> (hard rules) và <em>tuân thủ bất kể cảm xúc</em>. Quy tắc tồn tại để bảo vệ bạn khỏi chính mình.
-      </div>
-    `
-  },
-
-  // ── CHIẾN LƯỢC ──
-  {
-    id: 15,
-    cat: 'strategy',
-    level: null,
-    title: 'Dollar-Cost Averaging — Chiến lược đầu tư đơn giản nhưng hiệu quả',
-    desc: 'DCA (mua đều đặn theo định kỳ) là chiến lược giúp loại bỏ áp lực "timing the market" và phù hợp với đại đa số nhà đầu tư dài hạn.',
-    tags: ['strategy', 'beginner'],
-    readTime: '7 phút',
-    thumb: '#0d9488',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(45,212,191,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#0d9488,#0f766e)',
-    content: `
-      <h2>DCA là gì?</h2>
-      <p>Dollar-Cost Averaging (DCA) là chiến lược đầu tư <strong>một số tiền cố định theo định kỳ</strong> (ví dụ 2 triệu/tháng) bất kể thị trường đang ở đâu. Khi giá thấp, bạn mua được nhiều cổ phiếu hơn; khi giá cao, bạn mua ít hơn — tự động "mua nhiều lúc rẻ".</p>
-      <div class="highlight-box">
-        <strong>Ví dụ:</strong> Mua 2 triệu VNĐ mỗi tháng:<br/>
-        Tháng 1: giá 20,000 → mua 100 CP<br/>
-        Tháng 2: giá 16,000 → mua 125 CP<br/>
-        Tháng 3: giá 24,000 → mua 83 CP<br/>
-        Giá trung bình: 6M ÷ 308 CP = <em>19,480 VNĐ/CP</em><br/>
-        (thấp hơn giá trung bình số học 20,000!)
-      </div>
-      <h2>Ưu điểm của DCA</h2>
-      <ul>
-        <li>Loại bỏ áp lực "timing the market" — không cần đoán đỉnh đáy</li>
-        <li>Giảm tác động của biến động ngắn hạn</li>
-        <li>Xây dựng kỷ luật đầu tư tự động</li>
-        <li>Phù hợp với người có thu nhập hàng tháng</li>
-      </ul>
-      <h2>Khi nào DCA hiệu quả nhất?</h2>
-      <p>DCA hoạt động tốt nhất với các tài sản có xu hướng <em>tăng trong dài hạn</em> nhưng biến động trong ngắn hạn: VN-Index ETF, cổ phiếu blue-chip.</p>
-      <div class="highlight-box rose">
-        <strong>Nhược điểm:</strong> Trong bull market liên tục, lump sum (đầu tư một lần) thường thắng DCA vì bạn được hưởng toàn bộ đà tăng ngay từ đầu. DCA là công cụ quản lý rủi ro, không phải tối ưu hóa lợi nhuận.
-      </div>
-      <h2>Ứng dụng thực tế tại VN</h2>
-      <p>Đặt lịch hàng tháng mua ETF E1VFVN30 hoặc FUEVFVND. Đây là cách tiếp cận toàn bộ thị trường với chi phí thấp nhất mà không cần chọn cổ phiếu riêng lẻ.</p>
-    `
-  },
-  {
-    id: 16,
-    cat: 'strategy',
-    level: 'advanced',
-    title: 'Quản lý danh mục và Position Sizing',
-    desc: 'Không phải "mua cổ phiếu nào" mà là "mua bao nhiêu" mới là quyết định quan trọng nhất. Tìm hiểu Kelly Criterion và các nguyên tắc sizing chuyên nghiệp.',
-    tags: ['strategy', 'advanced'],
-    readTime: '13 phút',
-    thumb: '#f59e0b',
-    thumbIcon: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,179,0,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
-    iconBg: 'linear-gradient(135deg,#f59e0b,#d97706)',
-    content: `
-      <h2>Tại sao Position Sizing quan trọng hơn chọn cổ phiếu?</h2>
-      <p>Một nghiên cứu nổi tiếng cho thấy: ngay cả khi chỉ thắng 40% giao dịch, bạn vẫn có thể kiếm tiền nếu <strong>lợi nhuận trung bình của lệnh thắng lớn hơn 1.5× thua lỗ trung bình</strong>. Position sizing quyết định điều này.</p>
-      <h2>Rủi ro 1% trên mỗi giao dịch</h2>
-      <p>Nguyên tắc cơ bản: <strong>không rủi ro quá 1-2% tổng vốn cho một giao dịch</strong>.</p>
-      <div class="highlight-box">
-        <strong>Tính toán:</strong><br/>
-        Vốn: 100 triệu VNĐ<br/>
-        Rủi ro tối đa/lệnh: 1% = 1 triệu<br/>
-        Giá mua: 25,000 VNĐ/CP<br/>
-        Stop-loss: 23,000 VNĐ/CP (lỗ 2,000/CP)<br/>
-        Số CP tối đa: 1,000,000 ÷ 2,000 = <em>500 CP</em>
-      </div>
-      <h2>Kelly Criterion</h2>
-      <p>Công thức Kelly cho position sizing tối ưu:</p>
-      <p style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:rgba(255,255,255,0.05);padding:10px 14px;border-radius:8px;color:#e8edf2;margin:8px 0">
-        f* = (bp - q) / b<br/>
-        b = tỷ lệ W/L, p = xác suất thắng, q = 1 - p
-      </p>
-      <p>Ví dụ: tỷ lệ W/L = 2, xác suất thắng = 55% → f* = (2×0.55 - 0.45) / 2 = <span class="key-number">32.5%</span></p>
-      <div class="highlight-box rose">
-        <strong>Thực tế:</strong> Kelly full thường quá rủi ro. Hầu hết các trader chuyên nghiệp dùng "Half Kelly" (16.25% trong ví dụ trên) để cân bằng giữa tăng trưởng và drawdown.
-      </div>
-      <h2>Đa dạng hóa thực sự</h2>
-      <ul>
-        <li>Không nên quá 5-7 vị thế nếu bạn theo dõi chặt</li>
-        <li>Đa dạng theo ngành, không chỉ theo số cổ phiếu</li>
-        <li>Tránh "đa dạng hóa dỏm" — 10 cổ phiếu ngân hàng không phải là đa dạng</li>
-        <li>Luôn giữ 15-20% tiền mặt để tận dụng cơ hội bất ngờ</li>
-      </ul>
-    `
+async function loadArticles() {
+  if (articlesLoaded) return;
+  try {
+    const res = await fetch('/api/library');
+    const data = await res.json();
+    if (data.ok) {
+      ARTICLES = data.articles;
+      articlesLoaded = true;
+    }
+  } catch(e) {
+    console.error('Failed to load articles:', e);
   }
-];
+}
+
+async function loadArticleContent(id) {
+  try {
+    const res = await fetch(`/api/library/${id}`);
+    const data = await res.json();
+    if (data.ok) return data.article.content;
+  } catch(e) {
+    console.error('Failed to load article content:', e);
+  }
+  return null;
+}
+
+
+
+// ── Read tracking ──
+const READ_KEY = 'lib_read_v1';
+const readSet = new Set(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+function saveRead() {
+  localStorage.setItem(READ_KEY, JSON.stringify([...readSet]));
+  updateProgress();
+}
+function updateProgress() {
+  const total = ARTICLES.length;
+  const read = readSet.size;
+  const pct = total ? Math.round(read / total * 100) : 0;
+  const el = document.getElementById('progressFill');
+  const lbl = document.getElementById('progressCount');
+  const allFill = document.getElementById('readAllFill');
+  const allPct = document.getElementById('readAllPct');
+  const statRead = document.getElementById('statRead');
+  const statTotal = document.getElementById('statTotal');
+  if (el) el.style.width = pct + '%';
+  if (lbl) lbl.textContent = read + '/' + total;
+  if (allFill) allFill.style.width = pct + '%';
+  if (allPct) allPct.textContent = pct + '%';
+  if (statRead) statRead.textContent = read;
+  if (statTotal) statTotal.textContent = total;
+}
 
 // ── State ──
 let currentCat = 'all';
+let currentLevel = 'all';
 let searchQuery = '';
 
 // ── Count badges ──
@@ -1175,6 +894,7 @@ function updateCounts() {
     const el = document.getElementById('cnt-' + cat);
     if (el) el.textContent = filtered.length;
   });
+  updateProgress();
 }
 
 // ── Render ──
@@ -1202,10 +922,13 @@ function render() {
     const catMatch = currentCat === 'all'
       ? true
       : a.cat === currentCat || (a.tags && a.tags.includes(currentCat));
+    const levelMatch = currentLevel === 'all' ? true
+      : currentLevel === 'unread' ? !readSet.has(a.id)
+      : a.level === currentLevel || (a.tags && a.tags.includes(currentLevel));
     const searchMatch = !q
       ? true
       : a.title.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q);
-    return catMatch && searchMatch;
+    return catMatch && levelMatch && searchMatch;
   });
 
   document.getElementById('sectionCount').textContent = filtered.length + ' bài viết';
@@ -1215,7 +938,7 @@ function render() {
 
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <p>Không tìm thấy bài viết nào</p>
@@ -1223,10 +946,14 @@ function render() {
     return;
   }
 
-  grid.innerHTML = filtered.map(a => `
-    <div class="article-card" onclick="openArticle(${a.id})">
-      <div class="card-thumb" style="background: linear-gradient(135deg, ${a.thumb}22, ${a.thumb}11)">
-        <div class="card-thumb-bg" style="background: radial-gradient(circle at 60% 40%, ${a.thumb}44, transparent 70%)"></div>
+  grid.innerHTML = filtered.map(a => {
+    const isRead = readSet.has(a.id);
+    return `
+    <div class="article-card${isRead ? ' is-read' : ''}" onclick="openArticle(${a.id})">
+      ${isRead ? '<div class="read-check">✓</div>' : ''}
+      <div class="card-thumb" style="background: linear-gradient(135deg, ${a.thumb}20, ${a.thumb}0a); color:${a.thumb}">
+        <div class="card-thumb-bg" style="background: radial-gradient(circle at 60% 40%, ${a.thumb}55, transparent 70%)"></div>
+        <div class="card-thumb-dots"></div>
         ${a.thumbIcon}
       </div>
       <div class="card-body">
@@ -1234,18 +961,23 @@ function render() {
         <div class="card-title">${a.title}</div>
         <div class="card-desc">${a.desc}</div>
         <div class="card-meta">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          ${a.readTime} đọc
+          <div class="card-meta-left">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${a.readTime} đọc
+          </div>
+          ${isRead ? '<span class="read-badge">✓ Đã đọc</span>' : ''}
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── Modal ──
-function openArticle(id) {
+let currentArticleId = null;
+async function openArticle(id) {
   const a = ARTICLES.find(x => x.id === id);
   if (!a) return;
+  currentArticleId = id;
   document.getElementById('modalIcon').style.background = a.iconBg;
   document.getElementById('modalIcon').innerHTML = a.thumbIcon.replace('width="40" height="40"', 'width="22" height="22"');
   document.getElementById('modalTitle').textContent = a.title;
@@ -1256,15 +988,63 @@ function openArticle(id) {
       ${a.readTime} đọc
     </span>
   `;
-  document.getElementById('modalBody').innerHTML = a.content;
+
+  // Show modal with loading state
+  document.getElementById('modalBody').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      Đang tải bài viết...
+    </div>`;
+  document.getElementById('modalReadFill').style.width = '0%';
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Load content
+  const content = await loadArticleContent(id);
+
+  if (content === null) {
+    document.getElementById('modalBody').innerHTML = `<div style="padding:40px;text-align:center;color:var(--dn)">Không tải được bài viết. Vui lòng thử lại.</div>`;
+    return;
+  }
+
+  // Related articles
+  const related = ARTICLES.filter(x => x.id !== id && (x.cat === a.cat || x.tags.some(t => a.tags.includes(t)))).slice(0, 3);
+  const relatedHtml = related.length ? `
+    <div class="related-section">
+      <div class="related-label">Bài viết liên quan</div>
+      <div class="related-list">
+        ${related.map(r => `
+          <div class="related-item" onclick="openArticle(${r.id})">
+            <div class="related-icon" style="background:${r.iconBg}">${r.thumbIcon.replace('width="40" height="40"','width="16" height="16"')}</div>
+            <div class="related-info">
+              <div class="related-title">${r.title}</div>
+              <div class="related-meta">${getTagHtml(r.tags.slice(0,1))} · ${r.readTime} đọc</div>
+            </div>
+            <svg class="related-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  document.getElementById('modalBody').innerHTML = content + relatedHtml;
+
+  // Mark as read after 3s
+  setTimeout(() => {
+    if (!readSet.has(id)) {
+      readSet.add(id);
+      saveRead();
+      render();
+    }
+  }, 3000);
 }
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
+  currentArticleId = null;
 }
+
 
 // ── Events ──
 document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -1272,6 +1052,15 @@ document.querySelectorAll('.cat-btn').forEach(btn => {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+document.querySelectorAll('.pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLevel = btn.dataset.level;
     render();
   });
 });
@@ -1287,9 +1076,17 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+document.getElementById('modalBody').addEventListener('scroll', function() {
+  const pct = this.scrollHeight <= this.clientHeight ? 100
+    : Math.round(this.scrollTop / (this.scrollHeight - this.clientHeight) * 100);
+  document.getElementById('modalReadFill').style.width = pct + '%';
+});
+
 // ── Init ──
-updateCounts();
-render();
+loadArticles().then(() => {
+  updateCounts();
+  render();
+});
 </script>
 </body>
 </html>

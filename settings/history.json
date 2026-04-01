@@ -1,5 +1,15 @@
 [
   {
+    "id": 1775034534187,
+    "symbol": "VIX",
+    "qty": 800,
+    "buyPrice": 16.25,
+    "sellPrice": 17.25,
+    "sellDate": "2026-04-01",
+    "pnl": 800,
+    "pnlPct": 6.15
+  },
+  {
     "id": 1774497219271,
     "symbol": "PGC",
     "qty": 1000,

@@ -22,6 +22,7 @@ import { handle as historyRoutes } from "./routes/history.mjs";
 import { handle as portfolioRoutes } from "./routes/portfolio.mjs";
 import { handle as watchlistRoutes } from "./routes/watchlist.mjs";
 import { handle as analyzeRoutes } from "./routes/analyze.mjs";
+import { handle as libraryRoutes } from "./routes/library.mjs";
 import { handle as staticRoutes } from "./routes/static.mjs";
 import { handleBoardWsUpgrade } from "./lib/board.mjs";
 import { killPort } from "./kill-port.mjs";
@@ -38,6 +39,7 @@ const ROUTES = [
   portfolioRoutes,
   watchlistRoutes,
   analyzeRoutes,
+  libraryRoutes,
   staticRoutes,
 ];
 
