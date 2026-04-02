@@ -117,7 +117,20 @@
       "Bash(curl -s \"http://localhost:3000/api/library\")",
       "Bash(curl -s \"http://localhost:3000/api/library/1\")",
       "Bash(curl -s \"http://localhost:3000/api/library/7\")",
-      "Bash(curl -s \"http://localhost:3000/api/library/99\")"
+      "Bash(curl -s \"http://localhost:3000/api/library/99\")",
+      "Bash(mkdir -p /Users/son.ph/my-surge/public/images/livermore)",
+      "Bash(curl -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -L -o \"livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Jesse_L_Livermore.jpg/440px-Jesse_L_Livermore.jpg\" -w \"%{http_code}\")",
+      "Bash(curl -A \"Mozilla/5.0 \\(X11; Linux x86_64\\) AppleWebKit/537.36 Chrome/121.0.0.0 Safari/537.36\" -L --referer \"https://en.wikipedia.org/\" -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Jesse_L_Livermore.jpg/440px-Jesse_L_Livermore.jpg\" -w \"%{http_code} size=%{size_download}\")",
+      "Bash(curl -A \"Wget/1.21.1\" -L --referer \"https://en.wikipedia.org/wiki/Jesse_Livermore\" -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/5/50/Jesse_L_Livermore.jpg\" -w \"\\\\nHTTP:%{http_code} SIZE:%{size_download}\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://en.wikipedia.org/api/rest_v1/page/summary/Jesse_Livermore\" -A \"curl/7.86.0\")",
+      "Bash(curl -s https://en.wikipedia.org/api/rest_v1/page/summary/Jesse_Livermore -A curl/7.86.0)",
+      "Bash(curl -A \"Mozilla/5.0\" --referer \"https://en.wikipedia.org/\" -L -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg/440px-Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg\" -w \"\\\\nHTTP:%{http_code} SIZE:%{size_download}\")",
+      "Bash(curl -s https://en.wikipedia.org/api/rest_v1/page/summary/Wall_Street_Crash_of_1929 -A curl/7.86.0)",
+      "Bash(curl -s https://en.wikipedia.org/api/rest_v1/page/summary/New_York_Stock_Exchange -A curl/7.86.0)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/122.0.0.0 Safari/537.36\" -H \"Referer: https://en.wikipedia.org/wiki/Jesse_Livermore\" -H \"Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.9\" -L --compressed -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg/440px-Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg\" -w \"HTTP:%{http_code} SIZE:%{size_download}\")",
+      "Bash(curl -s -A \"Mozilla/5.0\" -L -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://ia801600.us.archive.org/BookReader/BookReaderImages.php?zip=/26/items/reminiscencesofs00lefv/reminiscencesofs00lefv_jp2.zip&file=reminiscencesofs00lefv_jp2/reminiscencesofs00lefv_0008.jp2&id=reminiscencesofs00lefv&scale=4&rotate=0\" -w \"HTTP:%{http_code} SIZE:%{size_download}\")",
+      "Bash(DIR=\"/Users/son.ph/my-surge/public/images/livermore\")",
+      "Read(//Users/son.ph/my-surge/public/images/livermore/**)"
     ]
   }
 }

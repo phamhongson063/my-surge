@@ -101,6 +101,22 @@ export async function handle(req, res, { pathname, parsed }) {
     return true;
   }
 
+  // Serve images from public/images/
+  if (pathname.startsWith("/images/")) {
+    const imgPath = path.join(BASE_DIR, "public", pathname);
+    if (fs.existsSync(imgPath)) {
+      const ext = path.extname(pathname).toLowerCase();
+      const mimeMap = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml" };
+      const mime = mimeMap[ext] || "application/octet-stream";
+      res.writeHead(200, { "Content-Type": mime, "Cache-Control": "public, max-age=86400" });
+      res.end(fs.readFileSync(imgPath));
+    } else {
+      res.writeHead(404);
+      res.end("Image not found");
+    }
+    return true;
+  }
+
   if (staticFiles[pathname]) {
     const { file, mime } = staticFiles[pathname];
     const filePath = path.join(BASE_DIR, file);

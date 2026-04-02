@@ -680,6 +680,142 @@
     .related-meta { font-size: 11px; color: var(--muted); }
     .related-arrow { color: var(--muted); flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* Article figures / images */
+    .article-figure {
+      margin: 20px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
+    }
+    .article-figure img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+    .article-figure img.contain {
+      object-fit: contain;
+      background: var(--surface2);
+    }
+    .article-figure figcaption {
+      padding: 9px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      border-top: 1px solid var(--border);
+      font-style: italic;
+    }
+    .article-figure-inline {
+      float: right;
+      margin: 0 0 16px 20px;
+      width: 220px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
+    }
+    .article-figure-inline img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .article-figure-inline figcaption {
+      padding: 7px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+      border-top: 1px solid var(--border);
+      font-style: italic;
+      text-align: center;
+    }
+    .article-content::after { content: ''; display: table; clear: both; }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .stat-card {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-card .stat-value {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      line-height: 1.2;
+      display: block;
+    }
+    .stat-card .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      display: block;
+    }
+    .stat-card.rose .stat-value { color: var(--dn); }
+    .stat-card.teal .stat-value { color: var(--teal); }
+    .stat-card.amber .stat-value { color: var(--am); }
+    .timeline {
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 14px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 48px;
+    }
+    .timeline-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--surface);
+      box-shadow: 0 0 0 2px var(--teal-bd);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .timeline-dot.red { background: var(--dn); box-shadow: 0 0 0 2px var(--rose-bd); }
+    .timeline-line {
+      width: 1.5px;
+      flex: 1;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .timeline-year {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      margin-top: 2px;
+    }
+    .timeline-content strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .timeline-content p {
+      font-size: 13px !important;
+      line-height: 1.65 !important;
+      color: var(--text2);
+      margin-bottom: 0 !important;
+    }
   </style>
 </head>
 <body>
@@ -1028,6 +1164,21 @@ async function openArticle(id) {
     </div>` : '';
 
   document.getElementById('modalBody').innerHTML = content + relatedHtml;
+
+  // Handle broken images gracefully
+  document.getElementById('modalBody').querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', function() {
+      const fig = this.closest('figure');
+      if (!fig) return;
+      const alt = this.alt || 'Hình ảnh';
+      const caption = fig.querySelector('figcaption');
+      const capText = caption ? caption.textContent : alt;
+      fig.innerHTML = `<div style="padding:24px 16px;text-align:center;background:var(--surface2);border-radius:10px 10px 0 0;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div style="font-size:12px;color:var(--muted);font-style:italic">${capText}</div>
+      </div>`;
+    });
+  });
 
   // Mark as read after 3s
   setTimeout(() => {
