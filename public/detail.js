@@ -2598,10 +2598,155 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
         }</div>`
       : "");
 
+  // ═══ DCA CHIẾN LƯỢC ═══
+  let dcaColor = "var(--gray700)";
+  const dcaTotalQty = positions.reduce((s, p) => s + p.qty, 0);
+  const dcaTotalCost = positions.reduce((s, p) => s + p.qty * p.price, 0);
+
+  const belowSL = stoploss && curPrice <= stoploss;
+  const structBroken = !aboveMa200 && pnlPct < -15;
+  const tooDeepLoss = pnlPct < -25;
+
+  // Build DCA candidate levels below current price
+  const rawDcaLevels = [
+    ...(sr?.supports || []).filter(s => s.price < curPrice * 0.99).slice(0, 3)
+      .map(s => ({ price: s.price, label: `Hỗ trợ (${s.touches}t)` })),
+    ...(ma50 && ma50 < curPrice * 0.99 ? [{ price: ma50, label: "MA50" }] : []),
+    ...(ma200 && ma200 < curPrice * 0.99 ? [{ price: ma200, label: "MA200" }] : []),
+  ].sort((a, b) => b.price - a.price);
+
+  // Deduplicate levels within 2%
+  const dcaLevels = [];
+  for (const lv of rawDcaLevels) {
+    if (!dcaLevels.some(x => Math.abs(x.price - lv.price) / lv.price < 0.02)) {
+      dcaLevels.push(lv);
+      if (dcaLevels.length >= 3) break;
+    }
+  }
+
+  // Step size: 1/3 current position, rounded to 100
+  const dcaStep = Math.max(100, Math.round(dcaTotalQty / 3 / 100) * 100);
+
+  // Cumulative DCA projections
+  let cumQtyAcc = dcaTotalQty;
+  let cumCostAcc = dcaTotalCost;
+  const dcaProjections = dcaLevels.map((lv, i) => {
+    cumQtyAcc += dcaStep;
+    cumCostAcc += dcaStep * lv.price;
+    const newAvg = cumCostAcc / cumQtyAcc;
+    const pctFromCur = ((lv.price - curPrice) / curPrice * 100).toFixed(1);
+    const avgChangePct = ((newAvg - avgPrice) / avgPrice * 100).toFixed(1);
+    return { ...lv, pctFromCur, newAvg, avgChangePct, cumQty: cumQtyAcc };
+  });
+
+  let dcaHtml = "";
+
+  if (belowSL || structBroken || tooDeepLoss) {
+    dcaColor = "var(--dn)";
+    const reason = belowSL
+      ? `Giá phá stoploss ${stoploss ? fp(stoploss) : ""} — <b>tuyệt đối không DCA</b>.`
+      : structBroken
+      ? `Giá dưới MA200, lỗ <b>${pnlPct.toFixed(1)}%</b> — cấu trúc hỏng, không DCA.`
+      : `Lỗ quá sâu <b>${pnlPct.toFixed(1)}%</b> — DCA chỉ tăng rủi ro.`;
+    const notRecommended = [
+      "Ưu tiên cắt lỗ, bảo toàn vốn",
+      "DCA khi trend giảm mạnh = bắt dao đang rơi",
+      belowSL
+        ? "Chỉ đánh giá lại khi giá lấy lại trên stoploss"
+        : `Chờ giá lấy lại MA200 (${ma200 ? fp(ma200) : "—"}) rồi mới xem xét`,
+    ];
+    dcaHtml = `<div style="padding:10px 14px;border-radius:8px;background:var(--dn-bg);border:1px solid var(--dn-bd);margin-bottom:10px">
+  <div style="font-size:13px;color:var(--dn);font-weight:700">${reason}</div>
+</div>
+<div style="margin:6px 0">${notRecommended.map((a, i) =>
+      `<div style="font-size:12px;color:var(--gray700);padding:3px 0;display:flex;gap:6px"><span style="color:var(--dn);font-weight:700;min-width:16px">${i + 1}.</span><span>${a}</span></div>`
+    ).join("")}</div>`;
+
+  } else if (pnlPct > 10) {
+    dcaColor = "var(--up)";
+    dcaHtml = `<div style="padding:10px 14px;border-radius:8px;background:var(--up-bg);border:1px solid var(--up-bd);margin-bottom:10px">
+  <div style="font-size:13px;color:var(--up);font-weight:700">Lãi <b>+${pnlPct.toFixed(1)}%</b> — không cần DCA, tập trung bảo vệ lãi.</div>
+</div>
+<div style="margin:6px 0">${[
+      "Chỉ thêm vị thế khi có breakout xác nhận với volume lớn",
+      nearSup ? `Nếu pullback về hỗ trợ ${fp(nearSup)} có thể cân nhắc mua thêm nhỏ` : "Không thêm khi chưa có pullback rõ ràng",
+      "Ưu tiên dời SL lên bảo vệ lãi hiện có",
+    ].map((a, i) =>
+      `<div style="font-size:12px;color:var(--gray700);padding:3px 0;display:flex;gap:6px"><span style="color:var(--up);font-weight:700;min-width:16px">${i + 1}.</span><span>${a}</span></div>`
+    ).join("")}</div>`;
+
+  } else {
+    dcaColor = pnlPct < -5 ? "var(--am)" : "var(--navy)";
+    const intro = pnlPct < 0
+      ? `Lỗ <b>${pnlPct.toFixed(1)}%</b> — có thể DCA có kế hoạch nếu thesis còn nguyên.`
+      : `Gần hòa vốn — có thể tích lũy thêm khi giá về vùng tốt.`;
+
+    dcaHtml = `<div style="font-size:13px;color:${dcaColor};margin-bottom:10px">${intro}</div>`;
+
+    // Conditions checklist
+    const conds = [];
+    if (rsi != null) conds.push({ label: `RSI ${rsi.toFixed(0)}`, ok: rsi < 45, note: rsi < 30 ? "quá bán ✓" : rsi < 45 ? "OK ✓" : "chưa đủ giảm" });
+    if (aboveMa50 != null) conds.push({ label: `MA50 ${ma50 ? fp(ma50) : "—"}`, ok: aboveMa50, note: aboveMa50 ? "giá trên ✓" : "giá dưới ✗" });
+    if (aboveMa200 != null) conds.push({ label: `MA200 ${ma200 ? fp(ma200) : "—"}`, ok: aboveMa200, note: aboveMa200 ? "cấu trúc dài hạn OK ✓" : "cẩn thận ✗" });
+    if (conds.length) {
+      dcaHtml += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${conds.map(c =>
+        `<span style="font-size:11px;padding:3px 8px;border-radius:5px;background:${c.ok ? "var(--up-bg)" : "var(--dn-bg)"};color:${c.ok ? "var(--up)" : "var(--dn)"};border:1px solid ${c.ok ? "var(--up-bd)" : "var(--dn-bd)"}">${c.label} — ${c.note}</span>`
+      ).join("")}</div>`;
+    }
+
+    if (dcaProjections.length > 0) {
+      dcaHtml += `<div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">KẾ HOẠCH DCA — mỗi bước +${dcaStep.toLocaleString("vi-VN")} CP</div>`;
+      dcaHtml += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">`;
+      dcaProjections.forEach((step, i) => {
+        const pctColor = parseFloat(step.pctFromCur) >= 0 ? "var(--up)" : "var(--dn)";
+        const avgColor = parseFloat(step.avgChangePct) <= 0 ? "var(--up)" : "var(--dn)";
+        dcaHtml += `<div style="display:grid;grid-template-columns:22px 1fr 110px 90px;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:var(--gray50);border:1px solid var(--gray100)">
+  <span style="font-size:11px;font-weight:800;color:var(--gray400);text-align:center">#${i + 1}</span>
+  <div>
+    <span style="font-size:13px;font-weight:700;color:var(--navy)">${fp(step.price)}</span>
+    <span style="font-size:11px;color:var(--gray400);margin-left:4px">${step.label}</span>
+    <span style="font-size:11px;color:${pctColor};margin-left:4px">(${step.pctFromCur}%)</span>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:10px;color:var(--gray400)">Vốn TB mới</div>
+    <div style="font-size:13px;font-weight:700;color:var(--gray800)">${fp(step.newAvg)}</div>
+    <div style="font-size:10px;color:${avgColor};font-weight:700">${step.avgChangePct}% vs cũ</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:10px;color:var(--gray400)">Tổng CP</div>
+    <div style="font-size:13px;font-weight:700;color:var(--navy)">${step.cumQty.toLocaleString("vi-VN")}</div>
+  </div>
+</div>`;
+      });
+      dcaHtml += `</div>`;
+
+      // DCA rules
+      const dcaRules = [
+        "Chỉ DCA khi giá đóng cửa xác nhận tại vùng hỗ trợ — không mua trước",
+        "Volume phải tăng khi giá giữ vùng hỗ trợ (xác nhận lực cầu)",
+        aboveMa50
+          ? `MA50 (${ma50 ? fp(ma50) : "—"}) là stoploss của toàn bộ kế hoạch DCA`
+          : `Dừng DCA nếu giá không lấy lại MA50 (${ma50 ? fp(ma50) : "—"})`,
+        "Không DCA quá 3 lần — nếu vỡ cả 3 vùng, thoát toàn bộ vị thế",
+      ];
+      dcaHtml += `<div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:4px">NGUYÊN TẮC</div>`;
+      dcaHtml += dcaRules.map((r, i) =>
+        `<div style="font-size:11px;color:var(--gray600);padding:2px 0;display:flex;gap:5px"><span style="color:var(--gray400);min-width:14px">${i + 1}.</span><span>${r}</span></div>`
+      ).join("");
+
+    } else {
+      dcaHtml += `<div style="font-size:12px;color:var(--gray500);margin-top:6px">Chưa xác định được vùng DCA rõ ràng. Chờ giá test hỗ trợ cụ thể.</div>`;
+      if (nearSup) {
+        dcaHtml += `<div style="font-size:12px;color:var(--gray700);margin-top:6px">Hỗ trợ gần nhất: <b style="color:var(--up)">${fp(nearSup)}</b> — theo dõi phản ứng tại đây.</div>`;
+      }
+    }
+  }
+
   return {
     short: { text: shortHtml, color: shortColor },
     mid: { text: midHtml, color: midColor },
     long: { text: longHtml, color: longColor },
+    dca: { text: dcaHtml, color: dcaColor },
   };
 }
 
@@ -2822,22 +2967,41 @@ pnl > 0 ? "var(--up-bg)" : pnl < 0 ? "var(--dn-bg)" : "var(--gray50)"
       positions,
       analysisData
     );
-    const advTab = (label, icon, a, period) => `
-    <div style="padding:16px 20px;border-radius:12px;background:var(--gray50);border:1px solid var(--gray200);margin-bottom:12px">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-  <span style="font-size:16px">${icon}</span>
-  <span style="font-size:13px;font-weight:700;color:var(--gray700);letter-spacing:.6px">${label}</span>
-  <span style="font-size:11px;color:var(--gray400)">${period}</span>
-</div>
-<div style="line-height:1.5">${a.text}</div>
-    </div>`;
+    const tabs = [
+      { id: "short", label: "NGẮN HẠN", icon: "⚡", period: "1-2 tuần",       adv: adv.short },
+      { id: "mid",   label: "TRUNG HẠN", icon: "📈", period: "1-3 tháng",     adv: adv.mid },
+      { id: "long",  label: "DÀI HẠN",   icon: "🏦", period: "6-12 tháng",   adv: adv.long },
+      { id: "dca",   label: "DCA",        icon: "📊", period: "Chiến lược",    adv: adv.dca },
+    ];
+    const advTabFn = `switchAdvTab_${sym}`.replace(/[^a-zA-Z0-9_]/g, "_");
+
+    // Đăng ký function trên window (script trong innerHTML không được execute)
+    window[advTabFn] = function(id) {
+      tabs.forEach(t => {
+        const btn = document.getElementById(`advTab_${t.id}`);
+        const pane = document.getElementById(`advPane_${t.id}`);
+        if (btn) {
+          btn.style.borderBottomColor = id === t.id ? "var(--navy)" : "transparent";
+          btn.style.color = id === t.id ? "var(--navy)" : "var(--gray400)";
+        }
+        if (pane) pane.style.display = id === t.id ? "block" : "none";
+      });
+    };
 
     html += `
     <div style="border-top:2px solid var(--gray200);padding-top:16px">
-<div style="font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:12px">TƯ VẤN VỊ THẾ</div>
-${advTab("NGẮN HẠN", "⚡", adv.short, "1-2 tuần")}
-${advTab("TRUNG HẠN", "📈", adv.mid, "1-3 tháng")}
-${advTab("DÀI HẠN", "🏦", adv.long, "6-12 tháng")}
+      <div style="font-size:12px;font-weight:700;color:var(--gray500);letter-spacing:.8px;margin-bottom:10px">TƯ VẤN VỊ THẾ</div>
+      <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--gray100);padding-bottom:0">
+        ${tabs.map((t, i) => `
+        <button id="advTab_${t.id}" onclick="${advTabFn}('${t.id}')" style="display:flex;align-items:center;gap:5px;padding:8px 14px;border:none;border-bottom:2px solid ${i === 0 ? "var(--navy)" : "transparent"};margin-bottom:-2px;background:none;cursor:pointer;font-family:Tahoma,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;color:${i === 0 ? "var(--navy)" : "var(--gray400)"};letter-spacing:.5px;transition:all .15s;white-space:nowrap">
+          <span style="font-size:13px">${t.icon}</span>${t.label}
+          <span style="font-size:10px;font-weight:400;color:var(--gray400)">${t.period}</span>
+        </button>`).join("")}
+      </div>
+      <div>
+        ${tabs.map((t, i) => `
+        <div id="advPane_${t.id}" style="display:${i === 0 ? "block" : "none"};line-height:1.5">${t.adv.text}</div>`).join("")}
+      </div>
     </div>`;
   }
 
