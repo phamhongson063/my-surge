@@ -8,6 +8,14 @@ if(localStorage.getItem('pf-theme')==='light') document.documentElement.classLis
 const SERVER='';
 let portfolio={},prices={},editingId=null,openSyms=new Set(),historyData=[];
 let chartTotal=0; // cached for chartHoverReset
+let valuesHidden=false;
+
+function toggleValuesMask(){
+  valuesHidden=!valuesHidden;
+  const btn=document.getElementById('maskBtn');
+  if(btn) btn.classList.toggle('active',valuesHidden);
+  render();
+}
 
 // ── Shared constants ─────────────────────────────────────────────────────────
 const BADGE_COLORS=['#4da3ff','#00d26a','#ff4757','#ffb300','#a855f7','#06b6d4','#f97316','#ec4899'];
@@ -218,6 +226,12 @@ function hideTooltip(id){
 // ── Formatters ───────────────────────────────────────────────────────────────
 const fp=v=>{if(v==null)return'—';return parseFloat(v).toLocaleString('vi-VN',{minimumFractionDigits:1,maximumFractionDigits:2})};
 const fMoney=v=>{
+  if(valuesHidden){
+    const a=Math.abs(v);
+    if(a>=1e6) return '*.** tỷ';
+    if(a>=1e3) return '**.* tr';
+    return '*** ng';
+  }
   const a=Math.abs(v);
   if(a>=1e6) return (v/1e6).toFixed(2)+' tỷ';
   if(a>=1e3) return (v/1e3).toFixed(1)+' tr';
