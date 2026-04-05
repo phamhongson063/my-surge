@@ -2624,19 +2624,21 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
     }
   }
 
-  // Step size: 1/3 current position, rounded to 100
-  const dcaStep = Math.max(100, Math.round(dcaTotalQty / 3 / 100) * 100);
+  // Tỷ lệ 1:2:3 — base = 1/4 vị thế, tổng 3 bước ≈ 150% vị thế gốc
+  const dcaBase = Math.max(100, Math.round(dcaTotalQty / 4 / 100) * 100);
+  const dcaMultipliers = [1, 2, 3];
 
   // Cumulative DCA projections
   let cumQtyAcc = dcaTotalQty;
   let cumCostAcc = dcaTotalCost;
   const dcaProjections = dcaLevels.map((lv, i) => {
+    const dcaStep = Math.round(dcaBase * dcaMultipliers[i] / 100) * 100;
     cumQtyAcc += dcaStep;
     cumCostAcc += dcaStep * lv.price;
     const newAvg = cumCostAcc / cumQtyAcc;
     const pctFromCur = ((lv.price - curPrice) / curPrice * 100).toFixed(1);
     const avgChangePct = ((newAvg - avgPrice) / avgPrice * 100).toFixed(1);
-    return { ...lv, pctFromCur, newAvg, avgChangePct, cumQty: cumQtyAcc };
+    return { ...lv, dcaStep, pctFromCur, newAvg, avgChangePct, cumQty: cumQtyAcc };
   });
 
   let dcaHtml = "";
@@ -2695,7 +2697,7 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
     }
 
     if (dcaProjections.length > 0) {
-      dcaHtml += `<div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">KẾ HOẠCH DCA — mỗi bước +${dcaStep.toLocaleString("vi-VN")} CP</div>`;
+      dcaHtml += `<div style="font-size:11px;font-weight:700;color:var(--gray400);letter-spacing:.6px;margin-bottom:6px">KẾ HOẠCH DCA — mua nhiều hơn ở giá thấp hơn</div>`;
       dcaHtml += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">`;
       dcaProjections.forEach((step, i) => {
         const pctColor = parseFloat(step.pctFromCur) >= 0 ? "var(--up)" : "var(--dn)";
@@ -2713,8 +2715,9 @@ function generateAdvisory(avgPrice, curPrice, pnlPct, positions, d) {
     <div style="font-size:10px;color:${avgColor};font-weight:700">${step.avgChangePct}% vs cũ</div>
   </div>
   <div style="text-align:right">
-    <div style="font-size:10px;color:var(--gray400)">Tổng CP</div>
-    <div style="font-size:13px;font-weight:700;color:var(--navy)">${step.cumQty.toLocaleString("vi-VN")}</div>
+    <div style="font-size:10px;color:var(--gray400)">Mua thêm</div>
+    <div style="font-size:13px;font-weight:700;color:var(--navy)">+${step.dcaStep.toLocaleString("vi-VN")} CP</div>
+    <div style="font-size:10px;color:var(--gray400)">Tổng: ${step.cumQty.toLocaleString("vi-VN")}</div>
   </div>
 </div>`;
       });

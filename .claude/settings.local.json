@@ -130,7 +130,8 @@
       "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/122.0.0.0 Safari/537.36\" -H \"Referer: https://en.wikipedia.org/wiki/Jesse_Livermore\" -H \"Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8\" -H \"Accept-Language: en-US,en;q=0.9\" -L --compressed -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg/440px-Press_photo_of_Jesse_Livermore_in_1940_%28cropped%29.jpg\" -w \"HTTP:%{http_code} SIZE:%{size_download}\")",
       "Bash(curl -s -A \"Mozilla/5.0\" -L -o \"/Users/son.ph/my-surge/public/images/livermore/livermore-portrait.jpg\" \"https://ia801600.us.archive.org/BookReader/BookReaderImages.php?zip=/26/items/reminiscencesofs00lefv/reminiscencesofs00lefv_jp2.zip&file=reminiscencesofs00lefv_jp2/reminiscencesofs00lefv_0008.jp2&id=reminiscencesofs00lefv&scale=4&rotate=0\" -w \"HTTP:%{http_code} SIZE:%{size_download}\")",
       "Bash(DIR=\"/Users/son.ph/my-surge/public/images/livermore\")",
-      "Read(//Users/son.ph/my-surge/public/images/livermore/**)"
+      "Read(//Users/son.ph/my-surge/public/images/livermore/**)",
+      "Bash(ls /Users/son.ph/my-surge/database/library/articles/*.html)"
     ]
   }
 }

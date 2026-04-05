@@ -22,13 +22,14 @@ export async function handle(req, res, { pathname }) {
     return true;
   }
 
-  // GET /api/library/1 → return single article with content
+  // GET /api/library/1 → return single article HTML content
   const m = pathname.match(/^\/api\/library\/(\d+)$/);
   if (m && req.method === 'GET') {
     const id = m[1];
     try {
-      const data = await readFile(join(DB_DIR, 'articles', `${id}.json`), 'utf8');
-      sendJSON(res, 200, { ok: true, article: JSON.parse(data) });
+      const html = await readFile(join(DB_DIR, 'articles', `${id}.html`), 'utf8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(html);
     } catch (e) {
       sendJSON(res, 404, { ok: false, error: 'Article not found' });
     }

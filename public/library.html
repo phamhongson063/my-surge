@@ -982,8 +982,7 @@ async function loadArticles() {
 async function loadArticleContent(id) {
   try {
     const res = await fetch(`/api/library/${id}`);
-    const data = await res.json();
-    if (data.ok) return data.article.content;
+    if (res.ok) return await res.text();
   } catch(e) {
     console.error('Failed to load article content:', e);
   }
